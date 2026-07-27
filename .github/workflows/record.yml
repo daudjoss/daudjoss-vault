@@ -106,6 +106,51 @@ jobs:
             echo "ℹ️ tidak ada orv_id, skip link"
           fi
 
+      - name: Kirim "Rekaman dimulai!" ke Telegram
+        if: always()
+        continue-on-error: true
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          SOURCE: ${{ steps.inputs.outputs.source || '' }}
+          HUMAN_DUR: ${{ steps.inputs.outputs.human_duration || '' }}
+          DURATION: ${{ steps.inputs.outputs.duration || '' }}
+          FILENAME: ${{ steps.fname.outputs.filename || '' }}
+          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+        run: |
+          SOURCE_LABEL=$( [ "$SOURCE" = "trans7" ] && echo "Trans7" || echo "SevenHub" )
+          DUR_SEC="${DURATION:-600}"
+          EST_SEC=$(( DUR_SEC / 3 ))
+          [ "$EST_SEC" -lt 120 ] && EST_SEC=120
+          EST_MIN=$(( EST_SEC / 60 ))
+          [ "$DUR_SEC" -le 600 ] && MODE="VOD biasanya cepat" || MODE="live ~realtime"
+          MSG="✅ <b>Rekaman dimulai!</b>
+
+          🆔 ID: <code>${ORV_ID}</code>
+          📺 Source: <b>${SOURCE_LABEL}</b>
+          ⏱ Durasi: ${HUMAN_DUR}
+          📦 File: ${FILENAME}
+          ⏱ Target konten: ${HUMAN_DUR} (cap; ${MODE})
+          🎞 Estimasi encode HEVC: ~${EST_MIN} menit (workflow terpisah, ±30%)
+
+          ☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.
+
+          Simpan ID ini untuk /cancel <id> kalau mau membatalkan."
+
+          # Try local Bot API Server first, fallback to public API
+          for API_URL in "${TG_API_URL}" "https://api.telegram.org"; do
+            RESP=$(curl -sS --max-time 15 -X POST "${API_URL}/bot${BOT_TOKEN}/sendMessage" \
+              -H "Content-Type: application/json" \
+              -d "{\"chat_id\":\"${CHAT_ID}\",\"text\":$(echo "$MSG" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))'),\"parse_mode\":\"HTML\"}" 2>&1)
+            OK=$(echo "$RESP" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ok',False))" 2>/dev/null || echo "False")
+            if [ "$OK" = "True" ]; then
+              echo "✅ Rekaman dimulai! sent via ${API_URL:0:30}"
+              break
+            fi
+            echo "⚠️ Failed via ${API_URL:0:30}: ${RESP:0:200}"
+          done
+
       - name: Install dependencies (apt ffmpeg untuk rekam + static ffmpeg untuk HEVC)
         run: |
           # apt ffmpeg = stabil buat rekam (-c copy). Encoder libx265 di apt
