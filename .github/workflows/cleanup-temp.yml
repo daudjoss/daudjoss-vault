@@ -1,0 +1,62 @@
+name: cleanup-temp
+# Safety net: hapus release temp yatim (orphan) biar gak pernah numpuk.
+# Tag rusemeva-encode-* / rusemeva-rescue-* (+ legacy orvella-*) = temp transien.
+# Skip delete HANYA jika record run_id di tag masih in_progress ATAU ada encode
+# in_progress yang client_payload/release_tag-nya cocok — bukan "any encode".
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hapus release temp yatim (orphan)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          ACTIVE=$(gh api "repos/$REPO/actions/runs?per_page=50" \
+            --jq '[.workflow_runs[] | select(.status=="in_progress") | .id] | join(" ")' 2>/dev/null || echo "")
+          echo "🔎 Active runs: $ACTIVE"
+          # Encode runs in progress (ids only) — used as soft signal if tag match unknown
+          ENCODE_IDS=$(gh api "repos/$REPO/actions/runs?per_page=50" \
+            --jq '[.workflow_runs[] | select(.status=="in_progress") | select(.name=="rusemeva-encode" or .name=="orvella-encode") | .id] | join(" ")' 2>/dev/null || echo "")
+          echo "🔎 Encode active ids: $ENCODE_IDS"
+          gh api "repos/$REPO/releases?per_page=100" \
+            --jq '.[] | "\(.id) \(.tag_name) \(.created_at)"' 2>/dev/null | while read -r id tag created; do
+            case "$tag" in
+              rusemeva-encode-*|rusemeva-rescue-*|orvella-encode-*|orvella-rescue-*)
+                runid="${tag#rusemeva-encode-}"
+                runid="${runid#orvella-encode-}"
+                runid="${runid#rusemeva-rescue-}"
+                runid="${runid#orvella-rescue-}"
+                runid="${runid%%-*}"
+                # Skip if the RECORD run id embedded in tag is still running
+                if [ -n "$runid" ] && echo "$ACTIVE" | tr ' ' '\n' | grep -qx "$runid"; then
+                  echo "⏳ skip (record/run $runid still active): $tag"
+                  continue
+                fi
+                # If any encode active, only skip tags younger than 30m (likely in use)
+                created_epoch=$(date -d "$created" +%s 2>/dev/null || echo 0)
+                now=$(date +%s)
+                age=$(( (now - created_epoch) / 60 ))
+                if [ -n "$ENCODE_IDS" ] && [ "$age" -lt 30 ]; then
+                  echo "⏳ skip young temp while encode active (${age}m): $tag"
+                  continue
+                fi
+                if [ "$age" -gt 120 ]; then
+                  echo "🧹 hapus temp release yatim: $tag (umur ${age}m)"
+                  gh release delete "$tag" --repo "$REPO" --yes 2>/dev/null || true
+                else
+                  echo "⏳ simpan (baru ${age}m): $tag"
+                fi
+                ;;
+              *) ;;
+            esac
+          done
+          echo "✅ Cleanup selesai."

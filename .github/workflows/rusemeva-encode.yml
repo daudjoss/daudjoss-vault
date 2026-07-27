@@ -1,0 +1,609 @@
+name: rusemeva-encode
+
+# Workflow TERPISAH untuk encode HEVC.
+# Dipicu oleh record.yml (setelah rekam + kirim original ke Telegram) lewat
+# repository_dispatch type=encode-request. Tujuannya: encode video ORIGINAL
+# yang sudah di-upload ke GitHub Release SEMENTARA oleh record.yml, lalu kirim
+# hasil HEVC ke Telegram. Karena jalan di runner sendiri, encode punya 6 jam penuh
+# (tidak lagi berbagi waktu dengan rekam).
+
+permissions:
+  contents: write
+
+on:
+  repository_dispatch:
+    types: [encode-request]
+  workflow_dispatch:
+    inputs:
+      filename:
+        description: 'Original filename in temp release'
+        required: true
+      chat_id:
+        description: 'Telegram chat id'
+        required: true
+      release_tag:
+        description: 'Temp release tag'
+        required: true
+      duration:
+        description: 'Actual duration seconds'
+        required: true
+      requested_duration:
+        description: 'Requested duration seconds'
+        required: false
+        default: ''
+      human_duration:
+        description: 'Human duration label'
+        required: false
+        default: 'n/a'
+      hevc_preset:
+        required: false
+        default: 'ultrafast'
+      hevc_crf:
+        required: false
+        default: '25'
+      encode_profile:
+        required: false
+        default: 'speed'
+      orv_id:
+        required: false
+        default: ''
+
+jobs:
+  encode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      TZ: Asia/Jakarta
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get inputs
+        id: inputs
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "file_id=" >> $GITHUB_OUTPUT
+            echo "filename=${{ inputs.filename }}" >> $GITHUB_OUTPUT
+            echo "chat_id=${{ inputs.chat_id }}" >> $GITHUB_OUTPUT
+            echo "human_duration=${{ inputs.human_duration }}" >> $GITHUB_OUTPUT
+            echo "duration=${{ inputs.duration }}" >> $GITHUB_OUTPUT
+            echo "requested_duration=${{ inputs.requested_duration || inputs.duration }}" >> $GITHUB_OUTPUT
+            echo "release_tag=${{ inputs.release_tag }}" >> $GITHUB_OUTPUT
+            echo "hevc_preset=${{ inputs.hevc_preset || 'veryfast' }}" >> $GITHUB_OUTPUT
+            echo "hevc_crf=${{ inputs.hevc_crf || '24' }}" >> $GITHUB_OUTPUT
+            echo "encode_profile=${{ inputs.encode_profile || '' }}" >> $GITHUB_OUTPUT
+            echo "orv_id=${{ inputs.orv_id || '' }}" >> $GITHUB_OUTPUT
+          else
+            echo "file_id=${{ github.event.client_payload.file_id }}" >> $GITHUB_OUTPUT
+            echo "filename=${{ github.event.client_payload.filename }}" >> $GITHUB_OUTPUT
+            echo "chat_id=${{ github.event.client_payload.chat_id }}" >> $GITHUB_OUTPUT
+            echo "human_duration=${{ github.event.client_payload.human_duration }}" >> $GITHUB_OUTPUT
+            echo "duration=${{ github.event.client_payload.duration }}" >> $GITHUB_OUTPUT
+            echo "requested_duration=${{ github.event.client_payload.requested_duration || github.event.client_payload.duration }}" >> $GITHUB_OUTPUT
+            echo "release_tag=${{ github.event.client_payload.release_tag }}" >> $GITHUB_OUTPUT
+            echo "hevc_preset=${{ github.event.client_payload.hevc_preset || 'veryfast' }}" >> $GITHUB_OUTPUT
+            echo "hevc_crf=${{ github.event.client_payload.hevc_crf || '24' }}" >> $GITHUB_OUTPUT
+            echo "encode_profile=${{ github.event.client_payload.encode_profile || '' }}" >> $GITHUB_OUTPUT
+            echo "orv_id=${{ github.event.client_payload.orv_id || '' }}" >> $GITHUB_OUTPUT
+          fi
+
+      # === Link run_id -> orv_id ke KV (biar /status bisa baca % encode) ===
+      - name: Link run ke RSM-ID (KV)
+        if: always()
+        continue-on-error: true
+        env:
+          ORV_ID: ${{ github.event.client_payload.orv_id || '' }}
+          WORKER_URL: ${{ secrets.WORKER_URL || 'https://rusemeva.rusemeva.workers.dev' }}
+          PROGRESS_SECRET: ${{ secrets.PROGRESS_SECRET || '' }}
+        run: |
+          if [ -n "$ORV_ID" ]; then
+            curl -fsS --retry 2 --retry-delay 3 -X POST "$WORKER_URL/link" \
+              -H "Content-Type: application/json" \
+              -d "{\"run_id\":\"${{ github.run_id }}\",\"orv_id\":\"$ORV_ID\",\"secret\":\"$PROGRESS_SECRET\"}" 2>/dev/null \
+              && echo "🔗 run ${{ github.run_id }} -> $ORV_ID" || echo "⚠️ link gagal (non-fatal)"
+          else
+            echo "ℹ️ tidak ada orv_id, skip link"
+          fi
+
+      - name: Install dependencies (static ffmpeg untuk HEVC)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true
+          FFMPEG_STATIC="$(command -v ffmpeg || true)"
+          if [ -z "$FFMPEG_STATIC" ]; then echo "❌ no ffmpeg"; exit 1; fi
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          dl_static() { curl -fsSL --retry 4 --retry-delay 5 --retry-all-errors -A "$UA" "$1" -o /tmp/ffmpeg.tar.xz; }
+          for U in \
+            "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+            "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz" ; do
+            if dl_static "$U" && tar -xf /tmp/ffmpeg.tar.xz -C /tmp 2>/dev/null; then
+              D=$(ls -d /tmp/ffmpeg-*-amd64-static 2>/dev/null | head -1)
+              [ -z "$D" ] && D=$(ls -d /tmp/ffmpeg-master-latest-linux64-gpl 2>/dev/null | head -1)
+              if [ -n "$D" ]; then
+                if [ -x "$D/ffmpeg" ]; then FFMPEG_STATIC="$D/ffmpeg";
+                elif [ -x "$D/bin/ffmpeg" ]; then FFMPEG_STATIC="$D/bin/ffmpeg"; fi
+              fi
+              if [ -n "$FFMPEG_STATIC" ] && [ -x "$FFMPEG_STATIC" ]; then echo "✅ static ffmpeg: $FFMPEG_STATIC"; break; fi
+            fi
+            echo "⚠️ gagal $U"
+          done
+          echo "FFMPEG_STATIC=$FFMPEG_STATIC" >> $GITHUB_ENV
+          "$FFMPEG_STATIC" -version | head -1
+
+      - name: Download ORIGINAL dari GitHub Release sementara
+        id: dl
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.inputs.outputs.release_tag }}"
+          RAW="${{ steps.inputs.outputs.filename }}"
+          echo "📥 Download original dari release temp: $TAG / $RAW"
+          mkdir -p /tmp/rusemeva_dl
+          # Download SEMUA asset via gh api REST (lebih reliable dr 'gh release download'
+          # yang bisa gagal silent di gh 2.x). Loop tiap asset -> stream octet-stream.
+          API_URL="repos/${{ github.repository }}/releases/tags/$TAG"
+          ASSET_IDS=$(gh api "$API_URL" --jq '.assets[].id')
+          if [ -z "$ASSET_IDS" ]; then
+            echo "⚠️ Release temp $TAG tidak punya asset sama sekali!"
+            echo "📂 (mungkin upload di record.yml gagal — cek log record run)"
+            exit 1
+          fi
+          for aid in $ASSET_IDS; do
+            fname=$(gh api "repos/${{ github.repository }}/releases/assets/$aid" --jq '.name')
+            echo "  ⬇️  $fname"
+            gh api "repos/${{ github.repository }}/releases/assets/$aid" \
+              -H "Accept: application/octet-stream" > "/tmp/rusemeva_dl/$fname"
+            echo "     -> $(stat -c%s "/tmp/rusemeva_dl/$fname" 2>/dev/null || echo 0) bytes"
+          done
+          echo "✅ Download semua asset release temp"
+          echo "📂 Isi download:"
+          ls -lh /tmp/rusemeva_dl
+
+          # Kalau terpecah jadi segment (part-*), re-assemble jadi file utuh.
+          # Karena byte-split, cukup `cat` balik dalam urutan ter-sort ->
+          # hasil BIT-IDENTIK dgn original (tidak perlu ffmpeg concat).
+          if ls /tmp/rusemeva_dl/part-* >/dev/null 2>&1; then
+            echo "🧩 Segment terdeteksi, re-assemble via cat (urutan sort)..."
+            cat $(ls /tmp/rusemeva_dl/part-* | sort) > "/tmp/rusemeva_dl/$RAW"
+            echo "✅ Re-assembled: $(ls -lh "/tmp/rusemeva_dl/$RAW" | awk '{print $5}')"
+          fi
+
+          if [ -s "/tmp/rusemeva_dl/$RAW" ]; then
+            echo "ORIG_FILE=/tmp/rusemeva_dl/$RAW" >> $GITHUB_OUTPUT
+            echo "✅ Original siap: $(ls -lh /tmp/rusemeva_dl/$RAW | awk '{print $5}')"
+          else
+            echo "❌ Original gagal didownload"
+            exit 1
+          fi
+
+      - name: Start local Bot API Server (allow >2GB uploads)
+        if: success()
+        continue-on-error: true
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TG_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TG_API_HASH }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          set +e
+          docker rm -f tg-bot-api >/dev/null 2>&1 || true
+          rm -rf /tmp/tg-bot-api && mkdir -p /tmp/tg-bot-api
+          docker run -d --name tg-bot-api -p 8081:8081 \
+            -e TELEGRAM_API_ID="$TELEGRAM_API_ID" \
+            -e TELEGRAM_API_HASH="$TELEGRAM_API_HASH" \
+            -e TELEGRAM_LOCAL=1 \
+            -v /tmp/tg-bot-api:/var/lib/telegram-bot-api \
+            aiogram/telegram-bot-api:latest \
+            --local -m 2097152000 --dir /var/lib/telegram-bot-api --http-port 8081 --verbosity=2
+          echo "⏳ Menunggu Bot API Server siap..."
+          for i in $(seq 1 45); do
+            CODE=$(curl -s -o /tmp/getme.json -w "%{http_code}" "http://localhost:8081/bot${{ secrets.BOT_TOKEN }}/getMe" 2>/dev/null)
+            if [ "$CODE" = "200" ]; then echo "✅ Bot API Server ready"; break; fi
+            sleep 2
+          done
+
+      - name: Auto-downgrade preset (real-measure 60s sample)
+        id: autodg
+        run: |
+          # --- STRATEGI: ukur kecepatan RIIL lewat sample 60s encode,
+          # bukan tabel statis (terbukti meleset buat 'slower').
+          # 1) Encode 60s pakai preset PILIHAN -> dapat fps riil.
+          # 2) Hitung realtime_x = fps_encode / fps_video_asli.
+          # 3) Cascade: pilih preset TERTINGGI (paling lambat) yg est <= 350m.
+          ORIG="${{ steps.dl.outputs.ORIG_FILE }}"
+          PRESET="${{ steps.inputs.outputs.hevc_preset || 'medium' }}"
+          CRF_VAL="${{ steps.inputs.outputs.hevc_crf || '22' }}"
+          DUR="${{ steps.inputs.outputs.duration }}"
+          [ -z "$DUR" ] || [ "$DUR" -le 0 ] 2>/dev/null && DUR=3600
+          LIMIT_MIN=350
+          OVERHEAD_MIN=15
+          FFMPEG_STATIC="${{ env.FFMPEG_STATIC }}"
+
+          # fps video asli (biar tahu realtime_x)
+          VFPS=$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "$ORIG" 2>/dev/null | head -1)
+          VFPS_NUM=$(awk -F/ '{if(NF==2) printf "%.2f", $1/$2; else printf "%.2f", $1}' <<<"$VFPS" 2>/dev/null || echo 30)
+          [ -z "$VFPS_NUM" ] && VFPS_NUM=30
+          echo "📐 FPS video asli: $VFPS_NUM"
+
+          # --- Sample 60s encode pakai preset PILIHAN ---
+          echo "⏱ Sampling 60s encode dgn preset '$PRESET' (CRF $CRF_VAL)..."
+          SAMPLE_OUT="/tmp/rusemeva_sample.mkv"
+          # -progress pipe -> ambil 'fps=' terakhir
+          timeout 75 "$FFMPEG_STATIC" -hide_banner -y -ss 0 -i "$ORIG" -t 60 \
+            -c:v libx265 -profile:v main10 -pix_fmt yuv420p10le \
+            -crf "$CRF_VAL" -preset "$PRESET" -tag:v hvc1 \
+            -an -progress pipe:1 "$SAMPLE_OUT" 2>/dev/null \
+            | awk -F= '/^fps=/{v=$2} END{ if(v!="") print v }' > /tmp/rusemeva_fps.txt
+          SAMPLE_FPS=$(cat /tmp/rusemeva_fps.txt 2>/dev/null | head -1)
+          rm -f "$SAMPLE_OUT" 2>/dev/null || true
+          if [ -z "$SAMPLE_FPS" ] || awk "BEGIN{exit !($SAMPLE_FPS<=0)}"; then
+            echo "⚠️ Sample gak dapet fps -> fallback tabel statis"
+            SAMPLE_FPS=""
+          fi
+          echo "🎞 FPS encode sample ($PRESET): ${SAMPLE_FPS:-?}"
+
+          # LADDER: dari TERCEPAT (ultrafast) ke TERLAMBAT (placebo).
+          # Loop urutan ini, pilih preset PERTAMA yang muat = TERCEPAT yang muat.
+          # Preset USER hanya jadi BATAS ATAS (tidak akan di-upgrade ke lebih lambat
+          # dari yang user mau, tapi boleh di-downgrade ke yang lebih cepat).
+          LADDER=( ultrafast superfast veryfast faster fast medium slow slower veryslow placebo )
+          # Index preset di LADDER (untuk tau mana yang "lebih cepat" dari user choice)
+          declare -A LADDER_IDX=(
+            [ultrafast]=0 [superfast]=1 [veryfast]=2 [faster]=3 [fast]=4
+            [medium]=5 [slow]=6 [slower]=7 [veryslow]=8 [placebo]=9
+          )
+          # Faktor relatif antar preset (standar x265 ladder; medium=1.0)
+          declare -A RT=(
+            [ultrafast]=20 [superfast]=12 [veryfast]=6 [faster]=4 [fast]=3
+            [medium]=1.0 [slow]=0.7 [slower]=0.45 [veryslow]=0.25 [placebo]=0.1
+            [speed]=6 [balanced]=1.0 [quality]=0.7 [max]=0.25
+          )
+          USER_IDX=${LADDER_IDX[$PRESET]:-5}
+          USER_RT=${RT[$PRESET]:-0.3}
+
+          # realtime_x dasar: dari sample (atau fallback tabel)
+          if [ -n "$SAMPLE_FPS" ] && awk "BEGIN{exit !($SAMPLE_FPS>0)}"; then
+            BASE_RT=$(awk "BEGIN{printf \"%.4f\", $SAMPLE_FPS / $VFPS_NUM}")
+          else
+            BASE_RT=$USER_RT
+            echo "↩️ Fallback realtime_x=$BASE_RT (tabel)"
+          fi
+          echo "🔁 realtime_x dasar ($PRESET): ${BASE_RT}x"
+
+          # === #7 KALIBRASI RT OTOMATIS ===
+          CAL=""
+          if command -v curl >/dev/null 2>&1; then
+            CAL=$(curl -fsS --retry 2 --retry-delay 2 "https://rusemeva.rusemeva.workers.dev/rtcal?preset=${PRESET}" 2>/dev/null | head -c 40)
+          fi
+          if [ -n "$CAL" ] && awk "BEGIN{exit !($CAL>0)}" 2>/dev/null; then
+            BASE_RT=$CAL
+            echo "🎯 Kalibrasi aktif: realtime_x disesuaikan ke ${BASE_RT}x (dari histori riil)"
+          else
+            echo "ℹ️ Belum ada kalibrasi untuk '$PRESET' — pakai sample riil."
+          fi
+
+          # === FIX AUTO-DOWNGRADE ===
+          # Logika BENAR: hanya downgrade kalau preset USER tidak muat.
+          # Kalau muat, pertahankan preset USER (no downgrade).
+          # Kalau harus downgrade, pilih preset TERCEPAT yang muat
+          # (tidak lebih cepat dari ultrafast).
+          #
+          # Hitung estimasi preset USER dulu.
+          user_rtp=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * ($USER_RT / $USER_RT)}")  # = BASE_RT
+          user_est=$(awk "BEGIN{printf \"%d\", ($DUR/60 / $user_rtp) + $OVERHEAD_MIN}")
+          echo "📊 Preset user '$PRESET': est ${user_est}m (limit ${LIMIT_MIN}m)"
+
+          FINAL="$PRESET"
+          FINAL_CRF="$CRF_VAL"
+          FINAL_RT="$user_rtp"
+          if [ "$user_est" -le "$LIMIT_MIN" ]; then
+            echo "✅ Preset user MUAT — pertahankan $PRESET (no downgrade)"
+          else
+            # Harus downgrade. Loop dari TERCEPAT (idx 0) ke index USER (inclusive).
+            # Pilih preset PERTAMA (tercepat) yang muat.
+            echo "⚠️ Preset user tidak muat — cari alternatif tercepat yang muat..."
+            for idx in 0 1 2 3 4 5 6 7 8 9; do
+              # Skip kalau lebih lambat dari user choice (idx > USER_IDX)
+              [ "$idx" -gt "$USER_IDX" ] && continue
+              # Map idx -> nama preset
+              case $idx in
+                0) p="ultrafast" ;;
+                1) p="superfast" ;;
+                2) p="veryfast" ;;
+                3) p="faster" ;;
+                4) p="fast" ;;
+                5) p="medium" ;;
+                6) p="slow" ;;
+                7) p="slower" ;;
+                8) p="veryslow" ;;
+                9) p="placebo" ;;
+              esac
+              prt=${RT[$p]:-1.0}
+              rtp=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * ($prt / $USER_RT)}")
+              est=$(awk "BEGIN{printf \"%d\", ($DUR/60 / $rtp) + $OVERHEAD_MIN}")
+              echo "   • $p: ${rtp}x realtime -> est ${est}m"
+              if [ "$est" -le "$LIMIT_MIN" ]; then
+                FINAL="$p"
+                FINAL_CRF="$CRF_VAL"
+                FINAL_RT="$rtp"
+                echo "✅ Pilih: $p (tercepat yang muat)"
+                break
+              fi
+            done
+          fi
+
+          # Kalau sampai akhir loop masih tidak muat, fallback ke ultrafast
+          if [ "$FINAL" = "$PRESET" ] && [ "$user_est" -gt "$LIMIT_MIN" ]; then
+            FINAL="ultrafast"
+            FINAL_CRF="$CRF_VAL"
+            FINAL_RT=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * (${RT[ultrafast]} / $USER_RT)}")
+            echo "🚨 Tidak ada preset yang muat — fallback ke ultrafast (resiko encode bisa ke-potong)"
+          fi
+
+          if [ "$FINAL" = "$PRESET" ]; then
+            echo "✅ Final: preset asli $FINAL (${FINAL_RT}x, est di bawah ${LIMIT_MIN}m)"
+          else
+            echo "🔻 Turun ke: $FINAL (CRF $FINAL_CRF, ${FINAL_RT}x realtime) dari $PRESET biar muat 6 jam"
+          fi
+          echo "FINAL_PRESET=$FINAL" >> $GITHUB_OUTPUT
+          echo "FINAL_CRF=$FINAL_CRF" >> $GITHUB_OUTPUT
+
+      # === #5 DISK WATCHDOG: cancel run kalau disk runner >90% penuh ===
+      # Encode file besar bisa nyangkut / gagal kalau disk penuh. Lebih baik
+      # dibatalkan + dilaporkan daripada timeout 6 jam sia-sia.
+      - name: Disk watchdog — cek ruang sebelum encode
+        if: success()
+        continue-on-error: false
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+        run: |
+          USE=$(df -h /tmp | awk 'NR==2{gsub("%","",$5); print $5}')
+          echo "💽 Disk /tmp terpakai: ${USE}%"
+          if [ "${USE:-0}" -ge 90 ]; then
+            echo "🚨 Disk >90% penuh — batalkan run biar gak timeout sia-sia"
+            MSG="🚨 <b>Disk runner penuh (${USE}%)</b> — encode dibatalkan otomatis.\n\n🆔 ID: <code>${ORV_ID}</code>\nℹ️ Coba lagi nanti (runner GitHub akan di-reset)."
+            CHAT_ID="$CHAT_ID" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" python3 scripts/send_message.py "$MSG" || true
+            gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel -X POST || true
+            exit 1
+          fi
+          echo "✅ Ruang disk cukup."
+
+      - name: Encode to HEVC 10-bit (dari original, full 6 jam)
+        id: hevc
+        if: success()
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          FILENAME: ${{ steps.inputs.outputs.filename }}
+          DURATION_SEC: ${{ steps.inputs.outputs.duration }}
+          REQUESTED_DURATION: ${{ steps.inputs.outputs.requested_duration || steps.inputs.outputs.duration }}
+          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          WORKER_URL: ${{ secrets.WORKER_URL || 'https://rusemeva.rusemeva.workers.dev' }}
+          PROGRESS_SECRET: ${{ secrets.PROGRESS_SECRET || '' }}
+          ORIG_FILE: ${{ steps.dl.outputs.ORIG_FILE }}
+          FFMPEG_STATIC: ${{ env.FFMPEG_STATIC }}
+          HEVC_PRESET: ${{ steps.autodg.outputs.FINAL_PRESET || 'veryfast' }}
+          HEVC_CRF: ${{ steps.autodg.outputs.FINAL_CRF || '24' }}
+          CHOSEN_PRESET: ${{ steps.inputs.outputs.hevc_preset || 'veryfast' }}
+          ENCODE_PROFILE: ${{ steps.inputs.outputs.encode_profile || '' }}
+        run: bash scripts/run_hevc_encode.sh
+
+      # === #4 ANALYTICS: post encode summary ke Worker /ingest ===
+      - name: Post encode analytics ke Worker
+        if: success() && env.HEVC_FILE != ''
+        continue-on-error: true
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL || 'https://rusemeva.rusemeva.workers.dev' }}
+          PROGRESS_SECRET: ${{ secrets.PROGRESS_SECRET || '' }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          ENCODE_PROFILE: ${{ steps.inputs.outputs.encode_profile || '' }}
+          HEVC_PRESET: ${{ steps.autodg.outputs.FINAL_PRESET || steps.inputs.outputs.hevc_preset || 'veryfast' }}
+          HEVC_CRF_START: ${{ steps.inputs.outputs.hevc_crf || '24' }}
+          HEVC_CRF_FINAL: ${{ env.HEVC_CRF_FINAL || '' }}
+          ACT_DURATION_SEC: ${{ env.ACT_DURATION_SEC || steps.inputs.outputs.duration || '0' }}
+          HEVC_SIZE: ${{ env.HEVC_SIZE || '' }}
+          HEVC_VBITRATE: ${{ env.HEVC_VBITRATE || '' }}
+          ENC_ELAPSED: ${{ env.ENC_ELAPSED || '' }}
+          LIVE_MODE: ${{ env.LIVE_MODE || '0' }}
+          SCENE_LABEL: ${{ env.SCENE_LABEL || '' }}
+          CHOSEN_PRESET: ${{ steps.inputs.outputs.hevc_preset || 'veryfast' }}
+        run: |
+          # Parse HEVC size to MB
+          SIZE_MB=0
+          if [ -n "$HEVC_SIZE" ]; then
+            # "1.1G" -> 1100, "450M" -> 450
+            case "$HEVC_SIZE" in
+              *G) SIZE_MB=$(awk "BEGIN{printf \"%.1f\", ${HEVC_SIZE%G}*1024}") ;;
+              *M) SIZE_MB=${HEVC_SIZE%M} ;;
+              *K) SIZE_MB=$(awk "BEGIN{printf \"%.2f\", ${HEVC_SIZE%K}/1024}") ;;
+            esac
+          fi
+          # Parse bitrate "1.31 Mbps" -> 1.31
+          BR_MBPS=0
+          if [ -n "$HEVC_VBITRATE" ]; then
+            BR_MBPS=$(echo "$HEVC_VBITRATE" | grep -oP '[0-9.]+' | head -1)
+          fi
+          # Parse elapsed seconds from env
+          ELAPSED=${ENC_ELAPSED:-0}
+          # realtime_x: prefer from env, else compute
+          RT_X=$(echo "$ACT_DURATION_SEC $ELAPSED" | awk '{if($2>0) printf "%.2f",$1/$2; else print "0"}')
+          # Auto-downgrade: true kalau FINAL_PRESET != CHOSEN_PRESET
+          AD="false"
+          if [ "${{ steps.autodg.outputs.FINAL_PRESET }}" != "$CHOSEN_PRESET" ]; then
+            AD="true"
+          fi
+          LIVE="false"
+          if [ "${LIVE_MODE:-0}" = "1" ]; then LIVE="true"; fi
+
+          curl -fsS --retry 2 --retry-delay 3 -X POST "$WORKER_URL/ingest" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"id\": \"${ORV_ID}\",
+              \"profile\": \"${ENCODE_PROFILE}\",
+              \"preset\": \"${HEVC_PRESET}\",
+              \"crf_start\": ${HEVC_CRF_START:-24},
+              \"crf_final\": ${HEVC_CRF_FINAL:-${HEVC_CRF_START:-24}},
+              \"scene_label\": \"${SCENE_LABEL}\",
+              \"duration_sec\": ${ACT_DURATION_SEC:-0},
+              \"hevc_size_mb\": ${SIZE_MB:-0},
+              \"hevc_bitrate_mbps\": ${BR_MBPS:-0},
+              \"encode_time_sec\": ${ELAPSED:-0},
+              \"realtime_x\": ${RT_X:-0},
+              \"auto_downgrade\": ${AD},
+              \"live_mode\": ${LIVE},
+              \"secret\": \"${PROGRESS_SECRET}\"
+            }" 2>/dev/null && echo "📊 Analytics posted" || echo "⚠️ Analytics post gagal (non-fatal)"
+
+      # === #1 SPLIT UPLOAD >2GB: pecah HEVC jadi part <2GB (limit Bot API) ===
+      # Pakai split -b (bukan ffmpeg) biar gak re-encode. Kirim tiap part via notify.
+      - name: Split HEVC kalau >2GB (biar bisa dikirim Telegram)
+        if: always()
+        continue-on-error: true
+        env:
+          HEVC_FILE: ${{ env.HEVC_FILE }}
+        run: |
+          if [ -n "${HEVC_FILE:-}" ] && [ -s "$HEVC_FILE" ]; then
+            SIZE=$(stat -c%s "$HEVC_FILE" 2>/dev/null || echo 0)
+            MAX=$((2*1024*1024*1024))
+            if [ "$SIZE" -gt "$MAX" ]; then
+              echo "📦 HEVC $((SIZE/1024/1024/1024)) GB > 2GB -> split -b 1990M"
+              # Format part-000 (sama kayak record.yml yg terbukti jalan)
+              split -b 1990M --numeric-suffixes=0 --suffix-length=3 "$HEVC_FILE" "${HEVC_FILE}.part-"
+              # Hapus file asli biar notify gak kirim utuh
+              rm -f "$HEVC_FILE"
+              echo "HEVC_SPLIT=1" >> $GITHUB_ENV
+              ls -lh "${HEVC_FILE}.part"* 2>/dev/null || true
+            else
+              echo "HEVC_SPLIT=0" >> $GITHUB_ENV
+            fi
+          else
+            echo "HEVC_SPLIT=0" >> $GITHUB_ENV
+          fi
+
+      - name: Notify Telegram — HEVC 10-bit (encode selesai)
+        if: always()
+        continue-on-error: true
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          FILENAME: ${{ steps.inputs.outputs.filename }}
+          HUMAN_DUR: ${{ steps.inputs.outputs.human_duration }}
+          JOB_STATUS: ${{ job.status }}
+          HEVC_FILE: ${{ env.HEVC_FILE }}
+          HEVC_SIZE: ${{ env.HEVC_SIZE }}
+          HEVC_RES: ${{ env.HEVC_RES }}
+          HEVC_VCODEC: ${{ env.HEVC_VCODEC }}
+          HEVC_VBITRATE: ${{ env.HEVC_VBITRATE }}
+          HEVC_DUR: ${{ env.HEVC_DUR }}
+          HEVC_THUMB_FILE: ${{ env.HEVC_THUMB_FILE }}
+          HAS_HEVC_THUMB: ${{ env.HAS_HEVC_THUMB }}
+          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          HEVC_SPLIT: ${{ env.HEVC_SPLIT || '0' }}
+          FAIL_REASON: ${{ env.FAIL_REASON || 'unknown' }}
+          CHAPTERS_TEXT: ${{ env.CHAPTERS_TEXT || '' }}
+          PHASE: hevc
+        run: python3 scripts/notify.py
+
+      - name: Auto-retry encode 1 level lebih cepat (kalau gagal)
+        id: autoretry
+        if: failure()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id || '' }}
+          FILENAME: ${{ steps.inputs.outputs.filename || '' }}
+          # Pakai preset FINAL (hasil autodg), bukan preset input mentah
+          CUR_PRESET: ${{ steps.autodg.outputs.FINAL_PRESET || steps.inputs.outputs.hevc_preset || 'veryfast' }}
+          CUR_CRF: ${{ steps.autodg.outputs.FINAL_CRF || steps.inputs.outputs.hevc_crf || '24' }}
+          RELEASE_TAG: ${{ steps.inputs.outputs.release_tag || '' }}
+          DURATION: ${{ steps.inputs.outputs.duration || '' }}
+          HUMAN_DUR: ${{ steps.inputs.outputs.human_duration || '' }}
+        run: |
+          # Hanya retry kalau masih ada release temp (sumber original)
+          if [ -z "$RELEASE_TAG" ]; then
+            echo "⚠️ release_tag kosong — auto-retry tidak mungkin (tidak ada sumber)."
+            echo "retried=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          # Tentukan preset 1 level lebih cepat dari FINAL
+          case "$CUR_PRESET" in
+            placebo|veryslow|slower|slow|medium) NEXT_PRESET=faster;  NEXT_CRF=24 ;;
+            faster)   NEXT_PRESET=fast;     NEXT_CRF=24 ;;
+            fast)     NEXT_PRESET=veryfast; NEXT_CRF=24 ;;
+            veryfast) NEXT_PRESET=superfast; NEXT_CRF=26 ;;
+            superfast) NEXT_PRESET=ultrafast; NEXT_CRF=26 ;;
+            *)        echo "ℹ️ Sudah di preset tercepat ($CUR_PRESET), stop auto-retry."; echo "retried=0" >> $GITHUB_OUTPUT; exit 0 ;;
+          esac
+          echo "🔁 Auto-retry: $CUR_PRESET -> $NEXT_PRESET (crf $NEXT_CRF) tag=$RELEASE_TAG"
+          gh api repos/${{ github.repository }}/dispatches \
+            -f event_type=encode-request \
+            -f "client_payload[filename]=$FILENAME" \
+            -f "client_payload[chat_id]=$CHAT_ID" \
+            -f "client_payload[release_tag]=$RELEASE_TAG" \
+            -f "client_payload[duration]=$DURATION" \
+            -f "client_payload[human_duration]=$HUMAN_DUR" \
+            -f "client_payload[hevc_preset]=$NEXT_PRESET" \
+            -f "client_payload[hevc_crf]=$NEXT_CRF" \
+            -f "client_payload[encode_profile]=${{ steps.inputs.outputs.encode_profile || '' }}" \
+            -f "client_payload[orv_id]=$ORV_ID" || true
+          # GitHub client_payload hard max = 10 keys — do not add more.
+          echo "retried=1" >> $GITHUB_OUTPUT
+          echo "✅ Auto-retry dispatched ($NEXT_PRESET)."
+
+
+      - name: Hapus GitHub Release sementara (cleanup storage) — HANYA kalau encode sukses
+        if: success()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.inputs.outputs.release_tag }}"
+          [ -z "$TAG" ] && exit 0
+          echo "🧹 Menghapus release temp: $TAG"
+          gh release delete "$TAG" --repo "${{ github.repository }}" --yes 2>/dev/null || true
+
+      - name: Hapus GitHub Release sementara kalau GAGAL (anti numpuk)
+        # Jangan hapus kalau auto-retry masih butuh release temp
+        if: failure() && steps.autoretry.outputs.retried != '1'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.inputs.outputs.release_tag }}"
+          [ -z "$TAG" ] && exit 0
+          echo "🧹 Encode gagal -> hapus release temp biar gak numpuk: $TAG"
+          gh release delete "$TAG" --repo "${{ github.repository }}" --yes 2>/dev/null || true
+          # (kalau cancelled: sengaja TIDAK dihapus di sini, biar user bisa retry manual)
+
+      # === #FIX: selalu bersihkan temp release, TERMASUK kalau cancelled ===
+      # Sebelumnya cancelled run gak kehapus (step di atas cuma failure/success),
+      # sehingga temp release numpuk jadi ratusan part. Step ini idempoten.
+      - name: Hapus release temp (selalu, incl. cancelled) — anti numpuk
+        # Skip kalau auto-retry butuh release temp untuk run berikutnya
+        if: always() && steps.autoretry.outputs.retried != '1'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.inputs.outputs.release_tag }}"
+          [ -z "$TAG" ] && exit 0
+          echo "🧹 Pastikan release temp dibersihkan (always): $TAG"
+          gh release delete "$TAG" --repo "${{ github.repository }}" --yes 2>/dev/null || true
+
+      # === #3 AUTO-RETRY: kalau encode gagal, redispatch 1 level lebih cepat ===
+      # Level: medium > faster > fast > veryfast(tetap) ; stop setelah veryfast.
+      # Release temp SUDAH dihapus di atas biar gak numpuk; dispatch baru bikin release baru.
+      - name: Bersihkan disk runner
+        if: always()
+        continue-on-error: true
+        run: |
+          rm -rf /tmp/rusemeva_dl 2>/dev/null || true
+          docker rm -f tg-bot-api >/dev/null 2>&1 || true
+          echo "✅ Disk runner dibersihkan"

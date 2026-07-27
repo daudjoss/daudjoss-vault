@@ -1,0 +1,727 @@
+name: rusemeva-vault
+
+# re-index trigger 2026-07-15
+permissions:
+  contents: write
+  actions: write
+
+on:
+  repository_dispatch:
+    types: [record-request]
+  workflow_dispatch:
+    inputs:
+      m3u8_url:
+        description: 'Direct .m3u8 URL'
+        required: true
+      duration:
+        description: 'Duration in seconds (default 300)'
+        required: false
+        default: '300'
+      chat_id:
+        description: 'Telegram chat ID'
+        required: true
+      filename:
+        description: 'Output filename'
+        required: false
+        default: ''
+      human_duration:
+        description: 'Human readable duration'
+        required: false
+        default: ''
+      simulate_over_2gb:
+        description: 'DEBUG: paksa original dianggap >2GB (test skip-original + still-send-HEVC)'
+        required: false
+        default: 'false'
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      TZ: Asia/Jakarta
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get inputs
+        id: inputs
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "m3u8_url=${{ github.event.client_payload.m3u8_url }}" >> $GITHUB_OUTPUT
+            echo "duration=${{ github.event.client_payload.duration }}" >> $GITHUB_OUTPUT
+            echo "chat_id=${{ github.event.client_payload.chat_id }}" >> $GITHUB_OUTPUT
+            echo "human_duration=${{ github.event.client_payload.human_duration }}" >> $GITHUB_OUTPUT
+            echo "duration_label=${{ github.event.client_payload.duration_label }}" >> $GITHUB_OUTPUT
+            echo "referer=${{ github.event.client_payload.referer }}" >> $GITHUB_OUTPUT
+            echo "hevc_preset=${{ github.event.client_payload.hevc_preset || 'veryfast' }}" >> $GITHUB_OUTPUT
+            echo "hevc_crf=${{ github.event.client_payload.hevc_crf || '24' }}" >> $GITHUB_OUTPUT
+            echo "encode_profile=${{ github.event.client_payload.encode_profile || '' }}" >> $GITHUB_OUTPUT
+            echo "orv_id=${{ github.event.client_payload.orv_id || '' }}" >> $GITHUB_OUTPUT
+            echo "source=${{ github.event.client_payload.source || '' }}" >> $GITHUB_OUTPUT
+          else
+            echo "m3u8_url=${{ inputs.m3u8_url }}" >> $GITHUB_OUTPUT
+            echo "duration=${{ inputs.duration }}" >> $GITHUB_OUTPUT
+            echo "chat_id=${{ inputs.chat_id }}" >> $GITHUB_OUTPUT
+            echo "human_duration=${{ inputs.human_duration }}" >> $GITHUB_OUTPUT
+            echo "duration_label=${{ inputs.duration_label }}" >> $GITHUB_OUTPUT
+            echo "referer=${{ inputs.referer }}" >> $GITHUB_OUTPUT
+            echo "simulate_over_2gb=${{ inputs.simulate_over_2gb }}" >> $GITHUB_OUTPUT
+            echo "orv_id=${{ inputs.orv_id || '' }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate filename
+        id: fname
+        run: |
+          NOW=$(date '+%Y-%m-%d_%H-%M-%S')
+          DURATION_LABEL="${{ steps.inputs.outputs.duration_label }}"
+          FNAME="Rusemeva-Asset-${NOW}-${DURATION_LABEL}.mp4"
+          echo "filename=$FNAME" >> $GITHUB_OUTPUT
+
+      # === Resolve stream source (trans7 / sevenhub) → m3u8_url ===
+      - name: Resolve stream source
+        id: resolve
+        env:
+          source: ${{ steps.inputs.outputs.source || '' }}
+          WOWZA_SECRET: ${{ secrets.WOWZA_SECRET || '' }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          chat_id: ${{ steps.inputs.outputs.chat_id }}
+        run: bash scripts/resolve_source.sh
+        continue-on-error: false
+
+      # === Link run rekam -> RSM-ID ke KV (biar /cancel <ORV> bisa resolve) ===
+      - name: Link rekam run ke RSM-ID (KV)
+        if: always()
+        continue-on-error: true
+        env:
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          WORKER_URL: ${{ secrets.WORKER_URL || 'https://rusemeva.rusemeva.workers.dev' }}
+          PROGRESS_SECRET: ${{ secrets.PROGRESS_SECRET || '' }}
+        run: |
+          if [ -n "$ORV_ID" ]; then
+            curl -fsS --retry 2 --retry-delay 3 -X POST "$WORKER_URL/link" \
+              -H "Content-Type: application/json" \
+              -d "{\"run_id\":\"${{ github.run_id }}\",\"orv_id\":\"$ORV_ID\",\"secret\":\"$PROGRESS_SECRET\"}" 2>/dev/null \
+              && echo "🔗 rekam run ${{ github.run_id }} -> $ORV_ID" || echo "⚠️ link gagal (non-fatal)"
+          else
+            echo "ℹ️ tidak ada orv_id, skip link"
+          fi
+
+      - name: Install dependencies (apt ffmpeg untuk rekam + static ffmpeg untuk HEVC)
+        run: |
+          # apt ffmpeg = stabil buat rekam (-c copy). Encoder libx265 di apt
+          # sering tidak ada, jadi kita juga download static build khusus HEVC.
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true
+          echo "apt ffmpeg: $(command -v ffmpeg || echo MISSING)"
+
+          # Fallback default: pakai apt ffmpeg kalau download static gagal total,
+          # supaya step ini TIDAK PERNAH menggagalkan job (rekaman tetap jalan).
+          FFMPEG_STATIC="$(command -v ffmpeg || true)"
+          if [ -z "$FFMPEG_STATIC" ]; then
+            echo "❌ Tidak ada ffmpeg sama sekali (apt gagal install)."
+            exit 1
+          fi
+
+          # johnvansickle blokir curl tanpa User-Agent -> HTTP 415.
+          # Jadi: pasang UA, retry, dan coba mirror GitHub (BtbN) sebagai fallback.
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          dl_static() {
+            curl -fsSL --retry 4 --retry-delay 5 --retry-all-errors -A "$UA" "$1" -o /tmp/ffmpeg.tar.xz
+          }
+          for U in \
+            "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+            "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz" ; do
+            echo "🔻 Mencoba download static ffmpeg: $U"
+            if dl_static "$U" && tar -xf /tmp/ffmpeg.tar.xz -C /tmp 2>/dev/null; then
+              D=$(ls -d /tmp/ffmpeg-*-amd64-static 2>/dev/null | head -1)
+              [ -z "$D" ] && D=$(ls -d /tmp/ffmpeg-master-latest-linux64-gpl 2>/dev/null | head -1)
+              if [ -n "$D" ]; then
+                if [ -x "$D/ffmpeg" ]; then FFMPEG_STATIC="$D/ffmpeg"
+                elif [ -x "$D/bin/ffmpeg" ]; then FFMPEG_STATIC="$D/bin/ffmpeg"
+                fi
+              fi
+              if [ -n "$FFMPEG_STATIC" ] && [ -x "$FFMPEG_STATIC" ]; then
+                echo "✅ static ffmpeg siap: $FFMPEG_STATIC"
+                break
+              fi
+            fi
+            echo "⚠️  Gagal dari $U, coba mirror berikutnya..."
+          done
+
+          echo "FFMPEG_STATIC=$FFMPEG_STATIC" >> $GITHUB_ENV
+          "$FFMPEG_STATIC" -version | head -1
+          "$FFMPEG_STATIC" -hide_banner -encoders 2>/dev/null | grep -E "libx265|libx264" || echo "⚠️ encoder x26x tidak ditemukan (HEVC akan dilewati, original tetap utuh)"
+
+      - name: Record stream
+        run: |
+          # Use resolved URL from source (trans7/sevenhub) if available
+          M3U8_URL="${RESOLVED_URL:-${{ steps.inputs.outputs.m3u8_url }}}"
+          if [ -n "$RESOLVED_URL" ]; then
+            echo "🔗 Using resolved URL from source: ${{ steps.inputs.outputs.source }}"
+          fi
+          if [ -n "$RESOLVED_REFERER" ]; then
+            REFERRER="$RESOLVED_REFERER"
+          else
+            REFERRER="${{ steps.inputs.outputs.referer }}"
+          fi
+
+          echo "🎬 Starting recording..."
+          echo "URL: ${M3U8_URL:0:80}..."
+          echo "Duration: ${{ steps.inputs.outputs.human_duration }}"
+          echo "Output: ${{ steps.fname.outputs.filename }}"
+
+          FILE="${{ steps.fname.outputs.filename }}"
+          if [ -n "$REFERRER" ]; then
+            echo "Referer: $REFERRER"
+          fi
+
+          # Wall-clock guard: ffmpeg -t tidak dihormati untuk live HLS + -c copy
+          # (playlist live tak punya EXT-X-ENDLIST, ffmpeg terus nangkring segmen
+          # baru). Jadi kasih backstop keras di durasi + 120s, di-wrap `timeout`.
+          REC_WALL=$(( ${{ steps.inputs.outputs.duration }} + 120 ))
+          echo "🛡 Wall-clock guard: auto-stop di ${REC_WALL}s (durasi + 120s buffer)"
+
+          # Build ffmpeg args
+          FFMPEG_ARGS=(-hide_banner -loglevel info
+            -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+            -fflags +genpts
+            -avoid_negative_ts make_zero
+            -protocol_whitelist "file,http,https,tcp,tls,crypto"
+            -reconnect 1
+            -reconnect_streamed 1
+            -reconnect_delay_max 30
+            -timeout 6000000
+            -timelimit "$REC_WALL")
+
+          if [ -n "$REFERRER" ]; then
+            FFMPEG_ARGS+=(-referer "$REFERRER")
+          fi
+
+          FFMPEG_ARGS+=(-i "$M3U8_URL"
+            -c copy
+            -movflags +faststart
+            -max_muxing_queue_size 1024
+            -t ${{ steps.inputs.outputs.duration }}
+            -progress pipe:1
+            "$FILE")
+
+          # ---- Auto-retry loop ----
+          MAX_RETRIES=3
+          MIN_SIZE=102400   # 100 KB — di bawah ini dianggap gagal (bukan rekaman valid)
+          ATTEMPT=1
+          SUCCESS=0
+
+          # Durasi request untuk progress bar rekam (kayak HEVC step)
+          SRC_DUR_INT="${{ steps.inputs.outputs.duration }}"
+          [ "$SRC_DUR_INT" -le 0 ] 2>/dev/null && SRC_DUR_INT=60
+
+          while [ $ATTEMPT -le $MAX_RETRIES ]; do
+            echo "──────────────────────────────────────"
+            echo "🎬 Recording attempt ${ATTEMPT}/${MAX_RETRIES}"
+            echo "──────────────────────────────────────"
+
+            rm -f "$FILE"
+            # Mulai 1 pesan progress rekam (edit-message, bukan spam)
+            CHAT_ID="${{ steps.inputs.outputs.chat_id }}" FILENAME="$FILE" \
+              TG_API_URL="${{ secrets.TG_API_URL || 'http://localhost:8081' }}" \
+              BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
+              PHASE_LABEL=Rekam \
+              PROGRESS_MSG_FILE=/tmp/rusemeva_rec_msg_id \
+              PROGRESS_STATE_FILE=/tmp/rusemeva_rec_state \
+              python3 scripts/progress.py start 2>/dev/null || true
+            set +e
+            # `timeout` = backstop keras: bunuh ffmpeg (SIGTERM, lalu SIGKILL +30s)
+            # kalau -t / -timelimit gagal stop di live stream. File tetap valid
+            # karena step sukses dicek dari ukuran file, bukan exit code.
+            # -progress pipe:1 -> parse out_time_ms -> persen rekam real-time.
+            LAST_PCT=-1
+            # Progress via fd pipe; capture ffmpeg/timeout exit via PIPESTATUS[0]
+            set +o pipefail
+            timeout -k 30 "$REC_WALL" ffmpeg "${FFMPEG_ARGS[@]}" 2>/dev/null | while IFS='=' read -r k v; do
+              if [ "$k" = "out_time_ms" ]; then
+                ms=${v%.*}
+                [ "$ms" -gt 0 ] 2>/dev/null || continue
+                cur=$(( ms / 1000000 ))
+                pct=$(( (cur * 100) / SRC_DUR_INT ))
+                [ "$pct" -gt 100 ] && pct=100
+                if [ "$pct" != "$LAST_PCT" ]; then
+                  LAST_PCT=$pct
+                  echo "🔴 Rekam ${pct}%"
+                  CHAT_ID="${{ steps.inputs.outputs.chat_id }}" FILENAME="$FILE" \
+                    TG_API_URL="${{ secrets.TG_API_URL || 'http://localhost:8081' }}" \
+                    BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
+                    PROGRESS_MSG_FILE=/tmp/rusemeva_rec_msg_id \
+                    PROGRESS_STATE_FILE=/tmp/rusemeva_rec_state \
+                    python3 scripts/progress.py progress "$pct" 2>/dev/null || true
+                fi
+              fi
+            done
+            FFMPEG_EXIT=${PIPESTATUS[0]:-$?}
+            set -e
+            # Classify stop (request duration is max, not force-pad)
+            if [ ! -f "$FILE" ] || [ "$(stat -c%s "$FILE" 2>/dev/null || echo 0)" -lt "$MIN_SIZE" ]; then
+              STOP_REASON="error"
+            elif [ "${FFMPEG_EXIT:-0}" -eq 124 ] || [ "${FFMPEG_EXIT:-0}" -eq 137 ]; then
+              STOP_REASON="timeout_backstop"
+            elif [ "${FFMPEG_EXIT:-0}" -eq 0 ]; then
+              STOP_REASON="requested_duration_reached_or_stream_ended"
+            else
+              STOP_REASON="stream_ended_or_partial"
+            fi
+            echo "STOP_REASON=$STOP_REASON (ffmpeg_exit=${FFMPEG_EXIT:-?})"
+            echo "STOP_REASON=$STOP_REASON" >> $GITHUB_ENV
+
+            if [ -f "$FILE" ]; then
+              ACTUAL_SIZE=$(stat -c%s "$FILE" 2>/dev/null || echo 0)
+            else
+              ACTUAL_SIZE=0
+            fi
+            echo "ℹ️  ffmpeg exit=${FFMPEG_EXIT}, file size=${ACTUAL_SIZE} bytes"
+
+            # File valid (>= MIN_SIZE) → cek KELENGKAPAN durasi juga.
+            # #4: stream live bisa putus di tengah -> file ada & >100KB tapi
+            # durasi cuma sebagian. Retry kalau durasi < 80% target (kecuali attempt terakhir).
+            if [ "$ACTUAL_SIZE" -ge "$MIN_SIZE" ]; then
+              # Ukur durasi hasil rekam
+              REC_DUR=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+              REC_DUR_INT=${REC_DUR%.*}; [ -z "$REC_DUR_INT" ] && REC_DUR_INT=0
+              THRESH=$(( SRC_DUR_INT * 80 / 100 ))
+              echo "📏 Durasi hasil: ${REC_DUR_INT}s / target ${SRC_DUR_INT}s (ambang ${THRESH}s)"
+
+              if [ "$REC_DUR_INT" -lt "$THRESH" ] && [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
+                echo "⚠️  Rekaman kependekan (stream putus?) — retry biar dapat lebih lengkap."
+                echo "❌ Attempt ${ATTEMPT}: durasi ${REC_DUR_INT}s < ${THRESH}s."
+                # Simpan kandidat terbaik: kalau retry berikut malah lebih pendek, pakai ini
+                if [ "$REC_DUR_INT" -gt "${BEST_DUR:-0}" ]; then
+                  cp -f "$FILE" "${FILE}.best" 2>/dev/null && BEST_DUR=$REC_DUR_INT
+                  echo "💾 Simpan kandidat terbaik: ${BEST_DUR}s"
+                fi
+                echo "⏳ Retry dalam 15 detik..."
+                sleep 15
+                ATTEMPT=$((ATTEMPT + 1))
+                continue
+              fi
+
+              # Attempt terakhir atau durasi cukup: kalau ada kandidat lebih panjang, pakai itu
+              if [ -f "${FILE}.best" ] && [ "${BEST_DUR:-0}" -gt "$REC_DUR_INT" ]; then
+                echo "↩️  Pakai kandidat terbaik (${BEST_DUR}s > ${REC_DUR_INT}s)."
+                mv -f "${FILE}.best" "$FILE"
+              else
+                rm -f "${FILE}.best" 2>/dev/null || true
+              fi
+
+              SUCCESS=1
+              if [ "$REC_DUR_INT" -lt "$THRESH" ]; then
+                echo "⚠️  Durasi tetap di bawah target setelah ${ATTEMPT} attempt — simpan yang ada (stream mungkin memang berakhir lebih awal)."
+              elif [ "$FFMPEG_EXIT" -ne 0 ]; then
+                echo "⚠️  ffmpeg exit non-zero, tapi file valid & durasi cukup. Diterima."
+              else
+                echo "✅ Recording attempt ${ATTEMPT} sukses (durasi lengkap)."
+              fi
+              # Pastikan 100% lalu ubah jadi pesan final
+              echo "🔴 Rekam 100%"
+              CHAT_ID="${{ steps.inputs.outputs.chat_id }}" FILENAME="$FILE" \
+                TG_API_URL="${{ secrets.TG_API_URL || 'http://localhost:8081' }}" \
+                BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
+                PHASE_LABEL=Rekam \
+                PROGRESS_MSG_FILE=/tmp/rusemeva_rec_msg_id \
+                python3 scripts/progress.py done 2>/dev/null || true
+              break
+            fi
+
+            echo "❌ Attempt ${ATTEMPT} gagal (file hilang / terlalu kecil)."
+            if [ $ATTEMPT -lt $MAX_RETRIES ]; then
+              echo "⏳ Retry dalam 15 detik..."
+              sleep 15
+            fi
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          if [ "$SUCCESS" -ne 1 ]; then
+            echo "❌ Semua ${MAX_RETRIES} percobaan gagal. Tidak ada file valid."
+            # Tandai progress rekam gagal
+            CHAT_ID="${{ steps.inputs.outputs.chat_id }}" FILENAME="$FILE" \
+              TG_API_URL="${{ secrets.TG_API_URL || 'http://localhost:8081' }}" \
+              BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
+              PHASE_LABEL=Rekam \
+              PROGRESS_MSG_FILE=/tmp/rusemeva_rec_msg_id \
+              python3 scripts/progress.py fail 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "✅ Recording complete!"
+          ls -lh "$FILE"
+          # Export ukuran original untuk step segmentasi >2GB
+          echo "FILE_SIZE=$(ls -lh "$FILE" 2>/dev/null | awk '{print $5}')" >> $GITHUB_ENV
+          echo "ORIG_BYTES=$(stat -c%s "$FILE" 2>/dev/null || echo 0)" >> $GITHUB_ENV
+
+      - name: Extract metadata and thumbnail
+        id: meta
+        if: success()
+        run: |
+          FILE="${{ steps.fname.outputs.filename }}"
+          THUMB="${FILE%.mp4}.jpg"
+
+          # ---- Probe metadata (semua defensif, gagal = nilai default) ----
+          DUR_RAW=$(ffprobe -v error -show_entries format=duration \
+            -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+          [ -z "$DUR_RAW" ] && DUR_RAW=0
+          DUR_INT=${DUR_RAW%.*}
+          [ -z "$DUR_INT" ] && DUR_INT=0
+          case "$DUR_INT" in
+            ''|*[!0-9]*) DUR_INT=0 ;;
+          esac
+          REAL_DURATION=$(printf '%02d:%02d:%02d' \
+            $((DUR_INT/3600)) $(((DUR_INT%3600)/60)) $((DUR_INT%60)))
+
+          WIDTH=$(ffprobe -v error -select_streams v:0 -show_entries stream=width \
+            -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+          HEIGHT=$(ffprobe -v error -select_streams v:0 -show_entries stream=height \
+            -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+          if [ -n "$WIDTH" ] && [ -n "$HEIGHT" ]; then
+            RESOLUTION="${WIDTH}x${HEIGHT}"
+          else
+            RESOLUTION="?"
+          fi
+
+          VCODEC=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
+            -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+          [ -z "$VCODEC" ] && VCODEC="?"
+
+          BR_RAW=$(ffprobe -v error -show_entries format=bit_rate \
+            -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+          case "$BR_RAW" in
+            ''|*[!0-9]*) VBITRATE="?" ;;
+            *) VBITRATE="$(awk "BEGIN{printf \"%.1f Mbps\", ${BR_RAW}/1000000}")" ;;
+          esac
+
+          FILE_SIZE=$(ls -lh "$FILE" 2>/dev/null | awk '{print $5}')
+          [ -z "$FILE_SIZE" ] && FILE_SIZE="?"
+
+          echo "📊 Metadata:"
+          echo "   Durasi asli : $REAL_DURATION"
+          echo "   Resolusi    : $RESOLUTION"
+          echo "   Codec       : $VCODEC"
+          echo "   Bitrate     : $VBITRATE"
+          echo "   Ukuran      : $FILE_SIZE"
+
+          # ---- Thumbnail dari tengah video (hindari frame hitam di awal) ----
+          if [ "$DUR_INT" -gt 6 ]; then
+            SEEK=$((DUR_INT / 2))
+          else
+            SEEK=1
+          fi
+          echo "🖼  Membuat thumbnail (seek ${SEEK}s)..."
+
+          HAS_THUMB=0
+          ffmpeg -hide_banner -loglevel error -y -ss "$SEEK" -i "$FILE" \
+            -frames:v 1 -q:v 2 -vf "scale=640:-2" "$THUMB" 2>/dev/null || true
+
+          # Fallback: kalau seek tengah gagal, coba dari detik ke-1
+          if [ ! -s "$THUMB" ]; then
+            echo "⚠️  Thumbnail tengah gagal, fallback ke detik 1..."
+            ffmpeg -hide_banner -loglevel error -y -ss 1 -i "$FILE" \
+              -frames:v 1 -q:v 2 -vf "scale=640:-2" "$THUMB" 2>/dev/null || true
+          fi
+
+          # Fallback terakhir: frame pertama tanpa seek
+          if [ ! -s "$THUMB" ]; then
+            echo "⚠️  Fallback terakhir, frame pertama..."
+            ffmpeg -hide_banner -loglevel error -y -i "$FILE" \
+              -frames:v 1 -q:v 2 -vf "scale=640:-2" "$THUMB" 2>/dev/null || true
+          fi
+
+          if [ -s "$THUMB" ]; then
+            HAS_THUMB=1
+            echo "✅ Thumbnail dibuat: $THUMB ($(stat -c%s "$THUMB" 2>/dev/null || echo 0) bytes)"
+          else
+            echo "⚠️  Thumbnail tidak bisa dibuat (dilewati, tidak menggagalkan job)."
+            rm -f "$THUMB"
+          fi
+
+          # ---- Export ke env untuk step berikutnya ----
+          REQ_SEC="${{ steps.inputs.outputs.duration }}"
+          case "$REQ_SEC" in ''|*[!0-9]*) REQ_SEC=0 ;; esac
+          if [ "$DUR_INT" -gt 0 ] && [ "$REQ_SEC" -gt 0 ] && [ "$DUR_INT" -lt $(( REQ_SEC * 90 / 100 )) ]; then
+            STOP_REASON="stream_ended"
+            echo "STOP_REASON=$STOP_REASON (actual ${DUR_INT}s < 90% of requested ${REQ_SEC}s)"
+          fi
+          {
+            echo "REAL_DURATION=$REAL_DURATION"
+            echo "RESOLUTION=$RESOLUTION"
+            echo "VCODEC=$VCODEC"
+            echo "VBITRATE=$VBITRATE"
+            echo "FILE_SIZE=$FILE_SIZE"
+            echo "THUMB_FILE=$THUMB"
+            echo "HAS_THUMB=$HAS_THUMB"
+            echo "ACTUAL_DURATION_SEC=$DUR_INT"
+            echo "REQUESTED_DURATION_SEC=$REQ_SEC"
+            echo "STOP_REASON=${STOP_REASON:-}"
+          } >> $GITHUB_ENV
+
+      - name: Segment ORIGINAL kalau >2GB (biar bisa dikirim utuh)
+        if: success()
+        run: |
+          FILE="${{ steps.fname.outputs.filename }}"
+          ORIG_BYTES=$(stat -c%s "$FILE" 2>/dev/null || echo 0)
+          if [ "${{ steps.inputs.outputs.simulate_over_2gb }}" = "true" ]; then
+            ORIG_BYTES=3221225472
+          fi
+          MAX=$((2*1024*1024*1024))
+          if [ "$ORIG_BYTES" -gt "$MAX" ]; then
+            echo "🧩 ORIGINAL $(numfmt --to=iec $ORIG_BYTES) > 2GB — pecah jadi segment <1.9GB"
+            SEG_DIR="segments"
+            rm -rf "$SEG_DIR"; mkdir -p "$SEG_DIR"
+            # Byte-split (bukan ffmpeg -f segment) -> part-000, part-001, ...
+            # Tiap part <2GB (1990MB) supaya muat limit asset GitHub Release.
+            # Re-assembly cukup `cat` balik (byte-kontigu) -> identik dgn original.
+            split -b 1990M --numeric-suffixes=0 --suffix-length=3 "$FILE" "$SEG_DIR/part-"
+            # verify ada segment
+            if ls "$SEG_DIR"/part-* >/dev/null 2>&1; then
+              echo "SEGMENTED=1" >> $GITHUB_ENV
+              echo "SEG_DIR=$SEG_DIR" >> $GITHUB_ENV
+              echo "✅ Segment siap ($(ls "$SEG_DIR"/part-* | wc -l) part):"
+              ls -lh "$SEG_DIR"/part-* | head
+            else
+              echo "⚠️ Segment gagal, fallback kirim file utuh (maybe >2GB dilewati)"
+              echo "SEGMENTED=0" >> $GITHUB_ENV
+            fi
+          else
+            echo "✅ ORIGINAL $(numfmt --to=iec $ORIG_BYTES) ≤ 2GB, tidak perlu segment"
+            echo "SEGMENTED=0" >> $GITHUB_ENV
+          fi
+
+      - name: Upload ORIGINAL ke GitHub Release TEMP + trigger encode terpisah
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          FILENAME: ${{ steps.fname.outputs.filename }}
+          HUMAN_DUR: ${{ steps.inputs.outputs.human_duration }}
+          DURATION: ${{ steps.inputs.outputs.duration }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          HEVC_PRESET: ${{ steps.inputs.outputs.hevc_preset || 'veryfast' }}
+          HEVC_CRF: ${{ steps.inputs.outputs.hevc_crf || '24' }}
+          ENCODE_PROFILE: ${{ steps.inputs.outputs.encode_profile || '' }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+        run: |
+          set -e
+          FILE="${{ steps.fname.outputs.filename }}"
+          # Pastikan FILE ada di working dir (repo root). Kalau cuma nama file,
+          # cari di repo root ATAU di folder recordings/.
+          if [ ! -f "$FILE" ]; then
+            for cand in "./$FILE" "./recordings/$FILE" "./downloads/$FILE"; do
+              if [ -f "$cand" ]; then FILE="$cand"; break; fi
+            done
+          fi
+          if [ ! -f "$FILE" ]; then
+            echo "❌ File original tidak ditemukan: ${{ steps.fname.outputs.filename }}"
+            echo "📂 Isi working dir:"; ls -la
+            exit 1
+          fi
+          echo "📄 File original: $FILE ($(numfmt --to=iec $(stat -c%s "$FILE" 2>/dev/null || echo 0)))"
+          TAG="rusemeva-encode-${{ github.run_id }}"
+          TEMP_NOTES="Rusemeva encode temp source (dihapus setelah encode). JANGAN dihapus manual sebelum encode selesai."
+          # Buat release temp (kosong dulu)
+          gh release create "$TAG" --repo "${{ github.repository }}" \
+            --title "Rusemeva Encode Temp ${{ github.run_id }}" \
+            --notes "$TEMP_NOTES"
+          echo "📦 Temp release: $TAG"
+          # Upload source: pakai relative path ./ (hindari gh 2.x glob bug "no matches found")
+          if [ "${SEGMENTED:-0}" = "1" ] && ls segments/part-* >/dev/null 2>&1; then
+            echo "🧩 Upload segment part-* ke temp..."
+            for f in segments/part-*; do
+              gh release upload "$TAG" --repo "${{ github.repository }}" "./$f" --clobber \
+                && echo "  ✅ $f" || { echo "  ❌ gagal $f"; exit 1; }
+            done
+          else
+            echo "📤 Upload original utuh ($FILE) ke temp..."
+            gh release upload "$TAG" --repo "${{ github.repository }}" "./$FILE" --clobber \
+              || { echo "  ❌ gagal upload original"; exit 1; }
+          fi
+          echo "✅ Upload selesai. Trigger encode..."
+          # Trigger rusemeva-encode
+          # GitHub API: client_payload max 10 properties (HTTP 422 if more).
+          # Runtime guard — never ship >10 keys again
+          set --             "filename" "chat_id" "human_duration" "duration" "requested_duration"             "release_tag" "hevc_preset" "hevc_crf" "encode_profile" "orv_id"
+          PAYLOAD_N=$#
+          echo "client_payload keys: $PAYLOAD_N (max 10)"
+          if [ "$PAYLOAD_N" -gt 10 ]; then
+            echo "FATAL: client_payload has $PAYLOAD_N keys (GitHub max 10)"
+            exit 1
+          fi
+          # duration = actual (authoritative). requested_duration kept for diminta/didapat.
+          # stop_reason stays in GITHUB_ENV/vault only (not needed by encode).
+          gh api repos/${{ github.repository }}/dispatches \
+            -f event_type=encode-request \
+            -f "client_payload[filename]=${FILE}" \
+            -f "client_payload[chat_id]=${CHAT_ID}" \
+            -f "client_payload[human_duration]=${HUMAN_DUR}" \
+            -f "client_payload[duration]=${ACTUAL_DURATION_SEC:-$DURATION}" \
+            -f "client_payload[requested_duration]=${REQUESTED_DURATION_SEC:-$DURATION}" \
+            -f "client_payload[release_tag]=${TAG}" \
+            -f "client_payload[hevc_preset]=${HEVC_PRESET}" \
+            -f "client_payload[hevc_crf]=${HEVC_CRF}" \
+            -f "client_payload[encode_profile]=${ENCODE_PROFILE}" \
+            -f "client_payload[orv_id]=${ORV_ID}" \
+            && echo "✅ rusemeva-encode di-trigger" \
+            || { echo "⚠️ Gagal trigger rusemeva-encode"; exit 1; }
+
+      - name: Buat .txt (update log kecil) + Release ringan
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          FILE="${{ steps.fname.outputs.filename }}"
+          TAG="rusemeva-$(date +%s)"
+          TITLE="Rusemeva Vault — $(date '+%Y-%m-%d %H:%M:%S') WIB (${{ steps.inputs.outputs.duration_label }})"
+
+          # --- Extract SEMUA URL segmen .ts dari playlist (bukan cuma 1) ---
+          M3U8="${RESOLVED_URL:-${{ steps.inputs.outputs.m3u8_url }}}"
+          REF="${RESOLVED_REFERER:-${{ steps.inputs.outputs.referer }}}"
+          resolve_url() {
+            b="$1"; r="$2"
+            case "$r" in
+              http*) echo "$r"; return ;;
+            esac
+            d="${b%/*}"
+            case "$r" in
+              /*) sh=$(echo "$b" | sed -E 's#^(https?://[^/]+).*#\1#'); echo "$sh$r" ;;
+              *) echo "$d/$r" ;;
+            esac
+          }
+          fetch_h() {
+            if [ -n "$REF" ]; then
+              curl -s -L -H "Referer: $REF" -H "User-Agent: Mozilla/5.0" "$1"
+            else
+              curl -s -L -H "User-Agent: Mozilla/5.0" "$1"
+            fi
+          }
+          PL=$(fetch_h "$M3U8")
+          # Kalau master playlist, ikut variant .m3u8 pertama (biasanya quality yang dipakai)
+          VAR=$(echo "$PL" | grep -E '\.m3u8' | head -1 | tr -d '\r')
+          MEDIA_M3U8="$M3U8"
+          if [ -n "$VAR" ] && [ "$VAR" != "$M3U8" ]; then
+            MEDIA_M3U8="$(resolve_url "$M3U8" "$VAR")"
+            PL=$(fetch_h "$MEDIA_M3U8")
+          fi
+          # Kumpulkan semua baris .ts (absolute URL)
+          TS_LIST_FILE=$(mktemp)
+          echo "$PL" | tr -d '\r' | grep -E '\.ts($|\?)' | while read -r line; do
+            [ -z "$line" ] && continue
+            case "$line" in \#*) continue ;; esac
+            resolve_url "$MEDIA_M3U8" "$line"
+          done > "$TS_LIST_FILE"
+          TS_COUNT=$(wc -l < "$TS_LIST_FILE" | tr -d ' ')
+          FIRST_TS=$(head -1 "$TS_LIST_FILE" 2>/dev/null || true)
+          if [ -z "$FIRST_TS" ]; then
+            FIRST_TS="$M3U8"
+            TS_COUNT=0
+          fi
+          echo "TS_URL=$FIRST_TS" >> $GITHUB_ENV
+          echo "TS_COUNT=$TS_COUNT" >> $GITHUB_ENV
+          echo "Vault segments: $TS_COUNT .ts"
+
+          # .txt = metadata + daftar SEMUA segmen .ts (boleh panjang; ratusan-ribuan baris OK)
+          TXT="${FILE%.mp4}.txt"
+          {
+            echo "# Rusemeva Vault — record update"
+            echo "file: ${FILE}"
+            echo "size: ${FILE_SIZE}"
+            echo "durasi: ${REAL_DURATION}"
+            echo "requested_duration_sec: ${REQUESTED_DURATION_SEC:-}"
+            echo "actual_duration_sec: ${ACTUAL_DURATION_SEC:-}"
+            echo "stop_reason: ${STOP_REASON:-}"
+            echo "resolusi: ${RESOLUTION}"
+            echo "codec: ${VCODEC}"
+            echo "bitrate: ${VBITRATE}"
+            echo "playlist_url: ${M3U8}"
+            echo "media_playlist: ${MEDIA_M3U8}"
+            echo "segment_count: ${TS_COUNT}"
+            echo "source_url: ${FIRST_TS}"
+            echo "referer: ${{ steps.inputs.outputs.referer }}"
+            echo "status: sent-to-telegram"
+            echo "recorded_at: $(date '+%Y-%m-%dT%H:%M:%S %z')"
+            echo ""
+            echo "# segments (.ts) — full list"
+            if [ "$TS_COUNT" -gt 0 ]; then
+              cat "$TS_LIST_FILE"
+            else
+              echo "# (no .ts lines found in playlist; kept playlist_url above)"
+            fi
+          } > "$TXT"
+          rm -f "$TS_LIST_FILE" 2>/dev/null || true
+
+          NOTES="Rusemeva Vault — record update. Metadata + full daftar segmen .ts. Video dikirim ke Telegram (tidak disimpan di GitHub)."
+
+          # Release cuma berisi .txt (boleh besar kalau segmen banyak; tetap teks, bukan video)
+          gh release create "$TAG" --repo "${{ github.repository }}" \
+            --title "${TITLE}" --notes "${NOTES}" \
+            "$TXT" 2>/dev/null || \
+          gh release create "$TAG" --repo "${{ github.repository }}" \
+            --title "${TITLE}" --notes "${NOTES}" "$TXT"
+          echo "Created release $TAG (asset: $(ls -lh "$TXT" | awk '{print $5}') .txt, segments=$TS_COUNT)"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "TXT_FILE=$TXT" >> $GITHUB_ENV
+
+      - name: Start local Bot API Server (allow >50MB uploads)
+        if: success()
+        continue-on-error: true
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TG_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TG_API_HASH }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          set +e
+          docker rm -f tg-bot-api >/dev/null 2>&1 || true
+          rm -rf /tmp/tg-bot-api && mkdir -p /tmp/tg-bot-api
+          docker run -d --name tg-bot-api -p 8081:8081 \
+            -e TELEGRAM_API_ID="$TELEGRAM_API_ID" \
+            -e TELEGRAM_API_HASH="$TELEGRAM_API_HASH" \
+            -e TELEGRAM_LOCAL=1 \
+            -v /tmp/tg-bot-api:/var/lib/telegram-bot-api \
+            aiogram/telegram-bot-api:latest \
+            --local -m 2097152000 --dir /var/lib/telegram-bot-api --http-port 8081 --verbosity=2
+          echo "⏳ Menunggu Bot API Server siap (hingga 90s)..."
+          for i in $(seq 1 45); do
+            CODE=$(curl -s -o /tmp/getme.json -w "%{http_code}" "http://localhost:8081/bot${{ secrets.BOT_TOKEN }}/getMe" 2>/dev/null)
+            echo "  attempt $i: HTTP $CODE -> $(cat /tmp/getme.json 2>/dev/null | head -c 300)"
+            if [ "$CODE" = "200" ]; then
+              echo "✅ Bot API Server ready"
+              break
+            fi
+            sleep 2
+          done
+          echo "================ SERVER LOG (docker logs) ================"
+          docker logs --tail 60 tg-bot-api 2>&1 || echo "(no docker logs)"
+          echo "================ END SERVER LOG ================"
+
+      - name: Notify Telegram — ORIGINAL (rekam selesai)
+        if: always()
+        continue-on-error: true
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          FILENAME: ${{ steps.fname.outputs.filename }}
+          HUMAN_DUR: ${{ steps.inputs.outputs.human_duration }}
+          TAG: ${{ env.TAG }}
+          JOB_STATUS: ${{ job.status }}
+          REAL_DURATION: ${{ env.REAL_DURATION }}
+          RESOLUTION: ${{ env.RESOLUTION }}
+          VCODEC: ${{ env.VCODEC }}
+          VBITRATE: ${{ env.VBITRATE }}
+          FILE_SIZE: ${{ env.FILE_SIZE }}
+          ORIG_BYTES: ${{ env.ORIG_BYTES }}
+          THUMB_FILE: ${{ env.THUMB_FILE }}
+          HAS_THUMB: ${{ env.HAS_THUMB }}
+          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          PHASE: original
+          HEVC_PRESET: ${{ steps.inputs.outputs.hevc_preset || 'veryfast' }}
+          HEVC_CRF: ${{ steps.inputs.outputs.hevc_crf || '24' }}
+          STOP_REASON: ${{ env.STOP_REASON }}
+          REQUESTED_DURATION_SEC: ${{ env.REQUESTED_DURATION_SEC }}
+          ACTUAL_DURATION_SEC: ${{ env.ACTUAL_DURATION_SEC }}
+
+        run: python3 scripts/notify.py

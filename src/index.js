@@ -1,0 +1,1272 @@
+// ===== Akses privat: hanya owner yang boleh pakai bot =====
+const ALLOWED_USER_ID = 2027652715;
+
+// ===== Profil encode HEVC (preset + crf) =====
+// Setiap profil punya: label, preset x265, crf, dan ringkasan untuk /setting.
+const ENCODE_PROFILES = {
+  speed: {
+    key: 'speed',
+    label: '⚡ Ultra Cepat',
+    preset: 'ultrafast',
+    crf: 25,
+    quality: '🟡 lumayan',
+    note: 'Paling kenceng. Target ~1.2–1.4 Mbps @720p (CRF 25). Auto-size max CRF 28 biar tidak buram.',
+  },
+  balanced: {
+    key: 'balanced',
+    label: '🟢 Cepat (Default)',
+    preset: 'veryfast',
+    crf: 24,
+    quality: '🟢 bagus',
+    note: 'Default. Target ~1.3 Mbps @720p (CRF 24). Hemat tapi tidak buram seperti 1.0 Mbps.',
+  },
+  quality: {
+    key: 'quality',
+    label: '🟢🟢 Berkualitas',
+    preset: 'slow',
+    crf: 23,
+    quality: '🟢🟢 lebih oke',
+    note: 'Lebih bersih (~1.4–1.6 Mbps). Auto-size max CRF 28; tidak dipaksa ke 1.0 Mbps.',
+  },
+  max: {
+    key: 'max',
+    label: '🟢🟢🟢 Maksimal',
+    preset: 'slower',
+    crf: 22,
+    quality: '🟢🟢🟢 transparan',
+    note: 'Kualitas tinggi. Tetap cegah file membengkak, tapi jaga bitrate minimal ~1.2 Mbps.',
+  },
+  live: {
+    key: 'live',
+    label: '📺 Siaran / Live TV',
+    preset: 'veryfast',
+    crf: 24,
+    quality: '🟢 bagus (TV)',
+    note: 'Khusus siaran TV/live: jaga tengah frame, hemat di logo/ticker, denoise ringan. Target ~1.3 Mbps.',
+  },
+};
+const DEFAULT_PROFILE = 'balanced';
+
+export default {
+  async fetch(request, env, ctx) {
+    // Return OK immediately to prevent Telegram webhook retries
+    const response = new Response('OK');
+
+    try {
+      const url = new URL(request.url);
+
+      if (request.method === 'GET') {
+        const url = new URL(request.url);
+        // === #7 Endpoint /rtcal GET: baca kalibrasi RT ===
+        if (url.pathname === '/rtcal') {
+          const preset = url.searchParams.get('preset') || '';
+          const raw = await env.RUSEMEVA_KV.get(`orv:rtcal:${preset}`);
+          return new Response(raw || '', { status: 200 });
+        }
+        // === #4 Endpoint /dashboard: analytics dashboard HTML ===
+        if (url.pathname === '/dashboard') {
+          return await handleDashboard(env);
+        }
+      }
+
+      if (request.method === 'POST') {
+        const url = new URL(request.url);
+        // === #2 Endpoint /progress: progress.py push % encode ke sini -> simpan KV ===
+        if (url.pathname === '/progress') {
+          try {
+            const body = await request.json();
+            const id = (body.id || '').toString();
+            const pct = parseInt(body.pct, 10);
+            const secret = (body.secret || '').toString();
+            // Kalau PROGRESS_SECRET diset, wajib cocok (anti-abuse)
+            if (env.PROGRESS_SECRET && secret !== env.PROGRESS_SECRET) {
+              return new Response('forbidden', { status: 403 });
+            }
+            if (id && !isNaN(pct)) {
+              // TTL 6 jam (1 encode job max) biar KV gak numpuk
+              await env.RUSEMEVA_KV.put(`orv:${id}:pct`, String(pct), { expirationTtl: 21600 });
+            }
+            return new Response('OK');
+          } catch (_) {
+            return new Response('bad request', { status: 400 });
+          }
+        }
+
+        // === #7 Endpoint /rtcal POST: simpan kalibrasi RT (realtime_x aktual) ===
+        // GET sudah di-handle di awal fetch (baca nilai). Ini handler POST (tulis).
+        if (url.pathname === '/rtcal') {
+          try {
+            const body = await request.json();
+            const preset = (body.preset || '').toString();
+            const rt = parseFloat(body.rt);
+            const secret = (body.secret || '').toString();
+            if (env.PROGRESS_SECRET && secret !== env.PROGRESS_SECRET) {
+              return new Response('forbidden', { status: 403 });
+            }
+            if (preset && !isNaN(rt) && rt > 0) {
+              const prev = parseFloat(await env.RUSEMEVA_KV.get(`orv:rtcal:${preset}`) || '');
+              let avg = rt;
+              if (!isNaN(prev) && prev > 0) {
+                avg = (prev + rt) / 2;
+              }
+              await env.RUSEMEVA_KV.put(`orv:rtcal:${preset}`, avg.toFixed(4), { expirationTtl: 60*86400 });
+              return new Response(`ok avg=${avg.toFixed(4)}`, { status: 200 });
+            }
+            return new Response('bad', { status: 400 });
+          } catch (_) {
+            return new Response('err', { status: 500 });
+          }
+        }
+
+        if (url.pathname === '/link') {
+          try {
+            const body = await request.json();
+            const runId = (body.run_id || '').toString();
+            const orvId = (body.orv_id || '').toString();
+            const secret = (body.secret || '').toString();
+            if (env.PROGRESS_SECRET && secret !== env.PROGRESS_SECRET) {
+              return new Response('forbidden', { status: 403 });
+            }
+            if (runId && orvId) {
+              await env.RUSEMEVA_KV.put(`run:${runId}`, orvId, { expirationTtl: 21600 });
+              // Reverse map: orv_id -> run_id (biar /cancel <ORV> bisa resolve run)
+              await env.RUSEMEVA_KV.put(`orv:${orvId}:run`, String(runId), { expirationTtl: 21600 });
+              return new Response('OK');
+            }
+            return new Response('bad', { status: 400 });
+          } catch (_) {
+            return new Response('err', { status: 500 });
+          }
+        }
+
+        // === #4 Endpoint /ingest: terima ringkasan encode dari GHA -> simpan ke KV ===
+        if (url.pathname === '/ingest') {
+          try {
+            const body = await request.json();
+            const secret = (body.secret || '').toString();
+            if (env.PROGRESS_SECRET && secret !== env.PROGRESS_SECRET) {
+              return new Response('forbidden', { status: 403 });
+            }
+            const record = {
+              id: (body.id || '').toString(),
+              ts: new Date().toISOString(),
+              profile: (body.profile || '').toString(),
+              preset: (body.preset || '').toString(),
+              crf_start: parseInt(body.crf_start) || 0,
+              crf_final: parseInt(body.crf_final) || 0,
+              scene_label: (body.scene_label || '').toString(),
+              duration_sec: parseInt(body.duration_sec) || 0,
+              hevc_size_mb: parseFloat(body.hevc_size_mb) || 0,
+              hevc_bitrate_mbps: parseFloat(body.hevc_bitrate_mbps) || 0,
+              encode_time_sec: parseInt(body.encode_time_sec) || 0,
+              realtime_x: parseFloat(body.realtime_x) || 0,
+              auto_downgrade: !!body.auto_downgrade,
+              live_mode: !!body.live_mode,
+            };
+            // Baca list yang ada, append, cap 500
+            let list = [];
+            try {
+              const raw = await env.RUSEMEVA_KV.get('orv:analytics');
+              if (raw) list = JSON.parse(raw);
+            } catch (_) {}
+            list.push(record);
+            if (list.length > 500) list = list.slice(-500);
+            await env.RUSEMEVA_KV.put('orv:analytics', JSON.stringify(list), { expirationTtl: 180 * 86400 });
+            return new Response('ok', { status: 200 });
+          } catch (_) {
+            return new Response('err', { status: 500 });
+          }
+        }
+
+        // (handler /rtcal sudah dipindah ke awal fetch: GET baca kalibrasi, POST simpan)
+
+        const update = await request.json();
+
+        // === #7 INLINE KEYBOARD: tangani callback_query (tombol /setting) ===
+        if (update.callback_query) {
+          const cb = update.callback_query;
+          const cbFromId = cb.from?.id;
+          const cbChatId = cb.message?.chat?.id;
+          const cbData = cb.data || '';
+          // Access control
+          if (cbFromId !== ALLOWED_USER_ID) {
+            return response;
+          }
+          if (cbData.startsWith('set:')) {
+            const key = cbData.slice(4);
+            await handleSettingSelect(`/setting ${key}`, cbChatId, env);
+            // Edit pesan biar tombol gak berkedip (opsional: biarkan)
+            await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/answerCallbackQuery`, {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ callback_query_id: cb.id })
+            });
+          }
+          return response;
+        }
+
+        // Access control — tolak siapa pun selain owner
+        const incoming = update.message || update.edited_message;
+        const fromId = incoming?.from?.id;
+        const guardChatId = incoming?.chat?.id;
+        if (fromId !== undefined && fromId !== ALLOWED_USER_ID) {
+          if (guardChatId !== undefined) {
+            ctx.waitUntil(sendMessage(env.BOT_TOKEN, guardChatId,
+              '⛔ <b>Akses ditolak.</b>\nBot ini privat dan hanya bisa digunakan oleh pemiliknya.'
+            ));
+          }
+          return response;
+        }
+
+        let text = update.message?.text;
+        const chatId = update.message?.chat?.id;
+
+        if (!text || !chatId) return response;
+
+        // Telegram sering kirim /cmd@BotName — normalisasi SEBELUM semua route
+        if (text.startsWith('/')) {
+          text = text.replace(/^\/([A-Za-z0-9_]+)@[A-Za-z0-9_]+/, '/$1');
+        }
+
+        if (text === '/start' || text === '/help') {
+          ctx.waitUntil(sendMessage(env.BOT_TOKEN, chatId,
+            '🎬 <b>Rusemeva Vault</b>\n\n' +
+                        '<b>Commands:</b>\n' +
+                        '/record &lt;url&gt; &lt;durasi&gt; — Process media\n' +
+                        '/record &lt;url&gt; &lt;durasi&gt; --referer &lt;url&gt; — Process with referer\n' +
+                        '/trans7 &lt;durasi&gt; — Rekam Trans7 live\n' +
+                        '/sevenhub &lt;durasi&gt; — Rekam sevenhub live\n' +
+                        '/setting — Pilih profil encode HEVC\n' +
+                        '/status — Cek status\n' +
+                        '/stats — Statistik encode\n' +
+                        '/cancel — Batalkan proses\n\n' +
+                        '<b>Format durasi:</b>\n' +
+                        '  300 / 300s → 300 detik\n' +
+                        '  5m → 5 menit\n' +
+                        '  2h → 2 jam\n' +
+                        '  1h30m → 1 jam 30 menit\n\n' +
+                        '<b>Contoh:</b>\n' +
+                        '/record https://example.com/stream.m3u8 5m\n' +
+                        '/record https://example.com/stream.m3u8 1h30m --referer https://example.com'
+          ));
+          return response;
+        }
+
+        // AWAIT all handlers — pastikan sendMessage selesai sebelum return OK
+        // (ctx.waitUntil bs terputus kalau worker return terlalu cepat)
+        try {
+          if (text.startsWith('/record')) {
+            await handleRecord(text, chatId, env, ctx);
+          } else if (text === '/setting') {
+            await handleSetting(chatId, env);
+          } else if (text.startsWith('/setting ')) {
+            await handleSettingSelect(text, chatId, env);
+          } else if (text === '/status') {
+            await handleStatus(chatId, env);
+          } else if (text === '/cancel' || text.startsWith('/cancel ')) {
+            await handleCancel(chatId, env, text);
+          } else if (text === '/stats') {
+            await handleStats(chatId, env);
+          } else if (text === '/trans7' || text.startsWith('/trans7 ')) {
+            await handleSourceRecord(text, chatId, env, ctx, 'trans7');
+          } else if (text === '/sevenhub' || text.startsWith('/sevenhub ')) {
+            await handleSourceRecord(text, chatId, env, ctx, 'sevenhub');
+          } else if (text.startsWith('/')) {
+            await sendMessage(env.BOT_TOKEN, chatId,
+              '❓ Command tidak dikenali.\nKetik /start untuk melihat daftar command.'
+            );
+          }
+        } catch (e) {
+          // Kalau handler error, kirim pesan error biar user tahu
+          try {
+            await env.RUSEMEVA_KV.put('orv:rec-log', `${new Date().toISOString()} HANDLER_THREW: ${e.message}`, { expirationTtl: 3600 });
+          } catch (_) {}
+          try {
+            await sendMessage(env.BOT_TOKEN, chatId,
+              `⚠️ <b>Terjadi error:</b>\n<code>${escapeHtml(String(e.message || e))}</code>`
+            );
+          } catch (_) {}
+        }
+
+        return response;
+      }
+
+      return new Response('rusemeva-vault', { status: 200 });
+    } catch (err) {
+      return response;
+    }
+  }
+};
+
+// ============ ADMIN: SET WEBHOOK ============
+// Dipakai sekali untuk menghubungkan bot ke worker (bot "gak respon" = webhook belum set).
+async function setWebhook(env, request) {
+  const url = new URL(request.url);
+  const k = url.searchParams.get('k') || '';
+  if (env.PROGRESS_SECRET && k !== env.PROGRESS_SECRET) {
+    return new Response('forbidden', { status: 403 });
+  }
+  const origin = url.origin; // https://rusemeva.rusemeva.workers.dev
+  const whUrl = `${origin}`; // TANPA trailing slash (Telegram webhook standard)
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/setWebhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: whUrl, allowed_updates: ['message', 'edited_message', 'callback_query'] })
+    });
+    const j = await r.json();
+    // Verifikasi
+    const info = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/getWebhookInfo`).then(x => x.json());
+    return new Response(JSON.stringify({ set: j, info: info }, null, 2), {
+      status: 200, headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    return new Response('err: ' + e.message, { status: 500 });
+  }
+}
+
+// ============ SETTING (encode profile) ============
+
+// Hitung estimasi waktu encode buat durasi tertentu.
+// Ratio ultrafast:veryfast diukur nyata di mesin (32s:70s untuk 20s => 2.19x).
+// Anchor: di runner GitHub 2 vCPU, veryfast 720p60 ~2.5x realtime (encode lebih
+// cepat dari durasi rekam). slow ~3x lebih lambat dari veryfast, slower ~5.5x.
+// Disclaimer: estimasi, bisa +-30% tergantung isi video & beban runner.
+const SPEED_FACTOR = {
+  speed: 2.5 * 2.19,    // ultrafast vs veryfast 2.19x
+  balanced: 2.5,        // veryfast 2.5x rt
+  quality: 2.5 / 3.0,   // slow ~3x lebih lambat
+  max: 2.5 / 5.5,       // slower ~5.5x lebih lambat
+};
+
+function estEncodeSeconds(profileKey, recordSeconds, probeRes) {
+  let f = SPEED_FACTOR[profileKey] || SPEED_FACTOR.balanced;
+  if (probeRes) {
+    const w = parseInt(probeRes, 10) || 1280;
+    const ratio = (w * w) / (1280 * 1280);
+    const r = Math.max(0.5, Math.min(3.5, ratio));
+    f = f / r;
+  }
+  // waktu encode = durasi rekam / faktor (faktor>1 = lebih cepat dari realtime)
+  let s = recordSeconds / f;
+  if (s > 2 * 3600) s += 20 * 60;
+  else s += 10 * 60;
+  return Math.round(s);
+}
+
+async function getProfile(env, chatId) {
+  try {
+    const v = await Promise.race([
+      env.RUSEMEVA_KV.get(`encprof:${chatId}`),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('kv timeout')), 3000))
+    ]);
+    if (v && ENCODE_PROFILES[v]) return v;
+  } catch (_) { /* KV lambat/error = fallback */ }
+  return DEFAULT_PROFILE;
+}
+
+async function setProfile(env, chatId, key) {
+  if (!ENCODE_PROFILES[key]) return false;
+  try {
+    await env.RUSEMEVA_KV.put(`encprof:${chatId}`, key);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function handleSetting(chatId, env) {
+  const current = await getProfile(env, chatId);
+  let msg = '⚙️ <b>Pengaturan Encode HEVC</b>\n\n';
+  msg += `Profil aktif: <b>${ENCODE_PROFILES[current].label}</b>\n\n`;
+  msg += 'Pilih profil (ketik perintah):\n\n';
+  for (const k of Object.keys(ENCODE_PROFILES)) {
+    const p = ENCODE_PROFILES[k];
+    const mark = k === current ? ' ✓' : '';
+    // escape note for HTML parse_mode (notes may contain < > &)
+    const note = escapeHtml(p.note || '');
+    msg += `${p.label}${mark}\n`;
+    msg += `  └ /setting ${p.key}\n`;
+    msg += `     preset: ${p.preset} | crf: ${p.crf} | kualitas: ${p.quality}\n`;
+    msg += `     ${note}\n\n`;
+  }
+  msg += '💡 Estimasi encode mengikuti panjang konten (bukan wall-clock VOD). Contoh: /record 120m.';
+  // pass env so send errors land in KV; keyboard optional
+  const st = await sendMessage(env.BOT_TOKEN, chatId, msg, settingsKeyboard(), env);
+  if (st && st >= 400) {
+    // fallback plain text without keyboard if HTML/markup rejected
+    const plain = msg.replace(/<[^>]+>/g, '');
+    await sendMessage(env.BOT_TOKEN, chatId, plain, null, env);
+  }
+}
+
+async function handleSettingSelect(text, chatId, env) {
+  const parts = text.trim().split(/\s+/);
+  const key = parts[1]?.toLowerCase();
+  if (!key || !ENCODE_PROFILES[key]) {
+    await sendMessage(env.BOT_TOKEN, chatId,
+      '❌ Profil tidak dikenal.\nGunakan: /setting speed | balanced | quality | max | live\n' +
+      'Optional durasi: /setting quality 120m (untuk estimasi waktu encode).'
+    );
+    return;
+  }
+  const ok = await setProfile(env, chatId, key);
+  const p = ENCODE_PROFILES[key];
+  if (!ok) {
+    await sendMessage(env.BOT_TOKEN, chatId, '⚠️ Gagal menyimpan ke KV (cek binding wrangler.toml).');
+    return;
+  }
+
+  // Parse durasi opsional (misal /setting quality 120m)
+  let durSec = null;
+  if (parts[2]) {
+    durSec = parseDuration(parts[2]);
+  }
+
+  let msg = `✅ Profil diubah ke <b>${p.label}</b>\n\n` +
+    `⚙️ preset: <code>${p.preset}</code> | crf: <code>${p.crf}</code>\n` +
+    `🟢 kualitas: ${p.quality}\n` +
+    `📦 ${escapeHtml(p.note || '')}\n`;
+
+  if (durSec && durSec > 0) {
+    msg += `\n<b>Estimasi encode untuk konten ${formatDuration(durSec)}):</b>\n`;
+    msg += `⏱ Profil ini: ~${formatDuration(estEncodeSeconds(key, durSec))}\n\n`;
+    // Bandingkan semua profil biar user tahu trade-off
+    msg += `<b>Bandingkan semua profil:</b>\n`;
+    for (const k of Object.keys(ENCODE_PROFILES)) {
+      const pp = ENCODE_PROFILES[k];
+      const e = estEncodeSeconds(k, durSec);
+      const mark = k === key ? ' ▶' : '';
+      msg += `• ${pp.label}${mark}: ~${formatDuration(e)} (${pp.quality})\n`;
+    }
+    // Encode job terpisah (limit 6 jam). Jangan jumlahkan durasi konten + encode.
+    const encThis = estEncodeSeconds(key, durSec);
+    const LIMIT = 6 * 3600;
+    msg += `
+💡 Estimasi encode ±30% (isi video & beban runner). Rekam VOD ≠ realtime.`;
+    if (encThis > LIMIT) {
+      msg += `
+⛔ <b>Encode</b> ~${formatDuration(encThis)} LEWAT limit 6 jam job encode — auto-downgrade.`;
+    } else if (encThis > LIMIT * 0.85) {
+      msg += `
+⚠️ Encode ~${formatDuration(encThis)} mendekati limit 6 jam runner.`;
+    } else {
+      msg += `
+⏳ Encode ~${formatDuration(encThis)} — di bawah limit 6 jam job encode.`;
+    }
+  } else {
+    msg += `\n💡 Ketik /setting ${key} &lt;durasi&gt; (contoh: /setting ${key} 120m) untuk estimasi waktu encode.`;
+  }
+
+  await sendMessage(env.BOT_TOKEN, chatId, msg);
+}
+
+// ============ COMMAND HANDLERS ============
+
+async function handleRecord(text, chatId, env, ctx) {
+  const parts = text.split(/\s+/);
+  let _n = 0;
+  const LOG = () => {};
+  LOG(`start chat=${chatId} parts=${parts.length}`);
+
+  if (parts.length < 2) {
+    await sendMessage(env.BOT_TOKEN, chatId,
+      '❌ Format: /record &lt;url&gt; &lt;durasi&gt;\n\n' +
+      '<b>Format durasi:</b>\n' +
+      '  300 / 300s → 300 detik\n' +
+      '  5m → 5 menit\n' +
+      '  2h → 2 jam\n' +
+      '  1h30m → 1 jam 30 menit\n\n' +
+      'Contoh:\n' +
+      '/record https://example.com/stream.m3u8 5m'
+    );
+    return new Response('OK');
+  }
+
+  let url = parts[1];
+  LOG(`url set: ${url.slice(0,30)}`);
+
+  // Extract optional --referer flag
+  let referer = '';
+  const refIdx = parts.indexOf('--referer');
+  if (refIdx !== -1 && refIdx + 1 < parts.length) {
+    referer = parts[refIdx + 1];
+    // Remove --referer and its value from parts for duration parsing
+    parts.splice(refIdx, 2);
+  }
+  LOG(`referer=${referer}`);
+
+  // Parse duration: /record <url> [duration]
+  let duration = 300; // default 5 menit
+  if (parts.length >= 3) {
+    const durStr = parts.slice(2).join(''); // join for "1h30m" without spaces
+    const parsed = parseDuration(durStr);
+    LOG(`durStr=${durStr} parsed=${parsed}`);
+    if (parsed === null) {
+      await sendMessage(env.BOT_TOKEN, chatId,
+        '❌ Format durasi salah.\n\n' +
+        '<b>Contoh:</b> 300, 300s, 5m, 2h, 1h30m'
+      );
+      return new Response('OK');
+    }
+    if (parsed <= 0 || parsed > 21600) {
+      await sendMessage(env.BOT_TOKEN, chatId,
+        '❌ Durasi harus antara 1 detik - 21600 detik (max 6 jam).'
+      );
+      return new Response('OK');
+    }
+    duration = parsed;
+  }
+
+  // === #6 GUARD GANDA: blokir kalau ada run in_progress (rekam/encode) ===
+  // Cek KV lock dulu (cepat), lalu GH API sbg otoritat.
+  try {
+    const running = await checkActiveRuns(env, LOG);
+    if (running.length > 0) {
+      let msg = '⛔ <b>Masih ada proses berjalan.</b>\n\n';
+      msg += `Tunggu sampai selesai / dibatalkan dulu:\n`;
+      for (const r of running.slice(0, 5)) {
+        const wf = r.name || '';
+        const phase = wf.includes('encode') ? '🔄 Encode HEVC' : (wf.includes('record') ? '🎬 Rekam' : wf);
+        const runId = r.id ? String(r.id) : '';
+        msg += `• ${phase}\n  🆔 Run ID: <code>${runId}</code>\n  🔗 ${r.html_url}\n`;
+      }
+      msg += '\nGunakan /cancel ' + (running[0].id ? String(running[0].id) : '&lt;run_id&gt;') + ' untuk membatalkan, atau /status untuk detail.';
+      await sendMessage(env.BOT_TOKEN, chatId, msg);
+      return new Response('OK');
+    }
+  } catch (_) { /* kalau GH API error, biarkan lanjut (fail-open) */ }
+  LOG(`guard passed duration=${duration} url=${url.slice(0,40)}`);
+
+  // === #1 PROBE m3u8: di-skip di worker (best-effort, jangan block handler).
+  // Estimasi pakai default; validasi link dilakukan oleh GH action.
+  let probeRes = '';
+  let probeFpsHint = '';
+
+  // Validate URL (cepat, gak network)
+  if (!url.startsWith('http')) {
+    await sendMessage(env.BOT_TOKEN, chatId, '❌ URL harus dimulai dengan http:// atau https://');
+    return new Response('OK');
+  }
+
+  // Ambil profil encode aktif
+  const profileKey = await getProfile(env, chatId);
+  LOG(`got profile=${profileKey}`);
+  const profile = ENCODE_PROFILES[profileKey];
+
+  // Validate URL
+  if (!url.startsWith('http')) {
+    await sendMessage(env.BOT_TOKEN, chatId, '❌ URL harus dimulai dengan http:// atau https://');
+    return new Response('OK');
+  }
+  LOG(`url validated`);
+
+  // Generate filename (WIB timezone)
+  const now = new Date();
+  const wib = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+  const pad = n => String(n).padStart(2, '0');
+  const ts = `${wib.getFullYear()}-${pad(wib.getMonth()+1)}-${pad(wib.getDate())}T${pad(wib.getHours())}-${pad(wib.getMinutes())}-${pad(wib.getSeconds())}`;
+  const filename = `Rusemeva-Asset-${ts.replace('T', '_')}-${formatDurationShort(duration)}.mp4`;
+
+  // === #4 ESTIMASI SEBELUM REKAM ===
+  // recSec = target panjang KONTEN (ffmpeg -t cap). Bukan wall-clock.
+  // VOD/Kick: download sering hitungan menit. Live: wall-clock ~ durasi.
+  // Encode = job TERPISAH (limit 6 jam sendiri) — jangan dijumlah seolah serial realtime.
+  const recSec = duration;
+  const encSec = estEncodeSeconds(profileKey, recSec, probeRes);
+  const LIMIT = 6 * 3600;
+  let estLine =
+    `⏱ Target konten: ${formatDuration(recSec)} (cap; VOD biasanya cepat, live ~realtime)
+` +
+    `🎞 Estimasi encode HEVC: ~${formatDuration(encSec)} (workflow terpisah, ±30%)`;
+  if (encSec > LIMIT) {
+    estLine += `
+⛔ Encode estimasi LEWAT 6 jam — auto-downgrade preset di runner.`;
+  } else if (encSec > LIMIT * 0.85) {
+    estLine += `
+⚠️ Encode mendekati limit 6 jam runner — auto-downgrade mungkin aktif.`;
+  }
+
+  // Trigger GitHub Actions
+  LOG(`before triggerGitHubActions`);
+  const trig = await triggerGitHubActions(env, url, duration, chatId, filename, referer, profile);
+  LOG(`after triggerGitHubActions`);
+  const orvId = trig.orvId;
+  const trigResp = await trig.resp; // fetch returns Promise -> await dulu
+  LOG(`trigResp status=${trigResp.status}`);
+  // Drain body biar subrequest pool gak ke-lock (penyebab sendMessage hang)
+  await trigResp.text().catch(() => {});
+
+  if (trigResp.ok) {
+    let msg = '✅ <b>Rekaman dimulai!</b>\n\n' +
+      `🆔 ID: <code>${orvId}</code>\n` +
+      `🔗 URL: <code>${escapeHtml(url)}</code>\n` +
+      `⏱ Durasi: ${formatDuration(duration)}\n` +
+      `📦 File: ${filename}\n` +
+      `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n`;
+    if (referer) msg += `🔗 Referer: <code>${escapeHtml(referer)}</code>\n`;
+    if (probeRes) msg += `🖥 Sumber: ${probeRes}p${probeFpsHint ? ' @' + probeFpsHint + 'fps' : ''}\n`;
+    msg += `${estLine}\n\n☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\nSimpan ID ini untuk /cancel &lt;id&gt; kalau mau membatalkan.`;
+    LOG(`before sendMessage success`);
+    const finalMsg = msg;
+    const fid = orvId;
+    try {
+      if (ctx && ctx.waitUntil) {
+        ctx.waitUntil((async () => {
+          try {
+            const st = await sendMessage(env.BOT_TOKEN, chatId, finalMsg, null, env);
+            await env.RUSEMEVA_KV.put('orv:sendok', `${new Date().toISOString()} tg=${st} orv=${fid}`, { expirationTtl: 600 }).catch(() => {});
+          } catch (e) {
+            await env.RUSEMEVA_KV.put('orv:senderr', `${new Date().toISOString()} THREW ${e.message} orv=${fid}`, { expirationTtl: 600 }).catch(() => {});
+          }
+        })());
+      } else {
+        const st = await sendMessage(env.BOT_TOKEN, chatId, finalMsg, null, env);
+        LOG(`sent success msg orv=${orvId} tg=${st}`);
+      }
+    } catch (e) {
+      LOG(`sendMessage THREW: ${e.message}`);
+    }
+  } else {
+    const errText = await trigResp.text();
+    LOG(`GH not ok: ${errText.slice(0,200)}`);
+    await sendMessage(env.BOT_TOKEN, chatId,
+      `❌ Gagal trigger rekaman.\nError: ${escapeHtml(errText.slice(0, 500))}`
+    );
+  }
+
+  return new Response('OK');
+}
+
+async function handleStatus(chatId, env) {
+  try {
+    const resp = await ghApi(env, `actions/runs?per_page=15`);
+    const data = await resp.json();
+
+    if (!data.workflow_runs?.length) {
+      await sendMessage(env.BOT_TOKEN, chatId, '📭 Tidak ada rekaman aktif.');
+      return new Response('OK');
+    }
+
+    const active = data.workflow_runs.filter(r => r.status === 'in_progress' || r.status === 'queued');
+    if (active.length === 0) {
+      const last = data.workflow_runs[0];
+      const emoji = last.conclusion === 'success' ? '✅' : last.conclusion === 'failure' ? '❌' : last.conclusion === 'cancelled' ? '🚫' : '📭';
+      await sendMessage(env.BOT_TOKEN, chatId,
+        `${emoji} <b>Tidak ada rekaman aktif</b>\n\n` +
+        `Terakhir: ${last.status} (${last.conclusion || '-'})\n` +
+        `🔗 ${last.html_url}`
+      );
+      return new Response('OK');
+    }
+
+    let msg = `⏳ <b>${active.length} proses aktif:</b>\n\n`;
+    for (const run of active) {
+      const wf = run.name || '';
+      const phase = wf.includes('encode') ? '🔄 Encode HEVC' : (wf.includes('record') ? '🎬 Rekam' : '⚙️ ' + wf);
+      const created = new Date(run.created_at).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' });
+      const elapsed = Math.round((Date.now() - new Date(run.created_at)) / 1000);
+      msg += `• ${phase}\n`;
+      msg += `  ⏱ ${formatDuration(elapsed)} · mulai ${created} WIB\n`;
+      if (wf.includes('encode') && elapsed < 90 * 60) {
+        msg += `  ℹ️ Encode 4 jam media biasanya 40–70 mnt wall-clock (bukan stuck).\n`;
+      } else if (wf.includes('encode') && elapsed >= 90 * 60) {
+        msg += `  ⚠️ Encode sudah >90 mnt — cek log Actions jika % tidak naik.\n`;
+      }
+      if (wf.includes('record') || wf.includes('vault')) {
+        msg += `  ℹ️ Rekam VOD sering selesai hitungan menit (durasi di notif = panjang konten).\n`;
+      }
+      // Tampilin run ID biar gak tebak-tebakan pas /cancel
+      msg += `  🆔 Run: <code>${run.id}</code>\n`;
+      // Coba resolve ORV ID dari KV (encode tulis run:<id> via /link)
+      let orvShown = '';
+      try {
+        const orvId = run.display_title?.match(/(?:RSM|ORV)-[a-z0-9-]+/i)?.[0]
+          || (await env.RUSEMEVA_KV.get(`run:${run.id}`));
+        if (orvId) orvShown = `  🏷 ID: <code>${orvId}</code>\n`;
+      } catch (_) {}
+      if (orvShown) msg += orvShown;
+      msg += `  🔗 ${run.html_url}\n`;
+
+      // Kalau encode lagi jalan -> ambil progress % dari KV (di-push progress.py)
+      if (wf.includes('encode')) {
+        try {
+          const jobsResp = await ghApi(env, `actions/runs/${run.id}/jobs?per_page=5`);
+          const jobs = await jobsResp.json();
+          const job = jobs.workflow_runs?.jobs?.[0] || jobs.jobs?.[0];
+          if (job?.steps) {
+            const enc = job.steps.find(s => s.name && s.name.toLowerCase().includes('encode to hevc'));
+            if (enc) {
+              const st = enc.status;
+              const em = enc.conclusion || '';
+              let pct = '';
+              if (st === 'in_progress') {
+                pct = ' ⏳ (berjalan)';
+                // Baca % terakhir dari KV: orv:<id>:pct (di-push progress.py tiap 5%)
+                try {
+                  const orvId = run.display_title?.match(/(?:RSM|ORV)-[a-z0-9-]+/i)?.[0]
+                    || (await env.RUSEMEVA_KV.get(`run:${run.id}`));
+                  if (orvId) {
+                    const kvPct = await env.RUSEMEVA_KV.get(`orv:${orvId}:pct`);
+                    if (kvPct !== null && kvPct !== undefined && kvPct !== '') {
+                      const n = parseInt(kvPct, 10);
+                      if (!isNaN(n) && n >= 0) pct = ` 🔄 ${n}%`;
+                    }
+                  }
+                } catch (_) {}
+              }
+              else if (st === 'completed' && em === 'success') pct = ' ✅';
+              else if (st === 'completed' && em === 'failure') pct = ' ❌';
+              msg += `  📊 Status: ${st}${pct}\n`;
+            }
+          }
+        } catch (_) {
+          // ignore: progress detail gak krusial
+        }
+      }
+      msg += `\n`;
+    }
+    await sendMessage(env.BOT_TOKEN, chatId, msg);
+  } catch (err) {
+    await sendMessage(env.BOT_TOKEN, chatId, `❌ Error: ${escapeHtml(err.message)}`);
+  }
+  return new Response('OK');
+}
+
+async function handleCancel(chatId, env, text) {
+  // Cari ID opsional: /cancel RSM-XXXX atau ORV-XXXX (atau ORV- lama) atau /cancel <run_url>
+  let targetId = '';
+  const parts = (text || '').trim().split(/\s+/);
+  if (parts[1]) targetId = parts[1];
+
+  try {
+    const resp = await ghApi(env, 'actions/runs?per_page=20');
+    const data = await resp.json();
+    const inProgress = (data.workflow_runs || []).filter(r => r.status === 'in_progress');
+
+    if (!inProgress.length) {
+      await sendMessage(env.BOT_TOKEN, chatId, '📭 Tidak ada rekaman yang sedang berjalan.');
+      return new Response('OK');
+    }
+
+    // === #2 /cancel <id>: filter by ID biar lebih presisi ===
+    if (targetId) {
+      // Coba resolve dari KV dulu (ID = orv:ID)
+      let matched = [];
+      try {
+        const meta = await env.RUSEMEVA_KV.get(`orv:${targetId}`);
+        if (meta) {
+          const m = JSON.parse(meta);
+          // KV simpan chat_id; cocokkan dgn chat pengirim
+          if (m.chat_id && String(m.chat_id) !== String(chatId)) {
+            await sendMessage(env.BOT_TOKEN, chatId,
+              `⛔ ID <code>${targetId}</code> bukan milikmu.`);
+            return new Response('OK');
+          }
+        }
+      } catch (_) {}
+
+      // Resolve run IDs dari reverse-map KV (orv_id -> run_id)
+      // encode tulis `orv:<id>:run`, record tulis `orv:<id>:recrun`
+      try {
+        const encRun = await env.RUSEMEVA_KV.get(`orv:${targetId}:run`);
+        const recRun = await env.RUSEMEVA_KV.get(`orv:${targetId}:recrun`);
+        const ids = [encRun, recRun].filter(Boolean);
+        if (ids.length) {
+          for (const rid of ids) {
+            const run = inProgress.find(r => String(r.id) === String(rid));
+            if (run) matched.push(run);
+          }
+        }
+      } catch (_) {}
+
+      // Kalau reverse-map kosong, fallback: match by run-id di URL / substring
+      if (!matched.length) {
+        const t = targetId.replace(/^.*\/runs\//, '').replace(/[^A-Za-z0-9]/g, '');
+        matched = inProgress.filter(r =>
+          String(r.id) === t ||
+          (r.html_url && r.html_url.includes(t)) ||
+          (r.name && r.name.toLowerCase().includes(targetId.toLowerCase()))
+        );
+      }
+
+      if (!matched.length) {
+        await sendMessage(env.BOT_TOKEN, chatId,
+          `⚠️ Tidak ada proses aktif dengan ID <code>${targetId}</code>.\nGunakan /status untuk lihat daftar ID/run.`);
+        return new Response('OK');
+      }
+      for (const run of matched) {
+        await ghApi(env, `actions/runs/${run.id}/cancel`, 'POST');
+      }
+      await sendMessage(env.BOT_TOKEN, chatId,
+        `🚫 <b>${matched.length} rekaman dibatalkan.</b>\n🔗 ${matched[0].html_url}`);
+      return new Response('OK');
+    }
+
+    // Fallback: cancel SEMUA in_progress (perilaku lama)
+    for (const run of inProgress) {
+      await ghApi(env, `actions/runs/${run.id}/cancel`, 'POST');
+    }
+    await sendMessage(env.BOT_TOKEN, chatId,
+      `🚫 <b>${inProgress.length} rekaman dibatalkan.</b>`);
+  } catch (err) {
+    await sendMessage(env.BOT_TOKEN, chatId, `❌ Error: ${escapeHtml(err.message)}`);
+  }
+  return new Response('OK');
+}
+
+// ============ SOURCE RECORDING (trans7 / sevenhub) ============
+
+async function handleSourceRecord(text, chatId, env, ctx, source) {
+  const parts = text.trim().split(/\s+/);
+  let duration = 600; // default 10 menit
+
+  if (parts[1]) {
+    const parsed = parseDuration(parts[1]);
+    if (parsed === null) {
+      await sendMessage(env.BOT_TOKEN, chatId, `❌ Format durasi salah.\nContoh: /${source} 2h`);
+      return;
+    }
+    if (parsed <= 0 || parsed > 21600) {
+      await sendMessage(env.BOT_TOKEN, chatId, '❌ Durasi 1 detik - 6 jam.');
+      return;
+    }
+    duration = parsed;
+  }
+
+  // Guard: cek active runs
+  try {
+    const running = await checkActiveRuns(env, () => {});
+    if (running.length > 0) {
+      await sendMessage(env.BOT_TOKEN, chatId, '⛔ Masih ada proses berjalan. /status untuk detail.');
+      return;
+    }
+  } catch (_) {}
+
+  // SevenHub: skip API check (inconsistent) — let GHA resolve via Playwright
+  if (source === 'sevenhub') {
+    await sendMessage(env.BOT_TOKEN, chatId, '⏳ Resolving sevenhub stream (Playwright)...');
+  }
+
+  // Generate filename + orvId
+  const now = new Date();
+  const wib = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+  const pad = n => String(n).padStart(2, '0');
+  const ts = `${wib.getFullYear()}-${pad(wib.getMonth()+1)}-${pad(wib.getDate())}_${pad(wib.getHours())}-${pad(wib.getMinutes())}-${pad(wib.getSeconds())}`;
+  const sourceLabel = source === 'trans7' ? 'Trans7' : 'SevenHub';
+  const filename = `Rusemeva-Asset-${sourceLabel}-${ts}-${formatDurationShort(duration)}.mp4`;
+  const orvId = genOrvId();
+  const profileKey = await getProfile(env, chatId);
+  const profile = ENCODE_PROFILES[profileKey];
+
+  // Simpan mapping
+  try {
+    await Promise.race([
+      env.RUSEMEVA_KV.put(`orv:${orvId}`, JSON.stringify({
+        chat_id: String(chatId), type: source, created_at: new Date().toISOString(),
+      }), { expirationTtl: 7 * 86400 }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('kv timeout')), 3000))
+    ]);
+  } catch (_) {}
+
+  // Dispatch ke GHA — source-based (GHA akan resolve URL)
+  const payload = {
+    source: source,
+    duration: duration,
+    chat_id: String(chatId),
+    human_duration: formatDuration(duration),
+    duration_label: formatDurationShort(duration),
+    filename: filename,
+    orv_id: orvId,
+    hevc_preset: profile.preset,
+    hevc_crf: profile.crf,
+    encode_profile: profile.key,
+  };
+
+  const resp = await fetch(
+    `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `token ${env.GH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'rusemeva-vault'
+      },
+      body: JSON.stringify({ event_type: 'record-request', client_payload: payload }),
+      signal: AbortSignal.timeout(15000)
+    }
+  );
+
+  if (resp.ok) {
+    await sendMessage(env.BOT_TOKEN, chatId,
+      `✅ <b>${sourceLabel} recording dimulai!</b>\n\n` +
+      `🆔 ID: <code>${orvId}</code>\n` +
+      `📺 Source: <b>${sourceLabel}</b>\n` +
+      `⏱ Durasi: ${formatDuration(duration)}\n` +
+      `📦 File: ${filename}\n` +
+      `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n\n` +
+      `🔗 URL akan di-resolve otomatis oleh GHA.\n` +
+      `Simpan ID untuk /cancel <id>.`
+    );
+  } else {
+    const err = await resp.text();
+    await sendMessage(env.BOT_TOKEN, chatId, `❌ Gagal dispatch: ${escapeHtml(err.slice(0, 300))}`);
+  }
+}
+
+// ============ DURATION PARSING ============
+
+// ============ ANALYTICS: /stats + /dashboard ============
+
+async function getAnalytics(env) {
+  try {
+    const raw = await env.RUSEMEVA_KV.get('orv:analytics');
+    if (raw) return JSON.parse(raw);
+  } catch (_) {}
+  return [];
+}
+
+async function handleStats(chatId, env) {
+  const list = await getAnalytics(env);
+  if (!list.length) {
+    await sendMessage(env.BOT_TOKEN, chatId, '📊 Belum ada data encode. Jalankan /record dulu.');
+    return;
+  }
+
+  // Filter 30 hari terakhir
+  const cutoff = Date.now() - 30 * 86400 * 1000;
+  const recent = list.filter(r => new Date(r.ts).getTime() > cutoff);
+  const data = recent.length > 0 ? recent : list.slice(-50);
+
+  const total = data.length;
+  const totalDur = data.reduce((s, r) => s + (r.duration_sec || 0), 0);
+  const totalHevcBytes = data.reduce((s, r) => s + (r.hevc_size_mb || 0) * 1024 * 1024, 0);
+  const avgRt = data.filter(r => r.realtime_x > 0).reduce((s, r, _, a) => s + r.realtime_x / a.length, 0);
+  const avgBr = data.filter(r => r.hevc_bitrate_mbps > 0).reduce((s, r, _, a) => s + r.hevc_bitrate_mbps / a.length, 0);
+
+  // Scene distribution
+  const sceneCounts = {};
+  data.forEach(r => { const k = r.scene_label || 'unknown'; sceneCounts[k] = (sceneCounts[k] || 0) + 1; });
+  const sceneTop = Object.entries(sceneCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+
+  // Profile distribution
+  const profCounts = {};
+  data.forEach(r => { const k = r.profile || 'unknown'; profCounts[k] = (profCounts[k] || 0) + 1; });
+  const profTop = Object.entries(profCounts).sort((a, b) => b[1] - a[1]);
+
+  // Downgrade & failure stats
+  const downgrades = data.filter(r => r.auto_downgrade).length;
+  const liveCount = data.filter(r => r.live_mode).length;
+
+  // Encode time
+  const encTimes = data.filter(r => r.encode_time_sec > 0);
+  const avgEncTime = encTimes.length > 0 ? encTimes.reduce((s, r, _, a) => s + r.encode_time_sec / a.length, 0) : 0;
+
+  const fmtBytes = (b) => {
+    if (b > 1024 * 1024 * 1024) return `${(b / 1024 / 1024 / 1024).toFixed(1)} GB`;
+    return `${(b / 1024 / 1024).toFixed(0)} MB`;
+  };
+  const fmtDur = (s) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    return h > 0 ? `${h}j${m}m` : `${m}m`;
+  };
+
+  const scope = recent.length > 0 ? '30 hari' : `${total} data terakhir`;
+  let msg = `📊 <b>Rusemeva Stats</b> (${scope})\n\n`;
+  msg += `🎬 Total rekaman: <b>${total}</b>\n`;
+  msg += `⏱ Total durasi: <b>${fmtDur(totalDur)}</b>\n`;
+  msg += `📦 Total HEVC: <b>${fmtBytes(totalHevcBytes)}</b>\n\n`;
+  msg += `⚡ Avg encode speed: <b>${avgRt.toFixed(1)}x</b> realtime\n`;
+  msg += `🎯 Avg bitrate: <b>${avgBr.toFixed(2)} Mbps</b>\n`;
+  if (avgEncTime > 0) msg += `⏱ Avg encode time: <b>${fmtDur(Math.round(avgEncTime))}</b>\n`;
+  msg += `\n`;
+
+  if (sceneTop.length > 0) {
+    msg += `🧠 Scene: ${sceneTop.map(([k, v]) => `${k} ${Math.round(v / total * 100)}%`).join(', ')}\n`;
+  }
+
+  if (downgrades > 0 || liveCount > 0) {
+    msg += `🔻 Auto-downgrade: ${downgrades} (${Math.round(downgrades / total * 100)}%)\n`;
+    if (liveCount > 0) msg += `📺 Live mode: ${liveCount} (${Math.round(liveCount / total * 100)}%)\n`;
+  }
+
+  if (profTop.length > 0) {
+    msg += `\n⚙️ Profile: ${profTop.map(([k, v]) => {
+      const label = ENCODE_PROFILES[k]?.label || k;
+      return `${label} ${Math.round(v / total * 100)}%`;
+    }).join(' | ')}\n`;
+  }
+
+  msg += `\n📊 Dashboard: <a href="https://rusemeva.rusemeva.workers.dev/dashboard">/dashboard</a>`;
+
+  await sendMessage(env.BOT_TOKEN, chatId, msg);
+}
+
+async function handleDashboard(env) {
+  const list = await getAnalytics(env);
+  const data = JSON.stringify(list);
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rusemeva Analytics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#c9d1d9;padding:20px}
+h1{color:#58a6ff;margin-bottom:20px;font-size:1.5em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px}
+.card h3{color:#8b949e;font-size:.85em;text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px}
+.stat{font-size:2em;font-weight:700;color:#58a6ff}
+.sub{color:#8b949e;font-size:.85em;margin-top:4px}
+canvas{max-height:250px}
+.empty{text-align:center;padding:40px;color:#8b949e}
+</style></head><body>
+<h1>📊 Rusemeva Analytics</h1>
+<div class="grid" id="stats"></div>
+<div class="grid">
+<div class="card"><h3>Encode Speed Trend</h3><canvas id="speedChart"></canvas></div>
+<div class="card"><h3>CRF Distribution</h3><canvas id="crfChart"></canvas></div>
+<div class="card"><h3>Scene Complexity</h3><canvas id="sceneChart"></canvas></div>
+<div class="card"><h3>Profile Usage</h3><canvas id="profileChart"></canvas></div>
+</div>
+<script>
+const DATA=${data};
+if(!DATA.length){document.getElementById('stats').innerHTML='<div class="empty">Belum ada data encode.</div>';throw 'no data'}
+const total=DATA.length;
+const totalDur=DATA.reduce((s,r)=>s+(r.duration_sec||0),0);
+const totalBytes=DATA.reduce((s,r)=>s+(r.hevc_size_mb||0)*1024*1024,0);
+const avgRt=DATA.filter(r=>r.realtime_x>0).reduce((s,r,_,a)=>s+r.realtime_x/a.length,0);
+const avgBr=DATA.filter(r=>r.hevc_bitrate_mbps>0).reduce((s,r,_,a)=>s+r.hevc_bitrate_mbps/a.length,0);
+const fmtB=b=>b>1073741824?(b/1073741824).toFixed(1)+' GB':(b/1048576).toFixed(0)+' MB';
+const fmtD=s=>{const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h?h+'j'+m+'m':m+'m'};
+document.getElementById('stats').innerHTML=
+'<div class="card"><h3>Total Rekaman</h3><div class="stat">'+total+'</div><div class="sub">'+fmtD(totalDur)+' total durasi</div></div>'+
+'<div class="card"><h3>Total HEVC</h3><div class="stat">'+fmtB(totalBytes)+'</div><div class="sub">~'+(totalBytes/totalDur/125000).toFixed(2)+'x kompresi</div></div>'+
+'<div class="card"><h3>Avg Speed</h3><div class="stat">'+avgRt.toFixed(1)+'x</div><div class="sub">realtime</div></div>'+
+'<div class="card"><h3>Avg Bitrate</h3><div class="stat">'+avgBr.toFixed(2)+'</div><div class="sub">Mbps</div></div>';
+const colors=['#58a6ff','#3fb950','#d29922','#f85149','#bc8cff','#79c0ff','#56d364','#e3b341'];
+const chartOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}},scales:{x:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}},y:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}};
+// Speed trend
+const byDate={};DATA.forEach(r=>{const d=r.ts.slice(0,10);if(!byDate[d])byDate[d]=[];byDate[d].push(r.realtime_x||0)});
+const dates=Object.keys(byDate).sort();
+new Chart('speedChart',{type:'line',data:{labels:dates,datasets:[{label:'realtime_x',data:dates.map(d=>{const v=byDate[d];return v.reduce((s,x)=>s+x,0)/v.length}),borderColor:'#58a6ff',backgroundColor:'rgba(88,166,255,0.1)',fill:true,tension:0.3}]},options:{...chartOpts,plugins:{legend:{display:false}}}});
+// CRF distribution
+const crfC={};DATA.forEach(r=>{const k=r.crf_final||r.crf_start||'?';crfC[k]=(crfC[k]||0)+1});
+const crfK=Object.keys(crfC).sort((a,b)=>a-b);
+new Chart('crfChart',{type:'bar',data:{labels:crfK.map(k=>'CRF '+k),datasets:[{data:crfK.map(k=>crfC[k]),backgroundColor:crfK.map((_,i)=>colors[i%colors.length])}]},options:{...chartOpts,plugins:{legend:{display:false}}}});
+// Scene
+const sceneC={};DATA.forEach(r=>{const k=r.scene_label||'unknown';sceneC[k]=(sceneC[k]||0)+1});
+const sceneK=Object.keys(sceneC).sort((a,b)=>sceneC[b]-sceneC[a]);
+new Chart('sceneChart',{type:'doughnut',data:{labels:sceneK,datasets:[{data:sceneK.map(k=>sceneC[k]),backgroundColor:sceneK.map((_,i)=>colors[i%colors.length])}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'},position:'right'}}}});
+// Profile
+const profC={};DATA.forEach(r=>{const k=r.profile||'unknown';profC[k]=(profC[k]||0)+1});
+const profK=Object.keys(profC).sort((a,b)=>profC[b]-profC[a]);
+new Chart('profileChart',{type:'pie',data:{labels:profK,datasets:[{data:profK.map(k=>profC[k]),backgroundColor:profK.map((_,i)=>colors[i%colors.length])}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'},position:'right'}}}});
+</script></body></html>`;
+
+  return new Response(html, {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
+}
+
+function parseDuration(str) {
+  str = str.trim().toLowerCase();
+
+  // Pure number → seconds (e.g. "300" or "300s")
+  if (/^\d+s?$/.test(str)) {
+    return parseInt(str);
+  }
+
+  // Pattern: 1h30m, 2h, 30m, 1h30s, 1h30m15s
+  let total = 0;
+  let remaining = str;
+
+  const hMatch = remaining.match(/^(\d+)h/);
+  if (hMatch) {
+    total += parseInt(hMatch[1]) * 3600;
+    remaining = remaining.slice(hMatch[0].length);
+  }
+
+  const mMatch = remaining.match(/^(\d+)m/);
+  if (mMatch) {
+    total += parseInt(mMatch[1]) * 60;
+    remaining = remaining.slice(mMatch[0].length);
+  }
+
+  const sMatch = remaining.match(/^(\d+)s?$/);
+  if (sMatch) {
+    total += parseInt(sMatch[1]);
+    remaining = '';
+  }
+
+  if (remaining || total === 0) return null;
+  return total;
+}
+
+// ============ HELPERS ============
+
+// ============ ORV ID GENERATOR ============
+// ID unik per aksi: RSM-<base36 timestamp>-<rand> (lama: ORV-*)
+// Dipakai di /record, /cancel, notif biar user gampang rujuk.
+function genOrvId() {
+  const ts = Date.now().toString(36).toUpperCase();
+  const rnd = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `RSM-${ts}-${rnd}`;
+}
+
+async function triggerGitHubActions(env, m3u8Url, duration, chatId, filename, referer = '', profile = null) {
+  const orvId = genOrvId();
+  // Simpan mapping ID -> chat (biar /status /cancel gampang) — timeout biar gak hang
+  try {
+    await Promise.race([
+      env.RUSEMEVA_KV.put(`orv:${orvId}`, JSON.stringify({
+        chat_id: String(chatId),
+        type: 'record',
+        created_at: new Date().toISOString(),
+      }), { expirationTtl: 60 * 60 * 24 * 7 }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('kv put timeout')), 3000))
+    ]);
+  } catch (_) { /* KV optional */ }
+
+  const payload = {
+    m3u8_url: m3u8Url,
+    duration: duration,
+    chat_id: String(chatId),
+    human_duration: formatDuration(duration),
+    duration_label: formatDurationShort(duration),
+    filename: filename,
+    orv_id: orvId,
+  };
+  if (referer) payload.referer = referer;
+  // Sisipkan profil encode (fallback ke default kalau null)
+  const p = profile || ENCODE_PROFILES[DEFAULT_PROFILE];
+  payload.hevc_preset = p.preset;
+  payload.hevc_crf = p.crf;
+  payload.encode_profile = p.key;
+
+  return {
+    resp: fetch(
+      `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${env.GH_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'rusemeva-vault'
+        },
+        body: JSON.stringify({
+            event_type: 'record-request',
+            client_payload: payload
+          }),
+        signal: AbortSignal.timeout(15000)
+      }
+    ),
+    orvId,
+  };
+}
+
+async function checkActiveRuns(env, logFn) {
+  try {
+    if (logFn) try { logFn('car: before ghApi'); } catch(_){}
+    const resp = await ghApi(env, 'actions/runs?per_page=10');
+    if (logFn) try { logFn('car: ghApi status=' + resp.status); } catch(_){}
+    const data = await resp.json();
+    if (logFn) try { logFn('car: json parsed runs=' + (data.workflow_runs||[]).length); } catch(_){}
+    return (data.workflow_runs || []).filter(r =>
+      r.status === 'in_progress' || r.status === 'queued' || r.status === 'pending');
+  } catch (_) {
+    if (logFn) try { logFn('car: CAUGHT err, return []'); } catch(_){}
+    return [];
+  }
+}
+
+function ghApi(env, path, method = 'GET') {
+  return fetch(
+    `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/${path}`,
+    {
+      method,
+      headers: {
+        'Authorization': `token ${env.GH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'rusemeva-vault'
+      },
+      signal: AbortSignal.timeout(10000)
+    }
+  );
+}
+
+async function sendMessage(token, chatId, text, replyMarkup = null, env = null) {
+  // Split messages > 4096 chars
+  const parts = splitMessage(text, 4096);
+  let lastStatus = null;
+  for (const part of parts) {
+    const body = { chat_id: chatId, text: part, parse_mode: 'HTML' };
+    if (replyMarkup) body.reply_markup = replyMarkup;
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15000)
+    });
+    lastStatus = r.status;
+    // Log kalau gagal (debug)
+    if (!r.ok) {
+      try {
+        const errBody = await r.text();
+        if (env) await env.RUSEMEVA_KV.put('orv:senderr', `${new Date().toISOString()} status=${r.status} :: ${errBody}`, { expirationTtl: 3600 });
+      } catch (_) {}
+    }
+  }
+  return lastStatus;
+}
+
+function settingsKeyboard() {
+  const keys = Object.keys(ENCODE_PROFILES);
+  const row = keys.map(k => ({ text: ENCODE_PROFILES[k].label, callback_data: `set:${k}` }));
+  return { inline_keyboard: [row] };
+}
+
+function splitMessage(text, maxLen) {
+  const parts = [];
+  while (text.length > maxLen) {
+    let idx = text.lastIndexOf('\n', maxLen);
+    if (idx <= 0) idx = maxLen;
+    parts.push(text.slice(0, idx));
+    text = text.slice(idx);
+  }
+  if (text) parts.push(text);
+  return parts;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function formatDuration(seconds) {
+  if (seconds < 60) return `${seconds} detik`;
+  if (seconds < 3600) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return s ? `${m} menit ${s} detik` : `${m} menit`;
+  }
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  let parts = `${h} jam`;
+  if (m) parts += ` ${m} menit`;
+  if (s) parts += ` ${s} detik`;
+  return parts;
+}
+
+function formatDurationShort(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  let parts = '';
+  if (h) parts += `${h}h`;
+  if (m) parts += `${m}m`;
+  if (s || !parts) parts += `${s}s`;
+  return parts;
+}
