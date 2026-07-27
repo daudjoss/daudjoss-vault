@@ -47,67 +47,63 @@ jobs:
             -e TELEGRAM_LOCAL=1 \
             -v /tmp/tg-bot-api:/var/lib/telegram-bot-api \
             aiogram/telegram-bot-api:latest \
-            --local -m 2097152000 --dir /var/lib/telegram-bot-api --http-port=8081 --verbosity=2
+            --local -m 2147483648 --dir /var/lib/telegram-bot-api --http-port=8081 --verbosity=2
           echo "⏳ Menunggu Bot API Server siap..."
-          for i in $(seq 1 45); do
+          for i in $(seq 1 60); do
             CODE=$(curl -s -o /tmp/getme.json -w "%{http_code}" "http://localhost:8081/bot${BOT_TOKEN}/getMe" 2>/dev/null)
             if [ "$CODE" = "200" ]; then echo "✅ Bot API Server ready"; break; fi
             sleep 2
           done
+          # Verify local mode
+          curl -s "http://localhost:8081/bot${BOT_TOKEN}/getMe" | python3 -c "import sys,json; d=json.load(sys.stdin); print('local_mode:', d.get('result',{}).get('can_read_all_group_messages', 'unknown'))" 2>/dev/null || true
 
-      - name: Kirim video ke Telegram
+      - name: Kirim video ke Telegram (curl)
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ inputs.chat_id }}
+          CAPTION: ${{ inputs.caption }}
         run: |
-          python3 << 'PYEOF'
-          import os, glob, json, urllib.request
-
-          bot = os.environ['BOT_TOKEN']
-          chat = os.environ['CHAT_ID']
-          caption = os.environ.get('INPUT_CAPTION', '')
-
-          files = glob.glob('/tmp/files/*.mp4') + glob.glob('/tmp/files/*.mkv')
-          if not files:
-              print("❌ No video files found")
-              exit(1)
-
-          for f in sorted(files, key=os.path.getsize, reverse=True):
-              size = os.path.getsize(f)
-              name = os.path.basename(f)
-              print(f"📤 Sending {name} ({size/1024/1024:.0f} MB)...")
-
-              cap = caption or f"📦 {name}\n📏 {size/1024/1024:.0f} MB"
-
-              for api in ['http://localhost:8081', 'https://api.telegram.org']:
-                  url = f'{api}/bot{bot}/sendVideo'
-                  try:
-                      boundary = '----FormBoundary123'
-                      parts = []
-                      parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n{chat}'.encode())
-                      parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="caption"\r\n\r\n{cap}'.encode())
-                      parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="parse_mode"\r\n\r\nHTML'.encode())
-                      parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="video"; filename="{name}"\r\nContent-Type: video/mp4\r\n\r\n'.encode())
-                      with open(f, 'rb') as vf:
-                          parts.append(vf.read())
-                      parts.append(f'\r\n--{boundary}--\r\n'.encode())
-                      body = b''.join(parts)
-
-                      req = urllib.request.Request(url, data=body, headers={
-                          'Content-Type': f'multipart/form-data; boundary={boundary}'
-                      })
-                      with urllib.request.urlopen(req, timeout=900) as r:
-                          resp = json.loads(r.read().decode())
-                          if resp.get('ok'):
-                              fid = resp.get('result', {}).get('video', {}).get('file_id', 'sent')
-                              print(f'✅ Sent via {api} — file_id={fid[:30]}...')
-                              break
-                  except Exception as e:
-                      err_body = ''
-                      if hasattr(e, 'read'):
-                          try: err_body = e.read().decode()[:200]
-                          except: pass
-                      print(f'⚠️ {api}: {e} {err_body}')
-              else:
-                  print(f'❌ Gagal kirim {name} via semua API')
-          PYEOF
+          for f in /tmp/files/*.mp4 /tmp/files/*.mkv; do
+            [ -f "$f" ] || continue
+            SIZE=$(stat -c%s "$f")
+            NAME=$(basename "$f")
+            echo "📤 Sending $NAME ($(( SIZE / 1024 / 1024 )) MB)..."
+            
+            CAP="${CAPTION:-📦 $NAME\n📏 $(( SIZE / 1024 / 1024 )) MB}"
+            
+            # Try local Bot API Server first (2GB limit)
+            echo "Trying localhost:8081..."
+            RESP=$(curl -s --max-time 900 \
+              -X POST "http://localhost:8081/bot${BOT_TOKEN}/sendVideo" \
+              -F "chat_id=${CHAT_ID}" \
+              -F "caption=${CAP}" \
+              -F "parse_mode=HTML" \
+              -F "video=@${f}" 2>&1)
+            
+            OK=$(echo "$RESP" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ok', False))" 2>/dev/null || echo "False")
+            
+            if [ "$OK" = "True" ]; then
+              echo "✅ Sent via localhost:8081"
+              echo "$RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print('file_id:', d.get('result',{}).get('video',{}).get('file_id','?')[:50])" 2>/dev/null
+              continue
+            fi
+            
+            echo "⚠️ localhost gagal: ${RESP:0:200}"
+            
+            # Fallback to public API (50MB limit)
+            echo "Trying api.telegram.org..."
+            RESP2=$(curl -s --max-time 300 \
+              -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendVideo" \
+              -F "chat_id=${CHAT_ID}" \
+              -F "caption=${CAP}" \
+              -F "parse_mode=HTML" \
+              -F "video=@${f}" 2>&1)
+            
+            OK2=$(echo "$RESP2" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ok', False))" 2>/dev/null || echo "False")
+            
+            if [ "$OK2" = "True" ]; then
+              echo "✅ Sent via api.telegram.org"
+            else
+              echo "❌ Gagal kirim: ${RESP2:0:300}"
+            fi
+          done
