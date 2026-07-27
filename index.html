@@ -4,174 +4,575 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rusemeva Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #484f58;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-purple: #bc8cff;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0d1117;
-            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             padding: 20px;
+            min-height: 100vh;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 {
-            color: #58a6ff;
-            margin-bottom: 8px;
-            font-size: 24px;
-        }
-        .subtitle {
-            color: #8b949e;
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header h1 .logo { font-size: 32px; }
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-secondary);
             font-size: 14px;
         }
-        .stats {
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
-            margin-bottom: 32px;
-        }
-        .stat-card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 16px;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #58a6ff;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: #8b949e;
-            margin-top: 4px;
-            text-transform: uppercase;
-        }
-        .section {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 16px;
             margin-bottom: 24px;
         }
-        .section h2 {
-            color: #c9d1d9;
-            font-size: 16px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #30363d;
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        .stat-card.blue::before { background: var(--accent-blue); }
+        .stat-card.green::before { background: var(--accent-green); }
+        .stat-card.red::before { background: var(--accent-red); }
+        .stat-card.yellow::before { background: var(--accent-yellow); }
+        .stat-card.purple::before { background: var(--accent-purple); }
+        .stat-icon { font-size: 24px; margin-bottom: 8px; }
+        .stat-value { font-size: 36px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card.blue .stat-value { color: var(--accent-blue); }
+        .stat-card.green .stat-value { color: var(--accent-green); }
+        .stat-card.red .stat-value { color: var(--accent-red); }
+        .stat-card.yellow .stat-value { color: var(--accent-yellow); }
+        .stat-card.purple .stat-value { color: var(--accent-purple); }
+        
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        /* Section Card */
+        .section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+        .search-input {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 200px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        
+        /* Table */
         table {
             width: 100%;
             border-collapse: collapse;
         }
         th, td {
-            padding: 8px 12px;
+            padding: 10px 14px;
             text-align: left;
-            border-bottom: 1px solid #21262d;
+            border-bottom: 1px solid var(--border);
         }
         th {
-            color: #8b949e;
+            color: var(--text-secondary);
             font-size: 12px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
         td { font-size: 14px; }
+        tr:hover { background: rgba(88, 166, 255, 0.05); }
         code {
-            background: #21262d;
-            padding: 2px 6px;
-            border-radius: 4px;
+            background: var(--bg-tertiary);
+            padding: 3px 8px;
+            border-radius: 6px;
             font-size: 12px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
         }
-        a { color: #58a6ff; text-decoration: none; }
+        a { color: var(--accent-blue); text-decoration: none; }
         a:hover { text-decoration: underline; }
+        
+        /* Badges */
         .badge {
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
             font-weight: 500;
         }
-        .badge-success { background: #1a4d2e; color: #3fb950; }
-        .badge-failure { background: #4d1a1a; color: #f85149; }
-        .badge-cancelled { background: #3d3d3d; color: #8b949e; }
-        .badge-in_progress { background: #1a3a4d; color: #58a6ff; }
+        .badge-success { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+        .badge-failure { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+        .badge-cancelled { background: rgba(139, 148, 158, 0.15); color: var(--text-secondary); }
+        .badge-running { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+        
+        /* Calendar */
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(35, 1fr);
+            gap: 3px;
+            margin-top: 12px;
+        }
+        .cal-day {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--text-muted);
+            cursor: default;
+            position: relative;
+        }
+        .cal-0 { background: var(--bg-tertiary); }
+        .cal-1 { background: rgba(63, 185, 80, 0.3); }
+        .cal-2 { background: rgba(63, 185, 80, 0.5); }
+        .cal-3 { background: rgba(63, 185, 80, 0.7); }
+        .cal-4 { background: rgba(63, 185, 80, 0.85); }
+        .cal-5 { background: var(--accent-green); color: white; }
+        
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 12px;
+        }
+        
+        /* Status indicator */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(63, 185, 80, 0.1);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .status-bar.error {
+            background: rgba(248, 81, 73, 0.1);
+            border-color: rgba(248, 81, 73, 0.3);
+        }
+        
+        /* Footer */
         .footer {
             text-align: center;
-            color: #484f58;
-            font-size: 12px;
-            margin-top: 32px;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
         }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+        .footer a { color: var(--text-secondary); }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; gap: 12px; }
+            .filters { flex-direction: column; }
+            .search-input { width: 100%; }
+            .calendar { grid-template-columns: repeat(7, 1fr); }
         }
+        
+        /* Animations */
+        .stat-card, .section {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Hidden rows for filter */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📊 Rusemeva Dashboard</h1>
-        <p class="subtitle">Last updated: 2026-07-28 03:01 WIB</p>
-
-        <div class="stats">
-            <div class="stat-card">
+        <!-- Header -->
+        <div class="header">
+            <h1><span class="logo">🎬</span> Rusemeva Dashboard</h1>
+            <div class="header-meta">
+                <div class="live-dot"></div>
+                <span>Auto-refresh 30s</span>
+                <span>|</span>
+                <span id="last-update">2026-07-28 03:49 WIB</span>
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon">📹</div>
                 <div class="stat-value">0</div>
                 <div class="stat-label">Total Rekaman</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card green">
+                <div class="stat-icon">✅</div>
                 <div class="stat-value">0</div>
                 <div class="stat-label">Sukses</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card red">
+                <div class="stat-icon">❌</div>
                 <div class="stat-value">0</div>
                 <div class="stat-label">Gagal</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card yellow">
+                <div class="stat-icon">📊</div>
                 <div class="stat-value">0%</div>
                 <div class="stat-label">Success Rate</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card purple">
+                <div class="stat-icon">🎞</div>
                 <div class="stat-value">0</div>
-                <div class="stat-label">Encode</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">0</div>
-                <div class="stat-label">Transcribe</div>
+                <div class="stat-label">Encode Jobs</div>
             </div>
         </div>
-
+        
+        <!-- Activity Calendar -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">📅 Aktivitas 35 Hari Terakhir</div>
+            </div>
+            <div class="calendar">
+                <div class="cal-day cal-0" title="2026-06-24: 0 recordings">24</div><div class="cal-day cal-0" title="2026-06-25: 0 recordings">25</div><div class="cal-day cal-0" title="2026-06-26: 0 recordings">26</div><div class="cal-day cal-0" title="2026-06-27: 0 recordings">27</div><div class="cal-day cal-0" title="2026-06-28: 0 recordings">28</div><div class="cal-day cal-0" title="2026-06-29: 0 recordings">29</div><div class="cal-day cal-0" title="2026-06-30: 0 recordings">30</div><div class="cal-day cal-0" title="2026-07-01: 0 recordings">1</div><div class="cal-day cal-0" title="2026-07-02: 0 recordings">2</div><div class="cal-day cal-0" title="2026-07-03: 0 recordings">3</div><div class="cal-day cal-0" title="2026-07-04: 0 recordings">4</div><div class="cal-day cal-0" title="2026-07-05: 0 recordings">5</div><div class="cal-day cal-0" title="2026-07-06: 0 recordings">6</div><div class="cal-day cal-0" title="2026-07-07: 0 recordings">7</div><div class="cal-day cal-0" title="2026-07-08: 0 recordings">8</div><div class="cal-day cal-0" title="2026-07-09: 0 recordings">9</div><div class="cal-day cal-0" title="2026-07-10: 0 recordings">10</div><div class="cal-day cal-0" title="2026-07-11: 0 recordings">11</div><div class="cal-day cal-0" title="2026-07-12: 0 recordings">12</div><div class="cal-day cal-0" title="2026-07-13: 0 recordings">13</div><div class="cal-day cal-0" title="2026-07-14: 0 recordings">14</div><div class="cal-day cal-0" title="2026-07-15: 0 recordings">15</div><div class="cal-day cal-0" title="2026-07-16: 0 recordings">16</div><div class="cal-day cal-0" title="2026-07-17: 0 recordings">17</div><div class="cal-day cal-0" title="2026-07-18: 0 recordings">18</div><div class="cal-day cal-0" title="2026-07-19: 0 recordings">19</div><div class="cal-day cal-0" title="2026-07-20: 0 recordings">20</div><div class="cal-day cal-0" title="2026-07-21: 0 recordings">21</div><div class="cal-day cal-0" title="2026-07-22: 0 recordings">22</div><div class="cal-day cal-0" title="2026-07-23: 0 recordings">23</div><div class="cal-day cal-0" title="2026-07-24: 0 recordings">24</div><div class="cal-day cal-0" title="2026-07-25: 0 recordings">25</div><div class="cal-day cal-0" title="2026-07-26: 0 recordings">26</div><div class="cal-day cal-0" title="2026-07-27: 0 recordings">27</div><div class="cal-day cal-0" title="2026-07-28: 0 recordings">28</div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px; align-items:center; font-size:12px; color:var(--text-secondary)">
+                <span>Less</span>
+                <div class="cal-day cal-0" style="width:14px;height:14px"></div>
+                <div class="cal-day cal-1" style="width:14px;height:14px"></div>
+                <div class="cal-day cal-2" style="width:14px;height:14px"></div>
+                <div class="cal-day cal-3" style="width:14px;height:14px"></div>
+                <div class="cal-day cal-4" style="width:14px;height:14px"></div>
+                <div class="cal-day cal-5" style="width:14px;height:14px"></div>
+                <span>More</span>
+            </div>
+        </div>
+        
+        <!-- Charts -->
         <div class="grid-2">
             <div class="section">
-                <h2>🎬 Recent Recordings</h2>
-                <table>
-                    <tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr>
-                    
-                </table>
+                <div class="section-header">
+                    <div class="section-title">📈 Rekaman per Hari</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dailyChart"></canvas>
+                </div>
             </div>
-
             <div class="section">
-                <h2>🎞 Encode Jobs</h2>
-                <table>
-                    <tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr>
-                    
-                </table>
+                <div class="section-header">
+                    <div class="section-title">📊 Success Rate per Minggu</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weeklyChart"></canvas>
+                </div>
             </div>
         </div>
-
+        
+        <!-- Recordings Table -->
         <div class="section">
-            <h2>📦 Recent Releases</h2>
-            <table>
-                <tr><th>Tag</th><th>Size</th><th>Time</th></tr>
-                
+            <div class="section-header">
+                <div class="section-title">🎬 Recent Recordings</div>
+                <div class="filters">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search ID...">
+                    <button class="filter-btn active" onclick="filterTable('all')">All</button>
+                    <button class="filter-btn" onclick="filterTable('success')">✅ Success</button>
+                    <button class="filter-btn" onclick="filterTable('failure')">❌ Failed</button>
+                    <button class="filter-btn" onclick="filterTable('running')">🔄 Running</button>
+                </div>
+            </div>
+            <table id="recordingsTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Run ID</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
             </table>
         </div>
-
+        
+        <!-- Encode Jobs -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">🎞 Encode Jobs</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Run ID</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Releases -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">📦 Recent Releases</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tag</th>
+                        <th>Size</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Footer -->
         <div class="footer">
-            Rusemeva Vault &middot; <a href="https://github.com/daudjoss/daudjoss-vault">GitHub</a>
+            <p>Rusemeva Vault &middot; <a href="https://github.com/daudjoss/daudjoss-vault">GitHub</a> &middot; <a href="https://github.com/daudjoss/daudjoss-vault/actions">Actions</a></p>
+            <p style="margin-top:8px">Auto-refresh setiap 30 detik &middot; Data dari GitHub API</p>
         </div>
     </div>
+    
+    <script>
+        // Charts
+        const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+        new Chart(dailyCtx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Recordings',
+                    data: [],
+                    backgroundColor: 'rgba(88, 166, 255, 0.6)',
+                    borderColor: 'rgba(88, 166, 255, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' },
+                        ticks: { color: '#8b949e', maxTicksLimit: 10 }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' },
+                        ticks: { color: '#8b949e', stepSize: 1 }
+                    }
+                }
+            }
+        });
+        
+        const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+        new Chart(weeklyCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Success',
+                        data: [],
+                        borderColor: '#3fb950',
+                        backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                    },
+                    {
+                        label: 'Failed',
+                        data: [],
+                        borderColor: '#f85149',
+                        backgroundColor: 'rgba(248, 81, 73, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#8b949e' }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' },
+                        ticks: { color: '#8b949e' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(48, 54, 61, 0.5)' },
+                        ticks: { color: '#8b949e', stepSize: 1 }
+                    }
+                }
+            }
+        });
+        
+        // Filter functions
+        function filterTable(status) {
+            const rows = document.querySelectorAll('#recordingsTable tbody tr');
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            rows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const search = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#recordingsTable tbody tr');
+            rows.forEach(row => {
+                const id = row.querySelector('code').textContent.toLowerCase();
+                row.classList.toggle('hidden', !id.includes(search));
+            });
+        });
+        
+        // Auto-refresh
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
 </body>
 </html>

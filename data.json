@@ -1,12 +1,16 @@
 {
-  "generated": "2026-07-28T03:01:09.375018+07:00",
+  "generated": "2026-07-28T03:49:51.532855+07:00",
   "stats": {
     "total_recordings": 0,
     "total_success": 0,
     "total_failed": 0,
     "success_rate": 0,
     "total_encode": 0,
-    "total_transcribe": 0
+    "encode_success": 0,
+    "encode_rate": 0,
+    "total_other": 0,
+    "daily_activity": {},
+    "weekly_stats": {}
   },
   "recent_runs": [],
   "recent_releases": []
