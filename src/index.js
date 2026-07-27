@@ -182,6 +182,13 @@ export default {
 
         const update = await request.json();
 
+        // DEBUG: log incoming update type
+        try {
+          const dbgType = update.message ? 'message' : update.callback_query ? 'callback' : update.edited_message ? 'edited' : 'other';
+          const dbgText = update.message?.text || update.callback_query?.data || '';
+          await env.RUSEMEVA_KV.put('orv:debug', `incoming: ${dbgType} text=${dbgText.slice(0,50)} from=${update.message?.from?.id || update.callback_query?.from?.id}`, {expirationTtl:60});
+        } catch(_){}
+
         // === #7 INLINE KEYBOARD: tangani callback_query (tombol /setting) ===
         if (update.callback_query) {
           const cb = update.callback_query;
@@ -834,9 +841,6 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     duration = parsed;
   }
 
-  // Guard: cek active runs — SKIP (user pakai /cancel untuk manage)
-  // checkActiveRuns sering false-positive dan block command
-
   // SevenHub: skip API check
   if (source === 'sevenhub') {
     await sendMessage(env.BOT_TOKEN, chatId, '⏳ Resolving sevenhub stream (Playwright)...');
@@ -853,70 +857,67 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
   const profileKey = await getProfile(env, chatId);
   const profile = ENCODE_PROFILES[profileKey];
 
-  // Simpan mapping
-  try {
-    await Promise.race([
-      env.RUSEMEVA_KV.put(`orv:${orvId}`, JSON.stringify({
-        chat_id: String(chatId), type: source, created_at: new Date().toISOString(),
-      }), { expirationTtl: 7 * 86400 }),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('kv timeout')), 3000))
-    ]);
-  } catch (_) {}
+  // === KIRIM PESAN DULUAN (sebelum dispatch) ===
+  const estSec = Math.max(120, Math.round(duration / 3));
+  const estMin = Math.round(estSec / 60);
+  const modeLabel = duration <= 600 ? 'VOD biasanya cepat' : 'live ~realtime';
+  const msg = `✅ <b>Rekaman dimulai!</b>\n\n` +
+    `🆔 ID: <code>${orvId}</code>\n` +
+    `📺 Source: <b>${sourceLabel}</b>\n` +
+    `⏱ Durasi: ${formatDuration(duration)}\n` +
+    `📦 File: ${filename}\n` +
+    `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n` +
+    `⏱ Target konten: ${formatDuration(duration)} (cap; ${modeLabel})\n` +
+    `🎞 Estimasi encode HEVC: ~${estMin} menit (workflow terpisah, ±30%)\n\n` +
+    `☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n` +
+    `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`;
+  await sendMessage(env.BOT_TOKEN, chatId, msg);
 
-  // Dispatch ke GHA — source-based (GHA akan resolve URL)
-  const payload = {
-    source: source,
-    duration: duration,
-    chat_id: String(chatId),
-    human_duration: formatDuration(duration),
-    duration_label: formatDurationShort(duration),
-    filename: filename,
-    orv_id: orvId,
-    hevc_preset: profile.preset,
-    hevc_crf: profile.crf,
-    encode_profile: profile.key,
-  };
-
-  const resp = await fetch(
-    `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/dispatches`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `token ${env.GH_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'rusemeva-vault'
-      },
-      body: JSON.stringify({ event_type: 'record-request', client_payload: payload }),
-      signal: AbortSignal.timeout(15000)
-    }
-  );
-
-  if (resp.ok) {
-    // Estimasi encode (kasar: 1/3 durasi, min 2 menit)
-    const estSec = Math.max(120, Math.round(duration / 3));
-    const estMin = Math.round(estSec / 60);
-    const modeLabel = duration <= 600 ? 'VOD biasanya cepat' : 'live ~realtime';
-    const msg = `✅ <b>Rekaman dimulai!</b>\n\n` +
-      `🆔 ID: <code>${orvId}</code>\n` +
-      `📺 Source: <b>${sourceLabel}</b>\n` +
-      `⏱ Durasi: ${formatDuration(duration)}\n` +
-      `📦 File: ${filename}\n` +
-      `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n` +
-      `⏱ Target konten: ${formatDuration(duration)} (cap; ${modeLabel})\n` +
-      `🎞 Estimasi encode HEVC: ~${estMin} menit (workflow terpisah, ±30%)\n\n` +
-      `☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n` +
-      `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`;
+  // === DISPATCH KE GHA (background via ctx.waitUntil) ===
+  ctx.waitUntil((async () => {
     try {
-      await sendMessage(env.BOT_TOKEN, chatId, msg);
-      try { await env.RUSEMEVA_KV.put('orv:debug', `sendMessage OK for ${orvId}`, {expirationTtl:60}); } catch(_){}
+      // Simpan mapping
+      await env.RUSEMEVA_KV.put(`orv:${orvId}`, JSON.stringify({
+        chat_id: String(chatId), type: source, created_at: new Date().toISOString(),
+      }), { expirationTtl: 7 * 86400 });
+    } catch (_) {}
+
+    const payload = {
+      source: source,
+      duration: duration,
+      chat_id: String(chatId),
+      human_duration: formatDuration(duration),
+      duration_label: formatDurationShort(duration),
+      filename: filename,
+      orv_id: orvId,
+      hevc_preset: profile.preset,
+      hevc_crf: profile.crf,
+      encode_profile: profile.key,
+    };
+
+    try {
+      const resp = await fetch(
+        `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `token ${env.GH_TOKEN}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'rusemeva-vault'
+          },
+          body: JSON.stringify({ event_type: 'record-request', client_payload: payload }),
+          signal: AbortSignal.timeout(15000)
+        }
+      );
+      if (!resp.ok) {
+        const err = await resp.text();
+        await sendMessage(env.BOT_TOKEN, chatId, `❌ Gagal dispatch: ${escapeHtml(err.slice(0, 300))}`);
+      }
     } catch (e) {
-      try { await env.RUSEMEVA_KV.put('orv:debug', `sendMessage FAILED: ${e.message}`, {expirationTtl:300}); } catch(_){}
-      console.error('sendMessage FAILED:', e);
+      await sendMessage(env.BOT_TOKEN, chatId, `❌ Dispatch error: ${escapeHtml(String(e.message || e).slice(0, 200))}`);
     }
-  } else {
-    const err = await resp.text();
-    await sendMessage(env.BOT_TOKEN, chatId, `❌ Gagal dispatch: ${escapeHtml(err.slice(0, 300))}`);
-  }
+  })());
+
  } catch (e) {
   try { await env.RUSEMEVA_KV.put('orv:debug', `handleSourceRecord err: ${e.message}`, {expirationTtl:60}); } catch(_){}
   try {
