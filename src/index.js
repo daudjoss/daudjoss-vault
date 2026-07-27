@@ -857,7 +857,7 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
   const profileKey = await getProfile(env, chatId);
   const profile = ENCODE_PROFILES[profileKey];
 
-  // === KIRIM PESAN DULUAN (sebelum dispatch) ===
+  // === BUILD PESAN + DISPATCH + KV — SEMUA DI BACKGROUND ===
   const estSec = Math.max(120, Math.round(duration / 3));
   const estMin = Math.round(estSec / 60);
   const modeLabel = duration <= 600 ? 'VOD biasanya cepat' : 'live ~realtime';
@@ -871,30 +871,33 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     `🎞 Estimasi encode HEVC: ~${estMin} menit (workflow terpisah, ±30%)\n\n` +
     `☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n` +
     `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`;
-  await sendMessage(env.BOT_TOKEN, chatId, msg);
 
-  // === DISPATCH KE GHA (background via ctx.waitUntil) ===
+  const payload = {
+    source: source,
+    duration: duration,
+    chat_id: String(chatId),
+    human_duration: formatDuration(duration),
+    duration_label: formatDurationShort(duration),
+    filename: filename,
+    orv_id: orvId,
+    hevc_preset: profile.preset,
+    hevc_crf: profile.crf,
+    encode_profile: profile.key,
+  };
+
+  // SEMUA jaringan di background — return 200 ASAP ke Telegram
   ctx.waitUntil((async () => {
+    // 1. Kirim "Rekaman dimulai!"
+    await sendMessage(env.BOT_TOKEN, chatId, msg);
+
+    // 2. Simpan mapping ke KV
     try {
-      // Simpan mapping
       await env.RUSEMEVA_KV.put(`orv:${orvId}`, JSON.stringify({
         chat_id: String(chatId), type: source, created_at: new Date().toISOString(),
       }), { expirationTtl: 7 * 86400 });
     } catch (_) {}
 
-    const payload = {
-      source: source,
-      duration: duration,
-      chat_id: String(chatId),
-      human_duration: formatDuration(duration),
-      duration_label: formatDurationShort(duration),
-      filename: filename,
-      orv_id: orvId,
-      hevc_preset: profile.preset,
-      hevc_crf: profile.crf,
-      encode_profile: profile.key,
-    };
-
+    // 3. Dispatch ke GHA
     try {
       const resp = await fetch(
         `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/dispatches`,

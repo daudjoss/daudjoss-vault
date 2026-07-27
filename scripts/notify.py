@@ -240,7 +240,17 @@ def send_photo_fallback(photo_path, caption):
         return True
     except Exception as e:
         print(f"⚠️ sendPhoto gagal: {e}")
-        return False
+        # Fallback ke public API
+        try:
+            req2 = urllib.request.Request(
+                f"{FALLBACK_API}/sendPhoto",
+                data=body,
+                headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
+            urllib.request.urlopen(req2, timeout=600)
+            return True
+        except Exception as e2:
+            print(f"⚠️ sendPhoto fallback juga gagal: {e2}")
+            return False
 
 
 def send_video_with_fallback(video_path, caption, thumb_path):
