@@ -31,7 +31,7 @@ def main():
         f'⏱ Target konten: {dur} (cap; {mode})\n'
         f'🎞 Estimasi encode HEVC: ~{estm} menit (workflow terpisah, ±30%)\n\n'
         f'☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n'
-        f'Simpan ID ini untuk /cancel <id> kalau mau membatalkan.'
+        f'Simpan ID ini untuk /cancel &lt;id&gt; kalau mau membatalkan.'
     )
 
     data = json.dumps({

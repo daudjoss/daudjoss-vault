@@ -357,7 +357,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
-          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          TG_API_URL: 'https://api.telegram.org'
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
         run: |
           USE=$(df -h /tmp | awk 'NR==2{gsub("%","",$5); print $5}')
@@ -381,7 +381,7 @@ jobs:
           FILENAME: ${{ steps.inputs.outputs.filename }}
           DURATION_SEC: ${{ steps.inputs.outputs.duration }}
           REQUESTED_DURATION: ${{ steps.inputs.outputs.requested_duration || steps.inputs.outputs.duration }}
-          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          TG_API_URL: 'https://api.telegram.org'
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
           WORKER_URL: ${{ secrets.WORKER_URL || 'https://rusemeva.rusemeva.workers.dev' }}
           PROGRESS_SECRET: ${{ secrets.PROGRESS_SECRET || '' }}
@@ -502,7 +502,7 @@ jobs:
           HEVC_DUR: ${{ env.HEVC_DUR }}
           HEVC_THUMB_FILE: ${{ env.HEVC_THUMB_FILE }}
           HAS_HEVC_THUMB: ${{ env.HAS_HEVC_THUMB }}
-          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          TG_API_URL: 'https://api.telegram.org'
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
           HEVC_SPLIT: ${{ env.HEVC_SPLIT || '0' }}
           FAIL_REASON: ${{ env.FAIL_REASON || 'unknown' }}

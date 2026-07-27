@@ -728,7 +728,7 @@ jobs:
           ORIG_BYTES: ${{ env.ORIG_BYTES }}
           THUMB_FILE: ${{ env.THUMB_FILE }}
           HAS_THUMB: ${{ env.HAS_THUMB }}
-          TG_API_URL: ${{ secrets.TG_API_URL || 'http://localhost:8081' }}
+          TG_API_URL: 'https://api.telegram.org'
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
           PHASE: original
           HEVC_PRESET: ${{ steps.inputs.outputs.hevc_preset || 'veryfast' }}

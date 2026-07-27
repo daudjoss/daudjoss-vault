@@ -870,7 +870,7 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     `⏱ Target konten: ${formatDuration(duration)} (cap; ${modeLabel})\n` +
     `🎞 Estimasi encode HEVC: ~${estMin} menit (workflow terpisah, ±30%)\n\n` +
     `☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n` +
-    `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`;
+    `Simpan ID ini untuk /cancel &lt;id&gt; kalau mau membatalkan.`;
 
   const payload = {
     source: source,
