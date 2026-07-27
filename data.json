@@ -1,17 +1,295 @@
 {
-  "generated": "2026-07-28T04:10:09.590412+07:00",
+  "generated": "2026-07-28T04:11:43.535528+07:00",
   "stats": {
-    "total_recordings": 0,
-    "total_success": 0,
+    "total_recordings": 16,
+    "total_success": 11,
     "total_failed": 0,
-    "success_rate": 0,
-    "total_encode": 0,
-    "encode_success": 0,
-    "encode_rate": 0,
-    "total_other": 0,
-    "daily_activity": {},
-    "weekly_stats": {}
+    "success_rate": 68.8,
+    "total_encode": 17,
+    "encode_success": 5,
+    "encode_rate": 29.4,
+    "total_other": 10,
+    "daily_activity": {
+      "2026-07-27": 16
+    },
+    "weekly_stats": {
+      "2026-W30": {
+        "success": 11,
+        "fail": 0
+      }
+    }
   },
-  "recent_runs": [],
+  "recent_runs": [
+    {
+      "conclusion": "",
+      "createdAt": "2026-07-27T21:11:34Z",
+      "databaseId": 30305802489,
+      "event": "workflow_dispatch",
+      "name": "Update Dashboard",
+      "status": "in_progress",
+      "updatedAt": "2026-07-27T21:11:38Z"
+    },
+    {
+      "conclusion": "",
+      "createdAt": "2026-07-27T21:11:33Z",
+      "databaseId": 30305802215,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "queued",
+      "updatedAt": "2026-07-27T21:11:33Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T21:10:11Z",
+      "databaseId": 30305706010,
+      "event": "dynamic",
+      "name": "pages build and deployment",
+      "status": "completed",
+      "updatedAt": "2026-07-27T21:10:59Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T21:09:55Z",
+      "databaseId": 30305686567,
+      "event": "workflow_dispatch",
+      "name": "Update Dashboard",
+      "status": "completed",
+      "updatedAt": "2026-07-27T21:10:13Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T21:08:47Z",
+      "databaseId": 30305608722,
+      "event": "dynamic",
+      "name": "pages build and deployment",
+      "status": "completed",
+      "updatedAt": "2026-07-27T21:09:53Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T21:08:37Z",
+      "databaseId": 30305597642,
+      "event": "workflow_run",
+      "name": "Update Dashboard",
+      "status": "completed",
+      "updatedAt": "2026-07-27T21:08:50Z"
+    },
+    {
+      "conclusion": "",
+      "createdAt": "2026-07-27T21:08:14Z",
+      "databaseId": 30305571189,
+      "event": "repository_dispatch",
+      "name": "rusemeva-encode",
+      "status": "in_progress",
+      "updatedAt": "2026-07-27T21:08:24Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:57:32Z",
+      "databaseId": 30304808242,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:57:41Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:52:24Z",
+      "databaseId": 30304433483,
+      "event": "repository_dispatch",
+      "name": "rusemeva-vault",
+      "status": "completed",
+      "updatedAt": "2026-07-27T21:08:34Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:49:53Z",
+      "databaseId": 30304253211,
+      "event": "dynamic",
+      "name": "pages build and deployment",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:50:40Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:49:36Z",
+      "databaseId": 30304234582,
+      "event": "workflow_dispatch",
+      "name": "Update Dashboard",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:49:55Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:49:26Z",
+      "databaseId": 30304221915,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:49:39Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:43:26Z",
+      "databaseId": 30303793515,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:43:41Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:01:11Z",
+      "databaseId": 30300779478,
+      "event": "dynamic",
+      "name": "pages build and deployment",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:02:02Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:00:52Z",
+      "databaseId": 30300756188,
+      "event": "workflow_dispatch",
+      "name": "Update Dashboard",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:01:13Z"
+    },
+    {
+      "conclusion": "cancelled",
+      "createdAt": "2026-07-27T20:00:32Z",
+      "databaseId": 30300730633,
+      "event": "dynamic",
+      "name": "pages build and deployment",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:01:15Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T20:00:20Z",
+      "databaseId": 30300713996,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T20:00:31Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T19:44:09Z",
+      "databaseId": 30299541437,
+      "event": "repository_dispatch",
+      "name": "rusemeva-encode",
+      "status": "completed",
+      "updatedAt": "2026-07-27T19:57:03Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T19:44:09Z",
+      "databaseId": 30299540742,
+      "event": "repository_dispatch",
+      "name": "rusemeva-transcribe",
+      "status": "completed",
+      "updatedAt": "2026-07-27T19:48:47Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T19:33:20Z",
+      "databaseId": 30298744469,
+      "event": "repository_dispatch",
+      "name": "rusemeva-vault",
+      "status": "completed",
+      "updatedAt": "2026-07-27T19:44:32Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T18:55:33Z",
+      "databaseId": 30295958770,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T18:55:43Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:48:02Z",
+      "databaseId": 30290864702,
+      "event": "repository_dispatch",
+      "name": "rusemeva-encode",
+      "status": "completed",
+      "updatedAt": "2026-07-27T18:00:27Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:37:19Z",
+      "databaseId": 30290059100,
+      "event": "repository_dispatch",
+      "name": "rusemeva-vault",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:48:19Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:18:37Z",
+      "databaseId": 30288667407,
+      "event": "schedule",
+      "name": "cleanup-temp",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:18:52Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:16:38Z",
+      "databaseId": 30288524887,
+      "event": "repository_dispatch",
+      "name": "rusemeva-encode",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:25:10Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:15:48Z",
+      "databaseId": 30288464346,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:16:05Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:09:57Z",
+      "databaseId": 30288023277,
+      "event": "repository_dispatch",
+      "name": "rusemeva-vault",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:16:55Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T17:07:56Z",
+      "databaseId": 30287876966,
+      "event": "push",
+      "name": "ci-policy",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:08:06Z"
+    },
+    {
+      "conclusion": "cancelled",
+      "createdAt": "2026-07-27T17:01:23Z",
+      "databaseId": 30287370645,
+      "event": "repository_dispatch",
+      "name": "rusemeva-encode",
+      "status": "completed",
+      "updatedAt": "2026-07-27T17:09:23Z"
+    },
+    {
+      "conclusion": "success",
+      "createdAt": "2026-07-27T16:40:31Z",
+      "databaseId": 30285773571,
+      "event": "workflow_dispatch",
+      "name": "Send File to Telegram (Bot API Server 2GB)",
+      "status": "completed",
+      "updatedAt": "2026-07-27T16:41:52Z"
+    }
+  ],
   "recent_releases": []
 }
