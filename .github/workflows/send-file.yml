@@ -32,38 +32,28 @@ jobs:
           echo "=== Files downloaded ==="
           ls -lh /tmp/files/
 
-      - name: Start Bot API Server
+      - name: Start Bot API Server (Docker, 2GB limit)
+        continue-on-error: true
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TG_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TG_API_HASH }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          # Download Bot API Server
-          curl -fsSL -o /tmp/botapi.tar.gz \
-            "https://github.com/nickoala/nickoala.github.io/raw/refs/heads/main/telegram-bot-api-8.2-linux-amd64.tar.gz" || \
-          curl -fsSL -o /tmp/botapi.tar.gz \
-            "https://github.com/nickoala/nickoala.github.io/raw/refs/heads/main/telegram-bot-api-linux-amd64.tar.gz" || true
-          
-          # Try alternative: install from Docker image extract
-          if [ ! -s /tmp/botapi.tar.gz ]; then
-            echo "Downloading pre-built Bot API Server..."
-            apt-get update -qq && apt-get install -y -qq wget
-            wget -q -O /tmp/bot-api-server \
-              "https://github.com/nickoala/nickoala.github.io/raw/refs/heads/main/telegram-bot-api-8.2-linux-amd64.tar.gz" 2>/dev/null || true
-          fi
-
-          # Build from source as fallback
-          if [ ! -s /tmp/botapi.tar.gz ]; then
-            echo "Building Bot API Server from source..."
-            apt-get install -y -qq git cmake gperf zlib1g-dev libssl-dev 2>/dev/null || true
-            git clone --depth 1 https://github.com/nickoala/nickoala.github.io /tmp/botapi-src 2>/dev/null || true
-          fi
-
-          # Start server (use pre-compiled binary)
-          if [ -f /tmp/botapi.tar.gz ]; then
-            cd /tmp && tar xzf botapi.tar.gz 2>/dev/null || true
-            ls /tmp/telegram-bot-api* 2>/dev/null
-            /tmp/telegram-bot-api* --api-id=0 --api-hash=0 --http-port=8081 &
-          else
-            echo "Using direct API (50MB limit fallback)"
-          fi
-          sleep 3
+          docker rm -f tg-bot-api 2>/dev/null || true
+          rm -rf /tmp/tg-bot-api && mkdir -p /tmp/tg-bot-api
+          docker run -d --name tg-bot-api -p 8081:8081 \
+            -e TELEGRAM_API_ID="$TELEGRAM_API_ID" \
+            -e TELEGRAM_API_HASH="$TELEGRAM_API_HASH" \
+            -e TELEGRAM_LOCAL=1 \
+            -v /tmp/tg-bot-api:/var/lib/telegram-bot-api \
+            aiogram/telegram-bot-api:latest \
+            --local -m 2097152000 --dir /var/lib/telegram-bot-api --http-port=8081 --verbosity=2
+          echo "⏳ Menunggu Bot API Server siap..."
+          for i in $(seq 1 45); do
+            CODE=$(curl -s -o /tmp/getme.json -w "%{http_code}" "http://localhost:8081/bot${BOT_TOKEN}/getMe" 2>/dev/null)
+            if [ "$CODE" = "200" ]; then echo "✅ Bot API Server ready"; break; fi
+            sleep 2
+          done
 
       - name: Kirim video ke Telegram
         env:
@@ -89,19 +79,14 @@ jobs:
 
               cap = caption or f"📦 {name}\n📏 {size/1024/1024:.0f} MB"
 
-              # Try local Bot API first (2GB), then public API (50MB)
               for api in ['http://localhost:8081', 'https://api.telegram.org']:
                   url = f'{api}/bot{bot}/sendVideo'
                   try:
                       boundary = '----FormBoundary123'
                       parts = []
-                      # chat_id
                       parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n{chat}'.encode())
-                      # caption
                       parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="caption"\r\n\r\n{cap}'.encode())
-                      # parse_mode
                       parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="parse_mode"\r\n\r\nHTML'.encode())
-                      # video file
                       parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="video"; filename="{name}"\r\nContent-Type: video/mp4\r\n\r\n'.encode())
                       with open(f, 'rb') as vf:
                           parts.append(vf.read())
@@ -111,14 +96,18 @@ jobs:
                       req = urllib.request.Request(url, data=body, headers={
                           'Content-Type': f'multipart/form-data; boundary={boundary}'
                       })
-                      with urllib.request.urlopen(req, timeout=600) as r:
+                      with urllib.request.urlopen(req, timeout=900) as r:
                           resp = json.loads(r.read().decode())
                           if resp.get('ok'):
                               fid = resp.get('result', {}).get('video', {}).get('file_id', 'sent')
-                              print(f'✅ Sent via {api} — file_id={fid[:20]}...')
+                              print(f'✅ Sent via {api} — file_id={fid[:30]}...')
                               break
                   except Exception as e:
-                      print(f'⚠️ {api}: {e}')
+                      err_body = ''
+                      if hasattr(e, 'read'):
+                          try: err_body = e.read().decode()[:200]
+                          except: pass
+                      print(f'⚠️ {api}: {e} {err_body}')
               else:
                   print(f'❌ Gagal kirim {name} via semua API')
           PYEOF
