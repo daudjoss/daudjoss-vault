@@ -96,7 +96,7 @@ run_url = f"{server_url}/{repo}/actions/runs/{run_id}"
 release_url = f"https://github.com/{repo}/releases/tag/{tag}" if tag else ""
 
 # Default ke local Bot API Server (allow 2GB). Token disisipkan di path /bot<TOKEN>.
-TG_URL = os.environ.get('TG_API_URL', 'http://localhost:8081').rstrip('/')
+TG_URL = os.environ.get('TG_API_URL', 'https://api.telegram.org').rstrip('/')
 API = f"{TG_URL}/bot{bot_token}"
 FALLBACK_API = f"https://api.telegram.org/bot{bot_token}"
 print(f"ℹ️  Notify start | phase={phase} | API={API[:40]}... | chat={chat_id} | job={job_status} | file={filename} | hevc={'yes' if hevc_file else 'no'}", flush=True)
