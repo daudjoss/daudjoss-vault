@@ -34,6 +34,7 @@ jobs:
       - name: Generate dashboard
         env:
           DASHBOARD_DIR: /tmp/gh-pages
+          GH_TOKEN: ${{ github.token }}
         run: |
           cd main
           python3 scripts/generate_dashboard.py
