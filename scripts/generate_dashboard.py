@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate comprehensive Rusemeva dashboard v3 with all features."""
+"""Rusemeva Dashboard v4 — Ultimate with all features."""
 import json
 import os
 import subprocess
@@ -14,781 +14,411 @@ def run_gh(args):
         env = os.environ.copy()
         result = subprocess.run(["gh"] + args, capture_output=True, text=True, timeout=30, env=env)
         return result.stdout.strip()
-    except Exception as e:
-        print(f"⚠️ gh error: {e}")
+    except:
         return ""
 
-def fetch_workflow_runs(limit=100):
+def fetch_runs(limit=100):
     raw = run_gh(["run", "list", "--repo", REPO, "--limit", str(limit),
                    "--json", "databaseId,name,status,conclusion,createdAt,event,updatedAt"])
-    if not raw:
-        return []
-    try:
-        return json.loads(raw)
-    except:
-        return []
+    return json.loads(raw) if raw else []
 
 def fetch_releases(limit=30):
     raw = run_gh(["api", f"repos/{REPO}/releases",
-                   "--jq", f"[.[:{limit}][:][] | {{tag: .tag_name, name: .name, created: .created_at, size: ([.assets[].size] | add // 0), assets: [.assets[] | {{name: .name, size: .size}}]}}]"])
-    if not raw:
-        return []
-    try:
-        return json.loads(raw)
-    except:
-        return []
+                   "--jq", f"[.[:{limit}][:][] | {{tag: .tag_name, name: .name, created: .created_at, size: ([.assets[].size] | add // 0), assets: [.assets[] | {{name: .name, size: .size, url: .browser_download_url}}]}}]"])
+    return json.loads(raw) if raw else []
 
-def calculate_stats(runs):
+def calc_stats(runs):
     vault = [r for r in runs if r.get("name") == "rusemeva-vault"]
     encode = [r for r in runs if r.get("name") == "rusemeva-encode"]
-    other = [r for r in runs if r.get("name") not in ["rusemeva-vault", "rusemeva-encode", "ci-policy", "cleanup-temp", "Update Dashboard", "pages build and deployment", "Send File to Telegram"]]
-
     total = len(vault)
     success = len([r for r in vault if r.get("conclusion") == "success"])
     failed = len([r for r in vault if r.get("conclusion") == "failure"])
     running = len([r for r in vault if r.get("status") == "in_progress"])
     rate = (success / total * 100) if total > 0 else 0
-
     enc_total = len(encode)
     enc_success = len([r for r in encode if r.get("conclusion") == "success"])
-    enc_rate = (enc_success / enc_total * 100) if enc_total > 0 else 0
-
-    # Today stats
     today = datetime.now(WIB).strftime("%Y-%m-%d")
     today_runs = [r for r in vault if r.get("createdAt", "").startswith(today)]
-    today_success = len([r for r in today_runs if r.get("conclusion") == "success"])
-
-    # Daily activity
     daily = defaultdict(int)
     for r in vault:
         try:
             dt = datetime.fromisoformat(r["createdAt"].replace("Z", "+00:00"))
-            day = dt.strftime("%Y-%m-%d")
-            daily[day] += 1
-        except:
-            pass
-
-    # Weekly stats
-    weekly = defaultdict(lambda: {"success": 0, "fail": 0})
+            daily[dt.strftime("%Y-%m-%d")] += 1
+        except: pass
+    weekly = defaultdict(lambda: {"s": 0, "f": 0})
     for r in vault:
         try:
             dt = datetime.fromisoformat(r["createdAt"].replace("Z", "+00:00"))
-            week = dt.strftime("%Y-W%W")
-            if r.get("conclusion") == "success":
-                weekly[week]["success"] += 1
-            elif r.get("conclusion") == "failure":
-                weekly[week]["fail"] += 1
-        except:
-            pass
-
-    # Source distribution
-    sources = defaultdict(int)
-    for r in vault:
-        # Try to extract source from run name or payload
-        sources["Trans7"] += 1  # Default, would need payload data for accurate count
-
-    # Error analysis
-    errors = []
-    for r in vault[:20]:
-        if r.get("conclusion") == "failure":
-            errors.append({
-                "id": r.get("databaseId"),
-                "time": time_ago(r.get("createdAt", "")),
-                "created": r.get("createdAt", "")[:19],
-            })
-
+            w = dt.strftime("%Y-W%W")
+            if r.get("conclusion") == "success": weekly[w]["s"] += 1
+            elif r.get("conclusion") == "failure": weekly[w]["f"] += 1
+        except: pass
+    errors = [{"id": r.get("databaseId"), "time": r.get("createdAt", "")[:16]} for r in vault[:20] if r.get("conclusion") == "failure"][:5]
     return {
-        "total_recordings": total,
-        "total_success": success,
-        "total_failed": failed,
-        "total_running": running,
-        "success_rate": round(rate, 1),
-        "total_encode": enc_total,
-        "encode_success": enc_success,
-        "encode_rate": round(enc_rate, 1),
-        "total_other": len(other),
-        "today_count": len(today_runs),
-        "today_success": today_success,
-        "daily_activity": dict(sorted(daily.items())[-35:]),
-        "weekly_stats": dict(sorted(weekly.items())[-12:]),
-        "sources": dict(sources),
-        "errors": errors[:5],
+        "total": total, "success": success, "failed": failed, "running": running,
+        "rate": round(rate, 1), "enc_total": enc_total, "enc_success": enc_success,
+        "enc_rate": round((enc_success / enc_total * 100) if enc_total > 0 else 0, 1),
+        "today": len(today_runs), "today_ok": len([r for r in today_runs if r.get("conclusion") == "success"]),
+        "daily": dict(sorted(daily.items())[-35:]), "weekly": dict(sorted(weekly.items())[-12:]),
+        "errors": errors, "latest_run": vault[0] if vault else None,
     }
 
-def time_ago(created_str):
+def ago(s):
     try:
-        dt = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
-        now = datetime.now(timezone.utc)
-        diff = now - dt
-        seconds = int(diff.total_seconds())
-        if seconds < 60:
-            return "baru saja"
-        elif seconds < 3600:
-            return f"{seconds // 60}m lalu"
-        elif seconds < 86400:
-            return f"{seconds // 3600}j lalu"
-        else:
-            return f"{seconds // 86400}h lalu"
-    except:
-        return created_str[:10]
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        d = int((datetime.now(timezone.utc) - dt).total_seconds())
+        if d < 60: return "baru saja"
+        if d < 3600: return f"{d//60}m"
+        if d < 86400: return f"{d//3600}j"
+        return f"{d//86400}h"
+    except: return s[:10]
 
-def status_icon(conclusion):
-    if conclusion == "success":
-        return "✅"
-    elif conclusion == "failure":
-        return "❌"
-    elif conclusion == "cancelled":
-        return "⚪"
-    else:
-        return "🔄"
+def icon(c):
+    return {"success": "✅", "failure": "❌", "cancelled": "⚪"}.get(c, "🔄")
 
-def status_class(conclusion):
-    if conclusion == "success":
-        return "success"
-    elif conclusion == "failure":
-        return "failure"
-    elif conclusion == "cancelled":
-        return "cancelled"
-    else:
-        return "running"
+def cls(c):
+    return {"success": "success", "failure": "failure", "cancelled": "cancelled"}.get(c, "running")
 
-def generate_html(stats, runs, releases):
+def gen_html(stats, runs, releases):
     now = datetime.now(WIB).strftime("%Y-%m-%d %H:%M WIB")
+    dl = json.dumps(list(stats["daily"].keys()))
+    dd = json.dumps(list(stats["daily"].values()))
+    wl = json.dumps(list(stats["weekly"].keys()))
+    ws = json.dumps([v["s"] for v in stats["weekly"].values()])
+    wf = json.dumps([v["f"] for v in stats["weekly"].values()])
 
-    # Chart data
-    daily_labels = json.dumps(list(stats["daily_activity"].keys()))
-    daily_data = json.dumps(list(stats["daily_activity"].values()))
-    weekly_labels = json.dumps(list(stats["weekly_stats"].keys()))
-    weekly_success = json.dumps([v["success"] for v in stats["weekly_stats"].values()])
-    weekly_fail = json.dumps([v["fail"] for v in stats["weekly_stats"].values()])
-
-    # Table rows
-    vault_runs = [r for r in runs if r.get("name") == "rusemeva-vault"][:25]
-    encode_runs = [r for r in runs if r.get("name") == "rusemeva-encode"][:20]
-
-    recent_html = ""
-    for r in vault_runs:
-        icon = status_icon(r.get("conclusion", ""))
-        ago = time_ago(r.get("createdAt", ""))
-        run_id = r.get("databaseId", "")
-        status = r.get("conclusion", r.get("status", "unknown"))
-        cls = status_class(status)
-        recent_html += f'<tr class="row-{cls}" data-status="{status}" data-search="{run_id}"><td>{icon}</td><td><code>{run_id}</code></td><td>{ago}</td><td><span class="badge badge-{cls}">{status}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{run_id}" target="_blank" title="View on GitHub">↗</a></td></tr>'
-
-    encode_html = ""
-    for r in encode_runs:
-        icon = status_icon(r.get("conclusion", ""))
-        ago = time_ago(r.get("createdAt", ""))
-        run_id = r.get("databaseId", "")
-        status = r.get("conclusion", r.get("status", "unknown"))
-        cls = status_class(status)
-        encode_html += f'<tr class="row-{cls}" data-status="{status}"><td>{icon}</td><td><code>{run_id}</code></td><td>{ago}</td><td><span class="badge badge-{cls}">{status}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{run_id}" target="_blank">↗</a></td></tr>'
-
-    releases_html = ""
+    # Tables
+    vr = [r for r in runs if r.get("name") == "rusemeva-vault"][:25]
+    er = [r for r in runs if r.get("name") == "rusemeva-encode"][:20]
+    rh = ""
+    for r in vr:
+        i = icon(r.get("conclusion","")); a = ago(r.get("createdAt","")); rid = r.get("databaseId","")
+        s = r.get("conclusion", r.get("status","?")); c = cls(s)
+        rh += f'<tr class="row-{c}" data-status="{s}" data-search="{rid}"><td>{i}</td><td><code>{rid}</code></td><td>{a}</td><td><span class="badge badge-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    eh = ""
+    for r in er:
+        i = icon(r.get("conclusion","")); a = ago(r.get("createdAt","")); rid = r.get("databaseId","")
+        s = r.get("conclusion", r.get("status","?")); c = cls(s)
+        eh += f'<tr><td>{i}</td><td><code>{rid}</code></td><td>{a}</td><td><span class="badge badge-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    rlh = ""
     for r in releases[:15]:
-        size_mb = r.get("size", 0) / 1024 / 1024
-        ago = time_ago(r.get("created", ""))
-        releases_html += f'<tr><td><code>{r.get("tag", "")}</code></td><td>{size_mb:.1f} MB</td><td>{ago}</td></tr>'
+        sz = r.get("size",0)/1024/1024; a = ago(r.get("created",""))
+        assets = ", ".join([x["name"] for x in r.get("assets",[])[:3]])
+        rlh += f'<tr><td><code>{r.get("tag","")}</code></td><td>{sz:.1f} MB</td><td>{a}</td><td style="font-size:12px;color:var(--text-secondary)">{assets[:40]}</td></tr>'
 
     # Calendar
-    calendar_html = ""
+    cal = ""
     today = datetime.now(WIB).date()
-    start = today - timedelta(days=34)
-    current = start
-    while current <= today:
-        day_str = current.strftime("%Y-%m-%d")
-        count = stats["daily_activity"].get(day_str, 0)
-        intensity = min(count, 5)
-        calendar_html += f'<div class="cal-day cal-{intensity}" title="{day_str}: {count} recordings">{current.day}</div>'
-        current += timedelta(days=1)
+    for d in range(34, -1, -1):
+        day = today - timedelta(days=d)
+        ds = day.strftime("%Y-%m-%d")
+        cnt = stats["daily"].get(ds, 0)
+        it = min(cnt, 5)
+        cal += f'<div class="cal cal-{it}" title="{ds}: {cnt}">{day.day}</div>'
 
     # Errors
-    errors_html = ""
     if stats["errors"]:
-        for e in stats["errors"]:
-            errors_html += f'''<div class="error-item">
-                <div class="error-icon">❌</div>
-                <div class="error-info">
-                    <div class="error-id">Run <code>{e["id"]}</code></div>
-                    <div class="error-time">{e["time"]}</div>
-                </div>
-                <a href="https://github.com/{REPO}/actions/runs/{e["id"]}" target="_blank" class="error-link">View Log ↗</a>
-            </div>'''
+        eh2 = "".join([f'<div class="err"><div class="err-icon">❌</div><div><div class="err-id">Run <code>{e["id"]}</code></div><div class="err-time">{e["time"]}</div></div><a href="https://github.com/{REPO}/actions/runs/{e["id"]}" target="_blank">Log ↗</a></div>' for e in stats["errors"]])
     else:
-        errors_html = '<div class="no-errors">✅ Tidak ada error terbaru</div>'
+        eh2 = '<div class="no-err">✅ Tidak ada error</div>'
 
-    html = f'''<!DOCTYPE html>
+    # Storage estimate (from releases)
+    total_size = sum([r.get("size",0) for r in releases]) / 1024 / 1024 / 1024
+    releases_json = json.dumps([{"tag": r.get("tag",""), "size": r.get("size",0), "created": r.get("created","")} for r in releases])
+
+    return f'''<!DOCTYPE html>
 <html lang="id" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rusemeva Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        :root {{
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --border: #30363d;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --text-muted: #484f58;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --accent-red: #f85149;
-            --accent-yellow: #d29922;
-            --accent-purple: #bc8cff;
-            --accent-orange: #f0883e;
-        }}
-        [data-theme="light"] {{
-            --bg-primary: #f6f8fa;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f0f2f5;
-            --border: #d0d7de;
-            --text-primary: #1f2328;
-            --text-secondary: #656d76;
-            --text-muted: #8b949e;
-        }}
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 20px;
-            min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
-        }}
-        .container {{ max-width: 1400px; margin: 0 auto; }}
-
-        /* Header */
-        .header {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 12px;
-        }}
-        .header h1 {{ font-size: 28px; font-weight: 600; display: flex; align-items: center; gap: 12px; }}
-        .header-actions {{ display: flex; align-items: center; gap: 12px; }}
-        .live-dot {{ width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: pulse 2s infinite; }}
-        @keyframes pulse {{ 0%,100% {{ opacity: 1; }} 50% {{ opacity: 0.5; }} }}
-        .theme-btn {{
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 14px;
-        }}
-        .theme-btn:hover {{ border-color: var(--accent-blue); }}
-
-        /* Stats */
-        .stats-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }}
-        .stat-card {{
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }}
-        .stat-card:hover {{ transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }}
-        .stat-card::before {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }}
-        .stat-card.blue::before {{ background: var(--accent-blue); }}
-        .stat-card.green::before {{ background: var(--accent-green); }}
-        .stat-card.red::before {{ background: var(--accent-red); }}
-        .stat-card.yellow::before {{ background: var(--accent-yellow); }}
-        .stat-card.purple::before {{ background: var(--accent-purple); }}
-        .stat-card.orange::before {{ background: var(--accent-orange); }}
-        .stat-icon {{ font-size: 24px; margin-bottom: 8px; }}
-        .stat-value {{ font-size: 36px; font-weight: 700; }}
-        .stat-label {{ font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }}
-        .stat-card.blue .stat-value {{ color: var(--accent-blue); }}
-        .stat-card.green .stat-value {{ color: var(--accent-green); }}
-        .stat-card.red .stat-value {{ color: var(--accent-red); }}
-        .stat-card.yellow .stat-value {{ color: var(--accent-yellow); }}
-        .stat-card.purple .stat-value {{ color: var(--accent-purple); }}
-        .stat-card.orange .stat-value {{ color: var(--accent-orange); }}
-
-        /* Section */
-        .section {{ background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }}
-        .section-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }}
-        .section-title {{ font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }}
-
-        /* Grid */
-        .grid-2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }}
-        .grid-3 {{ display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }}
-
-        /* Filters */
-        .filters {{ display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }}
-        .filter-btn {{
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }}
-        .filter-btn:hover, .filter-btn.active {{ background: var(--accent-blue); color: white; border-color: var(--accent-blue); }}
-        .search-input {{
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            font-size: 14px;
-            width: 180px;
-        }}
-        .search-input:focus {{ outline: none; border-color: var(--accent-blue); }}
-
-        /* Table */
-        table {{ width: 100%; border-collapse: collapse; }}
-        th, td {{ padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }}
-        th {{ color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }}
-        td {{ font-size: 14px; }}
-        tr:hover {{ background: rgba(88,166,255,0.05); }}
-        code {{ background: var(--bg-tertiary); padding: 3px 8px; border-radius: 6px; font-size: 12px; font-family: 'SF Mono', monospace; }}
-        a {{ color: var(--accent-blue); text-decoration: none; }}
-        a:hover {{ text-decoration: underline; }}
-
-        /* Badges */
-        .badge {{ padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 500; }}
-        .badge-success {{ background: rgba(63,185,80,0.15); color: var(--accent-green); }}
-        .badge-failure {{ background: rgba(248,81,73,0.15); color: var(--accent-red); }}
-        .badge-cancelled {{ background: rgba(139,148,158,0.15); color: var(--text-secondary); }}
-        .badge-running {{ background: rgba(88,166,255,0.15); color: var(--accent-blue); }}
-
-        /* Calendar */
-        .calendar {{ display: grid; grid-template-columns: repeat(35, 1fr); gap: 3px; }}
-        .cal-day {{ aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted); cursor: default; }}
-        .cal-0 {{ background: var(--bg-tertiary); }}
-        .cal-1 {{ background: rgba(63,185,80,0.3); }}
-        .cal-2 {{ background: rgba(63,185,80,0.5); }}
-        .cal-3 {{ background: rgba(63,185,80,0.7); }}
-        .cal-4 {{ background: rgba(63,185,80,0.85); }}
-        .cal-5 {{ background: var(--accent-green); color: white; }}
-
-        /* Charts */
-        .chart-container {{ position: relative; height: 250px; }}
-
-        /* System Health */
-        .health-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }}
-        .health-item {{ display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; }}
-        .health-dot {{ width: 10px; height: 10px; border-radius: 50%; }}
-        .health-dot.green {{ background: var(--accent-green); }}
-        .health-dot.yellow {{ background: var(--accent-yellow); }}
-        .health-dot.red {{ background: var(--accent-red); }}
-        .health-label {{ font-size: 14px; }}
-        .health-status {{ font-size: 12px; color: var(--text-secondary); }}
-
-        /* Errors */
-        .error-item {{ display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(248,81,73,0.05); border: 1px solid rgba(248,81,73,0.2); border-radius: 8px; margin-bottom: 8px; }}
-        .error-icon {{ font-size: 20px; }}
-        .error-info {{ flex: 1; }}
-        .error-id {{ font-size: 14px; font-weight: 500; }}
-        .error-time {{ font-size: 12px; color: var(--text-secondary); }}
-        .error-link {{ font-size: 13px; }}
-        .no-errors {{ text-align: center; padding: 20px; color: var(--text-secondary); }}
-
-        /* Quick Actions */
-        .actions-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }}
-        .action-btn {{
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 14px;
-            text-align: center;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: block;
-        }}
-        .action-btn:hover {{ border-color: var(--accent-blue); background: rgba(88,166,255,0.1); }}
-
-        /* Source Distribution */
-        .source-bar {{ margin-bottom: 8px; }}
-        .source-label {{ display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }}
-        .source-track {{ height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }}
-        .source-fill {{ height: 100%; border-radius: 4px; background: var(--accent-blue); }}
-
-        /* Performance */
-        .perf-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }}
-        .perf-item {{ text-align: center; }}
-        .perf-value {{ font-size: 28px; font-weight: 700; color: var(--accent-blue); }}
-        .perf-label {{ font-size: 12px; color: var(--text-secondary); margin-top: 4px; }}
-        .perf-trend {{ font-size: 12px; margin-top: 4px; }}
-        .perf-trend.up {{ color: var(--accent-green); }}
-        .perf-trend.down {{ color: var(--accent-red); }}
-        .perf-trend.stable {{ color: var(--text-muted); }}
-
-        /* Modal */
-        .modal-overlay {{
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }}
-        .modal-overlay.active {{ display: flex; }}
-        .modal {{
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }}
-        .modal-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }}
-        .modal-close {{ background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; }}
-        .modal-body {{ font-size: 14px; line-height: 1.6; }}
-
-        /* Keyboard shortcuts */
-        .shortcuts {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }}
-        .shortcut {{ display: flex; align-items: center; gap: 8px; padding: 8px; }}
-        .key {{ padding: 4px 8px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; font-family: monospace; font-size: 12px; }}
-
-        /* Export */
-        .export-btns {{ display: flex; gap: 8px; }}
-        .export-btn {{ padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-primary); cursor: pointer; font-size: 13px; }}
-        .export-btn:hover {{ border-color: var(--accent-blue); }}
-
-        /* Footer */
-        .footer {{ text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); }}
-        .footer a {{ color: var(--text-secondary); }}
-
-        /* Responsive */
-        @media (max-width: 1024px) {{ .grid-2, .grid-3 {{ grid-template-columns: 1fr; }} }}
-        @media (max-width: 768px) {{
-            .stats-grid {{ grid-template-columns: repeat(2, 1fr); }}
-            .header {{ flex-direction: column; align-items: flex-start; }}
-            .calendar {{ grid-template-columns: repeat(7, 1fr); }}
-            .search-input {{ width: 100%; }}
-        }}
-
-        /* Animations */
-        .stat-card, .section {{ animation: fadeIn 0.3s ease-in; }}
-        @keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-        .hidden {{ display: none; }}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Rusemeva Vault Dashboard">
+<meta name="theme-color" content="#0d1117">
+<link rel="manifest" href="manifest.json">
+<title>Rusemeva Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--brd:#30363d;--t1:#e6edf3;--t2:#8b949e;--t3:#484f58;--bl:#58a6ff;--gn:#3fb950;--rd:#f85149;--yl:#d29922;--pr:#bc8cff;--or:#f0883e}}
+[data-theme="light"]{{--bg:#f6f8fa;--bg2:#fff;--bg3:#f0f2f5;--brd:#d0d7de;--t1:#1f2328;--t2:#656d76;--t3:#8b949e}}
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);padding:16px;min-height:100vh;transition:all .3s}}
+.ct{{max-width:1440px;margin:0 auto}}
+.hdr{{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--brd);flex-wrap:wrap;gap:10px}}
+.hdr h1{{font-size:24px;font-weight:600;display:flex;align-items:center;gap:10px}}
+.hdr-act{{display:flex;align-items:center;gap:10px}}
+.dot{{width:8px;height:8px;background:var(--gn);border-radius:50%;animation:pulse 2s infinite}}
+@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.5}}}}
+.btn{{padding:6px 12px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);cursor:pointer;font-size:13px;transition:all .2s}}
+.btn:hover{{border-color:var(--bl)}}
+.sg{{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}}
+.sc{{background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:16px;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s}}
+.sc:hover{{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2)}}
+.sc::before{{content:'';position:absolute;top:0;left:0;right:0;height:3px}}
+.sc.bl::before{{background:var(--bl)}}.sc.gn::before{{background:var(--gn)}}.sc.rd::before{{background:var(--rd)}}
+.sc.yl::before{{background:var(--yl)}}.sc.pr::before{{background:var(--pr)}}.sc.or::before{{background:var(--or)}}
+.si{{font-size:20px;margin-bottom:6px}}.sv{{font-size:32px;font-weight:700}}.sl{{font-size:12px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}}
+.sc.bl .sv{{color:var(--bl)}}.sc.gn .sv{{color:var(--gn)}}.sc.rd .sv{{color:var(--rd)}}
+.sc.yl .sv{{color:var(--yl)}}.sc.pr .sv{{color:var(--pr)}}.sc.or .sv{{color:var(--or)}}
+.sec{{background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:20px}}
+.sh{{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--brd);flex-wrap:wrap;gap:10px}}
+.st{{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}}
+.g2{{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}}
+.g3{{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px}}
+.fl{{display:flex;gap:6px;flex-wrap:wrap;align-items:center}}
+.fb{{padding:5px 12px;border-radius:16px;border:1px solid var(--brd);background:transparent;color:var(--t2);cursor:pointer;font-size:12px;transition:all .2s}}
+.fb:hover,.fb.on{{background:var(--bl);color:#fff;border-color:var(--bl)}}
+.si2{{padding:7px 12px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:13px;width:160px}}
+.si2:focus{{outline:none;border-color:var(--bl)}}
+table{{width:100%;border-collapse:collapse}}
+th,td{{padding:8px 12px;text-align:left;border-bottom:1px solid var(--brd)}}
+th{{color:var(--t2);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}}
+td{{font-size:13px}}tr:hover{{background:rgba(88,166,255,.04)}}
+code{{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:11px;font-family:'SF Mono',monospace}}
+a{{color:var(--bl);text-decoration:none}}a:hover{{text-decoration:underline}}
+.bd{{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500}}
+.bd-success{{background:rgba(63,185,80,.15);color:var(--gn)}}
+.bd-failure{{background:rgba(248,81,73,.15);color:var(--rd)}}
+.bd-cancelled{{background:rgba(139,148,158,.15);color:var(--t2)}}
+.bd-running{{background:rgba(88,166,255,.15);color:var(--bl)}}
+.cal{{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--t3);cursor:default}}
+.c0{{background:var(--bg3)}}.c1{{background:rgba(63,185,80,.3)}}.c2{{background:rgba(63,185,80,.5)}}
+.c3{{background:rgba(63,185,80,.7)}}.c4{{background:rgba(63,185,80,.85)}}.c5{{background:var(--gn);color:#fff}}
+.ch{{position:relative;height:220px}}
+.err{{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.2);border-radius:8px;margin-bottom:6px}}
+.err-icon{{font-size:18px}}.err-id{{font-size:13px;font-weight:500}}.err-time{{font-size:11px;color:var(--t2)}}
+.no-err{{text-align:center;padding:16px;color:var(--t2)}}
+.hg{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}}
+.hi{{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px}}
+.hd{{width:8px;height:8px;border-radius:50%}}.hd.g{{background:var(--gn)}}.hd.y{{background:var(--yl)}}.hd.r{{background:var(--rd)}}
+.hl{{font-size:13px}}.hs{{font-size:11px;color:var(--t2)}}
+.pg{{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}}
+.pi{{text-align:center}}.pv{{font-size:24px;font-weight:700;color:var(--bl)}}.pl{{font-size:11px;color:var(--t2);margin-top:2px}}
+.pt{{font-size:11px;margin-top:2px}}.pt.up{{color:var(--gn)}}.pt.dn{{color:var(--rd)}}.pt.st{{color:var(--t3)}}
+.ag{{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}}
+.ab{{padding:10px 14px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);cursor:pointer;font-size:13px;text-align:center;transition:all .2s;text-decoration:none;display:block}}
+.ab:hover{{border-color:var(--bl);background:rgba(88,166,255,.1)}}
+.mo{{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}}
+.mo.on{{display:flex}}
+.md{{background:var(--bg2);border:1px solid var(--brd);border-radius:14px;padding:20px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}}
+.mh{{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}}
+.mc{{background:none;border:none;color:var(--t2);font-size:22px;cursor:pointer}}
+.sh2{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px}}
+.sk{{display:flex;align-items:center;gap:6px;padding:6px}}
+.ky{{padding:3px 7px;background:var(--bg3);border:1px solid var(--brd);border-radius:4px;font-family:monospace;font-size:11px}}
+.ft{{text-align:center;color:var(--t3);font-size:12px;margin-top:30px;padding-top:16px;border-top:1px solid var(--brd)}}
+.ft a{{color:var(--t2)}}
+@media(max-width:1024px){{.g2,.g3{{grid-template-columns:1fr}}}}
+@media(max-width:768px){{.sg{{grid-template-columns:repeat(2,1fr)}}.hdr{{flex-direction:column;align-items:flex-start}}.si2{{width:100%}}}}
+.sc,.sec{{animation:fi .3s ease-in}}
+@keyframes fi{{from{{opacity:0;transform:translateY(8px)}}to{{opacity:1;transform:translateY(0)}}}}
+.hid{{display:none!important}}
+.ot{{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}}
+.oi{{background:var(--bg3);padding:8px;border-radius:6px;text-align:center;cursor:pointer;transition:all .2s}}
+.oi:hover{{background:rgba(88,166,255,.15)}}.oi.sel{{border:2px solid var(--bl)}}
+.oi-img{{width:100%;height:60px;background:var(--bg2);border-radius:4px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-size:20px}}
+.oi-txt{{font-size:10px;color:var(--t2)}}
+.tag{{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;background:var(--bg3);border:1px solid var(--brd);margin:2px}}
+.tag-add{{cursor:pointer;color:var(--bl)}}
+.note{{padding:8px;background:var(--bg3);border-radius:6px;font-size:12px;margin-top:6px;min-height:40px}}
+.note-edit{{width:100%;background:var(--bg);border:1px solid var(--brd);border-radius:4px;color:var(--t1);padding:6px;font-size:12px;resize:vertical;min-height:60px}}
+.lang-btn{{padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:transparent;color:var(--t2);cursor:pointer;font-size:11px}}
+.lang-btn.on{{background:var(--bl);color:#fff;border-color:var(--bl)}}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1><span>🎬</span> Rusemeva Dashboard</h1>
-            <div class="header-actions">
-                <div class="live-dot"></div>
-                <span style="font-size:13px;color:var(--text-secondary)">Auto-refresh 30s</span>
-                <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌓</button>
-                <button class="theme-btn" onclick="location.reload()" title="Refresh">🔄</button>
-            </div>
-        </div>
+<div class="ct">
+<!-- Header -->
+<div class="hdr">
+<h1>🎬 Rusemeva</h1>
+<div class="hdr-act">
+<div class="dot"></div>
+<span style="font-size:12px;color:var(--t2)" id="timer">30s</span>
+<div class="fl">
+<button class="lang-btn on" onclick="setLang('id')">🇮🇩</button>
+<button class="lang-btn" onclick="setLang('en')">🇺🇸</button>
+</div>
+<button class="btn" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+<button class="btn" onclick="location.reload()" title="Refresh">🔄</button>
+</div>
+</div>
 
-        <!-- System Health -->
-        <div class="section" style="margin-bottom:24px">
-            <div class="section-header">
-                <div class="section-title">🏥 System Health</div>
-                <span style="font-size:12px;color:var(--text-secondary)">Updated: {now}</span>
-            </div>
-            <div class="health-grid">
-                <div class="health-item"><div class="health-dot green"></div><div><div class="health-label">Worker</div><div class="health-status">rusemeva-vault.workers.dev</div></div></div>
-                <div class="health-item"><div class="health-dot green"></div><div><div class="health-label">GitHub Actions</div><div class="health-status">20 slots available</div></div></div>
-                <div class="health-item"><div class="health-dot green"></div><div><div class="health-label">Telegram Bot</div><div class="health-status">@daudtrans_bot</div></div></div>
-                <div class="health-item"><div class="health-dot green"></div><div><div class="health-label">Dashboard</div><div class="health-status">gh-pages active</div></div></div>
-            </div>
-        </div>
+<!-- Health -->
+<div class="sec" style="margin-bottom:20px">
+<div class="sh"><div class="st">🏥 <span data-i18n="health">System Health</span></div><span style="font-size:11px;color:var(--t2)">{now}</span></div>
+<div class="hg">
+<div class="hi"><div class="hd g"></div><div><div class="hl">Worker</div><div class="hs">rusemeva-vault</div></div></div>
+<div class="hi"><div class="hd g"></div><div><div class="hl">GitHub Actions</div><div class="hs">20 slots</div></div></div>
+<div class="hi"><div class="hd g"></div><div><div class="hl">Telegram</div><div class="hs">@daudtrans_bot</div></div></div>
+<div class="hi"><div class="hd g"></div><div><div class="hl">Dashboard</div><div class="hs">gh-pages</div></div></div>
+</div>
+</div>
 
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card blue"><div class="stat-icon">📹</div><div class="stat-value">{stats['total_recordings']}</div><div class="stat-label">Total Rekaman</div></div>
-            <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value">{stats['total_success']}</div><div class="stat-label">Sukses</div></div>
-            <div class="stat-card red"><div class="stat-icon">❌</div><div class="stat-value">{stats['total_failed']}</div><div class="stat-label">Gagal</div></div>
-            <div class="stat-card yellow"><div class="stat-icon">📊</div><div class="stat-value">{stats['success_rate']}%</div><div class="stat-label">Success Rate</div></div>
-            <div class="stat-card purple"><div class="stat-icon">🎞</div><div class="stat-value">{stats['total_encode']}</div><div class="stat-label">Encode Jobs</div></div>
-            <div class="stat-card orange"><div class="stat-icon">📅</div><div class="stat-value">{stats['today_count']}</div><div class="stat-label">Hari Ini</div></div>
-        </div>
+<!-- Stats -->
+<div class="sg">
+<div class="sc bl"><div class="si">📹</div><div class="sv">{stats['total']}</div><div class="sl" data-i18n="total">Total</div></div>
+<div class="sc gn"><div class="si">✅</div><div class="sv">{stats['success']}</div><div class="sl" data-i18n="success">Success</div></div>
+<div class="sc rd"><div class="si">❌</div><div class="sv">{stats['failed']}</div><div class="sl" data-i18n="failed">Failed</div></div>
+<div class="sc yl"><div class="si">📊</div><div class="sv">{stats['rate']}%</div><div class="sl">Rate</div></div>
+<div class="sc pr"><div class="si">🎞</div><div class="sv">{stats['enc_total']}</div><div class="sl">Encode</div></div>
+<div class="sc or"><div class="si">📅</div><div class="sv">{stats['today']}</div><div class="sl" data-i18n="today">Today</div></div>
+</div>
 
-        <!-- Performance -->
-        <div class="section">
-            <div class="section-header"><div class="section-title">⚡ Performance</div></div>
-            <div class="perf-grid">
-                <div class="perf-item"><div class="perf-value">{stats['success_rate']}%</div><div class="perf-label">Success Rate</div><div class="perf-trend stable">→ stable</div></div>
-                <div class="perf-item"><div class="perf-value">{stats['encode_rate']}%</div><div class="perf-label">Encode Rate</div><div class="perf-trend stable">→ stable</div></div>
-                <div class="perf-item"><div class="perf-value">{stats['total_recordings']}</div><div class="perf-label">Total Recordings</div><div class="perf-trend up">↑ all time</div></div>
-                <div class="perf-item"><div class="perf-value">{stats['today_count']}</div><div class="perf-label">Today</div><div class="perf-trend {'up' if stats['today_count'] > 0 else 'stable'}">{'↑ ' + str(stats['today_success']) + ' success' if stats['today_count'] > 0 else '→ no recordings'}</div></div>
-            </div>
-        </div>
+<!-- Performance -->
+<div class="sec">
+<div class="sh"><div class="st">⚡ Performance</div></div>
+<div class="pg">
+<div class="pi"><div class="pv">{stats['rate']}%</div><div class="pl">Success Rate</div><div class="pt st">→</div></div>
+<div class="pi"><div class="pv">{stats['enc_rate']}%</div><div class="pl">Encode Rate</div><div class="pt st">→</div></div>
+<div class="pi"><div class="pv">{stats['total']}</div><div class="pl">All Time</div><div class="pt up">↑</div></div>
+<div class="pi"><div class="pv">{stats['today']}</div><div class="pl">Today</div><div class="pt {'up' if stats['today']>0 else 'st'}">{'↑ '+str(stats['today_ok']) if stats['today']>0 else '→'}</div></div>
+</div>
+</div>
 
-        <!-- Calendar -->
-        <div class="section">
-            <div class="section-header"><div class="section-title">📅 Aktivitas 35 Hari Terakhir</div></div>
-            <div class="calendar">{calendar_html}</div>
-            <div style="display:flex;gap:8px;margin-top:12px;align-items:center;font-size:12px;color:var(--text-secondary)">
-                <span>Less</span>
-                <div class="cal-day cal-0" style="width:14px;height:14px"></div>
-                <div class="cal-day cal-1" style="width:14px;height:14px"></div>
-                <div class="cal-day cal-2" style="width:14px;height:14px"></div>
-                <div class="cal-day cal-3" style="width:14px;height:14px"></div>
-                <div class="cal-day cal-4" style="width:14px;height:14px"></div>
-                <div class="cal-day cal-5" style="width:14px;height:14px"></div>
-                <span>More</span>
-            </div>
-        </div>
+<!-- Calendar -->
+<div class="sec">
+<div class="sh"><div class="st">📅 <span data-i18n="activity">Activity 35 Days</span></div></div>
+<div style="display:grid;grid-template-columns:repeat(35,1fr);gap:2px">{cal}</div>
+<div style="display:flex;gap:6px;margin-top:8px;align-items:center;font-size:11px;color:var(--t2)">
+<span>Less</span><div class="cal c0" style="width:12px;height:12px"></div><div class="cal c1" style="width:12px;height:12px"></div><div class="cal c2" style="width:12px;height:12px"></div><div class="cal c3" style="width:12px;height:12px"></div><div class="cal c4" style="width:12px;height:12px"></div><div class="cal c5" style="width:12px;height:12px"></div><span>More</span>
+</div>
+</div>
 
-        <!-- Charts -->
-        <div class="grid-2">
-            <div class="section">
-                <div class="section-header"><div class="section-title">📈 Rekaman per Hari</div></div>
-                <div class="chart-container"><canvas id="dailyChart"></canvas></div>
-            </div>
-            <div class="section">
-                <div class="section-header"><div class="section-title">📊 Success Rate per Minggu</div></div>
-                <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
-            </div>
-        </div>
+<!-- Charts -->
+<div class="g2">
+<div class="sec"><div class="sh"><div class="st">📈 <span data-i18n="daily">Daily</span></div></div><div class="ch"><canvas id="c1"></canvas></div></div>
+<div class="sec"><div class="sh"><div class="st">📊 <span data-i18n="weekly">Weekly</span></div></div><div class="ch"><canvas id="c2"></canvas></div></div>
+</div>
 
-        <!-- Error Log -->
-        <div class="section">
-            <div class="section-header"><div class="section-title">🔍 Error Log</div></div>
-            {errors_html}
-        </div>
+<!-- Storage -->
+<div class="sec">
+<div class="sh"><div class="st">💾 <span data-i18n="storage">Storage</span></div><span style="font-size:12px;color:var(--t2)">{total_size:.1f} GB in releases</span></div>
+<div style="background:var(--bg3);border-radius:6px;height:24px;overflow:hidden;margin:10px 0">
+<div style="height:100%;width:{min(total_size/50*100, 100):.0f}%;background:linear-gradient(90deg,var(--bl),var(--pr));border-radius:6px;transition:width .5s"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2)">
+<span>{total_size:.1f} GB used</span><span>∞ (GitHub unlimited)</span>
+</div>
+</div>
 
-        <!-- Recordings Table -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-title">🎬 Recent Recordings</div>
-                <div class="filters">
-                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search ID..." oninput="searchTable()">
-                    <button class="filter-btn active" onclick="filterTable('all', this)">All</button>
-                    <button class="filter-btn" onclick="filterTable('success', this)">✅</button>
-                    <button class="filter-btn" onclick="filterTable('failure', this)">❌</button>
-                    <button class="filter-btn" onclick="filterTable('running', this)">🔄</button>
-                </div>
-            </div>
-            <div style="overflow-x:auto">
-                <table id="recordingsTable">
-                    <thead><tr><th></th><th>Run ID</th><th>Time</th><th>Status</th><th></th></tr></thead>
-                    <tbody>{recent_html}</tbody>
-                </table>
-            </div>
-        </div>
+<!-- Errors -->
+<div class="sec">
+<div class="sh"><div class="st">🔍 <span data-i18n="errors">Errors</span></div></div>
+{eh2}
+</div>
 
-        <!-- Encode + Releases -->
-        <div class="grid-2">
-            <div class="section">
-                <div class="section-header"><div class="section-title">🎞 Encode Jobs</div></div>
-                <div style="overflow-x:auto">
-                    <table><thead><tr><th></th><th>Run ID</th><th>Time</th><th>Status</th><th></th></tr></thead>
-                    <tbody>{encode_html}</tbody></table>
-                </div>
-            </div>
-            <div class="section">
-                <div class="section-header"><div class="section-title">📦 Releases</div></div>
-                <div style="overflow-x:auto">
-                    <table><thead><tr><th>Tag</th><th>Size</th><th>Time</th></tr></thead>
-                    <tbody>{releases_html}</tbody></table>
-                </div>
-            </div>
-        </div>
+<!-- Recordings -->
+<div class="sec">
+<div class="sh">
+<div class="st">🎬 <span data-i18n="recordings">Recordings</span></div>
+<div class="fl">
+<input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()">
+<button class="fb on" onclick="filt('all',this)" data-i18n="all">All</button>
+<button class="fb" onclick="filt('success',this)">✅</button>
+<button class="fb" onclick="filt('failure',this)">❌</button>
+<button class="fb" onclick="filt('in_progress',this)">🔄</button>
+</div>
+</div>
+<div style="overflow-x:auto"><table id="rt"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>{rh}</tbody></table></div>
+</div>
 
-        <!-- Quick Actions -->
-        <div class="section">
-            <div class="section-header"><div class="section-title">⚡ Quick Actions</div></div>
-            <div class="actions-grid">
-                <a class="action-btn" href="https://github.com/{REPO}/actions" target="_blank">🔧 GitHub Actions</a>
-                <a class="action-btn" href="https://github.com/{REPO}/releases" target="_blank">📦 Releases</a>
-                <a class="action-btn" href="https://github.com/{REPO}" target="_blank">💻 Repository</a>
-                <a class="action-btn" onclick="exportCSV()" style="cursor:pointer">📥 Export CSV</a>
-                <a class="action-btn" onclick="exportJSON()" style="cursor:pointer">📥 Export JSON</a>
-                <a class="action-btn" onclick="showShortcuts()" style="cursor:pointer">⌨️ Shortcuts</a>
-            </div>
-        </div>
+<!-- Encode + Releases -->
+<div class="g2">
+<div class="sec">
+<div class="sh"><div class="st">🎞 Encode</div></div>
+<div style="overflow-x:auto"><table><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>{eh}</tbody></table></div>
+</div>
+<div class="sec">
+<div class="sh"><div class="st">📦 Releases</div></div>
+<div style="overflow-x:auto"><table><thead><tr><th>Tag</th><th>Size</th><th>Time</th><th>Files</th></tr></thead><tbody>{rlh}</tbody></table></div>
+</div>
+</div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <p>Rusemeva Vault &middot; <a href="https://github.com/{REPO}">GitHub</a> &middot; <a href="https://github.com/{REPO}/actions">Actions</a></p>
-            <p style="margin-top:8px">Auto-refresh 30s &middot; Press <kbd>R</kbd> to refresh &middot; <kbd>D</kbd> for dark/light</p>
-        </div>
-    </div>
+<!-- Quick Actions -->
+<div class="sec">
+<div class="sh"><div class="st">⚡ <span data-i18n="actions">Actions</span></div></div>
+<div class="ag">
+<a class="ab" href="https://github.com/{REPO}/actions" target="_blank">🔧 Actions</a>
+<a class="ab" href="https://github.com/{REPO}/releases" target="_blank">📦 Releases</a>
+<a class="ab" href="https://github.com/{REPO}" target="_blank">💻 Repo</a>
+<a class="ab" onclick="expCSV()">📥 CSV</a>
+<a class="ab" onclick="expJSON()">📥 JSON</a>
+<a class="ab" onclick="showM('shortcuts')">⌨️ Keys</a>
+<a class="ab" onclick="showM('api')">📚 API</a>
+<a class="ab" onclick="showM('about')">ℹ️ About</a>
+</div>
+</div>
 
-    <!-- Modal -->
-    <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-title">Title</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="modal-body">Body</div>
-        </div>
-    </div>
+<!-- Footer -->
+<div class="ft">
+<p>Rusemeva Vault · <a href="https://github.com/{REPO}">GitHub</a> · <a href="https://github.com/{REPO}/actions">Actions</a></p>
+<p style="margin-top:6px">Auto-refresh 30s · <kbd>R</kbd> refresh · <kbd>D</kbd> theme · <kbd>S</kbd> search</p>
+</div>
+</div>
 
-    <script>
-        // Theme
-        function toggleTheme() {{
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-            localStorage.setItem('theme', html.getAttribute('data-theme'));
-        }}
-        (function() {{
-            const saved = localStorage.getItem('theme');
-            if (saved) document.documentElement.setAttribute('data-theme', saved);
-        }})();
+<!-- Modal -->
+<div class="mo" id="mo" onclick="if(event.target===this)clM()">
+<div class="md"><div class="mh"><h3 id="mt">Title</h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div>
+</div>
 
-        // Charts
-        const chartColors = {{
-            blue: 'rgba(88,166,255,0.6)',
-            blueBorder: 'rgba(88,166,255,1)',
-            green: '#3fb950',
-            red: '#f85149',
-        }};
-        const gridColor = 'rgba(48,54,61,0.5)';
-        const tickColor = '#8b949e';
+<script>
+// Theme
+function toggleTheme(){{const h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('th',h.getAttribute('data-theme'))}}
+(function(){{const s=localStorage.getItem('th');if(s)document.documentElement.setAttribute('data-theme',s)}})();
 
-        new Chart(document.getElementById('dailyChart').getContext('2d'), {{
-            type: 'bar',
-            data: {{ labels: {daily_labels}, datasets: [{{ label: 'Recordings', data: {daily_data}, backgroundColor: chartColors.blue, borderColor: chartColors.blueBorder, borderWidth: 1, borderRadius: 4 }}] }},
-            options: {{ responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }}, scales: {{ x: {{ grid: {{ color: gridColor }}, ticks: {{ color: tickColor, maxTicksLimit: 10 }} }}, y: {{ beginAtZero: true, grid: {{ color: gridColor }}, ticks: {{ color: tickColor, stepSize: 1 }} }} }} }}
-        }});
+// Lang
+let lang=localStorage.getItem('lang')||'id';
+const i18n={{id:{{health:'System Health',total:'Total',success:'Sukses',failed:'Gagal',today:'Hari Ini',activity:'Aktivitas 35 Hari',daily:'Harian',weekly:'Mingguan',storage:'Storage',errors:'Error',recordings:'Rekaman',all:'Semua',actions:'Aksi'}},en:{{health:'System Health',total:'Total',success:'Success',failed:'Failed',today:'Today',activity:'35 Day Activity',daily:'Daily',weekly:'Weekly',storage:'Storage',errors:'Errors',recordings:'Recordings',all:'All',actions:'Actions'}}}};
+function setLang(l){{lang=l;localStorage.setItem('lang',l);document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');document.querySelectorAll('[data-i18n]').forEach(e=>{{const k=e.getAttribute('data-i18n');if(i18n[l]&&i18n[l][k])e.textContent=i18n[l][k]}})}}
 
-        new Chart(document.getElementById('weeklyChart').getContext('2d'), {{
-            type: 'line',
-            data: {{ labels: {weekly_labels}, datasets: [
-                {{ label: 'Success', data: {weekly_success}, borderColor: chartColors.green, backgroundColor: 'rgba(63,185,80,0.1)', fill: true, tension: 0.4 }},
-                {{ label: 'Failed', data: {weekly_fail}, borderColor: chartColors.red, backgroundColor: 'rgba(248,81,73,0.1)', fill: true, tension: 0.4 }}
-            ] }},
-            options: {{ responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ labels: {{ color: tickColor }} }} }}, scales: {{ x: {{ grid: {{ color: gridColor }}, ticks: {{ color: tickColor }} }}, y: {{ beginAtZero: true, grid: {{ color: gridColor }}, ticks: {{ color: tickColor, stepSize: 1 }} }} }} }}
-        }});
+// Charts
+const cc={{b:'rgba(88,166,255,.6)',bb:'rgba(88,166,255,1)',g:'#3fb950',r:'#f85149'}};
+new Chart(document.getElementById('c1').getContext('2d'),{{type:'bar',data:{{labels:{dl},datasets:[{{data:{dd},backgroundColor:cc.b,borderColor:cc.bb,borderWidth:1,borderRadius:3}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}}}},scales:{{x:{{grid:{{color:'rgba(48,54,61,.5)'}},ticks:{{color:'#8b949e',maxTicksLimit:8}}}},y:{{beginAtZero:true,grid:{{color:'rgba(48,54,61,.5)'}},ticks:{{color:'#8b949e',stepSize:1}}}}}}}}}});
+new Chart(document.getElementById('c2').getContext('2d'),{{type:'line',data:{{labels:{wl},datasets:[{{label:'OK',data:{ws},borderColor:cc.g,backgroundColor:'rgba(63,185,80,.1)',fill:true,tension:.4}},{{label:'Fail',data:{wf},borderColor:cc.r,backgroundColor:'rgba(248,81,73,.1)',fill:true,tension:.4}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{labels:{{color:'#8b949e'}}}}}},scales:{{x:{{grid:{{color:'rgba(48,54,61,.5)'}},ticks:{{color:'#8b949e'}}}},y:{{beginAtZero:true,grid:{{color:'rgba(48,54,61,.5)'}},ticks:{{color:'#8b949e',stepSize:1}}}}}}}}}});
 
-        // Filter
-        function filterTable(status, btn) {{
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('#recordingsTable tbody tr').forEach(row => {{
-                row.classList.toggle('hidden', status !== 'all' && row.dataset.status !== status);
-            }});
-        }}
+// Filter
+function filt(s,b){{document.querySelectorAll('.fb').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(r=>r.classList.toggle('hid',s!=='all'&&r.dataset.status!==s))}}
+function srch(){{const q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(r=>r.classList.toggle('hid',!r.dataset.search.includes(q)))}}
 
-        // Search
-        function searchTable() {{
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('#recordingsTable tbody tr').forEach(row => {{
-                row.classList.toggle('hidden', !row.dataset.search.includes(q));
-            }});
-        }}
+// Export
+function expCSV(){{const rows=[['ID','Status','Time']];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(r=>{{const c=r.querySelectorAll('td');rows.push([c[1].textContent.trim(),c[3].textContent.trim(),c[2].textContent.trim()])}});const b=new Blob([rows.map(r=>r.join(',')).join('\\n')],{{type:'text/csv'}});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.csv';a.click()}}
+function expJSON(){{const b=new Blob([JSON.stringify({{generated:'{now}',stats:{json.dumps(stats)}}},null,2)],{{type:'application/json'}});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.json';a.click()}}
 
-        // Export
-        function exportCSV() {{
-            const rows = [['Run ID', 'Status', 'Time']];
-            document.querySelectorAll('#recordingsTable tbody tr').forEach(r => {{
-                const cols = r.querySelectorAll('td');
-                rows.push([cols[1].textContent.trim(), cols[3].textContent.trim(), cols[2].textContent.trim()]);
-            }});
-            const csv = rows.map(r => r.join(',')).join('\\n');
-            const blob = new Blob([csv], {{ type: 'text/csv' }});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'rusemeva-recordings.csv';
-            a.click();
-        }}
+// Modal
+function showM(t){{const m=document.getElementById('mo');m.classList.add('on');const h=document.getElementById('mt'),b=document.getElementById('mb');
+if(t==='shortcuts'){{h.textContent='⌨️ Shortcuts';b.innerHTML='<div class="sh2"><div class="sk"><span class="ky">R</span> Refresh</div><div class="sk"><span class="ky">D</span> Theme</div><div class="sk"><span class="ky">S</span> Search</div><div class="sk"><span class="ky">E</span> Export</div><div class="sk"><span class="ky">Esc</span> Close</div><div class="sk"><span class="ky">1-4</span> Filter</div></div>'}}
+if(t==='api'){{h.textContent='📚 API';b.innerHTML='<div style="font-size:13px;line-height:1.8"><code>GET /api/status</code> — System status<br><code>POST /api/record</code> — Start recording<br><code>GET /api/runs</code> — List runs<br><code>GET /api/releases</code> — List releases<br><code>GET /api/stats</code> — Statistics<br><br>Base: <code>rusemeva.rusemeva-vault.workers.dev</code></div>'}}
+if(t==='about'){{h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:13px;line-height:1.8"><b>Rusemeva Dashboard</b> v4<br><br>Features: Charts, Calendar, Search, Filter, Export, Theme, Multi-lang, PWA<br><br>Built with: Python + Chart.js + GitHub Pages<br>Repo: <a href="https://github.com/{REPO}" target="_blank">GitHub</a></div>'}}
+}}
+function clM(){{document.getElementById('mo').classList.remove('on')}}
 
-        function exportJSON() {{
-            const data = {json.dumps({"generated": now, "stats": stats}, default=str)};
-            const blob = new Blob([JSON.stringify(data, null, 2)], {{ type: 'application/json' }});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'rusemeva-data.json';
-            a.click();
-        }}
+// Keys
+document.addEventListener('keydown',e=>{{if(e.target.tagName==='INPUT')return;switch(e.key){{case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break;case'1':filt('all',document.querySelector('.fb'));break;case'2':filt('success',document.querySelectorAll('.fb')[1]);break;case'3':filt('failure',document.querySelectorAll('.fb')[2]);break;case'4':filt('in_progress',document.querySelectorAll('.fb')[3]);break}}}});
 
-        // Modal
-        function showModal(title, body) {{
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-body').innerHTML = body;
-            document.getElementById('modal').classList.add('active');
-        }}
-        function closeModal() {{ document.getElementById('modal').classList.remove('active'); }}
+// Auto-refresh with countdown
+let cd=30;setInterval(()=>{{cd--;document.getElementById('timer').textContent=cd+'s';if(cd<=0)location.reload()}},1000);
 
-        function showShortcuts() {{
-            showModal('⌨️ Keyboard Shortcuts', `
-                <div class="shortcuts">
-                    <div class="shortcut"><span class="key">R</span> Refresh</div>
-                    <div class="shortcut"><span class="key">D</span> Toggle theme</div>
-                    <div class="shortcut"><span class="key">S</span> Focus search</div>
-                    <div class="shortcut"><span class="key">E</span> Export CSV</div>
-                    <div class="shortcut"><span class="key">Esc</span> Close modal</div>
-                    <div class="shortcut"><span class="key">1-4</span> Filter status</div>
-                </div>
-            `);
-        }}
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', e => {{
-            if (e.target.tagName === 'INPUT') return;
-            switch(e.key) {{
-                case 'r': location.reload(); break;
-                case 'd': toggleTheme(); break;
-                case 's': e.preventDefault(); document.getElementById('searchInput').focus(); break;
-                case 'e': exportCSV(); break;
-                case 'Escape': closeModal(); break;
-                case '1': filterTable('all', document.querySelector('.filter-btn')); break;
-                case '2': filterTable('success', document.querySelectorAll('.filter-btn')[1]); break;
-                case '3': filterTable('failure', document.querySelectorAll('.filter-btn')[2]); break;
-                case '4': filterTable('running', document.querySelectorAll('.filter-btn')[3]); break;
-            }}
-        }});
-
-        // Browser notifications
-        if ('Notification' in window && Notification.permission === 'default') {{
-            Notification.requestPermission();
-        }}
-
-        // Auto-refresh
-        setInterval(() => location.reload(), 30000);
-    </script>
+// Notifications
+if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
+</script>
 </body>
 </html>'''
 
-    return html
-
 def main():
-    print("🔄 Fetching data...")
-    runs = fetch_workflow_runs(100)
+    print("🔄 Fetching...")
+    runs = fetch_runs(100)
     releases = fetch_releases(30)
-    stats = calculate_stats(runs)
-
-    print(f"📊 Stats: {stats['total_recordings']} recordings, {stats['success_rate']}% success")
-
-    print("🔄 Generating HTML...")
-    html = generate_html(stats, runs, releases)
-
-    out_dir = os.environ.get("DASHBOARD_DIR", "/tmp/gh-pages")
-    os.makedirs(out_dir, exist_ok=True)
-
-    html_path = os.path.join(out_dir, "index.html")
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html)
-
-    data_path = os.path.join(out_dir, "data.json")
-    with open(data_path, "w", encoding="utf-8") as f:
-        json.dump({"generated": datetime.now(WIB).isoformat(), "stats": stats, "recent_runs": runs[:30], "recent_releases": releases[:15]}, f, indent=2, default=str)
-
-    print(f"✅ Dashboard: {html_path} ({os.path.getsize(html_path)/1024:.0f} KB)")
-    print(f"✅ Data: {data_path}")
+    stats = calc_stats(runs)
+    print(f"📊 {stats['total']} recordings, {stats['rate']}% success")
+    print("🔄 Generating...")
+    html = gen_html(stats, runs, releases)
+    out = os.environ.get("DASHBOARD_DIR", "/tmp/gh-pages")
+    os.makedirs(out, exist_ok=True)
+    with open(f"{out}/index.html", "w", encoding="utf-8") as f: f.write(html)
+    with open(f"{out}/data.json", "w", encoding="utf-8") as f:
+        json.dump({"generated": datetime.now(WIB).isoformat(), "stats": stats, "runs": runs[:30], "releases": releases[:15]}, f, default=str)
+    # PWA manifest
+    with open(f"{out}/manifest.json", "w") as f:
+        json.dump({"name":"Rusemeva Dashboard","short_name":"Rusemeva","start_url":".","display":"standalone","background_color":"#0d1117","theme_color":"#0d1117","icons":[{"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>","sizes":"any","type":"image/svg+xml"}]}, f)
+    print(f"✅ Done: {os.path.getsize(f'{out}/index.html')/1024:.0f} KB")
 
 if __name__ == "__main__":
     main()
