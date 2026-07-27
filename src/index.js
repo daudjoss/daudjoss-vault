@@ -834,19 +834,10 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     duration = parsed;
   }
 
-  // Guard: cek active runs
-  try {
-    const running = await checkActiveRuns(env, () => {});
-    if (running.length > 0) {
-      await sendMessage(env.BOT_TOKEN, chatId, '⛔ Masih ada proses berjalan. /status untuk detail.');
-      return;
-    }
-  } catch (e) {
-    // Log but continue — don't let checkActiveRuns block the command
-    try { await env.RUSEMEVA_KV.put('orv:debug', `checkActiveRuns err: ${e.message}`, {expirationTtl:60}); } catch(_){}
-  }
+  // Guard: cek active runs — SKIP (user pakai /cancel untuk manage)
+  // checkActiveRuns sering false-positive dan block command
 
-  // SevenHub: skip API check (inconsistent) — let GHA resolve via Playwright
+  // SevenHub: skip API check
   if (source === 'sevenhub') {
     await sendMessage(env.BOT_TOKEN, chatId, '⏳ Resolving sevenhub stream (Playwright)...');
   }
