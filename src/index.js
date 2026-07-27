@@ -817,6 +817,7 @@ async function handleCancel(chatId, env, text) {
 // ============ SOURCE RECORDING (trans7 / sevenhub) ============
 
 async function handleSourceRecord(text, chatId, env, ctx, source) {
+ try {
   const parts = text.trim().split(/\s+/);
   let duration = 600; // default 10 menit
 
@@ -840,7 +841,10 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
       await sendMessage(env.BOT_TOKEN, chatId, '⛔ Masih ada proses berjalan. /status untuk detail.');
       return;
     }
-  } catch (_) {}
+  } catch (e) {
+    // Log but continue — don't let checkActiveRuns block the command
+    try { await env.RUSEMEVA_KV.put('orv:debug', `checkActiveRuns err: ${e.message}`, {expirationTtl:60}); } catch(_){}
+  }
 
   // SevenHub: skip API check (inconsistent) — let GHA resolve via Playwright
   if (source === 'sevenhub') {
@@ -911,6 +915,13 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     const err = await resp.text();
     await sendMessage(env.BOT_TOKEN, chatId, `❌ Gagal dispatch: ${escapeHtml(err.slice(0, 300))}`);
   }
+ } catch (e) {
+  try { await env.RUSEMEVA_KV.put('orv:debug', `handleSourceRecord err: ${e.message}`, {expirationTtl:60}); } catch(_){}
+  try {
+    await sendMessage(env.BOT_TOKEN, chatId,
+      `⚠️ <b>Error di ${source}:</b>\n<code>${escapeHtml(String(e.message || e))}</code>`);
+  } catch (_) {}
+ }
 }
 
 // ============ DURATION PARSING ============
