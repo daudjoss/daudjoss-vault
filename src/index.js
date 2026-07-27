@@ -901,15 +901,21 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
   );
 
   if (resp.ok) {
+    // Estimasi encode (kasar: 1/3 durasi, min 2 menit)
+    const estSec = Math.max(120, Math.round(duration / 3));
+    const estMin = Math.round(estSec / 60);
+    const modeLabel = duration <= 600 ? 'VOD biasanya cepat' : 'live ~realtime';
     await sendMessage(env.BOT_TOKEN, chatId,
-      `✅ <b>${sourceLabel} recording dimulai!</b>\n\n` +
+      `✅ <b>Rekaman dimulai!</b>\n\n` +
       `🆔 ID: <code>${orvId}</code>\n` +
       `📺 Source: <b>${sourceLabel}</b>\n` +
       `⏱ Durasi: ${formatDuration(duration)}\n` +
       `📦 File: ${filename}\n` +
-      `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n\n` +
-      `🔗 URL akan di-resolve otomatis oleh GHA.\n` +
-      `Simpan ID untuk /cancel <id>.`
+      `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n` +
+      `⏱ Target konten: ${formatDuration(duration)} (cap; ${modeLabel})\n` +
+      `🎞 Estimasi encode HEVC: ~${estMin} menit (workflow terpisah, ±30%)\n\n` +
+      `☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n` +
+      `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`
     );
   } else {
     const err = await resp.text();
