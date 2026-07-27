@@ -96,7 +96,9 @@ run_url = f"{server_url}/{repo}/actions/runs/{run_id}"
 release_url = f"https://github.com/{repo}/releases/tag/{tag}" if tag else ""
 
 # Default ke local Bot API Server (allow 2GB). Token disisipkan di path /bot<TOKEN>.
-API = f"{os.environ.get('TG_API_URL', 'http://localhost:8081').rstrip('/')}/bot{bot_token}"
+TG_URL = os.environ.get('TG_API_URL', 'http://localhost:8081').rstrip('/')
+API = f"{TG_URL}/bot{bot_token}"
+FALLBACK_API = f"https://api.telegram.org/bot{bot_token}"
 print(f"ℹ️  Notify start | phase={phase} | API={API[:40]}... | chat={chat_id} | job={job_status} | file={filename} | hevc={'yes' if hevc_file else 'no'}", flush=True)
 
 
@@ -108,15 +110,16 @@ def send_message(text):
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
     }).encode()
-    req = urllib.request.Request(
-        f"{API}/sendMessage",
-        data=data, headers={"Content-Type": "application/json"})
-    try:
-        urllib.request.urlopen(req, timeout=30)
-        return True
-    except Exception as e:
-        print(f"⚠️ sendMessage gagal: {e}")
-        return False
+    for api_url in [API, FALLBACK_API]:
+        try:
+            req = urllib.request.Request(
+                f"{api_url}/sendMessage",
+                data=data, headers={"Content-Type": "application/json"})
+            urllib.request.urlopen(req, timeout=30)
+            return True
+        except Exception as e:
+            print(f"⚠️ sendMessage gagal ({api_url[:30]}): {e}")
+    return False
 
 
 def send_video(video_path, thumb_path, caption):
@@ -173,16 +176,18 @@ def send_video(video_path, thumb_path, caption):
     parts.append(f"--{boundary}--\r\n".encode())
     body = b"".join(parts)
 
-    req = urllib.request.Request(
-        f"{API}/sendVideo",
-        data=body,
-        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
-    try:
-        urllib.request.urlopen(req, timeout=600)
-        return True
-    except Exception as e:
-        print(f"⚠️ sendVideo gagal: {e}")
-        return False
+    # Try primary API, then fallback
+    for api_url in [API, FALLBACK_API]:
+        try:
+            req = urllib.request.Request(
+                f"{api_url}/sendVideo",
+                data=body,
+                headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
+            urllib.request.urlopen(req, timeout=600)
+            return True
+        except Exception as e:
+            print(f"⚠️ sendVideo gagal ({api_url[:30]}): {e}")
+    return False
 
 
 def send_photo_fallback(photo_path, caption):
@@ -234,7 +239,7 @@ def send_photo_fallback(photo_path, caption):
             pass
         return True
     except Exception as e:
-        print(f"⚠️ sendVideo gagal: {e}")
+        print(f"⚠️ sendPhoto gagal: {e}")
         return False
 
 
