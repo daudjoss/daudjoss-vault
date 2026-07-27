@@ -476,10 +476,11 @@ if [ -s "$HEVC_FILE" ]; then
     ACT_RT=$(awk "BEGIN{printf \"%.4f\", $HDUR_INT / $ENC_ELAPSED}")
     echo "🎯 realtime_x aktual: ${ACT_RT}x (video ${HDUR_INT}s / encode ${ENC_ELAPSED}s)"
     # Kirim ke worker biar disimpan + di-rata-rata ke KV
-    curl -fsS --retry 2 --retry-delay 3 -X POST "${WORKER_URL:-https://rusemeva.rusemeva-vault.workers.dev}/rtcal" \\
+    curl -fsS --retry 2 --retry-delay 3 -X POST "${WORKER_URL:-https://rusemeva.rusemeva-vault.workers.dev}/rtcal" \
       -H "Content-Type: application/json" \
-      -d "{\"preset\":\"${HEVC_PRESET}\",\"rt\":${ACT_RT},\"secret\":\"${PROGRESS_SECRET}\"}" 2>/dev/null || \
-      echo "⚠️ Gagal kirim kalibrasi ke worker (non-fatal)."
+      -d "{\"preset\":\"${HEVC_PRESET}\",\"rt\":${ACT_RT},\"secret\":\"${PROGRESS_SECRET}\"}" 2>/dev/null \
+      || echo "⚠️ Gagal kirim kalibrasi ke worker (non-fatal)."
+    true  # pastikan block ini selalu return 0
   fi
 else
   echo "⚠️ Encode HEVC gagal."
