@@ -1,0 +1,51 @@
+name: Update Dashboard
+
+on:
+  # Trigger setelah encode selesai
+  workflow_run:
+    workflows: ["rusemeva-encode", "rusemeva-transcribe", "rusemeva-vault"]
+    types: [completed]
+  # Manual trigger
+  workflow_dispatch:
+  # Setiap jam (backup)
+  schedule:
+    - cron: '0 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          path: main
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+          fetch-depth: 1
+
+      - name: Generate dashboard
+        env:
+          DASHBOARD_DIR: /tmp/gh-pages
+        run: |
+          cd main
+          python3 scripts/generate_dashboard.py
+
+      - name: Deploy to gh-pages
+        run: |
+          cd gh-pages
+          cp /tmp/gh-pages/index.html .
+          cp /tmp/gh-pages/data.json .
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html data.json
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "dashboard: update $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
