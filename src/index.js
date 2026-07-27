@@ -905,8 +905,7 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     const estSec = Math.max(120, Math.round(duration / 3));
     const estMin = Math.round(estSec / 60);
     const modeLabel = duration <= 600 ? 'VOD biasanya cepat' : 'live ~realtime';
-    await sendMessage(env.BOT_TOKEN, chatId,
-      `✅ <b>Rekaman dimulai!</b>\n\n` +
+    const msg = `✅ <b>Rekaman dimulai!</b>\n\n` +
       `🆔 ID: <code>${orvId}</code>\n` +
       `📺 Source: <b>${sourceLabel}</b>\n` +
       `⏱ Durasi: ${formatDuration(duration)}\n` +
@@ -915,8 +914,14 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
       `⏱ Target konten: ${formatDuration(duration)} (cap; ${modeLabel})\n` +
       `🎞 Estimasi encode HEVC: ~${estMin} menit (workflow terpisah, ±30%)\n\n` +
       `☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\n` +
-      `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`
-    );
+      `Simpan ID ini untuk /cancel <id> kalau mau membatalkan.`;
+    try {
+      await sendMessage(env.BOT_TOKEN, chatId, msg);
+      try { await env.RUSEMEVA_KV.put('orv:debug', `sendMessage OK for ${orvId}`, {expirationTtl:60}); } catch(_){}
+    } catch (e) {
+      try { await env.RUSEMEVA_KV.put('orv:debug', `sendMessage FAILED: ${e.message}`, {expirationTtl:300}); } catch(_){}
+      console.error('sendMessage FAILED:', e);
+    }
   } else {
     const err = await resp.text();
     await sendMessage(env.BOT_TOKEN, chatId, `❌ Gagal dispatch: ${escapeHtml(err.slice(0, 300))}`);
