@@ -604,35 +604,8 @@ async function handleRecord(text, chatId, env, ctx) {
   await trigResp.text().catch(() => {});
 
   if (trigResp.ok) {
-    let msg = '✅ <b>Rekaman dimulai!</b>\n\n' +
-      `🆔 ID: <code>${orvId}</code>\n` +
-      `🔗 URL: <code>${escapeHtml(url)}</code>\n` +
-      `⏱ Durasi: ${formatDuration(duration)}\n` +
-      `📦 File: ${filename}\n` +
-      `⚙️ Encode: <b>${profile.label}</b> (${profile.preset}, crf ${profile.crf})\n`;
-    if (referer) msg += `🔗 Referer: <code>${escapeHtml(referer)}</code>\n`;
-    if (probeRes) msg += `🖥 Sumber: ${probeRes}p${probeFpsHint ? ' @' + probeFpsHint + 'fps' : ''}\n`;
-    msg += `${estLine}\n\n☁️ Hasil di-upload ke GitHub Release setelah selesai, lalu dikirim ke Telegram.\n\nSimpan ID ini untuk /cancel &lt;id&gt; kalau mau membatalkan.`;
-    LOG(`before sendMessage success`);
-    const finalMsg = msg;
-    const fid = orvId;
-    try {
-      if (ctx && ctx.waitUntil) {
-        ctx.waitUntil((async () => {
-          try {
-            const st = await sendMessage(env.BOT_TOKEN, chatId, finalMsg, null, env);
-            await env.RUSEMEVA_KV.put('orv:sendok', `${new Date().toISOString()} tg=${st} orv=${fid}`, { expirationTtl: 600 }).catch(() => {});
-          } catch (e) {
-            await env.RUSEMEVA_KV.put('orv:senderr', `${new Date().toISOString()} THREW ${e.message} orv=${fid}`, { expirationTtl: 600 }).catch(() => {});
-          }
-        })());
-      } else {
-        const st = await sendMessage(env.BOT_TOKEN, chatId, finalMsg, null, env);
-        LOG(`sent success msg orv=${orvId} tg=${st}`);
-      }
-    } catch (e) {
-      LOG(`sendMessage THREW: ${e.message}`);
-    }
+    LOG(`dispatch OK for ${orvId}`);
+    await env.RUSEMEVA_KV.put('orv:sendok', `${new Date().toISOString()} orv=${orvId}`, { expirationTtl: 600 }).catch(() => {});
   } else {
     const errText = await trigResp.text();
     LOG(`GH not ok: ${errText.slice(0,200)}`);

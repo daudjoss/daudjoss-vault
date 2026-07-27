@@ -106,19 +106,6 @@ jobs:
             echo "ℹ️ tidak ada orv_id, skip link"
           fi
 
-      - name: Kirim "Rekaman dimulai!" ke Telegram
-        if: always()
-        continue-on-error: true
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
-          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
-          SOURCE: ${{ steps.inputs.outputs.source || '' }}
-          HUMAN_DUR: ${{ steps.inputs.outputs.human_duration || '' }}
-          DURATION: ${{ steps.inputs.outputs.duration || '' }}
-          FILENAME: ${{ steps.fname.outputs.filename || '' }}
-        run: python3 scripts/send_rekaman_start.py
-
       - name: Install dependencies (apt ffmpeg untuk rekam + static ffmpeg untuk HEVC)
         run: |
           # apt ffmpeg = stabil buat rekam (-c copy). Encoder libx265 di apt
