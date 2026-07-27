@@ -1,10 +1,8 @@
 import json, os, sys, urllib.request, time
 from datetime import datetime, timedelta
 
-API = "{}/bot{}".format(
-    os.environ.get("TG_API_URL", "http://localhost:8081").rstrip("/"),
-    os.environ.get("BOT_TOKEN", ""),
-)
+TG_URL = os.environ.get("TG_API_URL", "https://api.telegram.org").rstrip("/")
+API = f"{TG_URL}/bot{os.environ.get('BOT_TOKEN', '')}"
 CHAT = os.environ.get("CHAT_ID", "")
 MSG_FILE = os.environ.get("PROGRESS_MSG_FILE", "/tmp/rusemeva_progress_msg_id")
 FILENAME = os.environ.get("FILENAME", "")
@@ -19,19 +17,22 @@ MIN_INTERVAL = 5    # jeda minimum 5 detik antar edit (anti rate-limit Telegram 
 MILESTONE = 100     # selalu kirim saat mencapai 100%
 
 
+FALLBACK_API = f"https://api.telegram.org/bot{os.environ.get('BOT_TOKEN', '')}"
+
 def req(method, payload):
     data = json.dumps(payload).encode()
-    r = urllib.request.Request(
-        "{}/{}".format(API, method),
-        data=data,
-        headers={"Content-Type": "application/json"},
-    )
-    try:
-        with urllib.request.urlopen(r, timeout=30) as resp:
-            return json.loads(resp.read().decode())
-    except Exception as e:
-        print("⚠️ {} gagal: {}".format(method, e))
-        return {}
+    for api_url in [API, FALLBACK_API]:
+        try:
+            r = urllib.request.Request(
+                f"{api_url}/{method}",
+                data=data,
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(r, timeout=30) as resp:
+                return json.loads(resp.read().decode())
+        except Exception as e:
+            print(f"⚠️ {method} gagal ({api_url[:30]}): {e}")
+    return {}
 
 
 def push_pct_to_worker(pct):
