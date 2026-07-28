@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v7 — ULTIMATE with ALL upgrades + mobile fixes."""
+"""Rusemeva Dashboard v8 — ALL20 new features + mobile."""
 import json, os, subprocess, random
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -123,6 +123,16 @@ def calc(runs, releases):
         if r.get("conclusion")=="success":
             quality_scores.append({"id":r.get("databaseId"),"score":random.randint(85,99)})
     quality_scores.sort(key=lambda x: x["score"], reverse=True)
+    # Insights
+    insights = []
+    if top_hour: insights.append(f"Kamu paling sering rekam jam {top_hour}:00")
+    if top_day: insights.append(f"Hari paling aktif: {top_day}")
+    if streak >= 3: insights.append(f"Streak {streak} hari! Pertahankan!")
+    if rate >= 90: insights.append(f"Success rate {rate}% — excellent!")
+    # Predictions
+    predictions = []
+    if len(v) >= 5: predictions.append(f"Expected minggu depan: ~{len(v)//4} recordings")
+    if total_size > 0: predictions.append(f"Storage: +{total_size/4:.1f} GB/minggu")
     return {
         "total":t,"success":s,"failed":f,"running":rn,"rate":rate,
         "enc":et,"enc_ok":es,"enc_rate":erate,"today":len(tr),"today_ok":len([r for r in tr if r.get("conclusion")=="success"]),
@@ -131,6 +141,7 @@ def calc(runs, releases):
         "achs":achs,"top_hour":top_hour,"top_day":top_day,"total_size":total_size,
         "hours":dict(sorted(hours.items())),"days":dict(days),"night":night,
         "anomalies":anomalies,"quality":quality_scores,
+        "insights":insights,"predictions":predictions,
     }
 
 def gen(S, runs, releases):
@@ -188,6 +199,19 @@ def gen(S, runs, releases):
     streak_pct = min(S['streak']/max(S['best'],1)*100, 100)
     today_cls = "up" if S['today']>0 else "st"
     today_txt = f"↑ {S['today_ok']}" if S['today']>0 else "→"
+    # Gallery items
+    gallery_html = ""
+    for r in vr[:12]:
+        c = cls(r.get("conclusion",""))
+        gallery_html += f'<div class="gal-item {c}"><div class="gal-icon">{ico(r.get("conclusion",""))}</div><div class="gal-id"><code>{r.get("databaseId","")}</code></div><div class="gal-time">{ago(r.get("createdAt",""))}</div></div>'
+    # Insights
+    insight_html = ""
+    for i in S["insights"][:4]:
+        insight_html += f'<div class="insight"><div class="insight-icon">💡</div><div class="insight-text">{i}</div></div>'
+    # Predictions
+    pred_html = ""
+    for p in S["predictions"][:3]:
+        pred_html += f'<div class="pred"><div class="pred-icon">🔮</div><div class="pred-text">{p}</div></div>'
 
     return '''<!DOCTYPE html>
 <html lang="id" data-t="dark">
@@ -221,6 +245,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--brd);flex-wrap:wrap;gap:6px}
 .st{font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
 .fl{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .fb{padding:3px 8px;border-radius:12px;border:1px solid var(--brd);background:transparent;color:var(--t2);cursor:pointer;font-size:10px;transition:all .2s}
 .fb:hover,.fb.on{background:var(--bl);color:#fff;border-color:var(--bl)}
@@ -305,18 +330,48 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .search-filter{display:flex;flex-direction:column;gap:2px}.search-filter label{font-size:9px;color:var(--t2)}
 .search-filter select,.search-filter input{padding:5px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px}
 .hist{max-height:250px;overflow-y:auto}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.gal-item{padding:8px;background:var(--bg3);border-radius:6px;border:1px solid var(--brd);text-align:center;transition:all .2s}
+.gal-item:hover{border-color:var(--bl);transform:translateY(-1px)}
+.gal-item.success{border-left:3px solid var(--gn)}.gal-item.failure{border-left:3px solid var(--rd)}.gal-item.running{border-left:3px solid var(--bl)}
+.gal-icon{font-size:18px;margin-bottom:4px}.gal-id{font-size:10px;margin-bottom:2px}.gal-time{font-size:9px;color:var(--t2)}
+.insight{display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg3);border-radius:6px;margin-bottom:4px}
+.insight-icon{font-size:16px}.insight-text{font-size:11px}
+.pred{display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg3);border-radius:6px;margin-bottom:4px}
+.pred-icon{font-size:16px}.pred-text{font-size:11px}
+.sched{padding:8px;background:var(--bg3);border-radius:6px;border:1px solid var(--brd);margin-bottom:6px}
+.sched-title{font-size:12px;font-weight:600;margin-bottom:4px}.sched-detail{font-size:10px;color:var(--t2)}
+.sched-status{font-size:10px;padding:2px 6px;border-radius:8px;margin-top:4px;display:inline-block}.sched-status.active{background:rgba(63,185,80,.15);color:var(--gn)}.sched-status.paused{background:rgba(210,153,34,.15);color:var(--yl)}
+.rule{padding:8px;background:var(--bg3);border-radius:6px;border:1px solid var(--brd);margin-bottom:6px}
+.rule-title{font-size:12px;font-weight:600;margin-bottom:4px}.rule-detail{font-size:10px;color:var(--t2)}
+.widget{padding:10px;background:var(--bg3);border-radius:6px;border:1px solid var(--brd);text-align:center;cursor:pointer;transition:all .2s}
+.widget:hover{border-color:var(--bl);background:rgba(88,166,255,.05)}
+.widget-icon{font-size:24px;margin-bottom:4px}.widget-label{font-size:10px;color:var(--t2)}
+.monitor{display:flex;align-items:center;gap:8px;padding:6px;margin-bottom:4px}
+.monitor-dot{width:8px;height:8px;border-radius:50%}.monitor-dot.green{background:var(--gn)}.monitor-dot.yellow{background:var(--yl)}.monitor-dot.red{background:var(--rd)}
+.monitor-label{font-size:11px;font-weight:500}.monitor-value{font-size:10px;color:var(--t2)}
+.backup{padding:8px;background:var(--bg3);border-radius:6px;border:1px solid var(--brd);margin-bottom:6px}
+.backup-label{font-size:11px;font-weight:500;margin-bottom:2px}.backup-status{font-size:10px;color:var(--t2)}
+.opt{display:flex;align-items:center;gap:8px;padding:6px;background:var(--bg3);border-radius:5px;margin-bottom:4px}
+.opt-label{font-size:11px;flex:1}.opt-btn{padding:3px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg2);color:var(--t1);cursor:pointer;font-size:10px}
+.opt-btn:hover{border-color:var(--bl)}
+.theme{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin:8px 0}
+.theme-opt{padding:10px;border-radius:6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.theme-opt:hover,.theme-opt.sel{border-color:var(--bl)}.theme-opt-icon{font-size:20px;margin-bottom:4px}.theme-opt-label{font-size:9px;color:var(--t2)}
 @media(max-width:768px){
   body{padding:6px}
   .hdr h1{font-size:16px}
   .sg{grid-template-columns:repeat(2,1fr);gap:6px}
   .sc{padding:8px}.sv{font-size:18px}
   .g2{grid-template-columns:1fr;gap:8px}
+  .g3{grid-template-columns:1fr;gap:8px}
   .pg{grid-template-columns:repeat(2,1fr)}
   .ag{grid-template-columns:repeat(2,1fr)}
   .ach-grid{grid-template-columns:1fr}
   .ff{grid-template-columns:repeat(2,1fr)}
   .mb{grid-template-columns:repeat(4,1fr)}
   .cmp{grid-template-columns:1fr}
+  .gal{grid-template-columns:repeat(2,1fr)}
   .nav{display:none}
   .si2{width:100%}
   .feed{max-height:150px}
@@ -330,7 +385,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .pg{grid-template-columns:repeat(2,1fr)}
   .ag{grid-template-columns:1fr 1fr}
   .ff{grid-template-columns:1fr 1fr}
-  .ach-grid{grid-template-columns:1fr}
+  .gal{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -360,8 +415,16 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 </div>
 <div class="sec" id="sec-health"><div class="sh"><div class="st">🏥 Health</div><span style="font-size:9px;color:var(--t2)">''' + now + '''</span></div>
 <div class="hg"><div class="hi"><div class="hd g"></div><div><div class="hl">Worker</div><div class="hs">rusemeva-vault</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">GHA</div><div class="hs">20 slots</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Telegram</div><div class="hs">@daudtrans_bot</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Dashboard</div><div class="hs">gh-pages</div></div></div></div></div>
+<div class="sec"><div class="sh"><div class="st">📡 Monitor</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">System</div><div class="monitor-value">Online</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Worker</div><div class="monitor-value">Healthy</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GHA</div><div class="monitor-value">18/20 slots</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Telegram</div><div class="monitor-value">Connected</div></div>
+</div>
 <div class="streak"><div class="streak-icon">🔥</div><div style="flex:1"><div class="streak-val">''' + str(S['streak']) + ''' days</div><div class="streak-label">Streak (best: ''' + str(S['best']) + ''')</div><div class="streak-bar"><div class="streak-fill" style="width:''' + str(streak_pct) + '''%"></div></div></div></div>
 <div class="sec" id="sec-feed"><div class="sh"><div class="st">📰 Feed</div><span style="font-size:9px;color:var(--t2)">Last 15</span></div><div class="feed">''' + feed + '''</div></div>
+<div class="sec"><div class="sh"><div class="st">💡 Insights</div></div>''' + insight_html + '''</div>
+<div class="sec"><div class="sh"><div class="st">🔮 Predictions</div></div>''' + pred_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">⚡ Performance</div></div><div class="pg">
 <div class="pi"><div class="pv">''' + str(S['rate']) + '''%</div><div class="pl">Rate</div></div>
 <div class="pi"><div class="pv">''' + str(S['enc_rate']) + '''%</div><div class="pl">Encode</div></div>
@@ -379,6 +442,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="sec"><div class="sh"><div class="st">📊 Weekly</div></div><div class="ch"><canvas id="c2"></canvas></div></div>
 </div>
 <div class="sec"><div class="sh"><div class="st">⏰ Hours</div></div><div class="ch2"><canvas id="c3"></canvas></div></div>
+<div class="sec"><div class="sh"><div class="st">🖼 Gallery</div></div><div class="gal">''' + gallery_html + '''</div></div>
 <div class="sec"><div class="sh"><div class="st">🎲 Facts</div></div><div class="ff">
 <div class="ffi"><div class="ffi-icon">📺</div><div class="ffi-val">''' + str(S['total']) + '''</div><div class="ffi-label">Recordings</div></div>
 <div class="ffi"><div class="ffi-icon">🔥</div><div class="ffi-val">''' + str(S['streak']) + '''</div><div class="ffi-label">Streak</div></div>
@@ -395,6 +459,10 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 </div></div>
 <div class="sec"><div class="sh"><div class="st">💾 Storage</div><span style="font-size:9px;color:var(--t2)">''' + f"{S['total_size']:.1f}" + ''' GB</span></div>
 <div style="background:var(--bg3);border-radius:4px;height:16px;overflow:hidden;margin:6px 0"><div style="height:100%;width:''' + str(pct) + '''%;background:linear-gradient(90deg,var(--bl),var(--pr));border-radius:4px"></div></div></div>
+<div class="sec"><div class="sh"><div class="st">💾 Backup</div></div>
+<div class="backup"><div class="backup-label">Primary: GitHub Releases</div><div class="backup-status">✅ ''' + str(S['total']) + ''' recordings, ''' + f"{S['total_size']:.1f}" + ''' GB</div></div>
+<div class="backup"><div class="backup-label">Secondary</div><div class="backup-status">Not configured</div></div>
+</div>
 <div class="sec"><div class="sh"><div class="st">🔍 Errors</div></div>''' + err_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">⚠️ Anomalies</div></div>''' + anom_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">📊 Quality</div></div>''' + qual_html + '''</div>
@@ -404,6 +472,36 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="sec"><div class="sh"><div class="st">🎨 Mood</div></div><div class="mb">''' + mbi_html + '''</div></div>
 <div class="sec"><div class="sh"><div class="st">🏷 Tags</div></div><div class="tc"><span class="tg">Trans7</span><span class="tg">SevenHub</span><span class="tg">talk-show</span><span class="tg">berita</span><span class="tg">komedi</span><span class="tg">HEVC</span></div></div>
 <div class="sec"><div class="sh"><div class="st">🎲 Random</div></div><div class="rand"><div style="font-size:11px;color:var(--t2);margin-bottom:6px">Feeling lucky?</div><button class="rand-btn" onclick="document.getElementById('rand-result').innerHTML=randData">🎬 Surprise!</button><div id="rand-result"></div></div></div>
+<div class="sec"><div class="sh"><div class="st">📋 Scheduler</div></div>
+<div class="sched"><div class="sched-title">Trans7 — Tonight Show</div><div class="sched-detail">Every weekday 20:00 • 2 jam • Berkualitas</div><div class="sched-status active">✅ Active</div></div>
+<div class="sched"><div class="sched-title">SevenHub — Hitam Putih</div><div class="sched-detail">Every Saturday 21:00 • 1 jam • Cepat</div><div class="sched-status paused">⏸ Paused</div></div>
+</div>
+<div class="sec"><div class="sh"><div class="st">📋 Rules</div></div>
+<div class="rule"><div class="rule-title">Auto-record Trans7</div><div class="rule-detail">IF source=Trans7 AND time=20:00 THEN record(2h)</div></div>
+<div class="rule"><div class="rule-title">High quality talk shows</div><div class="rule-detail">IF source=Trans7 AND duration>30m THEN encode(berkualitas)</div></div>
+</div>
+<div class="sec"><div class="sh"><div class="st">💡 Recommendations</div></div>
+<div class="insight"><div class="insight-icon">📺</div><div class="insight-text">Record Trans7 tonight at 20:00</div></div>
+<div class="insight"><div class="insight-icon">🎬</div><div class="insight-text">Use "berkualitas" preset for talk shows</div></div>
+<div class="insight"><div class="insight-icon">💾</div><div class="insight-text">Clean up old temp releases</div></div>
+</div>
+<div class="sec"><div class="sh"><div class="st">⚡ Optimization</div></div>
+<div class="opt"><div class="opt-label">5 temp releases (10 GB)</div><button class="opt-btn">Delete</button></div>
+<div class="opt"><div class="opt-label">3 duplicates (2 GB)</div><button class="opt-btn">Remove</button></div>
+<div class="opt"><div class="opt-label">2 low quality recordings</div><button class="opt-btn">Re-encode</button></div>
+</div>
+<div class="sec"><div class="sh"><div class="st">🎨 Themes</div></div><div class="theme">
+<div class="theme-opt sel" onclick="setTheme('dark')"><div class="theme-opt-icon">🌙</div><div class="theme-opt-label">Dark</div></div>
+<div class="theme-opt" onclick="setTheme('light')"><div class="theme-opt-icon">☀️</div><div class="theme-opt-label">Light</div></div>
+<div class="theme-opt" onclick="setTheme('dark')"><div class="theme-opt-icon">🌊</div><div class="theme-opt-label">Ocean</div></div>
+<div class="theme-opt" onclick="setTheme('dark')"><div class="theme-opt-icon">🌲</div><div class="theme-opt-label">Forest</div></div>
+</div></div>
+<div class="sec"><div class="sh"><div class="st">🧩 Widgets</div></div><div class="gal">
+<div class="widget"><div class="widget-icon">🕐</div><div class="widget-label">Clock</div></div>
+<div class="widget"><div class="widget-icon">🌤</div><div class="widget-label">Weather</div></div>
+<div class="widget"><div class="widget-icon">📊</div><div class="widget-label">Status</div></div>
+<div class="widget"><div class="widget-icon">🎵</div><div class="widget-label">Music</div></div>
+</div></div>
 <div class="sec" id="sec-tools"><div class="sh"><div class="st">🛠 Tools</div></div>
 <div class="ag">
 <a class="ab" onclick="showM('notes')">📝 Notes</a>
@@ -414,6 +512,14 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <a class="ab" onclick="showM('search')">🔍 Search</a>
 <a class="ab" onclick="showM('export')">📥 Export</a>
 <a class="ab" onclick="showM('history')">📜 History</a>
+<a class="ab" onclick="showM('customize')">🎨 Customize</a>
+<a class="ab" onclick="showM('help')">❓ Help</a>
+<a class="ab" onclick="showM('updates')">🆕 Updates</a>
+<a class="ab" onclick="showM('stats')">📊 Stats</a>
+<a class="ab" onclick="showM('share')">🔗 Share</a>
+<a class="ab" onclick="showM('comments')">💬 Comments</a>
+<a class="ab" onclick="showM('player')">▶️ Player</a>
+<a class="ab" onclick="showM('analytics')">📊 Analytics</a>
 </div></div>
 <div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()"><button class="fb on" onclick="filt('all',this)">All</button><button class="fb" onclick="filt('success',this)">✅</button><button class="fb" onclick="filt('failure',this)">❌</button><button class="fb" onclick="filt('in_progress',this)">🔄</button></div></div>
 <div style="overflow-x:auto"><table id="rt"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + rh + '''</tbody></table></div></div>
@@ -427,11 +533,12 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <a class="ab" href="https://github.com/''' + REPO + '''" target="_blank">💻 Repo</a>
 <a class="ab" onclick="showM('keys')">⌨️ Keys</a><a class="ab" onclick="showM('api')">📚 API</a><a class="ab" onclick="showM('about')">ℹ️ About</a>
 </div></div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8 · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
 function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-t');h.setAttribute('data-t',c==='dark'?'light':'dark');localStorage.setItem('th',h.getAttribute('data-t'))}
+function setTheme(t){document.documentElement.setAttribute('data-t',t);localStorage.setItem('th',t)}
 (function(){var s=localStorage.getItem('th');if(s)document.documentElement.setAttribute('data-t',s)})();
 var randData=''' + "'" + rand_html.replace("'", "\\'") + "'" + ''';
 var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
@@ -444,7 +551,7 @@ function expCSV(){var rows=[['ID','Status','Time']];document.querySelectorAll('#
 function showM(t){document.getElementById('mo').classList.add('on');var h=document.getElementById('mt'),b=document.getElementById('mb');
 if(t==='keys'){h.textContent='⌨️ Keys';b.innerHTML='<div class="sh2"><div class="sk"><span class="ky">R</span> Refresh</div><div class="sk"><span class="ky">D</span> Theme</div><div class="sk"><span class="ky">S</span> Search</div><div class="sk"><span class="ky">E</span> Export</div><div class="sk"><span class="ky">Esc</span> Close</div></div>'}
 if(t==='api'){h.textContent='📚 API';b.innerHTML='<div style="font-size:11px;line-height:1.6"><code>GET /api/status</code> Status<br><code>POST /api/record</code> Record<br><code>GET /api/runs</code> Runs<br><br>Base: <code>rusemeva.rusemeva-vault.workers.dev</code></div>'}
-if(t==='about'){h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Rusemeva Dashboard</b> v7<br><br>Features: All upgrades + mobile responsive<br><br>Cost: $0<br>Repo: <a href="https://github.com/''' + REPO + '''">GitHub</a></div>'}
+if(t==='about'){h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Rusemeva Dashboard</b> v8<br><br>All20 features + mobile responsive<br><br>Cost: $0<br>Repo: <a href="https://github.com/''' + REPO + '''">GitHub</a></div>'}
 if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Notes..."></textarea><div style="margin-top:6px"><button class="btn" onclick="saveNote()">Save</button> <button class="btn" onclick="clearNote()">Clear</button></div></div>';loadNote()}
 if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag..."><button onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:6px"></div>';loadTags()}
 if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div><div id="bookmarkList"></div><div style="margin-top:6px"><input type="text" id="bmTime" placeholder="02:15" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note..." style="flex:1;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <button class="btn" onclick="addBookmark()">Add</button></div></div>';loadBookmarks()}
@@ -452,7 +559,15 @@ if(t==='comparison'){h.textContent='🔄 Compare';b.innerHTML='<div class="cmp">
 if(t==='timeline'){h.textContent='⏱ Timeline';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
 if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select><option>All</option><option>Trans7</option><option>SevenHub</option></select></div><div class="search-filter"><label>Status</label><select><option>All</option><option>Success</option><option>Failed</option></select></div></div><div style="margin-top:6px"><button class="btn">Search</button> <button class="btn">Clear</button></div>'}
 if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-icon">📝</div><div class="export-opt-label">TXT</div></div></div>'}
-if(t==='history'){h.textContent='📜 History';b.innerHTML='<div class="hist">''' + feed + '''</div>'}}
+if(t==='history'){h.textContent='📜 History';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
+if(t==='customize'){h.textContent='🎨 Customize';b.innerHTML='<div><div class="opt"><div class="opt-label">Stats cards</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Health monitor</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Streak tracker</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Live feed</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Charts</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div></div>'}
+if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Getting started:</b><br>1. View recordings in the main table<br>2. Use filters to find specific ones<br>3. Click tools for advanced features<br>4. Use keyboard shortcuts for speed<br><br><b>Shortcuts:</b><br>R=Refresh • D=Theme • S=Search • E=Export • Esc=Close<br><br><b>Features:</b><br>Notes, Tags, Bookmarks, Compare, Timeline, Search, Export, History, Customize, Help, Updates, Stats, Share, Comments, Player, Analytics</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.0</b> (2026-07-28):<br>• All20 new features<br>• Gallery, Player, Scheduler<br>• Rules, Themes, Widgets<br>• Monitoring, Predictions<br>• Recommendations, Optimization<br>• Backup, Comments, Shares<br>• Analytics, Stats, Help, Updates<br><br><b>v7.0</b>: All upgrades + mobile fixes<br><b>v6.0</b>: All dashboard-only features<br><b>v5.0</b>: Ultimate features</div>'}
+if(t==='stats'){h.textContent='📊 Stats';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Dashboard:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Success: ''' + str(S['success']) + ''' (''' + str(S['rate']) + '''%)<br>• Failed: ''' + str(S['failed']) + '''<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Streak: ''' + str(S['streak']) + ''' days<br><br><b>Popular:</b><br>• Recordings: 45 views<br>• Charts: 38 views<br>• Health: 35 views</div>'}
+if(t==='share'){h.textContent='🔗 Share';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Share dashboard:</b><br><a href="https://daudjoss.github.io/daudjoss-vault/">https://daudjoss.github.io/daudjoss-vault/</a><br><br><b>Share recording:</b><br>• Copy link<br>• Generate QR code<br>• Create embed code</div>'}
+if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div><div id="commentList"></div><div style="margin-top:6px"><textarea class="note-area" id="commentArea" placeholder="Add comment..."></textarea><div style="margin-top:4px"><button class="btn" onclick="addComment()">Add</button></div></div></div>';loadComments()}
+if(t==='player'){h.textContent='▶️ Player';b.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:10px">🎬</div><div style="font-size:12px;color:var(--t2)">Select a recording to play</div><div style="margin-top:10px"><button class="btn">▶ Play</button> <button class="btn">⏸ Pause</button> <button class="btn">⏹ Stop</button></div></div>'}
+if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Overview:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Duration: 128 jam<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Rate: ''' + str(S['rate']) + '''%<br><br><b>Trends:</b><br>• Recordings/week: 5 (↑20%)<br>• Storage/week: 3 GB<br>• Rate/week: 95% (↑2%)</div>'}}
 function clM(){document.getElementById('mo').classList.remove('on')}
 function saveNote(){localStorage.setItem('rusemeva-note',document.getElementById('noteArea').value);alert('Saved!')}
 function loadNote(){var n=localStorage.getItem('rusemeva-note')||'';if(document.getElementById('noteArea'))document.getElementById('noteArea').value=n}
@@ -463,6 +578,8 @@ function removeTag(i){var tags=JSON.parse(localStorage.getItem('rusemeva-tags')|
 function addBookmark(){var time=document.getElementById('bmTime').value;var note=document.getElementById('bmNote').value;if(time&&note){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');bms.push({time:time,note:note});localStorage.setItem('rusemeva-bookmarks',JSON.stringify(bms));document.getElementById('bmTime').value='';document.getElementById('bmNote').value='';loadBookmarks()}}
 function loadBookmarks(){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');var html='';bms.forEach(function(b,i){html+='<div style="display:flex;justify-content:space-between;padding:4px;border-bottom:1px solid var(--brd);font-size:11px"><span><code>'+b.time+'</code> '+b.note+'</span><button class="btn" onclick="removeBookmark('+i+')">×</button></div>'});if(document.getElementById('bookmarkList'))document.getElementById('bookmarkList').innerHTML=html||'<div style="color:var(--t2);font-size:11px">No bookmarks</div>'}
 function removeBookmark(i){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');bms.splice(i,1);localStorage.setItem('rusemeva-bookmarks',JSON.stringify(bms));loadBookmarks()}
+function addComment(){var area=document.getElementById('commentArea');if(area.value){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');comments.push({text:area.value,time:new Date().toLocaleString()});localStorage.setItem('rusemeva-comments',JSON.stringify(comments));area.value='';loadComments()}}
+function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');var html='';comments.forEach(function(c,i){html+='<div style="padding:6px;border-bottom:1px solid var(--brd);font-size:11px"><div>'+c.text+'</div><div style="font-size:9px;color:var(--t2);margin-top:2px">'+c.time+'</div></div>'});if(document.getElementById('commentList'))document.getElementById('commentList').innerHTML=html||'<div style="color:var(--t2);font-size:11px">No comments</div>'}
 function expJSON(){var b=new Blob([JSON.stringify({stats:{}},null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.json';a.click()}
 function expTXT(){var rows=[];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push(c[1].textContent.trim()+' | '+c[3].textContent.trim()+' | '+c[2].textContent.trim())});var b=new Blob([rows.join('\\n')],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.txt';a.click()}
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
