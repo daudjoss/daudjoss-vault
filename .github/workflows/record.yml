@@ -37,6 +37,14 @@ jobs:
   record:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    # Dedupe per RSM-ID via Worker KV lock (handleSourceRecord).
+    # Workflow concurrency pakai group per orv_id, tapi cancel-in-progress=false
+    # supaya run yg SUDAH jalan tidak di-cancel. KV lock di Worker sudah cukup
+    # untuk double-click; workflow-level cancel hanya akan trigger kalau benar-benar
+    # ada race window (<2s).
+    concurrency:
+      group: rec-${{ github.event.client_payload.orv_id || github.run_id }}
+      cancel-in-progress: false
     env:
       TZ: Asia/Jakarta
     steps:
@@ -726,3 +734,21 @@ jobs:
           ACTUAL_DURATION_SEC: ${{ env.ACTUAL_DURATION_SEC }}
 
         run: python3 scripts/notify.py
+
+      # === Clear Worker KV dedupe lock (always — biar user bisa rekam lagi) ===
+      - name: Clear KV dedupe lock
+        if: always()
+        continue-on-error: true
+        env:
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+          ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
+          WORKER_URL: ${{ secrets.WORKER_URL || 'https://rusemeva.rusemeva.workers.dev' }}
+          PROGRESS_SECRET: ${{ secrets.PROGRESS_SECRET || '' }}
+        run: |
+          if [ -n "$CHAT_ID" ]; then
+            curl -fsS --retry 2 --retry-delay 3 -X POST "$WORKER_URL/clear-lock" \
+              -H "Content-Type: application/json" \
+              -d "{\"chat_id\":\"$CHAT_ID\",\"orv_id\":\"$ORV_ID\",\"secret\":\"$PROGRESS_SECRET\"}" 2>/dev/null \
+              && echo "🔓 KV lock cleared for chat_id=$CHAT_ID orv=$ORV_ID" \
+              || echo "⚠️ clear-lock gagal (non-fatal, akan expire otomatis dalam 30m)"
+          fi

@@ -139,6 +139,41 @@ export default {
           }
         }
 
+        // === Dedupe lock clear (dipanggil GHA di akhir Record stream) ===
+        if (url.pathname === '/clear-lock') {
+          try {
+            const body = await request.json();
+            const chatId = (body.chat_id || '').toString();
+            const orvId = (body.orv_id || '').toString();
+            const secret = (body.secret || '').toString();
+            if (env.PROGRESS_SECRET && secret !== env.PROGRESS_SECRET) {
+              return new Response('forbidden', { status: 403 });
+            }
+            if (chatId) {
+              // Verify lock belongs to this orv_id (anti-poisoning)
+              const cur = await env.RUSEMEVA_KV.get(`rec:lock:${chatId}`);
+              if (cur) {
+                try {
+                  const lock = JSON.parse(cur);
+                  if (!orvId || lock.orv_id === orvId) {
+                    await env.RUSEMEVA_KV.delete(`rec:lock:${chatId}`);
+                    return new Response('OK', { status: 200 });
+                  }
+                  // Lock milik orv_id lain → jangan hapus (safety)
+                  return new Response('mismatch', { status: 409 });
+                } catch (_) {
+                  await env.RUSEMEVA_KV.delete(`rec:lock:${chatId}`);
+                  return new Response('OK', { status: 200 });
+                }
+              }
+              return new Response('no-lock', { status: 200 });
+            }
+            return new Response('bad', { status: 400 });
+          } catch (_) {
+            return new Response('err', { status: 500 });
+          }
+        }
+
         // === #4 Endpoint /ingest: terima ringkasan encode dari GHA -> simpan ke KV ===
         if (url.pathname === '/ingest') {
           try {
@@ -798,6 +833,30 @@ async function handleCancel(chatId, env, text) {
 
 async function handleSourceRecord(text, chatId, env, ctx, source) {
  try {
+  // === DEDUPE GUARD: tolak kalau masih ada rekaman in_progress untuk chat ini ===
+  // KV lock TTL 30 menit; di-clear oleh step 'Post Checkout' di GHA atau
+  // otomatis expire. Cegah double-fire dari klik berurutan cepat atau
+  // worker retry setelah network blip.
+  const lockKey = `rec:lock:${chatId}`;
+  let existingLock = null;
+  try { existingLock = await env.RUSEMEVA_KV.get(lockKey); } catch (_) {}
+  if (existingLock) {
+    try {
+      const lock = JSON.parse(existingLock);
+      const ageMs = Date.now() - (lock.ts || 0);
+      // Lock dianggap valid 25 menit (buffer di bawah TTL 30)
+      if (ageMs < 25 * 60 * 1000 && lock.status !== 'done' && lock.status !== 'failed') {
+        await sendMessage(env.BOT_TOKEN, chatId,
+          `⏳ <b>Masih ada rekaman berjalan</b> untuk chat ini.\n\n` +
+          `🆔 ID: <code>${lock.orv_id || '?'}</code>\n` +
+          `📺 Source: <b>${lock.source || source}</b>\n` +
+          `⏱ Dimulai: ${lock.age || Math.round(ageMs/1000) + ' detik'} lalu\n\n` +
+          `Tunggu sampai selesai, atau /cancel <code>${lock.orv_id || ''}</code> untuk batalkan.`);
+        return new Response('OK');
+      }
+    } catch (_) {}
+  }
+
   const parts = text.trim().split(/\s+/);
   let duration = 600; // default 10 menit
 
@@ -860,6 +919,17 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
 
   // SEMUA jaringan di background — return 200 ASAP ke Telegram
   ctx.waitUntil((async () => {
+    // 0. Set dedupe lock (TTL 30 menit) — di-clear di step akhir GHA
+    try {
+      await env.RUSEMEVA_KV.put(lockKey, JSON.stringify({
+        orv_id: orvId,
+        source: sourceLabel,
+        ts: Date.now(),
+        status: 'dispatching',
+        run_id: null,
+      }), { expirationTtl: 30 * 60 });
+    } catch (_) {}
+
     // 1. Kirim "Rekaman dimulai!"
     await sendMessage(env.BOT_TOKEN, chatId, msg);
 
@@ -871,6 +941,7 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
     } catch (_) {}
 
     // 3. Dispatch ke GHA
+    let dispatchOk = false;
     try {
       const resp = await fetch(
         `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/dispatches`,
@@ -888,9 +959,40 @@ async function handleSourceRecord(text, chatId, env, ctx, source) {
       if (!resp.ok) {
         const err = await resp.text();
         await sendMessage(env.BOT_TOKEN, chatId, `❌ Gagal dispatch: ${escapeHtml(err.slice(0, 300))}`);
+      } else {
+        dispatchOk = true;
       }
     } catch (e) {
       await sendMessage(env.BOT_TOKEN, chatId, `❌ Dispatch error: ${escapeHtml(String(e.message || e).slice(0, 200))}`);
+    }
+
+    // 4. Resolve run_id dari API (biar /cancel & dedupe kerja) + update lock
+    if (dispatchOk) {
+      try {
+        // Tunggu sebentar biar GitHub sempat bikin run record
+        await new Promise(r => setTimeout(r, 1500));
+        const runsResp = await ghApi(env, `actions/runs?per_page=5`);
+        const runs = await runsResp.json();
+        // Cari run terbaru untuk workflow rusemeva-vault dengan event record-request
+        const myRun = (runs.workflow_runs || []).find(r =>
+          r.name === 'rusemeva-vault' &&
+          r.event === 'repository_dispatch' &&
+          r.status !== 'completed' &&
+          Date.now() - new Date(r.created_at).getTime() < 90 * 1000
+        );
+        if (myRun) {
+          await env.RUSEMEVA_KV.put(lockKey, JSON.stringify({
+            orv_id: orvId,
+            source: sourceLabel,
+            ts: Date.now(),
+            status: 'recording',
+            run_id: String(myRun.id),
+          }), { expirationTtl: 30 * 60 });
+        }
+      } catch (_) {}
+    } else {
+      // Dispatch gagal → lepas lock agar user bisa coba lagi
+      try { await env.RUSEMEVA_KV.delete(lockKey); } catch (_) {}
     }
   })());
 
