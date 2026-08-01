@@ -18,7 +18,7 @@ def get_runs(n=100):
     return json.loads(raw) if raw else []
 
 def get_releases(n=30):
-    raw = gh(["api",f"repos/{REPO}/releases","--jq",f"[.[:{n}][:][]|{{tag:.tag_name,name:.name,created:.created_at,size:([.assets[].size]|add//0),assets:[.assets[]|{{name:.name,size:.size}}]}}]"])
+    raw = gh(["api",f"repos/{REPO}/releases","--jq",f"[.[:{n}][]|{{tag:.tag_name,name:.name,created:.created_at,size:([.assets[].size]|add//0),assets:[.assets[]|{{name:.name,size:.size}}]}}]"])
     return json.loads(raw) if raw else []
 
 def ago(s):
@@ -223,6 +223,8 @@ def gen(S, runs, releases):
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--brd:#30363d;--t1:#e6edf3;--t2:#8b949e;--t3:#484f58;--bl:#58a6ff;--gn:#3fb950;--rd:#f85149;--yl:#d29922;--pr:#bc8cff;--or:#f0883e;--pn:#f778ba}
 [data-t="light"]{--bg:#f6f8fa;--bg2:#fff;--bg3:#f0f2f5;--brd:#d0d7de;--t1:#1f2328;--t2:#656d76;--t3:#8b949e}
+[data-t="ocean"]{--bg:#001220;--bg2:#002233;--bg3:#003355;--brd:#004477;--t1:#e0f0ff;--t2:#80b0d0;--t3:#5080a0;--bl:#00aaff;--gn:#00ff88;--rd:#ff4466;--yl:#ffaa00;--pr:#aa88ff;--or:#ff8844;--pn:#ff66aa}
+[data-t="forest"]{--bg:#0a1a0a;--bg2:#152015;--bg3:#203020;--brd:#304030;--t1:#e0f0e0;--t2:#80a080;--t3:#508050;--bl:#44aa44;--gn:#44ff44;--rd:#ff4444;--yl:#ffaa00;--pr:#aa88ff;--or:#ff8844;--pn:#ff66aa}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);padding:10px;min-height:100vh;transition:all .3s;overflow-x:hidden;-webkit-text-size-adjust:100%}
 .ct{max-width:1480px;margin:0 auto}
@@ -418,7 +420,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="sec"><div class="sh"><div class="st">📡 Monitor</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">System</div><div class="monitor-value">Online</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Worker</div><div class="monitor-value">Healthy</div></div>
-<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GHA</div><div class="monitor-value">18/20 slots</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GHA</div><div class="monitor-value">''' + str(min(S['running'], 20)) + '''/20 slots</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Telegram</div><div class="monitor-value">Connected</div></div>
 </div>
 <div class="streak"><div class="streak-icon">🔥</div><div style="flex:1"><div class="streak-val">''' + str(S['streak']) + ''' days</div><div class="streak-label">Streak (best: ''' + str(S['best']) + ''')</div><div class="streak-bar"><div class="streak-fill" style="width:''' + str(streak_pct) + '''%"></div></div></div></div>
@@ -493,14 +495,14 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="sec"><div class="sh"><div class="st">🎨 Themes</div></div><div class="theme">
 <div class="theme-opt sel" onclick="setTheme('dark')"><div class="theme-opt-icon">🌙</div><div class="theme-opt-label">Dark</div></div>
 <div class="theme-opt" onclick="setTheme('light')"><div class="theme-opt-icon">☀️</div><div class="theme-opt-label">Light</div></div>
-<div class="theme-opt" onclick="setTheme('dark')"><div class="theme-opt-icon">🌊</div><div class="theme-opt-label">Ocean</div></div>
-<div class="theme-opt" onclick="setTheme('dark')"><div class="theme-opt-icon">🌲</div><div class="theme-opt-label">Forest</div></div>
+<div class="theme-opt" onclick="setTheme('ocean')"><div class="theme-opt-icon">🌊</div><div class="theme-opt-label">Ocean</div></div>
+<div class="theme-opt" onclick="setTheme('forest')"><div class="theme-opt-icon">🌲</div><div class="theme-opt-label">Forest</div></div>
 </div></div>
 <div class="sec"><div class="sh"><div class="st">🧩 Widgets</div></div><div class="gal">
-<div class="widget"><div class="widget-icon">🕐</div><div class="widget-label">Clock</div></div>
-<div class="widget"><div class="widget-icon">🌤</div><div class="widget-label">Weather</div></div>
-<div class="widget"><div class="widget-icon">📊</div><div class="widget-label">Status</div></div>
-<div class="widget"><div class="widget-icon">🎵</div><div class="widget-label">Music</div></div>
+<div class="widget" onclick="showM('clock')"><div class="widget-icon">🕐</div><div class="widget-label">Clock</div></div>
+<div class="widget" onclick="showM('weather')"><div class="widget-icon">🌤</div><div class="widget-label">Weather</div></div>
+<div class="widget" onclick="showM('status')"><div class="widget-icon">📊</div><div class="widget-label">Status</div></div>
+<div class="widget" onclick="showM('music')"><div class="widget-icon">🎵</div><div class="widget-label">Music</div></div>
 </div></div>
 <div class="sec" id="sec-tools"><div class="sh"><div class="st">🛠 Tools</div></div>
 <div class="ag">
@@ -557,7 +559,7 @@ if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><in
 if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div><div id="bookmarkList"></div><div style="margin-top:6px"><input type="text" id="bmTime" placeholder="02:15" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note..." style="flex:1;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <button class="btn" onclick="addBookmark()">Add</button></div></div>';loadBookmarks()}
 if(t==='comparison'){h.textContent='🔄 Compare';b.innerHTML='<div class="cmp"><div class="cmp-item"><div class="cmp-val">''' + str(S['success']) + '''</div><div class="cmp-label">Success</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['failed']) + '''</div><div class="cmp-label">Failed</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['rate']) + '''%</div><div class="cmp-label">Rate</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['enc_rate']) + '''%</div><div class="cmp-label">Encode</div></div></div>'}
 if(t==='timeline'){h.textContent='⏱ Timeline';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
-if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select><option>All</option><option>Trans7</option><option>SevenHub</option></select></div><div class="search-filter"><label>Status</label><select><option>All</option><option>Success</option><option>Failed</option></select></div></div><div style="margin-top:6px"><button class="btn">Search</button> <button class="btn">Clear</button></div>'}
+if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select><option>All</option><option>Trans7</option><option>SevenHub</option></select></div><div class="search-filter"><label>Status</label><select><option>All</option><option>Success</option><option>Failed</option></select></div></div><div style="margin-top:6px"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button></div><div id="searchResults" style="margin-top:8px"></div>'}
 if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-icon">📝</div><div class="export-opt-label">TXT</div></div></div>'}
 if(t==='history'){h.textContent='📜 History';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
 if(t==='customize'){h.textContent='🎨 Customize';b.innerHTML='<div><div class="opt"><div class="opt-label">Stats cards</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Health monitor</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Streak tracker</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Live feed</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div><div class="opt"><div class="opt-label">Charts</div><button class="opt-btn" onclick="this.textContent=this.textContent===\'ON\'?\'OFF\':\'ON\'">ON</button></div></div>'}
@@ -567,7 +569,13 @@ if(t==='stats'){h.textContent='📊 Stats';b.innerHTML='<div style="font-size:11
 if(t==='share'){h.textContent='🔗 Share';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Share dashboard:</b><br><a href="https://daudjoss.github.io/daudjoss-vault/">https://daudjoss.github.io/daudjoss-vault/</a><br><br><b>Share recording:</b><br>• Copy link<br>• Generate QR code<br>• Create embed code</div>'}
 if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div><div id="commentList"></div><div style="margin-top:6px"><textarea class="note-area" id="commentArea" placeholder="Add comment..."></textarea><div style="margin-top:4px"><button class="btn" onclick="addComment()">Add</button></div></div></div>';loadComments()}
 if(t==='player'){h.textContent='▶️ Player';b.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:10px">🎬</div><div style="font-size:12px;color:var(--t2)">Select a recording to play</div><div style="margin-top:10px"><button class="btn">▶ Play</button> <button class="btn">⏸ Pause</button> <button class="btn">⏹ Stop</button></div></div>'}
-if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Overview:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Duration: 128 jam<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Rate: ''' + str(S['rate']) + '''%<br><br><b>Trends:</b><br>• Recordings/week: 5 (↑20%)<br>• Storage/week: 3 GB<br>• Rate/week: 95% (↑2%)</div>'}}
+if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Overview:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Streak: ''' + str(S['streak']) + ''' days<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Rate: ''' + str(S['rate']) + '''%<br><br><b>Trends:</b><br>• Recordings/week: ~''' + str(max(1, S['total']//4)) + '''<br>• Storage/week: ~''' + f"{S['total_size']/4:.1f}" + ''' GB<br>• Night recordings: ''' + str(S['night']) + '''</div>'}
+if(t==='clock'){h.textContent='Clock';b.innerHTML='<div style=text-align:center;padding:20px><div id=liveClock style=font-size:36px;font-weight:700>--:--:--</div><div style=font-size:11px;color:var(--t2);margin-top:4px>WIB</div></div>';setInterval(function(){var c=document.getElementById('liveClock');if(c)c.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta'})},1000)}
+if(t==='weather'){h.textContent='Weather';b.innerHTML='<div style=text-align:center;padding:20px><div style=font-size:40px>Weather service not configured</div></div>'}
+if(t==='status'){h.textContent='Status';b.innerHTML='<div style=font-size:11px;line-height:1.6><b>System Status:</b><br>Total: '+''' + str(S['total']) + '''+'<br>Rate: '+''' + str(S['rate']) + '''+'%</div>'}
+if(t==='music'){h.textContent='Music';b.innerHTML='<div style=text-align:center;padding:20px>No music player configured</div>'}}
+function advSearch(){var stat=document.getElementById('statFilter');if(!stat)return;stat=stat.value;var results=document.getElementById('searchResults');if(!results)return;var html='';document.querySelectorAll('#rt tbody tr').forEach(function(r){var match=true;if(stat!=='All'){var s=r.querySelector('.b');if(s){match=s.classList.contains('b-'+stat.toLowerCase())}}if(match){var id=r.querySelector('code');if(id){html+='<div class="fi"><span class="fi-icon">📋</span><span class="fi-id"><code>'+id.textContent+'</code></span><span class="fi-status">'+(r.querySelector('.b')?r.querySelector('.b').textContent:'')+'</span></div>'}}});results.innerHTML=html||'<div style="color:var(--t2);font-size:11px;text-align:center;padding:10px">No results</div>'}
+function clearSearch(){var s=document.getElementById('srcFilter');if(s)s.value='All';var st=document.getElementById('statFilter');if(st)st.value='All';var r=document.getElementById('searchResults');if(r)r.innerHTML=''}
 function clM(){document.getElementById('mo').classList.remove('on')}
 function saveNote(){localStorage.setItem('rusemeva-note',document.getElementById('noteArea').value);alert('Saved!')}
 function loadNote(){var n=localStorage.getItem('rusemeva-note')||'';if(document.getElementById('noteArea'))document.getElementById('noteArea').value=n}
@@ -580,10 +588,10 @@ function loadBookmarks(){var bms=JSON.parse(localStorage.getItem('rusemeva-bookm
 function removeBookmark(i){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');bms.splice(i,1);localStorage.setItem('rusemeva-bookmarks',JSON.stringify(bms));loadBookmarks()}
 function addComment(){var area=document.getElementById('commentArea');if(area.value){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');comments.push({text:area.value,time:new Date().toLocaleString()});localStorage.setItem('rusemeva-comments',JSON.stringify(comments));area.value='';loadComments()}}
 function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');var html='';comments.forEach(function(c,i){html+='<div style="padding:6px;border-bottom:1px solid var(--brd);font-size:11px"><div>'+c.text+'</div><div style="font-size:9px;color:var(--t2);margin-top:2px">'+c.time+'</div></div>'});if(document.getElementById('commentList'))document.getElementById('commentList').innerHTML=html||'<div style="color:var(--t2);font-size:11px">No comments</div>'}
-function expJSON(){var b=new Blob([JSON.stringify({stats:{}},null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.json';a.click()}
+function expJSON(){var rows=[];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push({id:c[1].textContent.trim(),status:c[3].textContent.trim(),time:c[2].textContent.trim()})});var b=new Blob([JSON.stringify({total:''' + str(S['total']) + ''',success:''' + str(S['success']) + ''',failed:''' + str(S['failed']) + ''',rate:''' + str(S['rate']) + ''',streak:''' + str(S['streak']) + ''',recordings:rows},null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.json';a.click()}
 function expTXT(){var rows=[];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push(c[1].textContent.trim()+' | '+c[3].textContent.trim()+' | '+c[2].textContent.trim())});var b=new Blob([rows.join('\\n')],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.txt';a.click()}
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
-var cd=30;setInterval(function(){cd--;document.getElementById('tmr').textContent=cd+'s';if(cd<=0)location.reload()},1000);
+var cd=30;setInterval(function(){cd--;document.getElementById('tmr').textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){location.reload()}else{cd=30}}},1000);
 if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
 </script>
 </body>
