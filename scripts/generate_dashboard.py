@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v8 — ALL20 new features + mobile."""
+"""Rusemeva Dashboard v8.3 — visual upgrade + audit-hardened live data."""
 import json, os, subprocess, random
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -527,22 +527,117 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .ff{grid-template-columns:1fr 1fr}
   .gal{grid-template-columns:1fr 1fr}
 }
+
+/* === v8.3 visual upgrade === */
+body{background:
+  radial-gradient(1200px 600px at 10% -10%, rgba(88,166,255,.12), transparent 55%),
+  radial-gradient(900px 500px at 100% 0%, rgba(188,140,255,.10), transparent 50%),
+  radial-gradient(700px 400px at 50% 100%, rgba(63,185,80,.06), transparent 45%),
+  var(--bg);padding-bottom:72px}
+.hero{position:relative;overflow:hidden;border-radius:14px;padding:16px 16px 14px;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(88,166,255,.14),rgba(188,140,255,.10) 45%,rgba(63,185,80,.06));
+  border:1px solid var(--brd);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.hero::before{content:'';position:absolute;inset:-40% -20% auto auto;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(88,166,255,.25),transparent 70%);pointer-events:none}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.hero-brand{display:flex;flex-direction:column;gap:4px}
+.hero-brand h1{font-size:22px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,var(--t1),var(--bl));
+  -webkit-background-clip:text;background-clip:text;color:transparent;display:flex;align-items:center;gap:8px}
+.hero-sub{font-size:11px;color:var(--t2)}
+.hero-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.live-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;
+  background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.28);font-size:10px;color:var(--gn);font-weight:600}
+.btn{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:8px;padding:6px 10px}
+.btn:active{transform:scale(.97)}
+.sc{background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg2);
+  border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);backdrop-filter:blur(6px)}
+.sc:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.18),0 0 0 1px rgba(88,166,255,.15)}
+.sc::before{height:3px;opacity:.95}
+.sc.bl{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(88,166,255,.06)}
+.sc.gn{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(63,185,80,.06)}
+.sc.rd{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(248,81,73,.06)}
+.sc.yl{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(210,153,34,.06)}
+.sc.pr{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(188,140,255,.06)}
+.sc.or{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(240,136,62,.06)}
+.sc.pn{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(247,120,186,.06)}
+.sv{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sec{border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--bg2);
+  box-shadow:0 2px 12px rgba(0,0,0,.10)}
+.sh{border-bottom-color:rgba(48,54,61,.7)}
+.st{letter-spacing:.01em}
+.feed{max-height:240px;border-radius:8px}
+.fi{border-radius:8px;margin-bottom:2px;border-bottom:none;background:rgba(255,255,255,.015)}
+.fi:hover{background:rgba(88,166,255,.07)}
+.fi-status{font-weight:600}
+.streak{border-radius:12px;box-shadow:0 4px 18px rgba(240,136,62,.08)}
+.gal-item,.widget,.theme-opt,.ffi,.ach,.pi,.cmp-item{border-radius:10px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.gal-item:hover,.widget:hover,.ffi:hover,.ach:hover{box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.theme-opt{position:relative;overflow:hidden;min-height:64px}
+.theme-swatch{height:18px;border-radius:6px;margin:0 4px 6px;border:1px solid rgba(255,255,255,.08)}
+.theme-swatch.dark{background:linear-gradient(90deg,#0d1117,#21262d,#58a6ff)}
+.theme-swatch.light{background:linear-gradient(90deg,#f6f8fa,#fff,#0969da)}
+.theme-swatch.ocean{background:linear-gradient(90deg,#001220,#003355,#00aaff)}
+.theme-swatch.forest{background:linear-gradient(90deg,#0a1a0a,#203020,#44ff44)}
+.theme-opt.sel{box-shadow:0 0 0 1px var(--bl),0 6px 16px rgba(88,166,255,.15)}
+.nav{gap:6px;padding:6px;border-radius:12px;background:rgba(22,27,34,.85);border:1px solid var(--brd);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.nav-btn{width:32px;height:32px;border-radius:8px}
+.bnav{display:none;position:fixed;left:8px;right:8px;bottom:8px;z-index:200;
+  grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;border-radius:16px;
+  background:rgba(22,27,34,.92);border:1px solid var(--brd);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.bnav button{appearance:none;border:none;background:transparent;color:var(--t2);font-size:11px;
+  padding:6px 2px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bnav button .bi{font-size:16px;line-height:1}
+.bnav button:active,.bnav button:hover{color:var(--bl);background:rgba(88,166,255,.08)}
+.md{border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.45);border:1px solid rgba(88,166,255,.15);
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg2)}
+.mo{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.ft{opacity:.85}
+.rate-ring{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;background:var(--bg3);font-size:11px}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--gn);box-shadow:0 0 0 0 rgba(63,185,80,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,185,80,.45)}70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
+@media(max-width:768px){
+  body{padding-bottom:84px}
+  .hero{padding:12px}
+  .hero-brand h1{font-size:18px}
+  .nav{display:none!important}
+  .bnav{display:grid}
+  .sg{gap:8px}
+  .sc{border-radius:10px}
+}
+
 </style>
 </head>
 <body>
 <div class="ct">
 <div class="nav">
-<button class="nav-btn" onclick="document.querySelector('.hdr').scrollIntoView({behavior:'smooth'})">🏠</button>
-<button class="nav-btn" onclick="document.getElementById('sec-feed').scrollIntoView({behavior:'smooth'})">📰</button>
-<button class="nav-btn" onclick="document.getElementById('sec-rec').scrollIntoView({behavior:'smooth'})">🎬</button>
-<button class="nav-btn" onclick="document.getElementById('sec-ach').scrollIntoView({behavior:'smooth'})">🏆</button>
-<button class="nav-btn" onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})">🛠</button>
-<button class="nav-btn" onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})">⚡</button>
+<button class="nav-btn" onclick="document.querySelector('.hero').scrollIntoView({behavior:'smooth'})" title="Home">🏠</button>
+<button class="nav-btn" onclick="document.getElementById('sec-feed').scrollIntoView({behavior:'smooth'})" title="Feed">📰</button>
+<button class="nav-btn" onclick="document.getElementById('sec-rec').scrollIntoView({behavior:'smooth'})" title="Recordings">🎬</button>
+<button class="nav-btn" onclick="document.getElementById('sec-ach').scrollIntoView({behavior:'smooth'})" title="Achievements">🏆</button>
+<button class="nav-btn" onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})" title="Tools">🛠</button>
+<button class="nav-btn" onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})" title="Actions">⚡</button>
 </div>
-<div class="hdr">
+<div class="hero" id="sec-home">
+<div class="hero-top">
+<div class="hero-brand">
 <h1>🎬 Rusemeva</h1>
-<div class="ha"><div class="dot"></div><span style="font-size:10px;color:var(--t2)" id="tmr">30s</span>
-<button class="btn" onclick="toggleTheme()">🌓</button><button class="btn" onclick="location.reload()">🔄</button></div>
+<div class="hero-sub">Vault dashboard · live GHA · Telegram bot</div>
+</div>
+<div class="hero-actions">
+<span class="live-pill"><span class="pulse-dot"></span> LIVE <span id="tmr">30s</span></span>
+<button class="btn" onclick="toggleTheme()" title="Theme">🌓</button>
+<button class="btn" onclick="softRefresh().then(function(ok){if(!ok)location.reload()})" title="Refresh">🔄</button>
+</div>
+</div>
+<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1">
+<span class="rate-ring">📊 Rate <b style="color:var(--bl)">''' + str(S['rate']) + '''%</b></span>
+<span class="rate-ring">🔥 Streak <b style="color:var(--or)">''' + str(S['streak']) + '''d</b></span>
+<span class="rate-ring">✅ ''' + str(S['success']) + ''' / ''' + str(S['total']) + '''</span>
+<span class="rate-ring">🎞 Enc ''' + str(S['enc_ok']) + '''/''' + str(S['enc']) + '''</span>
+</div>
 </div>
 <div class="sg">
 <div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Total</div></div>
@@ -630,11 +725,11 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="opt"><div class="opt-label">Cek Actions untuk run gagal / cancel</div><a class="opt-btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">Open</a></div>
 <div class="opt"><div class="opt-label">Re-encode lewat bot Telegram (bukan dashboard)</div><button class="opt-btn" onclick="showM('help')">Help</button></div>
 </div>
-<div class="sec"><div class="sh"><div class="st">🎨 Themes</div></div><div class="theme">
-<div class="theme-opt sel" onclick="setTheme('dark')"><div class="theme-opt-icon">🌙</div><div class="theme-opt-label">Dark</div></div>
-<div class="theme-opt" onclick="setTheme('light')"><div class="theme-opt-icon">☀️</div><div class="theme-opt-label">Light</div></div>
-<div class="theme-opt" onclick="setTheme('ocean')"><div class="theme-opt-icon">🌊</div><div class="theme-opt-label">Ocean</div></div>
-<div class="theme-opt" onclick="setTheme('forest')"><div class="theme-opt-icon">🌲</div><div class="theme-opt-label">Forest</div></div>
+<div class="sec" id="sec-themes"><div class="sh"><div class="st">🎨 Themes</div><span style="font-size:9px;color:var(--t2)">tap to apply</span></div><div class="theme">
+<div class="theme-opt sel" onclick="setTheme('dark')"><div class="theme-swatch dark"></div><div class="theme-opt-icon">🌙</div><div class="theme-opt-label">Dark</div></div>
+<div class="theme-opt" onclick="setTheme('light')"><div class="theme-swatch light"></div><div class="theme-opt-icon">☀️</div><div class="theme-opt-label">Light</div></div>
+<div class="theme-opt" onclick="setTheme('ocean')"><div class="theme-swatch ocean"></div><div class="theme-opt-icon">🌊</div><div class="theme-opt-label">Ocean</div></div>
+<div class="theme-opt" onclick="setTheme('forest')"><div class="theme-swatch forest"></div><div class="theme-opt-icon">🌲</div><div class="theme-opt-label">Forest</div></div>
 </div></div>
 <div class="sec"><div class="sh"><div class="st">🧩 Widgets</div></div><div class="gal">
 <div class="widget" onclick="showM('clock')"><div class="widget-icon">🕐</div><div class="widget-label">Clock</div></div>
@@ -673,7 +768,15 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <a class="ab" href="https://github.com/''' + REPO + '''" target="_blank">💻 Repo</a>
 <a class="ab" onclick="showM('keys')">⌨️ Keys</a><a class="ab" onclick="showM('api')">📚 API</a><a class="ab" onclick="showM('about')">ℹ️ About</a>
 </div></div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.2 · Audit fix · Live data + clean feed · Auto-refresh 30s</p></div>
+
+<div class="bnav">
+<button onclick="document.getElementById('sec-home').scrollIntoView({behavior:'smooth'})"><span class="bi">🏠</span>Home</button>
+<button onclick="document.getElementById('sec-feed').scrollIntoView({behavior:'smooth'})"><span class="bi">📰</span>Feed</button>
+<button onclick="document.getElementById('sec-rec').scrollIntoView({behavior:'smooth'})"><span class="bi">🎬</span>Rec</button>
+<button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
+<button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
+</div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.3 · Visual upgrade · Glass + hero + mobile nav · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
@@ -702,16 +805,16 @@ if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opt
 if(t==='history'){h.textContent='📜 History';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
 if(t==='customize'){h.textContent='🎨 Customize';b.innerHTML='<div><div class="opt"><div class="opt-label">Stats cards</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Health monitor</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Streak tracker</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Live feed</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Charts</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div></div>'}
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Getting started:</b><br>1. View recordings in the main table<br>2. Use filters to find specific ones<br>3. Click tools for advanced features<br>4. Use keyboard shortcuts for speed<br><br><b>Shortcuts:</b><br>R=Refresh • D=Theme • S=Search • E=Export • Esc=Close<br><br><b>Features:</b><br>Notes, Tags, Bookmarks, Compare, Timeline, Search, Export, History, Customize, Help, Updates, Stats, Share, Comments, Player, Analytics</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.0</b> (2026-07-28):<br>• All20 new features<br>• Gallery, Player, Scheduler<br>• Rules, Themes, Widgets<br>• Monitoring, Predictions<br>• Recommendations, Optimization<br>• Backup, Comments, Shares<br>• Analytics, Stats, Help, Updates<br><br><b>v7.0</b>: All upgrades + mobile fixes<br><b>v6.0</b>: All dashboard-only features<br><b>v5.0</b>: Ultimate features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.3</b>:<br>• Visual upgrade: hero, glass cards, glow stats<br>• Mobile bottom nav<br>• Theme swatches<br>• Live soft-refresh hardened<br><br><b>v8.2</b>: Audit feed/WIB/filters<br><b>v8.0</b> (2026-07-28):<br>• All20 new features<br>• Gallery, Player, Scheduler<br>• Rules, Themes, Widgets<br>• Monitoring, Predictions<br>• Recommendations, Optimization<br>• Backup, Comments, Shares<br>• Analytics, Stats, Help, Updates<br><br><b>v7.0</b>: All upgrades + mobile fixes<br><b>v6.0</b>: All dashboard-only features<br><b>v5.0</b>: Ultimate features</div>'}
 if(t==='stats'){h.textContent='📊 Stats';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Dashboard:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Success: ''' + str(S['success']) + ''' (''' + str(S['rate']) + '''%)<br>• Failed: ''' + str(S['failed']) + '''<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Streak: ''' + str(S['streak']) + ''' days<br><br><b>Popular:</b><br>• Recordings: 45 views<br>• Charts: 38 views<br>• Health: 35 views</div>'}
 if(t==='share'){h.textContent='🔗 Share';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Share dashboard:</b><br><a href="https://daudjoss.github.io/daudjoss-vault/">https://daudjoss.github.io/daudjoss-vault/</a><br><br><b>Share recording:</b><br>• Copy link<br>• Generate QR code<br>• Create embed code</div>'}
 if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div><div id="commentList"></div><div style="margin-top:6px"><textarea class="note-area" id="commentArea" placeholder="Add comment..."></textarea><div style="margin-top:4px"><button class="btn" onclick="addComment()">Add</button></div></div></div>';loadComments()}
-if(t==='player'){h.textContent='▶️ Player';b.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:10px">🎬</div><div style="font-size:12px;color:var(--t2)">Select a recording to play</div><div style="margin-top:10px"><button class="btn">▶ Play</button> <button class="btn">⏸ Pause</button> <button class="btn">⏹ Stop</button></div></div>'}
+if(t==='player'){h.textContent='▶️ Player';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🎬</div><div style="font-size:12px;color:var(--t2);line-height:1.5">Playback file besar lewat Telegram / GitHub Release.<br>Buka baris Recording → ↗ untuk run, atau Releases di Actions.</div><div style="margin-top:12px"><a class="btn" href="https://github.com/daudjoss/daudjoss-vault/releases" target="_blank" style="display:inline-block;text-decoration:none">📦 Releases</a> <a class="btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="display:inline-block;text-decoration:none">🔧 Actions</a></div></div>'}
 if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Overview:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Streak: ''' + str(S['streak']) + ''' days<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Rate: ''' + str(S['rate']) + '''%<br><br><b>Trends:</b><br>• Recordings/week: ~''' + str(max(1, S['total']//4)) + '''<br>• Storage/week: ~''' + f"{S['total_size']/4:.1f}" + ''' GB<br>• Night recordings: ''' + str(S['night']) + '''</div>'}
 if(t==='clock'){h.textContent='Clock';b.innerHTML='<div style=text-align:center;padding:20px><div id=liveClock style=font-size:36px;font-weight:700>--:--:--</div><div style=font-size:11px;color:var(--t2);margin-top:4px>WIB</div></div>';setInterval(function(){var c=document.getElementById('liveClock');if(c)c.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta'})},1000)}
-if(t==='weather'){h.textContent='Weather';b.innerHTML='<div style=text-align:center;padding:20px><div style=font-size:40px>Weather service not configured</div></div>'}
+if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div style="font-size:12px;color:var(--t2)">Belum terhubung ke weather API.<br>Pakai bot Telegram untuk status live.</div></div>'}
 if(t==='status'){h.textContent='Status';b.innerHTML='<div style=font-size:11px;line-height:1.6><b>System Status:</b><br>Total: '+''' + str(S['total']) + '''+'<br>Rate: '+''' + str(S['rate']) + '''+'%</div>'}
-if(t==='music'){h.textContent='Music';b.innerHTML='<div style=text-align:center;padding:20px>No music player configured</div>'}}
+if(t==='music'){h.textContent='🎵 Music';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🎵</div><div style="font-size:12px;color:var(--t2)">Music widget placeholder.<br>Fokus dashboard: rekaman & encode.</div></div>'}}
 function advSearch(){var statEl=document.getElementById('statFilter');var srcEl=document.getElementById('srcFilter');var results=document.getElementById('searchResults');if(!results)return;var stat=statEl?statEl.value:'All';var src=srcEl?srcEl.value:'All';var html='';document.querySelectorAll('#rt tbody tr').forEach(function(r){var match=true;if(stat&&stat!=='All'){match=r.dataset.s===stat;}if(match&&src&&src!=='All'){var q=(r.dataset.q||'')+' '+(r.textContent||'');match=q.toLowerCase().indexOf(src.toLowerCase())>=0;}if(match){var id=r.querySelector('code');var st=r.querySelector('.b');html+='<div class="fi"><span class="fi-icon">📋</span><span class="fi-id"><code>'+(id?id.textContent:'')+'</code></span><span class="fi-status">'+(st?st.textContent:'')+'</span></div>';}});results.innerHTML=html||'<div style="color:var(--t2);font-size:11px;text-align:center;padding:10px">No results</div>';}
 function clearSearch(){var s=document.getElementById('srcFilter');if(s)s.value='All';var st=document.getElementById('statFilter');if(st)st.value='All';var r=document.getElementById('searchResults');if(r)r.innerHTML=''}
 function clM(){document.getElementById('mo').classList.remove('on')}
