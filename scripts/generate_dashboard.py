@@ -710,7 +710,7 @@ body{background:
 <div class="sec"><div class="sh"><div class="st">📡 Monitor</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Dashboard</div><div class="monitor-value">Generated OK</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">RSM map</div><div class="monitor-value">''' + str(S.get('_orv_n') or 0) + ''' entries</div></div>
-<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GHA</div><div class="monitor-value">''' + str(min(S['running'], 20)) + '''/20 slots</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Vault running</div><div class="monitor-value">''' + str(S.get('running') or 0) + ''' job(s)</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GH bytes</div><div class="monitor-value">''' + fmt_bytes(S.get('gh_bytes') or 0) + '''</div></div>
 </div>
 <div class="streak"><div class="streak-icon">🔥</div><div style="flex:1"><div class="streak-val">''' + str(S['streak']) + ''' days</div><div class="streak-label">Streak (best: ''' + str(S['best']) + ''')</div><div class="streak-bar"><div class="streak-fill" style="width:''' + str(streak_pct) + '''%"></div></div></div></div>
@@ -971,7 +971,7 @@ if(t==='stats'||t==='analytics'||t==='status'){
     extra+='<br><br><b>Predictions</b><br>'+(pred.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
   }
   if(t==='status'){
-    extra='<br><b>System</b><br>• Worker: rusemeva-vault<br>• GHA slots: '+Math.min(st.running||0,20)+'/20<br>• Dashboard: gh-pages<br>• Soft-refresh: 30s<br>• ORV in payload: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+' runs';
+    extra='<br><b>System</b><br>• Worker: rusemeva-vault<br>• Vault running: '+(st.running||0)+'<br>• Dashboard: gh-pages<br>• Soft-refresh: 30s<br>• ORV in payload: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+' runs';
   }
   b.innerHTML=statBlock()+extra;
 }
