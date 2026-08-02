@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v8.3 — visual upgrade + audit-hardened live data."""
-import json, os, subprocess, random
+"""Rusemeva Dashboard v8.4 — DASH live menus + storage est + customize."""
+import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
@@ -20,6 +20,25 @@ def get_runs(n=100):
 def get_releases(n=30):
     raw = gh(["api",f"repos/{REPO}/releases","--jq",f"[.[:{n}][]|{{tag:.tag_name,name:.name,created:.created_at,size:([.assets[].size]|add//0),assets:[.assets[]|{{name:.name,size:.size}}]}}]"])
     return json.loads(raw) if raw else []
+
+
+def parse_dur_sec(text):
+    """Parse 1h30m / 5h38m / 43m / 2h from release name or tag."""
+    if not text:
+        return 0
+    m = re.search(r"(?:(\d+)\s*h)?\s*(\d+)\s*m", text, re.I)
+    if m:
+        return int(m.group(1) or 0) * 3600 + int(m.group(2) or 0) * 60
+    m = re.search(r"(\d+)\s*h(?!\d)", text, re.I)
+    if m:
+        return int(m.group(1)) * 3600
+    return 0
+
+def est_bytes_from_dur(sec, mbps=1.3):
+    """Rough H264 size from duration (Telegram original ~1.3 Mbps)."""
+    if sec <= 0:
+        return 0
+    return int(sec * mbps * 1_000_000 / 8)
 
 def is_media_release(r):
     """Skip encode-temp + tiny metadata .txt releases from size/anomaly stats."""
@@ -204,13 +223,38 @@ def calc(runs, releases):
     if max(hours.values(), default=0) >= 5: achs.append(("Peak Hour","5+ record di jam sama","✅"))
     top_hour = max(hours, key=hours.get, default=0)
     top_day = max(days, key=days.get, default="N/A")
-    total_size = sum(r.get("size",0) for r in releases if is_media_release(r)) / 1024/1024/1024
+    # GH releases mostly metadata .txt — real MP4 goes to Telegram.
+    # Prefer real asset bytes when media; else estimate from duration in name.
+    total_bytes = 0
+    est_count = 0
+    for r in releases:
+        tag = r.get("tag") or ""
+        name = r.get("name") or ""
+        sz = r.get("size") or 0
+        if "encode-" in tag or "Encode Temp" in name:
+            continue
+        if sz >= 1 * 1024 * 1024:
+            total_bytes += sz
+        else:
+            dur = parse_dur_sec(name) or parse_dur_sec(tag)
+            eb = est_bytes_from_dur(dur)
+            if eb:
+                total_bytes += eb
+                est_count += 1
+    # also estimate from vault success runs without matching release duration text
+    if total_bytes == 0:
+        for r in v:
+            if r.get("conclusion") != "success":
+                continue
+            # no duration on run JSON — skip; releases cover named vault tags
+            pass
+    total_size = total_bytes / 1024 / 1024 / 1024
+    storage_est = est_count > 0
     anomalies = []
     media = [r for r in releases if is_media_release(r)]
     avg_size = sum(r.get("size",0) for r in media) / len(media) if media else 0
     for r in media[:15]:
         sz = r.get("size",0)
-        # only flag real media that is suspiciously small vs peers (min 20MB floor)
         if avg_size > 0 and sz > 20*1024*1024 and sz < avg_size * 0.15:
             anomalies.append({"type":"small_file","tag":r.get("tag",""),"size":sz/1024/1024,"msg":"Media size unusually small vs peers"})
     quality_scores = []
@@ -235,7 +279,7 @@ def calc(runs, releases):
         "enc":et,"enc_ok":es,"enc_rate":erate,"today":len(tr),"today_ok":len([r for r in tr if r.get("conclusion")=="success"]),
         "daily":dict(sorted(daily.items())[-35:]),"weekly":dict(sorted(weekly.items())[-12:]),
         "errs":errs,"latest":v[0] if v else None,"streak":streak,"best":best,
-        "achs":achs,"top_hour":top_hour,"top_day":top_day,"total_size":total_size,
+        "achs":achs,"top_hour":top_hour,"top_day":top_day,"total_size":round(total_size,2),"storage_est":storage_est,
         "hours":dict(sorted(hours.items())),"days":dict(days),"night":night,
         "anomalies":anomalies,"quality":quality_scores,
         "insights":insights,"predictions":predictions,
@@ -776,10 +820,33 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.3 · Visual upgrade · Glass + hero + mobile nav · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.4 · Live DASH menus · Storage est · Customize · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
+window.DASH = ''' + json.dumps({
+        "generated": datetime.now(WIB).isoformat(),
+        "stats": {k: S[k] for k in ("total","success","failed","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","night") if k in S},
+        "hours": S.get("hours") or {},
+        "days": S.get("days") or {},
+        "daily": S.get("daily") or {},
+        "insights": S.get("insights") or [],
+        "predictions": S.get("predictions") or [],
+        "runs": [{
+            "databaseId": r.get("databaseId"),
+            "name": r.get("name"),
+            "status": r.get("status"),
+            "conclusion": r.get("conclusion"),
+            "createdAt": r.get("createdAt"),
+            "updatedAt": r.get("updatedAt"),
+            "orv_id": r.get("orv_id") or "",
+            "source": r.get("source") or "",
+        } for r in runs[:80]],
+        "releases": [{
+            "tag": r.get("tag"), "name": r.get("name"),
+            "created": r.get("created"), "size": r.get("size") or 0,
+        } for r in releases[:20]],
+    }, default=str) + ''';
 function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-t');h.setAttribute('data-t',c==='dark'?'light':'dark');localStorage.setItem('th',h.getAttribute('data-t'))}
 function setTheme(t){document.documentElement.setAttribute('data-t',t);localStorage.setItem('th',t);document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel', (el.getAttribute('onclick')||'').indexOf("setTheme('"+t+"')")>=0);});}
 (function(){var s=localStorage.getItem('th');if(s){document.documentElement.setAttribute('data-t',s);setTimeout(function(){if(typeof setTheme==='function'){/* sync sel only */}document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel',(el.getAttribute('onclick')||'').indexOf("setTheme('"+s+"')")>=0);});},0);}})();
@@ -790,32 +857,154 @@ new Chart(document.getElementById('c2').getContext('2d'),{type:'line',data:{labe
 new Chart(document.getElementById('c3').getContext('2d'),{type:'bar',data:{labels:''' + hl + ''',datasets:[{data:''' + hv + ''',backgroundColor:'rgba(188,140,255,.5)',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:8}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:8}}}}}});
 function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));r.classList.toggle('hid',!match);})}
 function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',!r.dataset.q.includes(q))})}
-function expCSV(){var rows=[['ID','Status','Time']];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push([c[1].textContent.trim(),c[3].textContent.trim(),c[2].textContent.trim()])});var b=new Blob([rows.map(function(r){return r.join(',')}).join('\\n')],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.csv';a.click()}
-function showM(t){document.getElementById('mo').classList.add('on');var h=document.getElementById('mt'),b=document.getElementById('mb');
-if(t==='keys'){h.textContent='⌨️ Keys';b.innerHTML='<div class="sh2"><div class="sk"><span class="ky">R</span> Refresh</div><div class="sk"><span class="ky">D</span> Theme</div><div class="sk"><span class="ky">S</span> Search</div><div class="sk"><span class="ky">E</span> Export</div><div class="sk"><span class="ky">Esc</span> Close</div></div>'}
-if(t==='api'){h.textContent='📚 API';b.innerHTML='<div style="font-size:11px;line-height:1.6"><code>GET /api/status</code> Status<br><code>POST /api/record</code> Record<br><code>GET /api/runs</code> Runs<br><br>Base: <code>rusemeva.rusemeva-vault.workers.dev</code></div>'}
-if(t==='about'){h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Rusemeva Dashboard</b> v8<br><br>All20 features + mobile responsive<br><br>Cost: $0<br>Repo: <a href="https://github.com/''' + REPO + '''">GitHub</a></div>'}
-if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Notes..."></textarea><div style="margin-top:6px"><button class="btn" onclick="saveNote()">Save</button> <button class="btn" onclick="clearNote()">Clear</button></div></div>';loadNote()}
-if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag..."><button onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:6px"></div>';loadTags()}
-if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div><div id="bookmarkList"></div><div style="margin-top:6px"><input type="text" id="bmTime" placeholder="02:15" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note..." style="flex:1;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <button class="btn" onclick="addBookmark()">Add</button></div></div>';loadBookmarks()}
-if(t==='comparison'){h.textContent='🔄 Compare';b.innerHTML='<div class="cmp"><div class="cmp-item"><div class="cmp-val">''' + str(S['success']) + '''</div><div class="cmp-label">Success</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['failed']) + '''</div><div class="cmp-label">Failed</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['rate']) + '''%</div><div class="cmp-label">Rate</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['enc_rate']) + '''%</div><div class="cmp-label">Encode</div></div></div>'}
-if(t==='timeline'){h.textContent='⏱ Timeline';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
-if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select id="srcFilter"><option value="All">All</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div></div><div style="margin-top:6px"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button></div><div id="searchResults" style="margin-top:8px"></div>'}
-if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-icon">📝</div><div class="export-opt-label">TXT</div></div></div>'}
-if(t==='history'){h.textContent='📜 History';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
-if(t==='customize'){h.textContent='🎨 Customize';b.innerHTML='<div><div class="opt"><div class="opt-label">Stats cards</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Health monitor</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Streak tracker</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Live feed</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Charts</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div></div>'}
-if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Getting started:</b><br>1. View recordings in the main table<br>2. Use filters to find specific ones<br>3. Click tools for advanced features<br>4. Use keyboard shortcuts for speed<br><br><b>Shortcuts:</b><br>R=Refresh • D=Theme • S=Search • E=Export • Esc=Close<br><br><b>Features:</b><br>Notes, Tags, Bookmarks, Compare, Timeline, Search, Export, History, Customize, Help, Updates, Stats, Share, Comments, Player, Analytics</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.3</b>:<br>• Visual upgrade: hero, glass cards, glow stats<br>• Mobile bottom nav<br>• Theme swatches<br>• Live soft-refresh hardened<br><br><b>v8.2</b>: Audit feed/WIB/filters<br><b>v8.0</b> (2026-07-28):<br>• All20 new features<br>• Gallery, Player, Scheduler<br>• Rules, Themes, Widgets<br>• Monitoring, Predictions<br>• Recommendations, Optimization<br>• Backup, Comments, Shares<br>• Analytics, Stats, Help, Updates<br><br><b>v7.0</b>: All upgrades + mobile fixes<br><b>v6.0</b>: All dashboard-only features<br><b>v5.0</b>: Ultimate features</div>'}
-if(t==='stats'){h.textContent='📊 Stats';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Dashboard:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Success: ''' + str(S['success']) + ''' (''' + str(S['rate']) + '''%)<br>• Failed: ''' + str(S['failed']) + '''<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Streak: ''' + str(S['streak']) + ''' days<br><br><b>Popular:</b><br>• Recordings: 45 views<br>• Charts: 38 views<br>• Health: 35 views</div>'}
-if(t==='share'){h.textContent='🔗 Share';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Share dashboard:</b><br><a href="https://daudjoss.github.io/daudjoss-vault/">https://daudjoss.github.io/daudjoss-vault/</a><br><br><b>Share recording:</b><br>• Copy link<br>• Generate QR code<br>• Create embed code</div>'}
-if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div><div id="commentList"></div><div style="margin-top:6px"><textarea class="note-area" id="commentArea" placeholder="Add comment..."></textarea><div style="margin-top:4px"><button class="btn" onclick="addComment()">Add</button></div></div></div>';loadComments()}
-if(t==='player'){h.textContent='▶️ Player';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🎬</div><div style="font-size:12px;color:var(--t2);line-height:1.5">Playback file besar lewat Telegram / GitHub Release.<br>Buka baris Recording → ↗ untuk run, atau Releases di Actions.</div><div style="margin-top:12px"><a class="btn" href="https://github.com/daudjoss/daudjoss-vault/releases" target="_blank" style="display:inline-block;text-decoration:none">📦 Releases</a> <a class="btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="display:inline-block;text-decoration:none">🔧 Actions</a></div></div>'}
-if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Overview:</b><br>• Total: ''' + str(S['total']) + ''' recordings<br>• Streak: ''' + str(S['streak']) + ''' days<br>• Storage: ''' + f"{S['total_size']:.1f}" + ''' GB<br>• Rate: ''' + str(S['rate']) + '''%<br><br><b>Trends:</b><br>• Recordings/week: ~''' + str(max(1, S['total']//4)) + '''<br>• Storage/week: ~''' + f"{S['total_size']/4:.1f}" + ''' GB<br>• Night recordings: ''' + str(S['night']) + '''</div>'}
-if(t==='clock'){h.textContent='Clock';b.innerHTML='<div style=text-align:center;padding:20px><div id=liveClock style=font-size:36px;font-weight:700>--:--:--</div><div style=font-size:11px;color:var(--t2);margin-top:4px>WIB</div></div>';setInterval(function(){var c=document.getElementById('liveClock');if(c)c.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta'})},1000)}
-if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div style="font-size:12px;color:var(--t2)">Belum terhubung ke weather API.<br>Pakai bot Telegram untuk status live.</div></div>'}
-if(t==='status'){h.textContent='Status';b.innerHTML='<div style=font-size:11px;line-height:1.6><b>System Status:</b><br>Total: '+''' + str(S['total']) + '''+'<br>Rate: '+''' + str(S['rate']) + '''+'%</div>'}
-if(t==='music'){h.textContent='🎵 Music';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🎵</div><div style="font-size:12px;color:var(--t2)">Music widget placeholder.<br>Fokus dashboard: rekaman & encode.</div></div>'}}
-function advSearch(){var statEl=document.getElementById('statFilter');var srcEl=document.getElementById('srcFilter');var results=document.getElementById('searchResults');if(!results)return;var stat=statEl?statEl.value:'All';var src=srcEl?srcEl.value:'All';var html='';document.querySelectorAll('#rt tbody tr').forEach(function(r){var match=true;if(stat&&stat!=='All'){match=r.dataset.s===stat;}if(match&&src&&src!=='All'){var q=(r.dataset.q||'')+' '+(r.textContent||'');match=q.toLowerCase().indexOf(src.toLowerCase())>=0;}if(match){var id=r.querySelector('code');var st=r.querySelector('.b');html+='<div class="fi"><span class="fi-icon">📋</span><span class="fi-id"><code>'+(id?id.textContent:'')+'</code></span><span class="fi-status">'+(st?st.textContent:'')+'</span></div>';}});results.innerHTML=html||'<div style="color:var(--t2);font-size:11px;text-align:center;padding:10px">No results</div>';}
+function dashRows(){var D=window.DASH||{runs:[]};return (D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'})}
+function expCSV(){var rows=dashRows();var nl=String.fromCharCode(10);var lines=['id,orv_id,name,status,conclusion,createdAt,source'];rows.forEach(function(r){lines.push([r.databaseId||'',r.orv_id||'',r.name||'',r.status||'',r.conclusion||'',r.createdAt||'',r.source||''].map(function(x){return '"'+String(x).replace(/"/g,'""')+'"'}).join(','))});downloadBlob(lines.join(nl),'rusemeva-runs.csv','text/csv')}
+function expJSON(){var D=window.DASH||{};downloadBlob(JSON.stringify({generated:D.generated,stats:D.stats,runs:dashRows()},null,2),'rusemeva-runs.json','application/json')}
+function expTXT(){var rows=dashRows();var nl=String.fromCharCode(10);var lines=rows.map(function(r){return [r.createdAt||'',r.orv_id||r.databaseId||'',r.name||'',r.conclusion||r.status||'',r.source||''].join(String.fromCharCode(9))});downloadBlob(lines.join(nl),'rusemeva-runs.txt','text/plain')}
+function downloadBlob(text,name,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}
+function showM(t){
+document.getElementById('mo').classList.add('on');
+var h=document.getElementById('mt'),b=document.getElementById('mb');
+var D=window.DASH||{stats:{},runs:[],releases:[]};
+var st=D.stats||{};
+function vaultRuns(){return (D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'});}
+function encRuns(){return (D.runs||[]).filter(function(r){return r.name==='rusemeva-encode'});}
+function sk(r){return statusKeyJs(r);}
+function rowRun(r){
+  var id=r.orv_id||r.databaseId||'';
+  var s=displayStatusJs(r);
+  var link='https://github.com/daudjoss/daudjoss-vault/actions/runs/'+(r.databaseId||'');
+  return '<div class="fi" data-s="'+esc(sk(r))+'" data-rid="'+esc(r.databaseId||'')+'" data-orv="'+esc(r.orv_id||'')+'">'
+    +'<span class="fi-icon">'+icoJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'</span>'
+    +'<span class="fi-time">'+agoJs(r.createdAt||'')+'</span>'
+    +'<span class="fi-id"><code title="'+esc(r.databaseId||'')+'">'+esc(id)+'</code></span>'
+    +'<span class="fi-name">'+esc(r.name||'')+'</span>'
+    +'<span class="fi-status '+clsJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'">'+esc(s)+'</span>'
+    +' <a href="'+link+'" target="_blank" style="font-size:10px">↗</a></div>';
+}
+function storageLabel(){
+  var g=(st.total_size!=null?Number(st.total_size):0).toFixed(2);
+  return g+' GB'+(st.storage_est?' <span style="color:var(--t2)">(est.)</span>':'');
+}
+function statBlock(){
+  return '<div style="font-size:11px;line-height:1.7">'
+    +'<b>Recordings (vault)</b><br>'
+    +'• Total: <b>'+(st.total||0)+'</b><br>'
+    +'• Success: <b>'+(st.success||0)+'</b> ('+(st.rate||0)+'%)<br>'
+    +'• Failed: <b>'+(st.failed||0)+'</b> · Running: <b>'+(st.running||0)+'</b><br>'
+    +'• Today: <b>'+(st.today||0)+'</b> (ok '+(st.today_ok||0)+') · Streak: <b>'+(st.streak||0)+'</b>d (best '+(st.best||0)+')<br>'
+    +'• Storage: <b>'+storageLabel()+'</b><br>'
+    +'• Peak hour: <b>'+(st.top_hour!=null?st.top_hour+':00':'—')+'</b> · Top day: <b>'+(st.top_day||'—')+'</b><br>'
+    +'• Night owl runs: <b>'+(st.night||0)+'</b><br><br>'
+    +'<b>Encode</b><br>'
+    +'• Jobs: <b>'+(st.enc||0)+'</b> · OK: <b>'+(st.enc_ok||0)+'</b> ('+(st.enc_rate||0)+'%)<br>'
+    +'</div>';
+}
+if(t==='keys'){h.textContent='⌨️ Keys';b.innerHTML='<div class="sh2"><div class="sk"><span class="ky">R</span> Soft-refresh</div><div class="sk"><span class="ky">D</span> Theme</div><div class="sk"><span class="ky">S</span> Search</div><div class="sk"><span class="ky">E</span> Export</div><div class="sk"><span class="ky">Esc</span> Close modal</div></div><div style="margin-top:8px;font-size:11px;color:var(--t2)">Fokus input/textarea = shortcut nonaktif.</div>'}
+if(t==='api'){h.textContent='📚 API';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Worker</b> <code>rusemeva.rusemeva-vault.workers.dev</code><br><code>GET /api/status</code> Status<br><code>POST /api/record</code> Record<br><code>GET /api/runs</code> Runs<br><code>GET /api/orv-map</code> RSM map<br><code>GET /rtcal?preset=</code> RT kalibrasi<br><br><b>Dashboard static</b><br><code>GET data.json</code> Live soft-refresh payload<br><code>GET index.html</code> Full page</div>'}
+if(t==='about'){h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Rusemeva Dashboard</b> v8.4<br>Live GHA + Worker RSM map + Telegram delivery<br><br>Cost infra: ~$0 (GH free + CF Worker)<br>Repo: <a href="https://github.com/daudjoss/daudjoss-vault" target="_blank">daudjoss/daudjoss-vault</a><br>Site: <a href="https://daudjoss.github.io/daudjoss-vault/" target="_blank">gh-pages</a><br><br>Generated: <code>'+esc(D.generated||'—')+'</code></div>'}
+if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Catatan lokal (tersimpan di browser)..."></textarea><div style="margin-top:6px"><button class="btn" onclick="saveNote()">Save</button> <button class="btn" onclick="clearNote()">Clear</button></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage key: rusemeva_notes</div></div>';loadNote()}
+if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag..."><button onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:6px"></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Disimpan lokal di browser</div>';loadTags()}
+if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div><div id="bookmarkList"></div><div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap"><input type="text" id="bmTime" placeholder="02:15" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note / RSM-ID..." style="flex:1;min-width:120px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <button class="btn" onclick="addBookmark()">Add</button></div></div>';loadBookmarks()}
+if(t==='comparison'){
+  h.textContent='🔄 Compare';
+  var v=vaultRuns(),e=encRuns();
+  var vs=v.filter(function(r){return r.conclusion==='success'}).length;
+  var vf=v.filter(function(r){return r.conclusion==='failure'}).length;
+  var es=e.filter(function(r){return r.conclusion==='success'}).length;
+  var ef=e.filter(function(r){return r.conclusion==='failure'}).length;
+  b.innerHTML='<div class="cmp">'
+    +'<div class="cmp-item"><div class="cmp-val">'+vs+'</div><div class="cmp-label">Vault OK</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+vf+'</div><div class="cmp-label">Vault Fail</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+(st.rate||0)+'%</div><div class="cmp-label">Vault Rate</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+es+'</div><div class="cmp-label">Enc OK</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+ef+'</div><div class="cmp-label">Enc Fail</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+(st.enc_rate||0)+'%</div><div class="cmp-label">Enc Rate</div></div>'
+    +'</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Live dari window.DASH ('+v.length+' vault / '+e.length+' encode di payload)</div>';
+}
+if(t==='timeline'||t==='history'){
+  h.textContent=t==='timeline'?'⏱ Timeline':'📜 History';
+  var list=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'}).slice(0,25);
+  b.innerHTML='<div class="hist" style="max-height:360px;overflow:auto">'+list.map(rowRun).join('')+'</div>';
+}
+if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source / name</label><select id="srcFilter"><option value="All">All</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div></div><div style="margin-top:6px"><input class="si2" id="qAdv" placeholder="RSM-ID / run id / text..." style="width:100%;margin-bottom:6px"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button></div><div id="searchResults" style="margin-top:8px;max-height:280px;overflow:auto"></div>'}
+if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-label">TXT</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Export dari DASH.runs (live), bukan scrap DOM.</div>'}
+if(t==='customize'){
+  h.textContent='🎨 Customize';
+  var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts','#sec-week'],['hideStreak','Streak','.streak']];
+  var html='<div>';
+  keys.forEach(function(k){
+    var on=localStorage.getItem('dash_'+k[0])!=='1';
+    html+='<div class="opt"><div class="opt-label">'+k[1]+'</div><button class="opt-btn" data-k="'+k[0]+'" data-sel="'+k[2]+'" onclick="toggleCust(this)">'+(on?'ON':'OFF')+'</button></div>';
+  });
+  html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung</div>';
+  b.innerHTML=html;
+}
+if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai:</b><br>1. Lihat Recordings + filter ✅❌🔄<br>2. Soft-refresh 30s / tombol 🔄 di hero<br>3. Tools → Stats/Search/Export/Player<br>4. Themes & Customize (local)<br><br><b>RSM-ID</b> muncul kalau Worker map terisi (setelah record/encode link).<br><b>Storage</b> estimasi dari durasi release (file video di Telegram).<br><br><b>Shortcuts:</b> R refresh · D theme · S search · E export · Esc close</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.4</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='stats'||t==='analytics'||t==='status'){
+  h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
+  var extra='';
+  if(t==='analytics'){
+    var hours=D.hours||{};
+    var top=Object.keys(hours).sort(function(a,b){return (hours[b]||0)-(hours[a]||0)}).slice(0,5);
+    extra='<br><b>Top jam:</b><br>'+(top.map(function(hh){return '• '+hh+':00 → '+(hours[hh]||0)+' runs'}).join('<br>')||'• —');
+    var ins=(D.insights||[]).slice(0,4);
+    var pred=(D.predictions||[]).slice(0,3);
+    extra+='<br><br><b>Insights</b><br>'+(ins.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
+    extra+='<br><br><b>Predictions</b><br>'+(pred.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
+  }
+  if(t==='status'){
+    extra='<br><b>System</b><br>• Worker: rusemeva-vault<br>• GHA slots: '+Math.min(st.running||0,20)+'/20<br>• Dashboard: gh-pages<br>• Soft-refresh: 30s<br>• ORV in payload: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+' runs';
+  }
+  b.innerHTML=statBlock()+extra;
+}
+if(t==='share'){
+  h.textContent='🔗 Share';
+  var url='https://daudjoss.github.io/daudjoss-vault/';
+  var latest=vaultRuns()[0];
+  var rid=latest?(latest.orv_id||latest.databaseId):'';
+  var runLink=latest?('https://github.com/daudjoss/daudjoss-vault/actions/runs/'+latest.databaseId):'';
+  b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Dashboard</b><br><a id="shareUrl" href="'+url+'" target="_blank">'+url+'</a><br><button class="btn" style="margin-top:6px" id="shareCopyBtn">Copy link</button><br><br><b>Latest vault</b><br><code>'+esc(String(rid||'—'))+'</code><br>'
+    +(runLink?'<a href="'+runLink+'" target="_blank">Open run ↗</a>':'')
+    +'</div>';
+  var btn=document.getElementById('shareCopyBtn');
+  if(btn){btn.onclick=function(){navigator.clipboard.writeText(url).then(function(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy link'},1200)}).catch(function(){prompt('Copy:',url)})}}
+}
+if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div><div id="commentList"></div><div style="margin-top:6px"><textarea class="note-area" id="commentArea" placeholder="Komentar lokal..."></textarea><div style="margin-top:4px"><button class="btn" onclick="addComment()">Add</button></div></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage only</div></div>';loadComments()}
+if(t==='player'){
+  h.textContent='▶️ Player';
+  var list=vaultRuns().slice(0,12);
+  var html='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">File besar di Telegram / temporary GH release. Buka run atau Releases:</div>';
+  html+='<div style="margin-bottom:8px"><a class="btn" href="https://github.com/daudjoss/daudjoss-vault/releases" target="_blank" style="text-decoration:none">📦 Releases</a> <a class="btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">🔧 Actions</a></div>';
+  html+='<div class="hist" style="max-height:300px;overflow:auto">'+list.map(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    return '<div class="fi"><span class="fi-icon">'+icoJs(r.conclusion||'')+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><a class="btn" style="margin-left:auto;font-size:10px;text-decoration:none" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">Open</a></div>';
+  }).join('')+'</div>';
+  b.innerHTML=html;
+}
+if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:20px"><div id="liveClock" style="font-size:36px;font-weight:700">--:--:--</div><div style="font-size:11px;color:var(--t2);margin-top:4px">WIB (Asia/Jakarta)</div></div>';if(window._clk)clearInterval(window._clk);window._clk=setInterval(function(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false})},250);document.getElementById('liveClock').textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false})}
+if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='music'){h.textContent='🎵 Music';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🎵</div><div style="font-size:12px;color:var(--t2);line-height:1.5">Tidak ada stream music di pipeline Rusemeva.<br>Fokus: rekaman vault + encode HEVC + Telegram.</div></div>'}
+}
+function toggleCust(btn){
+  var k=btn.getAttribute('data-k');
+  var sel=btn.getAttribute('data-sel');
+  var off=localStorage.getItem('dash_'+k)==='1';
+  if(off){localStorage.removeItem('dash_'+k);btn.textContent='ON';}
+  else{localStorage.setItem('dash_'+k,'1');btn.textContent='OFF';}
+  applyCustomize();
+}
+function applyCustomize(){
+  var map=[['hideStats','.sg'],['hideHealth','#sec-health'],['hideFeed','#sec-feed'],['hideCharts','#sec-week'],['hideStreak','.streak']];
+  map.forEach(function(m){
+    var el=document.querySelector(m[1]);
+    if(!el)return;
+    el.style.display=localStorage.getItem('dash_'+m[0])==='1'?'none':'';
+  });
+}
+
+function advSearch(){var src=(document.getElementById('srcFilter')||{}).value||'All';var stv=(document.getElementById('statFilter')||{}).value||'All';var q=((document.getElementById('qAdv')||{}).value||'').toLowerCase().trim();var D=window.DASH||{runs:[]};var rows=(D.runs||[]).filter(function(r){  if(src!=='All'){    var hay=((r.name||'')+' '+(r.source||'')).toLowerCase();    if(hay.indexOf(src.toLowerCase())<0) return false;  }  var s=statusKeyJs(r);  if(stv!=='All' && s!==stv && (r.conclusion||'')!==stv) return false;  if(q){    var blob=((r.orv_id||'')+' '+(r.databaseId||'')+' '+(r.name||'')+' '+(r.source||'')+' '+(r.conclusion||'')).toLowerCase();    if(blob.indexOf(q)<0) return false;  }  return true;}).slice(0,40);var box=document.getElementById('searchResults');if(!box)return;if(!rows.length){box.innerHTML='<div class="ne">Tidak ada hasil</div>';return;}box.innerHTML=rows.map(function(r){  var id=r.orv_id||r.databaseId||'';  return '<div class="fi"><span class="fi-icon">'+icoJs(statusKeyJs(r)==='in_progress'?'':(r.conclusion||''))+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status">'+esc(displayStatusJs(r))+'</span><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">↗</a></div>';}).join('');}
 function clearSearch(){var s=document.getElementById('srcFilter');if(s)s.value='All';var st=document.getElementById('statFilter');if(st)st.value='All';var r=document.getElementById('searchResults');if(r)r.innerHTML=''}
 function clM(){document.getElementById('mo').classList.remove('on')}
 function saveNote(){localStorage.setItem('rusemeva-note',document.getElementById('noteArea').value);alert('Saved!')}
@@ -842,11 +1031,11 @@ function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(fu
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null)setTxt('st-rate',st.rate+'%');if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null)setTxt('st-rate',st.rate+'%');if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}}
 async function softRefresh(){try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}}
 var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
 // initial soft patch shortly after load (pick up fresher data.json / orv-map)
-setTimeout(function(){softRefresh()},2500);
+applyCustomize();setTimeout(function(){softRefresh()},2500);
 if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
 </script>
 </body>
