@@ -79,22 +79,46 @@ def ico(c):
 def cls(c):
     return {"success":"success","failure":"failure","cancelled":"cancelled"}.get(c,"running")
 
+def status_key(r):
+    """Canonical filter key: success|failure|cancelled|in_progress|other."""
+    c = (r.get("conclusion") or "").strip()
+    if c in ("success", "failure", "cancelled"):
+        return c
+    st = (r.get("status") or "").strip()
+    if st in ("in_progress", "queued", "waiting", "pending", "requested"):
+        return "in_progress"
+    return c or st or "?"
+
+def display_status(r):
+    c = (r.get("conclusion") or "").strip()
+    if c:
+        return c
+    st = (r.get("status") or "").strip()
+    if st in ("in_progress", "queued", "waiting", "pending", "requested"):
+        return "in_progress"
+    return st or "?"
+
 def mk_row(r):
-    c = cls(r.get("conclusion",""))
-    s = r.get("conclusion", r.get("status","?"))
+    sk = status_key(r)
+    c = cls(r.get("conclusion","") if (r.get("conclusion") or "").strip() else "")
+    # force running style when in progress
+    if sk == "in_progress":
+        c = "running"
+    s = display_status(r)
     rid = str(r.get("databaseId",""))
     orv = (r.get("orv_id") or "").strip()
     idcell = f'<code title="{rid}">{orv or rid}</code>' if orv else f'<code>{rid}</code>'
-    q = f"{rid} {orv}".lower()
-    return f'<tr class="r-{c}" data-s="{s}" data-q="{q}" data-rid="{rid}" data-orv="{orv}"><td>{ico(r.get("conclusion",""))}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    q = f"{rid} {orv} {s}".lower()
+    return f'<tr class="r-{c}" data-s="{sk}" data-q="{q}" data-rid="{rid}" data-orv="{orv}"><td>{ico(r.get("conclusion","") if sk!="in_progress" else "")}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
 
 def mk_erow(r):
-    c = cls(r.get("conclusion",""))
-    s = r.get("conclusion", r.get("status","?"))
+    sk = status_key(r)
+    c = "running" if sk == "in_progress" else cls(r.get("conclusion",""))
+    s = display_status(r)
     rid = str(r.get("databaseId",""))
     orv = (r.get("orv_id") or "").strip()
     idcell = f'<code title="{rid}">{orv or rid}</code>' if orv else f'<code>{rid}</code>'
-    return f'<tr data-rid="{rid}" data-orv="{orv}"><td>{ico(r.get("conclusion",""))}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    return f'<tr data-s="{sk}" data-rid="{rid}" data-orv="{orv}"><td>{ico("" if sk=="in_progress" else r.get("conclusion",""))}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
 
 def mk_rrow(r):
     tag = r.get("tag","")
@@ -103,14 +127,15 @@ def mk_rrow(r):
     return f'<tr data-kind="{kind}"><td><code>{tag}</code></td><td>{size_mb:.1f} MB</td><td>{ago(r.get("created",""))}</td></tr>'
 
 def mk_feed(r):
-    i = ico(r.get("conclusion", r.get("status","?")))
-    c = cls(r.get("conclusion",""))
-    s = r.get("conclusion", r.get("status","?"))
+    sk = status_key(r)
+    c = "running" if sk == "in_progress" else cls(r.get("conclusion",""))
+    s = display_status(r)
+    i = ico("" if sk == "in_progress" else r.get("conclusion",""))
     rid = str(r.get("databaseId",""))
     orv = (r.get("orv_id") or "").strip()
     nm = r.get("name","")
     idshow = orv or rid
-    return f'<div class="fi" data-rid="{rid}" data-orv="{orv}"><span class="fi-icon">{i}</span><span class="fi-time">{ago(r.get("createdAt",""))}</span><span class="fi-id"><code title="{rid}">{idshow}</code></span><span class="fi-name">{nm}</span><span class="fi-status {c}">{s}</span></div>'
+    return f'<div class="fi" data-s="{sk}" data-rid="{rid}" data-orv="{orv}"><span class="fi-icon">{i}</span><span class="fi-time">{ago(r.get("createdAt",""))}</span><span class="fi-id"><code title="{rid}">{idshow}</code></span><span class="fi-name">{nm}</span><span class="fi-status {c}">{s}</span></div>'
 
 def mk_ach(a):
     return f'<div class="ach"><div class="ach-icon">{a[2]}</div><div><div class="ach-title">{a[0]}</div><div class="ach-desc">{a[1]}</div></div></div>'
@@ -119,8 +144,10 @@ def mk_lock(n, d):
     return f'<div class="ach locked"><div class="ach-icon">🔒</div><div><div class="ach-title">{n}</div><div class="ach-desc">{d}</div></div></div>'
 
 def mk_mbi(r):
-    c = cls(r.get("conclusion",""))
-    return f'<div class="mbi {c}" title="{r.get("databaseId","")}"><div class="mbi-icon">{ico(r.get("conclusion",""))}</div><div class="mbi-time">{ago(r.get("createdAt",""))}</div></div>'
+    sk = status_key(r)
+    mood = {"success":"ok","failure":"fail","cancelled":"fail","in_progress":"run"}.get(sk, "run")
+    icon = ico("" if sk=="in_progress" else r.get("conclusion",""))
+    return f'<div class="mbi {mood}" title="{r.get("databaseId","")}"><div class="mbi-icon">{icon}</div><div class="mbi-time">{ago(r.get("createdAt",""))}</div></div>'
 
 def mk_err(e):
     return f'<div class="er"><div class="ei">❌</div><div><div>Run <code>{e["id"]}</code></div><div class="et">{e["t"]}</div></div><a href="https://github.com/{REPO}/actions/runs/{e["id"]}" target="_blank">Log ↗</a></div>'
@@ -569,9 +596,9 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="insight"><div class="insight-icon">💾</div><div class="insight-text">Clean up old temp releases</div></div>
 </div>
 <div class="sec"><div class="sh"><div class="st">⚡ Optimization</div></div>
-<div class="opt"><div class="opt-label">5 temp releases (10 GB)</div><button class="opt-btn">Delete</button></div>
-<div class="opt"><div class="opt-label">3 duplicates (2 GB)</div><button class="opt-btn">Remove</button></div>
-<div class="opt"><div class="opt-label">2 low quality recordings</div><button class="opt-btn">Re-encode</button></div>
+<div class="opt"><div class="opt-label">Temp releases dibersihkan otomatis setelah encode</div><button class="opt-btn" onclick="showM('about')">Info</button></div>
+<div class="opt"><div class="opt-label">Cek Actions untuk run gagal / cancel</div><a class="opt-btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">Open</a></div>
+<div class="opt"><div class="opt-label">Re-encode lewat bot Telegram (bukan dashboard)</div><button class="opt-btn" onclick="showM('help')">Help</button></div>
 </div>
 <div class="sec"><div class="sh"><div class="st">🎨 Themes</div></div><div class="theme">
 <div class="theme-opt sel" onclick="setTheme('dark')"><div class="theme-opt-icon">🌙</div><div class="theme-opt-label">Dark</div></div>
@@ -621,14 +648,14 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
 function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-t');h.setAttribute('data-t',c==='dark'?'light':'dark');localStorage.setItem('th',h.getAttribute('data-t'))}
-function setTheme(t){document.documentElement.setAttribute('data-t',t);localStorage.setItem('th',t)}
-(function(){var s=localStorage.getItem('th');if(s)document.documentElement.setAttribute('data-t',s)})();
+function setTheme(t){document.documentElement.setAttribute('data-t',t);localStorage.setItem('th',t);document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel', (el.getAttribute('onclick')||'').indexOf("setTheme('"+t+"')")>=0);});}
+(function(){var s=localStorage.getItem('th');if(s){document.documentElement.setAttribute('data-t',s);setTimeout(function(){if(typeof setTheme==='function'){/* sync sel only */}document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel',(el.getAttribute('onclick')||'').indexOf("setTheme('"+s+"')")>=0);});},0);}})();
 var randData=''' + "'" + rand_html.replace("'", "\\'") + "'" + ''';
 var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
 new Chart(document.getElementById('c1').getContext('2d'),{type:'bar',data:{labels:''' + dl + ''',datasets:[{data:''' + dd + ''',backgroundColor:cc.b,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',maxTicksLimit:6,font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
 new Chart(document.getElementById('c2').getContext('2d'),{type:'line',data:{labels:''' + wl + ''',datasets:[{label:'OK',data:''' + ws + ''',borderColor:cc.g,backgroundColor:'rgba(63,185,80,.08)',fill:true,tension:.4},{label:'Fail',data:''' + wf + ''',borderColor:cc.r,backgroundColor:'rgba(248,81,73,.08)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b949e',font:{size:9}}}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
 new Chart(document.getElementById('c3').getContext('2d'),{type:'bar',data:{labels:''' + hl + ''',datasets:[{data:''' + hv + ''',backgroundColor:'rgba(188,140,255,.5)',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:8}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:8}}}}}});
-function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',s!=='all'&&r.dataset.s!==s)})}
+function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));r.classList.toggle('hid',!match);})}
 function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',!r.dataset.q.includes(q))})}
 function expCSV(){var rows=[['ID','Status','Time']];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push([c[1].textContent.trim(),c[3].textContent.trim(),c[2].textContent.trim()])});var b=new Blob([rows.map(function(r){return r.join(',')}).join('\\n')],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.csv';a.click()}
 function showM(t){document.getElementById('mo').classList.add('on');var h=document.getElementById('mt'),b=document.getElementById('mb');
@@ -640,7 +667,7 @@ if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><in
 if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div><div id="bookmarkList"></div><div style="margin-top:6px"><input type="text" id="bmTime" placeholder="02:15" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note..." style="flex:1;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <button class="btn" onclick="addBookmark()">Add</button></div></div>';loadBookmarks()}
 if(t==='comparison'){h.textContent='🔄 Compare';b.innerHTML='<div class="cmp"><div class="cmp-item"><div class="cmp-val">''' + str(S['success']) + '''</div><div class="cmp-label">Success</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['failed']) + '''</div><div class="cmp-label">Failed</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['rate']) + '''%</div><div class="cmp-label">Rate</div></div><div class="cmp-item"><div class="cmp-val">''' + str(S['enc_rate']) + '''%</div><div class="cmp-label">Encode</div></div></div>'}
 if(t==='timeline'){h.textContent='⏱ Timeline';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
-if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select><option>All</option><option>Trans7</option><option>SevenHub</option></select></div><div class="search-filter"><label>Status</label><select><option>All</option><option>Success</option><option>Failed</option></select></div></div><div style="margin-top:6px"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button></div><div id="searchResults" style="margin-top:8px"></div>'}
+if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select id="srcFilter"><option value="All">All</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div></div><div style="margin-top:6px"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button></div><div id="searchResults" style="margin-top:8px"></div>'}
 if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-icon">📝</div><div class="export-opt-label">TXT</div></div></div>'}
 if(t==='history'){h.textContent='📜 History';b.innerHTML='<div class="hist">''' + feed + '''</div>'}
 if(t==='customize'){h.textContent='🎨 Customize';b.innerHTML='<div><div class="opt"><div class="opt-label">Stats cards</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Health monitor</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Streak tracker</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Live feed</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div><div class="opt"><div class="opt-label">Charts</div><button class="opt-btn" onclick="this.textContent=(this.textContent.trim()===String.fromCharCode(79,78))?String.fromCharCode(79,70,70):String.fromCharCode(79,78)">ON</button></div></div>'}
@@ -655,7 +682,7 @@ if(t==='clock'){h.textContent='Clock';b.innerHTML='<div style=text-align:center;
 if(t==='weather'){h.textContent='Weather';b.innerHTML='<div style=text-align:center;padding:20px><div style=font-size:40px>Weather service not configured</div></div>'}
 if(t==='status'){h.textContent='Status';b.innerHTML='<div style=font-size:11px;line-height:1.6><b>System Status:</b><br>Total: '+''' + str(S['total']) + '''+'<br>Rate: '+''' + str(S['rate']) + '''+'%</div>'}
 if(t==='music'){h.textContent='Music';b.innerHTML='<div style=text-align:center;padding:20px>No music player configured</div>'}}
-function advSearch(){var stat=document.getElementById('statFilter');if(!stat)return;stat=stat.value;var results=document.getElementById('searchResults');if(!results)return;var html='';document.querySelectorAll('#rt tbody tr').forEach(function(r){var match=true;if(stat!=='All'){var s=r.querySelector('.b');if(s){match=s.classList.contains('b-'+stat.toLowerCase())}}if(match){var id=r.querySelector('code');if(id){html+='<div class="fi"><span class="fi-icon">📋</span><span class="fi-id"><code>'+id.textContent+'</code></span><span class="fi-status">'+(r.querySelector('.b')?r.querySelector('.b').textContent:'')+'</span></div>'}}});results.innerHTML=html||'<div style="color:var(--t2);font-size:11px;text-align:center;padding:10px">No results</div>'}
+function advSearch(){var statEl=document.getElementById('statFilter');var srcEl=document.getElementById('srcFilter');var results=document.getElementById('searchResults');if(!results)return;var stat=statEl?statEl.value:'All';var src=srcEl?srcEl.value:'All';var html='';document.querySelectorAll('#rt tbody tr').forEach(function(r){var match=true;if(stat&&stat!=='All'){match=r.dataset.s===stat;}if(match&&src&&src!=='All'){var q=(r.dataset.q||'')+' '+(r.textContent||'');match=q.toLowerCase().indexOf(src.toLowerCase())>=0;}if(match){var id=r.querySelector('code');var st=r.querySelector('.b');html+='<div class="fi"><span class="fi-icon">📋</span><span class="fi-id"><code>'+(id?id.textContent:'')+'</code></span><span class="fi-status">'+(st?st.textContent:'')+'</span></div>';}});results.innerHTML=html||'<div style="color:var(--t2);font-size:11px;text-align:center;padding:10px">No results</div>';}
 function clearSearch(){var s=document.getElementById('srcFilter');if(s)s.value='All';var st=document.getElementById('statFilter');if(st)st.value='All';var r=document.getElementById('searchResults');if(r)r.innerHTML=''}
 function clM(){document.getElementById('mo').classList.remove('on')}
 function saveNote(){localStorage.setItem('rusemeva-note',document.getElementById('noteArea').value);alert('Saved!')}
@@ -675,10 +702,12 @@ document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e
 function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
 function icoJs(c){return c==='success'?'✅':c==='failure'?'❌':c==='cancelled'?'⚪':'🔄'}
 function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'running'}
+function statusKeyJs(r){var c=(r.conclusion||'').trim();if(c==='success'||c==='failure'||c==='cancelled')return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return c||st||'?';}
+function displayStatusJs(r){var c=(r.conclusion||'').trim();if(c)return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return st||'?';}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])})}
-function buildFeedHtml(runs){return (runs||[]).slice(0,15).map(function(r){var c=clsJs(r.conclusion);var s=r.conclusion||r.status||'?';var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(r.conclusion||r.status)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span></div>'}).join('')}
-function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var c=clsJs(r.conclusion);var s=r.conclusion||r.status||'?';var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(s)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/''' + REPO + '''/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>'}).join('')}
-function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var c=clsJs(r.conclusion);var s=r.conclusion||r.status||'?';var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/''' + REPO + '''/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>'}).join('')}
+function buildFeedHtml(runs){return (runs||[]).slice(0,15).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span></div>';}).join('')}
+function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
+function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
 function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt)rt.innerHTML=buildRecRows(data.runs);var et=document.querySelectorAll('#sec-rec ~ .g2 table tbody, .g2 table tbody');if(et&&et.length){/* encode table is first in g2 */} var encBody=document.querySelector('.g2 .sec table tbody');if(encBody)encBody.innerHTML=buildEncRows(data.runs);if(data.stats){var st=data.stats;var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}} var q=document.getElementById('q');if(q&&q.value)srch()}
 async function softRefresh(){try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}}
