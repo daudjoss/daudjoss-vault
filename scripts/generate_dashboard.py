@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v8.4 — DASH live menus + storage est + customize."""
+"""Rusemeva Dashboard v8.4.2 — honest GH storage + no fake health/quality metrics."""
 import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -33,6 +33,13 @@ def parse_dur_sec(text):
     if m:
         return int(m.group(1)) * 3600
     return 0
+
+def fmt_bytes(n):
+    n = float(n or 0)
+    if n < 1024: return f"{n:.0f} B"
+    if n < 1024**2: return f"{n/1024:.1f} KB"
+    if n < 1024**3: return f"{n/1024/1024:.1f} MB"
+    return f"{n/1024/1024/1024:.2f} GB"
 
 def est_bytes_from_dur(sec, mbps=1.3):
     """Rough H264 size from duration (Telegram original ~1.3 Mbps)."""
@@ -254,11 +261,13 @@ def calc(runs, releases):
             anomalies.append({"type":"small_file","tag":r.get("tag",""),"size":sz/1024/1024,"msg":"Media size unusually small vs peers"})
     quality_scores = []
     for r in v[:10]:
-        if r.get("conclusion")=="success":
-            # deterministic-ish score from id (no random noise each refresh)
-            rid = int(r.get("databaseId") or 0)
-            quality_scores.append({"id":r.get("databaseId"),"score":85 + (rid % 15)})
-    quality_scores.sort(key=lambda x: x["score"], reverse=True)
+        c = r.get("conclusion")
+        if c == "success":
+            quality_scores.append({"id": r.get("databaseId"), "score": "OK", "note": "vault success"})
+        elif c == "failure":
+            quality_scores.append({"id": r.get("databaseId"), "score": "FAIL", "note": "vault failure"})
+        elif c == "cancelled":
+            quality_scores.append({"id": r.get("databaseId"), "score": "CANCEL", "note": "cancelled"})
     # Insights
     insights = []
     if top_hour: insights.append(f"Kamu paling sering rekam jam {top_hour}:00")
@@ -267,10 +276,16 @@ def calc(runs, releases):
     if rate >= 90: insights.append(f"Success rate {rate}% — excellent!")
     # Predictions
     predictions = []
-    if len(v) >= 5: predictions.append(f"Expected minggu depan: ~{len(v)//4} recordings")
-    if lifetime_est_gb > 0: predictions.append(f"Volume rekaman (est lifetime): {lifetime_est_gb:.1f} GB — file di Telegram, GH hanya manifest")
+    n_cancel = len([r for r in v if r.get("conclusion") == "cancelled"])
+    if lifetime_est_gb > 0:
+        predictions.append(f"Volume rekaman lifetime ~{lifetime_est_gb:.1f} GB (est) — di Telegram, bukan di GitHub")
+    predictions.append(f"GitHub storage aktual: {fmt_bytes(gh_bytes)} (manifest .txt; encode-temp dibersihkan)")
+    if n_cancel:
+        predictions.append(f"Vault cancelled: {n_cancel} (tidak dihitung sebagai failed)")
+    if rn:
+        predictions.append(f"Ada {rn} vault run masih running/queued")
     return {
-        "total":t,"success":s,"failed":f,"running":rn,"rate":rate,
+        "total":t,"success":s,"failed":f,"cancelled":len([r for r in v if r.get("conclusion")=="cancelled"]),"running":rn,"rate":rate,
         "enc":et,"enc_ok":es,"enc_rate":erate,"today":len(tr),"today_ok":len([r for r in tr if r.get("conclusion")=="success"]),
         "daily":dict(sorted(daily.items())[-35:]),"weekly":dict(sorted(weekly.items())[-12:]),
         "errs":errs,"latest":v[0] if v else None,"streak":streak,"best":best,
@@ -343,7 +358,10 @@ def gen(S, runs, releases):
     if not anom_html: anom_html = '<div class="ne">✅ Tidak ada anomali</div>'
     qual_html = ""
     for q in S["quality"][:5]:
-        qual_html += f'<div class="qual"><code>{q["id"]}</code><div class="qual-score">{q["score"]}/100</div></div>'
+        sc = q.get("score")
+        label = f"{sc}/100" if isinstance(sc, (int, float)) else str(sc)
+        note = q.get("note") or ""
+        qual_html += f'<div class="qual"><code>{q["id"]}</code><div class="qual-score">{label}</div><div style="font-size:9px;color:var(--t2)">{note}</div></div>'
     src_html = ""
     sources = defaultdict(int)
     for r in vr:
@@ -679,21 +697,21 @@ body{background:
 </div>
 </div>
 <div class="sg">
-<div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Total</div></div>
-<div class="sc gn"><div class="si">✅</div><div class="sv" id="st-success">''' + str(S['success']) + '''</div><div class="sl">Success</div></div>
-<div class="sc rd"><div class="si">❌</div><div class="sv" id="st-failed">''' + str(S['failed']) + '''</div><div class="sl">Failed</div></div>
-<div class="sc yl"><div class="si">📊</div><div class="sv" id="st-rate">''' + str(S['rate']) + '''%</div><div class="sl">Rate</div></div>
+<div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Vault total</div></div>
+<div class="sc gn"><div class="si">✅</div><div class="sv" id="st-success">''' + str(S['success']) + '''</div><div class="sl">Vault OK</div></div>
+<div class="sc rd"><div class="si">❌</div><div class="sv" id="st-failed">''' + str(S['failed']) + '''</div><div class="sl">Vault fail</div></div>
+<div class="sc yl"><div class="si">📊</div><div class="sv" id="st-rate">''' + str(S['rate']) + '''%</div><div class="sl">Vault rate</div></div>
 <div class="sc pr"><div class="si">🎞</div><div class="sv" id="st-enc">''' + str(S['enc']) + '''</div><div class="sl">Encode</div></div>
 <div class="sc or"><div class="si">📅</div><div class="sv" id="st-today">''' + str(S['today']) + '''</div><div class="sl">Today</div></div>
 <div class="sc pn"><div class="si">🔥</div><div class="sv" id="st-streak">''' + str(S['streak']) + '''</div><div class="sl">Streak</div></div>
 </div>
 <div class="sec" id="sec-health"><div class="sh"><div class="st">🏥 Health</div><span style="font-size:9px;color:var(--t2)">''' + now + '''</span></div>
-<div class="hg"><div class="hi"><div class="hd g"></div><div><div class="hl">Worker</div><div class="hs">rusemeva-vault</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">GHA</div><div class="hs">20 slots</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Telegram</div><div class="hs">@daudtrans_bot</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Dashboard</div><div class="hs">gh-pages</div></div></div></div></div>
+<div class="hg"><div class="hi"><div class="hd g"></div><div><div class="hl">Worker</div><div class="hs">orv-map + notify</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">GHA</div><div class="hs">vault/encode jobs</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Telegram</div><div class="hs">@daudtrans_bot</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Dashboard</div><div class="hs">gh-pages</div></div></div></div></div>
 <div class="sec"><div class="sh"><div class="st">📡 Monitor</div></div>
-<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">System</div><div class="monitor-value">Online</div></div>
-<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Worker</div><div class="monitor-value">Healthy</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Dashboard</div><div class="monitor-value">Generated OK</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">RSM map</div><div class="monitor-value">''' + str(S.get('_orv_n') or 0) + ''' entries</div></div>
 <div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GHA</div><div class="monitor-value">''' + str(min(S['running'], 20)) + '''/20 slots</div></div>
-<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">Telegram</div><div class="monitor-value">Connected</div></div>
+<div class="monitor"><div class="monitor-dot green"></div><div class="monitor-label">GH bytes</div><div class="monitor-value">''' + fmt_bytes(S.get('gh_bytes') or 0) + '''</div></div>
 </div>
 <div class="streak"><div class="streak-icon">🔥</div><div style="flex:1"><div class="streak-val">''' + str(S['streak']) + ''' days</div><div class="streak-label">Streak (best: ''' + str(S['best']) + ''')</div><div class="streak-bar"><div class="streak-fill" style="width:''' + str(streak_pct) + '''%"></div></div></div></div>
 <div class="sec" id="sec-feed"><div class="sh"><div class="st">📰 Feed</div><span style="font-size:9px;color:var(--t2)">Last 15</span></div><div class="feed">''' + feed + '''</div></div>
@@ -723,7 +741,7 @@ body{background:
 <div class="ffi"><div class="ffi-icon">🌙</div><div class="ffi-val">''' + str(S['night']) + '''</div><div class="ffi-label">Night</div></div>
 <div class="ffi"><div class="ffi-icon">⏰</div><div class="ffi-val">''' + str(S['top_hour']) + ''':00</div><div class="ffi-label">Peak</div></div>
 <div class="ffi"><div class="ffi-icon">📅</div><div class="ffi-val">''' + str(S['top_day']) + '''</div><div class="ffi-label">Day</div></div>
-<div class="ffi"><div class="ffi-icon">💾</div><div class="ffi-val">''' + f"{S['total_size']:.1f}" + '''G</div><div class="ffi-label">Storage</div></div>
+<div class="ffi"><div class="ffi-icon">💾</div><div class="ffi-val">''' + fmt_bytes(S.get('gh_bytes') or 0) + '''</div><div class="ffi-label">On GitHub</div></div>
 </div></div>
 <div class="sec"><div class="sh"><div class="st">📊 Compare</div></div><div class="cmp">
 <div class="cmp-item"><div class="cmp-val">''' + str(S['success']) + '''</div><div class="cmp-label">Success</div></div>
@@ -731,11 +749,11 @@ body{background:
 <div class="cmp-item"><div class="cmp-val">''' + str(S['rate']) + '''%</div><div class="cmp-label">Rate</div></div>
 <div class="cmp-item"><div class="cmp-val">''' + str(S['enc_rate']) + '''%</div><div class="cmp-label">Encode</div></div>
 </div></div>
-<div class="sec"><div class="sh"><div class="st">💾 Storage</div><span style="font-size:9px;color:var(--t2)">''' + f"{S['total_size']:.1f}" + ''' GB</span></div>
-<div style="background:var(--bg3);border-radius:4px;height:16px;overflow:hidden;margin:6px 0"><div style="height:100%;width:''' + str(pct) + '''%;background:linear-gradient(90deg,var(--bl),var(--pr));border-radius:4px"></div></div></div>
+<div class="sec"><div class="sh"><div class="st">💾 Storage</div><span style="font-size:9px;color:var(--t2)">''' + fmt_bytes(S.get('gh_bytes') or 0) + ''' on GH · lifetime ~''' + str(S.get('lifetime_est_gb') or 0) + ''' GB est</span></div>
+<div style="font-size:10px;color:var(--t2);margin:4px 0">Bar = lifetime volume est / 50GB (bukan disk GH). GH aktual: ''' + fmt_bytes(S.get('gh_bytes') or 0) + '''</div><div style="background:var(--bg3);border-radius:4px;height:16px;overflow:hidden;margin:6px 0"><div style="height:100%;width:''' + str(pct) + '''%;background:linear-gradient(90deg,var(--bl),var(--pr));border-radius:4px"></div></div><div style="font-size:10px;color:var(--t2)">Video/HEVC → Telegram; encode-temp di GH dihapus otomatis.</div></div>
 <div class="sec"><div class="sh"><div class="st">💾 Backup</div></div>
-<div class="backup"><div class="backup-label">Primary: GitHub Releases</div><div class="backup-status">✅ ''' + str(S['total']) + ''' recordings, ''' + f"{S['total_size']:.1f}" + ''' GB</div></div>
-<div class="backup"><div class="backup-label">Secondary</div><div class="backup-status">Not configured</div></div>
+<div class="backup"><div class="backup-label">Primary: GitHub (manifest only)</div><div class="backup-status">✅ ''' + fmt_bytes(S.get('gh_bytes') or 0) + ''' on GH · video di Telegram · lifetime ~''' + str(S.get('lifetime_est_gb') or 0) + ''' GB est (not stored on GH)</div></div>
+<div class="backup"><div class="backup-label">Secondary</div><div class="backup-status">Telegram bot delivery (bukan mirror file di GH)</div></div>
 </div>
 <div class="sec"><div class="sh"><div class="st">🔍 Errors</div></div>''' + err_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">⚠️ Anomalies</div></div>''' + anom_html + '''</div>
@@ -744,10 +762,10 @@ body{background:
 <div class="sec"><div class="sh"><div class="st">⏰ Hours</div></div>''' + time_html + '''</div>
 <div class="sec" id="sec-ach"><div class="sh"><div class="st">🏆 Achievements (''' + str(len(S['achs'])) + ''')</div></div><div class="ach-grid">''' + ach_html + ach_locked + '''</div></div>
 <div class="sec"><div class="sh"><div class="st">🎨 Mood</div></div><div class="mb">''' + mbi_html + '''</div></div>
-<div class="sec"><div class="sh"><div class="st">🏷 Tags</div></div><div class="tc"><span class="tg">Trans7</span><span class="tg">SevenHub</span><span class="tg">talk-show</span><span class="tg">berita</span><span class="tg">komedi</span><span class="tg">HEVC</span></div></div>
+<div class="sec"><div class="sh"><div class="st">🏷 Tags</div></div><div class="tc"><span class="tg">Pakai Tools → Tags (localStorage browser)</span></div></div>
 <div class="sec"><div class="sh"><div class="st">🎲 Random</div></div><div class="rand"><div style="font-size:11px;color:var(--t2);margin-bottom:6px">Feeling lucky?</div><button class="rand-btn" onclick="document.getElementById('rand-result').innerHTML=randData">🎬 Surprise!</button><div id="rand-result"></div></div></div>
 <div class="sec"><div class="sh"><div class="st">📋 Scheduler</div></div>
-<div class="sched"><div class="sched-title">Trans7 — Tonight Show</div><div class="sched-detail">Every weekday 20:00 • 2 jam • Berkualitas</div><div class="sched-status active">✅ Active</div></div>
+<div class="sched"><div class="sched-title">Scheduler</div><div class="sched-detail">Jadwal rekam lewat Telegram bot / GHA dispatch — bukan cron di halaman ini.</div><div class="sched-status">ℹ️ External</div></div>
 <div class="sched"><div class="sched-title">SevenHub — Hitam Putih</div><div class="sched-detail">Every Saturday 21:00 • 1 jam • Cepat</div><div class="sched-status paused">⏸ Paused</div></div>
 </div>
 <div class="sec"><div class="sh"><div class="st">📋 Rules</div></div>
@@ -815,13 +833,14 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.4.1 · GH storage real · lifetime est terpisah · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.4.2 · Honest metrics · real GH bytes · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-        "stats": {k: S[k] for k in ("total","success","failed","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
+            "build": "v8.4.2-honest",
+        "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
         "daily": S.get("daily") or {},
@@ -1028,7 +1047,7 @@ function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(fu
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null)setTxt('st-rate',st.rate+'%');if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null)setTxt('st-rate',st.rate+'%');if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}}
 async function softRefresh(){try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}}
 var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
 // initial soft patch shortly after load (pick up fresher data.json / orv-map)
@@ -1046,7 +1065,8 @@ def main():
     runs = attach_orv(runs, orv_map)
     print(f"🔗 ORV map entries: {len(orv_map)}")
     S = calc(runs, releases)
-    print(f"📊 {S['total']} recordings, {S['rate']}% success, {S['streak']} streak")
+    S['_orv_n'] = len(orv_map or [])
+    print(f"📊 {S['total']} vault, {S['rate']}% OK, streak {S['streak']}, GH {fmt_bytes(S.get('gh_bytes') or 0)}, lifetime~{S.get('lifetime_est_gb')}GB est")
     print("🔄 Generating...")
     html = gen(S, runs, releases)
     out = os.environ.get("DASHBOARD_DIR", "/tmp/gh-pages")
@@ -1089,6 +1109,7 @@ def main():
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
         json.dump({
             "generated": datetime.now(WIB).isoformat(),
+            "build": "v8.4.2-honest",
             "stats": S,
             "runs": lean_runs,
             "releases": lean_releases,
