@@ -64,6 +64,14 @@ def attach_orv(runs, orv_map):
                 r["source"] = meta["source"]
     return runs
 
+def to_wib(s):
+    """Parse GH ISO timestamp to WIB datetime (or None)."""
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        return dt.astimezone(WIB)
+    except Exception:
+        return None
+
 def ago(s):
     try:
         d = int((datetime.now(timezone.utc) - datetime.fromisoformat(s.replace("Z","+00:00"))).total_seconds())
@@ -157,17 +165,21 @@ def calc(runs, releases):
     e = [r for r in runs if r.get("name")=="rusemeva-encode"]
     t = len(v); s = len([r for r in v if r.get("conclusion")=="success"])
     f = len([r for r in v if r.get("conclusion")=="failure"])
-    rn = len([r for r in v if r.get("status")=="in_progress"])
+    rn = len([r for r in v if status_key(r)=="in_progress"])
     rate = round(s/t*100,1) if t else 0
     et = len(e); es = len([r for r in e if r.get("conclusion")=="success"])
     erate = round(es/et*100,1) if et else 0
     today = datetime.now(WIB).strftime("%Y-%m-%d")
-    tr = [r for r in v if r.get("createdAt","").startswith(today)]
+    def _wib_date(r):
+        wt = to_wib(r.get("createdAt",""))
+        return wt.strftime("%Y-%m-%d") if wt else ""
+    tr = [r for r in v if _wib_date(r) == today]
     daily = defaultdict(int); weekly = defaultdict(lambda:{"s":0,"f":0})
     hours = defaultdict(int); days = defaultdict(int); night = 0
     for r in v:
         try:
-            dt = datetime.fromisoformat(r["createdAt"].replace("Z","+00:00"))
+            dt = to_wib(r.get("createdAt",""))
+            if not dt: continue
             daily[dt.strftime("%Y-%m-%d")] += 1
             w = dt.strftime("%Y-W%W")
             if r.get("conclusion")=="success": weekly[w]["s"] += 1
@@ -175,7 +187,7 @@ def calc(runs, releases):
             hours[dt.hour] += 1; days[dt.strftime("%A")] += 1
             if dt.hour >= 23 or dt.hour < 5: night += 1
         except: pass
-    errs = [{"id":r.get("databaseId"),"t":r.get("createdAt","")[:16]} for r in v[:20] if r.get("conclusion")=="failure"][:5]
+    errs = [{"id":r.get("databaseId"),"t":r.get("createdAt","")[:16]} for r in v if r.get("conclusion")=="failure"][:5]
     streak = 0; best = 0; d = datetime.now(WIB).date()
     while True:
         if d.strftime("%Y-%m-%d") in daily: streak += 1; best = max(best, streak)
@@ -183,7 +195,7 @@ def calc(runs, releases):
         d -= timedelta(days=1)
     achs = []
     if t >= 1: achs.append(("First Blood","Record pertama","✅"))
-    if any(r.get("createdAt","").startswith(today) for r in v): achs.append(("Today","Record hari ini","✅"))
+    if tr: achs.append(("Today","Record hari ini","✅"))
     if streak >= 3: achs.append(("Streak 3","3 hari berturut","✅"))
     if streak >= 7: achs.append(("Week Warrior","7 hari berturut","✅"))
     if t >= 10: achs.append(("Decade","10 recordings","✅"))
@@ -240,7 +252,18 @@ def gen(S, runs, releases):
     rh = "".join([mk_row(r) for r in vr])
     eh = "".join([mk_erow(r) for r in er])
     rl = "".join([mk_rrow(r) for r in releases[:15]])
-    feed = "".join([mk_feed(r) for r in runs[:15]])
+    feed_src = [r for r in runs if r.get("name") in ("rusemeva-vault", "rusemeva-encode")][:15]
+    if len(feed_src) < 8:
+        seen = {str(r.get("databaseId")) for r in feed_src}
+        skip = {"Update Dashboard", "pages build and deployment", "ci-policy", "cleanup-temp"}
+        for r in runs:
+            rid = str(r.get("databaseId"))
+            if rid in seen or r.get("name") in skip:
+                continue
+            feed_src.append(r); seen.add(rid)
+            if len(feed_src) >= 15:
+                break
+    feed = "".join([mk_feed(r) for r in feed_src])
     ach_html = "".join([mk_ach(a) for a in S["achs"]])
     lock_data = [("Centurion","100 recordings"),("Early Bird","Record sebelum 6am"),("Collector","Semua source"),("Marathon","Record >3 jam"),("Weekend Warrior","Record setiap weekend"),("Monthly Master","30 recordings/bulan")]
     ach_locked = "".join([mk_lock(n,d) for n,d in lock_data[:6-len(S["achs"])][:6]])
@@ -301,11 +324,18 @@ def gen(S, runs, releases):
     # Gallery items
     gallery_html = ""
     for r in vr[:12]:
-        c = cls(r.get("conclusion",""))
+        sk = status_key(r)
+        c = "running" if sk == "in_progress" else cls(r.get("conclusion",""))
         rid = r.get("databaseId","")
         orv = (r.get("orv_id") or "").strip()
         show = orv or rid
-        gallery_html += f'<div class="gal-item {c}" data-rid="{rid}" data-orv="{orv}"><div class="gal-icon">{ico(r.get("conclusion",""))}</div><div class="gal-id"><code title="{rid}">{show}</code></div><div class="gal-time">{ago(r.get("createdAt",""))}</div></div>'
+        icon = ico("" if sk=="in_progress" else r.get("conclusion",""))
+        gallery_html += (
+            f'<div class="gal-item {c}" data-s="{sk}" data-rid="{rid}" data-orv="{orv}">'
+            f'<div class="gal-icon">{icon}</div>'
+            f'<div class="gal-id"><code title="{rid}">{show}</code></div>'
+            f'<div class="gal-time">{ago(r.get("createdAt",""))}</div></div>'
+        )
     # Insights
     insight_html = ""
     for i in S["insights"][:4]:
@@ -515,13 +545,13 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <button class="btn" onclick="toggleTheme()">🌓</button><button class="btn" onclick="location.reload()">🔄</button></div>
 </div>
 <div class="sg">
-<div class="sc bl"><div class="si">📹</div><div class="sv">''' + str(S['total']) + '''</div><div class="sl">Total</div></div>
-<div class="sc gn"><div class="si">✅</div><div class="sv">''' + str(S['success']) + '''</div><div class="sl">Success</div></div>
-<div class="sc rd"><div class="si">❌</div><div class="sv">''' + str(S['failed']) + '''</div><div class="sl">Failed</div></div>
-<div class="sc yl"><div class="si">📊</div><div class="sv">''' + str(S['rate']) + '''%</div><div class="sl">Rate</div></div>
-<div class="sc pr"><div class="si">🎞</div><div class="sv">''' + str(S['enc']) + '''</div><div class="sl">Encode</div></div>
-<div class="sc or"><div class="si">📅</div><div class="sv">''' + str(S['today']) + '''</div><div class="sl">Today</div></div>
-<div class="sc pn"><div class="si">🔥</div><div class="sv">''' + str(S['streak']) + '''</div><div class="sl">Streak</div></div>
+<div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Total</div></div>
+<div class="sc gn"><div class="si">✅</div><div class="sv" id="st-success">''' + str(S['success']) + '''</div><div class="sl">Success</div></div>
+<div class="sc rd"><div class="si">❌</div><div class="sv" id="st-failed">''' + str(S['failed']) + '''</div><div class="sl">Failed</div></div>
+<div class="sc yl"><div class="si">📊</div><div class="sv" id="st-rate">''' + str(S['rate']) + '''%</div><div class="sl">Rate</div></div>
+<div class="sc pr"><div class="si">🎞</div><div class="sv" id="st-enc">''' + str(S['enc']) + '''</div><div class="sl">Encode</div></div>
+<div class="sc or"><div class="si">📅</div><div class="sv" id="st-today">''' + str(S['today']) + '''</div><div class="sl">Today</div></div>
+<div class="sc pn"><div class="si">🔥</div><div class="sv" id="st-streak">''' + str(S['streak']) + '''</div><div class="sl">Streak</div></div>
 </div>
 <div class="sec" id="sec-health"><div class="sh"><div class="st">🏥 Health</div><span style="font-size:9px;color:var(--t2)">''' + now + '''</span></div>
 <div class="hg"><div class="hi"><div class="hd g"></div><div><div class="hl">Worker</div><div class="hs">rusemeva-vault</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">GHA</div><div class="hs">20 slots</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Telegram</div><div class="hs">@daudtrans_bot</div></div></div><div class="hi"><div class="hd g"></div><div><div class="hl">Dashboard</div><div class="hs">gh-pages</div></div></div></div></div>
@@ -631,10 +661,10 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <a class="ab" onclick="showM('player')">▶️ Player</a>
 <a class="ab" onclick="showM('analytics')">📊 Analytics</a>
 </div></div>
-<div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()"><button class="fb on" onclick="filt('all',this)">All</button><button class="fb" onclick="filt('success',this)">✅</button><button class="fb" onclick="filt('failure',this)">❌</button><button class="fb" onclick="filt('in_progress',this)">🔄</button></div></div>
+<div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()"><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button></div></div>
 <div style="overflow-x:auto"><table id="rt"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + rh + '''</tbody></table></div></div>
 <div class="g2">
-<div class="sec"><div class="sh"><div class="st">🎞 Encode</div></div><div style="overflow-x:auto"><table><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + eh + '''</tbody></table></div></div>
+<div class="sec"><div class="sh"><div class="st">🎞 Encode</div></div><div style="overflow-x:auto"><table id="et"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + eh + '''</tbody></table></div></div>
 <div class="sec"><div class="sh"><div class="st">📦 Releases</div></div><div style="overflow-x:auto"><table><thead><tr><th>Tag</th><th>Size</th><th>Time</th></tr></thead><tbody>''' + rl + '''</tbody></table></div></div>
 </div>
 <div class="sec" id="sec-act"><div class="sh"><div class="st">⚡ Actions</div></div><div class="ag">
@@ -643,7 +673,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <a class="ab" href="https://github.com/''' + REPO + '''" target="_blank">💻 Repo</a>
 <a class="ab" onclick="showM('keys')">⌨️ Keys</a><a class="ab" onclick="showM('api')">📚 API</a><a class="ab" onclick="showM('about')">ℹ️ About</a>
 </div></div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.1 · Live data.json + RSM map · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.2 · Audit fix · Live data + clean feed · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
@@ -705,11 +735,11 @@ function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'runnin
 function statusKeyJs(r){var c=(r.conclusion||'').trim();if(c==='success'||c==='failure'||c==='cancelled')return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return c||st||'?';}
 function displayStatusJs(r){var c=(r.conclusion||'').trim();if(c)return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return st||'?';}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])})}
-function buildFeedHtml(runs){return (runs||[]).slice(0,15).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span></div>';}).join('')}
+function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span></div>';}).join('')}
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt)rt.innerHTML=buildRecRows(data.runs);var et=document.querySelectorAll('#sec-rec ~ .g2 table tbody, .g2 table tbody');if(et&&et.length){/* encode table is first in g2 */} var encBody=document.querySelector('.g2 .sec table tbody');if(encBody)encBody.innerHTML=buildEncRows(data.runs);if(data.stats){var st=data.stats;var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}} var q=document.getElementById('q');if(q&&q.value)srch()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null)setTxt('st-rate',st.rate+'%');if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}}
 async function softRefresh(){try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}}
 var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
 // initial soft patch shortly after load (pick up fresher data.json / orv-map)
@@ -721,7 +751,7 @@ if('Notification'in window&&Notification.permission==='default')Notification.req
 
 def main():
     print("🔄 Fetching...")
-    runs = get_runs(100)
+    runs = get_runs(150)
     releases = get_releases(30)
     orv_map = get_orv_map()
     runs = attach_orv(runs, orv_map)
@@ -734,10 +764,9 @@ def main():
     os.makedirs(out, exist_ok=True)
     with open(f"{out}/index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    # lean public data for live client refresh (omit heavy nested assets)
-    lean_runs = []
-    for r in runs[:40]:
-        lean_runs.append({
+    # lean public data — prioritize vault/encode so soft-refresh keeps Recording tables
+    def _lean(r):
+        return {
             "databaseId": r.get("databaseId"),
             "name": r.get("name"),
             "status": r.get("status"),
@@ -747,7 +776,19 @@ def main():
             "event": r.get("event"),
             "orv_id": r.get("orv_id") or "",
             "source": r.get("source") or "",
-        })
+        }
+    important = [r for r in runs if r.get("name") in ("rusemeva-vault", "rusemeva-encode")]
+    other = [r for r in runs if r.get("name") not in ("rusemeva-vault", "rusemeva-encode")]
+    lean_runs = []
+    seen = set()
+    for r in important + other:
+        rid = str(r.get("databaseId"))
+        if rid in seen:
+            continue
+        seen.add(rid)
+        lean_runs.append(_lean(r))
+        if len(lean_runs) >= 80:
+            break
     lean_releases = []
     for r in releases[:20]:
         lean_releases.append({
