@@ -226,13 +226,26 @@ def gen(S, runs, releases):
         cnt = S["daily"].get(day.strftime("%Y-%m-%d"), 0)
         it = min(cnt, 5)
         cal += f'<div class="c c{it}" title="{day.strftime("%Y-%m-%d")}: {cnt}">{day.day}</div>'
+    # This Week: compact chips (oldest->newest) — short on mobile
     cal_detail = ""
-    for i in range(7):
+    for i in range(6, -1, -1):
         day = today - timedelta(days=i)
         ds = day.strftime("%Y-%m-%d")
         cnt = S["daily"].get(ds, 0)
-        status = "✅" if cnt > 0 else "⬜"
-        cal_detail += f'<div class="cd"><div class="cd-day">{day.strftime("%a")}</div><div class="cd-date">{day.strftime("%d/%m")}</div><div class="cd-cnt">{status} {cnt}</div></div>'
+        is_today = day == today
+        lvl = min(cnt, 5)
+        on = " on" if is_today else ""
+        act = " act" if cnt > 0 else ""
+        dlet = day.strftime("%a")[:1]
+        dnum = day.strftime("%d")
+        title = f'{day.strftime("%a %d/%m")}: {cnt} record'
+        cal_detail += (
+            f'<div class="cd c{lvl}{on}{act}" title="{title}">'
+            f'<div class="cd-day">{dlet}</div>'
+            f'<div class="cd-num">{dnum}</div>'
+            f'<div class="cd-cnt">{cnt if cnt else "·"}</div>'
+            f'</div>'
+        )
     rand_r = random.choice(vr) if vr else None
     rand_html = f'<code>{rand_r.get("databaseId","")}</code> | {ago(rand_r.get("createdAt",""))} | <a href="https://github.com/{REPO}/actions/runs/{rand_r.get("databaseId","")}" target="_blank">View ↗</a>' if rand_r else "No recordings"
     anom_html = ""
@@ -381,10 +394,10 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .qual-score{font-size:12px;font-weight:700;color:var(--gn)}
 .src{display:flex;align-items:center;gap:8px;margin-bottom:4px}.src-label{font-size:10px;min-width:60px}.src-bar{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}.src-fill{height:100%;background:var(--bl);border-radius:3px}.src-pct{font-size:9px;color:var(--t2);min-width:30px;text-align:right}
 .time{display:flex;align-items:center;gap:6px;margin-bottom:2px}.time-label{font-size:8px;min-width:30px;color:var(--t3)}.time-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}.time-fill{height:100%;background:var(--pr);border-radius:3px}.time-cnt{font-size:8px;color:var(--t2);min-width:15px;text-align:right}
-.cd{display:flex;align-items:center;gap:8px;padding:6px;background:var(--bg3);border-radius:5px;margin-bottom:3px}.cd-day{font-size:10px;font-weight:600;min-width:30px}.cd-date{font-size:9px;color:var(--t2)}.cd-cnt{font-size:10px}
+.cd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 2px;background:var(--bg3);border-radius:8px;border:1px solid var(--brd);min-height:52px;text-align:center;transition:transform .15s,border-color .15s}.cd:hover{transform:translateY(-1px);border-color:var(--bl)}.cd.on{border-color:var(--bl);box-shadow:0 0 0 1px rgba(88,166,255,.35)}.cd.act{background:rgba(63,185,80,.12)}.cd-day{font-size:9px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.3px;line-height:1}.cd-num{font-size:11px;font-weight:700;color:var(--t1);line-height:1.1}.cd-cnt{font-size:10px;color:var(--gn);font-weight:600;line-height:1}.cd.c0 .cd-cnt{color:var(--t3)}
 .cal-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
 .cal-grid{display:grid;grid-template-columns:repeat(35,1fr);gap:1px;min-width:500px}
-.cd-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cd-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:100%}
 .note-area{width:100%;min-height:60px;padding:6px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px;resize:vertical;font-family:inherit}
 .tag-input{display:flex;gap:4px;margin:6px 0}.tag-input input{flex:1;padding:5px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px}.tag-input button{padding:5px 10px;border-radius:5px;border:1px solid var(--brd);background:var(--bl);color:#fff;cursor:pointer;font-size:11px}
 .export-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin:8px 0}
@@ -443,6 +456,12 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .hg{grid-template-columns:1fr 1fr}
   .fl{width:100%}
   .fb{flex:1;text-align:center}
+  .cd-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+  .cd{min-height:48px;padding:4px 1px;border-radius:7px}
+  .cd-day{font-size:8px}
+  .cd-num{font-size:10px}
+  .cd-cnt{font-size:9px}
+  .cal-grid{min-width:0;grid-template-columns:repeat(35,minmax(6px,1fr))}
 }
 @media(max-width:480px){
   .sg{grid-template-columns:repeat(2,1fr)}
@@ -500,7 +519,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <div class="sec"><div class="sh"><div class="st">📅 Activity</div></div>
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
 <div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:10px;height:10px"></div><div class="c c1" style="width:10px;height:10px"></div><div class="c c2" style="width:10px;height:10px"></div><div class="c c3" style="width:10px;height:10px"></div><div class="c c4" style="width:10px;height:10px"></div><div class="c c5" style="width:10px;height:10px"></div><span>More</span></div></div>
-<div class="sec"><div class="sh"><div class="st">📅 This Week</div></div><div class="cd-grid">''' + cal_detail + '''</div></div>
+<div class="sec" id="sec-week"><div class="sh"><div class="st">📅 This Week</div><span style="font-size:9px;color:var(--t2)">7 hari</span></div><div class="cd-grid">''' + cal_detail + '''</div></div>
 <div class="g2">
 <div class="sec"><div class="sh"><div class="st">📈 Daily</div></div><div class="ch"><canvas id="c1"></canvas></div></div>
 <div class="sec"><div class="sh"><div class="st">📊 Weekly</div></div><div class="ch"><canvas id="c2"></canvas></div></div>
