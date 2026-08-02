@@ -9,7 +9,7 @@ HEVC_PRESET="${HEVC_PRESET}"
 HEVC_CRF="${HEVC_CRF}"
 CHOSEN="${CHOSEN_PRESET}"
 if [ "$CHOSEN" != "$HEVC_PRESET" ]; then
-  MSG="🔻 <b>Auto-downgrade!</b> Preset <code>$CHOSEN</code> estimasi &gt;5j50m, otomatis turun ke <code>$HEVC_PRESET</code> (CRF $HEVC_CRF) biar muat 6 jam."
+  MSG="🔻 <b>Auto-downgrade</b>: request <code>$CHOSEN</code> estimasi &gt;~5j50m di runner; dipilih preset <b>paling lambat yang masih muat</b> → <code>$HEVC_PRESET</code> (CRF $HEVC_CRF)."
 else
   MSG="🎚 Encode pakai preset <code>$HEVC_PRESET</code> (CRF $HEVC_CRF)."
 fi

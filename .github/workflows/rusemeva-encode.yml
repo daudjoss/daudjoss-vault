@@ -242,10 +242,9 @@ jobs:
           fi
           echo "🎞 FPS encode sample ($PRESET): ${SAMPLE_FPS:-?}"
 
-          # LADDER: dari TERCEPAT (ultrafast) ke TERLAMBAT (placebo).
-          # Loop urutan ini, pilih preset PERTAMA yang muat = TERCEPAT yang muat.
-          # Preset USER hanya jadi BATAS ATAS (tidak akan di-upgrade ke lebih lambat
-          # dari yang user mau, tapi boleh di-downgrade ke yang lebih cepat).
+          # LADDER index: 0=tercepat ... 9=terlambat.
+          # Saat downgrade: pilih index tertinggi (paling lambat) yang est masih <= LIMIT.
+          # Preset USER = BATAS ATAS (tidak di-upgrade ke lebih lambat dari request).
           LADDER=( ultrafast superfast veryfast faster fast medium slow slower veryslow placebo )
           # Index preset di LADDER (untuk tau mana yang "lebih cepat" dari user choice)
           declare -A LADDER_IDX=(
@@ -283,10 +282,10 @@ jobs:
           fi
 
           # === FIX AUTO-DOWNGRADE ===
-          # Logika BENAR: hanya downgrade kalau preset USER tidak muat.
-          # Kalau muat, pertahankan preset USER (no downgrade).
-          # Kalau harus downgrade, pilih preset TERCEPAT yang muat
-          # (tidak lebih cepat dari ultrafast).
+          # Intent: minta quality (mis. slow). Hanya turun JIKA est > limit (~5j50m).
+          # Kalau harus turun: pilih preset PALING LAMBAT yang MASIH MUAT
+          # (= paling dekat ke request user). JANGAN loncat ke ultrafast dulu.
+          # Tidak pernah UPGRADE ke lebih lambat dari request user.
           #
           # Hitung estimasi preset USER dulu.
           user_rtp=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * ($USER_RT / $USER_RT)}")  # = BASE_RT
@@ -299,13 +298,18 @@ jobs:
           if [ "$user_est" -le "$LIMIT_MIN" ]; then
             echo "✅ Preset user MUAT — pertahankan $PRESET (no downgrade)"
           else
-            # Harus downgrade. Loop dari TERCEPAT (idx 0) ke index USER (inclusive).
-            # Pilih preset PERTAMA (tercepat) yang muat.
-            echo "⚠️ Preset user tidak muat — cari alternatif tercepat yang muat..."
-            for idx in 0 1 2 3 4 5 6 7 8 9; do
-              # Skip kalau lebih lambat dari user choice (idx > USER_IDX)
-              [ "$idx" -gt "$USER_IDX" ] && continue
-              # Map idx -> nama preset
+            # Harus downgrade. Loop dari (USER_IDX-1) → 0 (hampir-lambat → cepat).
+            # Kandidat PERTAMA yang muat = paling lambat yang muat (closest to user).
+            echo "⚠️ Preset user tidak muat (est ${user_est}m > ${LIMIT_MIN}m) — cari preset paling lambat yang masih muat..."
+            BEST=""
+            BEST_RT=""
+            BEST_EST=""
+            if [ "$USER_IDX" -gt 0 ]; then
+              idx_list=$(seq $((USER_IDX - 1)) -1 0)
+            else
+              idx_list=""
+            fi
+            for idx in $idx_list; do
               case $idx in
                 0) p="ultrafast" ;;
                 1) p="superfast" ;;
@@ -317,33 +321,43 @@ jobs:
                 7) p="slower" ;;
                 8) p="veryslow" ;;
                 9) p="placebo" ;;
+                *) continue ;;
               esac
               prt=${RT[$p]:-1.0}
               rtp=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * ($prt / $USER_RT)}")
-              est=$(awk "BEGIN{printf \"%d\", ($DUR/60 / $rtp) + $OVERHEAD_MIN}")
-              echo "   • $p: ${rtp}x realtime -> est ${est}m"
-              if [ "$est" -le "$LIMIT_MIN" ]; then
-                FINAL="$p"
-                FINAL_CRF="$CRF_VAL"
-                FINAL_RT="$rtp"
-                echo "✅ Pilih: $p (tercepat yang muat)"
-                break
+              if awk "BEGIN{exit !($rtp<=0)}"; then
+                echo "   • $p: skip (rt<=0)"
+                continue
               fi
+              est=$(awk "BEGIN{printf \"%d\", ($DUR/60 / $rtp) + $OVERHEAD_MIN}")
+              fit="❌"
+              if [ "$est" -le "$LIMIT_MIN" ]; then
+                fit="✅ muat"
+                if [ -z "$BEST" ]; then
+                  BEST="$p"
+                  BEST_RT="$rtp"
+                  BEST_EST="$est"
+                fi
+              fi
+              echo "   • $p: ${rtp}x realtime -> est ${est}m $fit"
             done
-          fi
-
-          # Kalau sampai akhir loop masih tidak muat, fallback ke ultrafast
-          if [ "$FINAL" = "$PRESET" ] && [ "$user_est" -gt "$LIMIT_MIN" ]; then
-            FINAL="ultrafast"
-            FINAL_CRF="$CRF_VAL"
-            FINAL_RT=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * (${RT[ultrafast]} / $USER_RT)}")
-            echo "🚨 Tidak ada preset yang muat — fallback ke ultrafast (resiko encode bisa ke-potong)"
+            if [ -n "$BEST" ]; then
+              FINAL="$BEST"
+              FINAL_CRF="$CRF_VAL"
+              FINAL_RT="$BEST_RT"
+              echo "✅ Pilih: $BEST (paling lambat yang muat, est ${BEST_EST}m) — closest to '$PRESET'"
+            else
+              FINAL="ultrafast"
+              FINAL_CRF="$CRF_VAL"
+              FINAL_RT=$(awk "BEGIN{printf \"%.4f\", $BASE_RT * (${RT[ultrafast]} / $USER_RT)}")
+              echo "🚨 Tidak ada preset yang muat — fallback ke ultrafast (resiko encode bisa ke-potong)"
+            fi
           fi
 
           if [ "$FINAL" = "$PRESET" ]; then
             echo "✅ Final: preset asli $FINAL (${FINAL_RT}x, est di bawah ${LIMIT_MIN}m)"
           else
-            echo "🔻 Turun ke: $FINAL (CRF $FINAL_CRF, ${FINAL_RT}x realtime) dari $PRESET biar muat 6 jam"
+            echo "🔻 Turun ke: $FINAL (CRF $FINAL_CRF, ${FINAL_RT}x realtime) dari $PRESET biar muat ~6 jam (bukan loncat buta)"
           fi
           echo "FINAL_PRESET=$FINAL" >> $GITHUB_OUTPUT
           echo "FINAL_CRF=$FINAL_CRF" >> $GITHUB_OUTPUT
