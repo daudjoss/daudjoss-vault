@@ -223,33 +223,28 @@ def calc(runs, releases):
     if max(hours.values(), default=0) >= 5: achs.append(("Peak Hour","5+ record di jam sama","✅"))
     top_hour = max(hours, key=hours.get, default=0)
     top_day = max(days, key=days.get, default="N/A")
-    # GH releases mostly metadata .txt — real MP4 goes to Telegram.
-    # Prefer real asset bytes when media; else estimate from duration in name.
-    total_bytes = 0
-    est_count = 0
+    # GitHub only keeps small manifest .txt; MP4 goes to Telegram; encode-temp dihapus.
+    # total_size = REAL bytes still on GH releases (bukan kumulatif histori video).
+    # lifetime_est_gb = estimasi volume rekaman sepanjang masa (info terpisah, bukan "storage").
+    gh_bytes = 0
+    lifetime_est_bytes = 0
     for r in releases:
         tag = r.get("tag") or ""
         name = r.get("name") or ""
-        sz = r.get("size") or 0
+        sz = int(r.get("size") or 0)
         if "encode-" in tag or "Encode Temp" in name:
-            continue
+            continue  # temp should be gone; ignore if residual
+        gh_bytes += sz
+        dur = parse_dur_sec(name) or parse_dur_sec(tag)
+        eb = est_bytes_from_dur(dur) if dur else 0
+        # if asset itself is already big media, count real size toward lifetime too
         if sz >= 1 * 1024 * 1024:
-            total_bytes += sz
-        else:
-            dur = parse_dur_sec(name) or parse_dur_sec(tag)
-            eb = est_bytes_from_dur(dur)
-            if eb:
-                total_bytes += eb
-                est_count += 1
-    # also estimate from vault success runs without matching release duration text
-    if total_bytes == 0:
-        for r in v:
-            if r.get("conclusion") != "success":
-                continue
-            # no duration on run JSON — skip; releases cover named vault tags
-            pass
-    total_size = total_bytes / 1024 / 1024 / 1024
-    storage_est = est_count > 0
+            lifetime_est_bytes += sz
+        elif eb:
+            lifetime_est_bytes += eb
+    total_size = gh_bytes / 1024 / 1024 / 1024  # GiB still on GitHub
+    lifetime_est_gb = lifetime_est_bytes / 1024 / 1024 / 1024
+    storage_est = False  # total_size is real GH occupancy, not estimate
     anomalies = []
     media = [r for r in releases if is_media_release(r)]
     avg_size = sum(r.get("size",0) for r in media) / len(media) if media else 0
@@ -273,13 +268,13 @@ def calc(runs, releases):
     # Predictions
     predictions = []
     if len(v) >= 5: predictions.append(f"Expected minggu depan: ~{len(v)//4} recordings")
-    if total_size > 0: predictions.append(f"Storage: +{total_size/4:.1f} GB/minggu")
+    if lifetime_est_gb > 0: predictions.append(f"Volume rekaman (est lifetime): {lifetime_est_gb:.1f} GB — file di Telegram, GH hanya manifest")
     return {
         "total":t,"success":s,"failed":f,"running":rn,"rate":rate,
         "enc":et,"enc_ok":es,"enc_rate":erate,"today":len(tr),"today_ok":len([r for r in tr if r.get("conclusion")=="success"]),
         "daily":dict(sorted(daily.items())[-35:]),"weekly":dict(sorted(weekly.items())[-12:]),
         "errs":errs,"latest":v[0] if v else None,"streak":streak,"best":best,
-        "achs":achs,"top_hour":top_hour,"top_day":top_day,"total_size":round(total_size,2),"storage_est":storage_est,
+        "achs":achs,"top_hour":top_hour,"top_day":top_day,"total_size":round(total_size,4),"storage_est":storage_est,"lifetime_est_gb":round(lifetime_est_gb,2),"gh_bytes":gh_bytes,
         "hours":dict(sorted(hours.items())),"days":dict(days),"night":night,
         "anomalies":anomalies,"quality":quality_scores,
         "insights":insights,"predictions":predictions,
@@ -361,7 +356,7 @@ def gen(S, runs, releases):
         cnt = S["hours"].get(h, 0)
         pct = round(cnt/max(S["hours"].values(), default=1)*100) if S["hours"] else 0
         time_html += f'<div class="time"><div class="time-label">{h:02d}</div><div class="time-bar"><div class="time-fill" style="width:{pct}%"></div></div><div class="time-cnt">{cnt}</div></div>'
-    pct = min(S['total_size']/50*100, 100)
+    pct = min((S.get('lifetime_est_gb') or 0)/50*100, 100)
     streak_pct = min(S['streak']/max(S['best'],1)*100, 100)
     today_cls = "up" if S['today']>0 else "st"
     today_txt = f"↑ {S['today_ok']}" if S['today']>0 else "→"
@@ -820,13 +815,13 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.4 · Live DASH menus · Storage est · Customize · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.4.1 · GH storage real · lifetime est terpisah · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-        "stats": {k: S[k] for k in ("total","success","failed","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","night") if k in S},
+        "stats": {k: S[k] for k in ("total","success","failed","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
         "daily": S.get("daily") or {},
@@ -883,8 +878,10 @@ function rowRun(r){
     +' <a href="'+link+'" target="_blank" style="font-size:10px">↗</a></div>';
 }
 function storageLabel(){
-  var g=(st.total_size!=null?Number(st.total_size):0).toFixed(2);
-  return g+' GB'+(st.storage_est?' <span style="color:var(--t2)">(est.)</span>':'');
+  var ghB=st.gh_bytes!=null?Number(st.gh_bytes):(Number(st.total_size||0)*1024*1024*1024);
+  var ghStr = ghB>=1024*1024 ? (ghB/1024/1024).toFixed(1)+' MB' : (ghB/1024).toFixed(0)+' KB';
+  var life=st.lifetime_est_gb!=null?Number(st.lifetime_est_gb):0;
+  return ghStr+' on GH'+(life>0?' · lifetime rec ~'+life.toFixed(1)+' GB <span style="color:var(--t2)">(est, not stored)</span>':'');
 }
 function statBlock(){
   return '<div style="font-size:11px;line-height:1.7">'
