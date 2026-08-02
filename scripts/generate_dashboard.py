@@ -21,6 +21,49 @@ def get_releases(n=30):
     raw = gh(["api",f"repos/{REPO}/releases","--jq",f"[.[:{n}][]|{{tag:.tag_name,name:.name,created:.created_at,size:([.assets[].size]|add//0),assets:[.assets[]|{{name:.name,size:.size}}]}}]"])
     return json.loads(raw) if raw else []
 
+def is_media_release(r):
+    """Skip encode-temp + tiny metadata .txt releases from size/anomaly stats."""
+    tag = (r.get("tag") or "")
+    name = (r.get("name") or "")
+    size = r.get("size") or 0
+    if "encode-" in tag or "Encode Temp" in name:
+        return False
+    # metadata-only releases are usually << 1MB
+    if size > 0 and size < 1 * 1024 * 1024:
+        return False
+    return True
+
+def get_orv_map():
+    """Fetch public run_id→RSM map from Worker (best-effort)."""
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            "https://rusemeva.rusemeva-vault.workers.dev/api/orv-map",
+            headers={"User-Agent": "rusemeva-dashboard"},
+        )
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            data = json.loads(resp.read().decode("utf-8", "replace"))
+            m = data.get("map") if isinstance(data, dict) else []
+            return m if isinstance(m, list) else []
+    except Exception:
+        return []
+
+def attach_orv(runs, orv_map):
+    by_run = {}
+    for item in orv_map or []:
+        rid = str(item.get("run_id") or "")
+        oid = (item.get("orv_id") or "").strip()
+        if rid and oid:
+            by_run[rid] = {"orv_id": oid, "source": item.get("source") or ""}
+    for r in runs:
+        rid = str(r.get("databaseId") or "")
+        meta = by_run.get(rid)
+        if meta:
+            r["orv_id"] = meta["orv_id"]
+            if meta.get("source"):
+                r["source"] = meta["source"]
+    return runs
+
 def ago(s):
     try:
         d = int((datetime.now(timezone.utc) - datetime.fromisoformat(s.replace("Z","+00:00"))).total_seconds())
@@ -40,24 +83,34 @@ def mk_row(r):
     c = cls(r.get("conclusion",""))
     s = r.get("conclusion", r.get("status","?"))
     rid = str(r.get("databaseId",""))
-    return f'<tr class="r-{c}" data-s="{s}" data-q="{rid}"><td>{ico(r.get("conclusion",""))}</td><td><code>{rid}</code></td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    orv = (r.get("orv_id") or "").strip()
+    idcell = f'<code title="{rid}">{orv or rid}</code>' if orv else f'<code>{rid}</code>'
+    q = f"{rid} {orv}".lower()
+    return f'<tr class="r-{c}" data-s="{s}" data-q="{q}" data-rid="{rid}" data-orv="{orv}"><td>{ico(r.get("conclusion",""))}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
 
 def mk_erow(r):
     c = cls(r.get("conclusion",""))
     s = r.get("conclusion", r.get("status","?"))
     rid = str(r.get("databaseId",""))
-    return f'<tr><td>{ico(r.get("conclusion",""))}</td><td><code>{rid}</code></td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    orv = (r.get("orv_id") or "").strip()
+    idcell = f'<code title="{rid}">{orv or rid}</code>' if orv else f'<code>{rid}</code>'
+    return f'<tr data-rid="{rid}" data-orv="{orv}"><td>{ico(r.get("conclusion",""))}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
 
 def mk_rrow(r):
-    return f'<tr><td><code>{r.get("tag","")}</code></td><td>{r.get("size",0)/1024/1024:.1f} MB</td><td>{ago(r.get("created",""))}</td></tr>'
+    tag = r.get("tag","")
+    size_mb = r.get("size",0)/1024/1024
+    kind = "temp" if "encode-" in tag else ("meta" if size_mb < 1 else "asset")
+    return f'<tr data-kind="{kind}"><td><code>{tag}</code></td><td>{size_mb:.1f} MB</td><td>{ago(r.get("created",""))}</td></tr>'
 
 def mk_feed(r):
     i = ico(r.get("conclusion", r.get("status","?")))
     c = cls(r.get("conclusion",""))
     s = r.get("conclusion", r.get("status","?"))
     rid = str(r.get("databaseId",""))
+    orv = (r.get("orv_id") or "").strip()
     nm = r.get("name","")
-    return f'<div class="fi"><span class="fi-icon">{i}</span><span class="fi-time">{ago(r.get("createdAt",""))}</span><span class="fi-id"><code>{rid}</code></span><span class="fi-name">{nm}</span><span class="fi-status {c}">{s}</span></div>'
+    idshow = orv or rid
+    return f'<div class="fi" data-rid="{rid}" data-orv="{orv}"><span class="fi-icon">{i}</span><span class="fi-time">{ago(r.get("createdAt",""))}</span><span class="fi-id"><code title="{rid}">{idshow}</code></span><span class="fi-name">{nm}</span><span class="fi-status {c}">{s}</span></div>'
 
 def mk_ach(a):
     return f'<div class="ach"><div class="ach-icon">{a[2]}</div><div><div class="ach-title">{a[0]}</div><div class="ach-desc">{a[1]}</div></div></div>'
@@ -112,16 +165,21 @@ def calc(runs, releases):
     if max(hours.values(), default=0) >= 5: achs.append(("Peak Hour","5+ record di jam sama","✅"))
     top_hour = max(hours, key=hours.get, default=0)
     top_day = max(days, key=days.get, default="N/A")
-    total_size = sum(r.get("size",0) for r in releases) / 1024/1024/1024
+    total_size = sum(r.get("size",0) for r in releases if is_media_release(r)) / 1024/1024/1024
     anomalies = []
-    avg_size = sum(r.get("size",0) for r in releases) / len(releases) if releases else 0
-    for r in releases[:10]:
-        if r.get("size",0) < avg_size * 0.3 and r.get("size",0) > 0:
-            anomalies.append({"type":"small_file","tag":r.get("tag",""),"size":r.get("size",0)/1024/1024,"msg":"File size unusually small"})
+    media = [r for r in releases if is_media_release(r)]
+    avg_size = sum(r.get("size",0) for r in media) / len(media) if media else 0
+    for r in media[:15]:
+        sz = r.get("size",0)
+        # only flag real media that is suspiciously small vs peers (min 20MB floor)
+        if avg_size > 0 and sz > 20*1024*1024 and sz < avg_size * 0.15:
+            anomalies.append({"type":"small_file","tag":r.get("tag",""),"size":sz/1024/1024,"msg":"Media size unusually small vs peers"})
     quality_scores = []
     for r in v[:10]:
         if r.get("conclusion")=="success":
-            quality_scores.append({"id":r.get("databaseId"),"score":random.randint(85,99)})
+            # deterministic-ish score from id (no random noise each refresh)
+            rid = int(r.get("databaseId") or 0)
+            quality_scores.append({"id":r.get("databaseId"),"score":85 + (rid % 15)})
     quality_scores.sort(key=lambda x: x["score"], reverse=True)
     # Insights
     insights = []
@@ -186,7 +244,8 @@ def gen(S, runs, releases):
         qual_html += f'<div class="qual"><code>{q["id"]}</code><div class="qual-score">{q["score"]}/100</div></div>'
     src_html = ""
     sources = defaultdict(int)
-    for r in vr: sources["Trans7"] += 1
+    for r in vr:
+        sources[(r.get("source") or "Trans7").strip() or "Trans7"] += 1
     for src, cnt in sorted(sources.items(), key=lambda x: -x[1]):
         pct = round(cnt/len(vr)*100) if vr else 0
         src_html += f'<div class="src"><div class="src-label">{src}</div><div class="src-bar"><div class="src-fill" style="width:{pct}%"></div></div><div class="src-pct">{pct}%</div></div>'
@@ -203,7 +262,10 @@ def gen(S, runs, releases):
     gallery_html = ""
     for r in vr[:12]:
         c = cls(r.get("conclusion",""))
-        gallery_html += f'<div class="gal-item {c}"><div class="gal-icon">{ico(r.get("conclusion",""))}</div><div class="gal-id"><code>{r.get("databaseId","")}</code></div><div class="gal-time">{ago(r.get("createdAt",""))}</div></div>'
+        rid = r.get("databaseId","")
+        orv = (r.get("orv_id") or "").strip()
+        show = orv or rid
+        gallery_html += f'<div class="gal-item {c}" data-rid="{rid}" data-orv="{orv}"><div class="gal-icon">{ico(r.get("conclusion",""))}</div><div class="gal-id"><code title="{rid}">{show}</code></div><div class="gal-time">{ago(r.get("createdAt",""))}</div></div>'
     # Insights
     insight_html = ""
     for i in S["insights"][:4]:
@@ -535,7 +597,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 <a class="ab" href="https://github.com/''' + REPO + '''" target="_blank">💻 Repo</a>
 <a class="ab" onclick="showM('keys')">⌨️ Keys</a><a class="ab" onclick="showM('api')">📚 API</a><a class="ab" onclick="showM('about')">ℹ️ About</a>
 </div></div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8 · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.1 · Live data.json + RSM map · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <script>
@@ -591,7 +653,19 @@ function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-c
 function expJSON(){var rows=[];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push({id:c[1].textContent.trim(),status:c[3].textContent.trim(),time:c[2].textContent.trim()})});var b=new Blob([JSON.stringify({total:''' + str(S['total']) + ''',success:''' + str(S['success']) + ''',failed:''' + str(S['failed']) + ''',rate:''' + str(S['rate']) + ''',streak:''' + str(S['streak']) + ''',recordings:rows},null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.json';a.click()}
 function expTXT(){var rows=[];document.querySelectorAll('#rt tbody tr:not(.hid)').forEach(function(r){var c=r.querySelectorAll('td');rows.push(c[1].textContent.trim()+' | '+c[3].textContent.trim()+' | '+c[2].textContent.trim())});var b=new Blob([rows.join('\\n')],{type:'text/plain'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rusemeva.txt';a.click()}
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
-var cd=30;setInterval(function(){cd--;document.getElementById('tmr').textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){location.reload()}else{cd=30}}},1000);
+function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
+function icoJs(c){return c==='success'?'✅':c==='failure'?'❌':c==='cancelled'?'⚪':'🔄'}
+function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'running'}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])})}
+function buildFeedHtml(runs){return (runs||[]).slice(0,15).map(function(r){var c=clsJs(r.conclusion);var s=r.conclusion||r.status||'?';var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(r.conclusion||r.status)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span></div>'}).join('')}
+function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var c=clsJs(r.conclusion);var s=r.conclusion||r.status||'?';var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(s)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/''' + REPO + '''/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>'}).join('')}
+function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var c=clsJs(r.conclusion);var s=r.conclusion||r.status||'?';var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/''' + REPO + '''/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>'}).join('')}
+function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);var feed=document.querySelector('#sec-feed .feed');if(feed)feed.innerHTML=buildFeedHtml(data.runs);var rt=document.querySelector('#rt tbody');if(rt)rt.innerHTML=buildRecRows(data.runs);var et=document.querySelectorAll('#sec-rec ~ .g2 table tbody, .g2 table tbody');if(et&&et.length){/* encode table is first in g2 */} var encBody=document.querySelector('.g2 .sec table tbody');if(encBody)encBody.innerHTML=buildEncRows(data.runs);if(data.stats){var st=data.stats;var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=Math.min(st.running||0,20)+'/20 slots';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}} var q=document.getElementById('q');if(q&&q.value)srch()}
+async function softRefresh(){try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}}
+var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
+// initial soft patch shortly after load (pick up fresher data.json / orv-map)
+setTimeout(function(){softRefresh()},2500);
 if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
 </script>
 </body>
@@ -601,6 +675,9 @@ def main():
     print("🔄 Fetching...")
     runs = get_runs(100)
     releases = get_releases(30)
+    orv_map = get_orv_map()
+    runs = attach_orv(runs, orv_map)
+    print(f"🔗 ORV map entries: {len(orv_map)}")
     S = calc(runs, releases)
     print(f"📊 {S['total']} recordings, {S['rate']}% success, {S['streak']} streak")
     print("🔄 Generating...")
@@ -609,8 +686,36 @@ def main():
     os.makedirs(out, exist_ok=True)
     with open(f"{out}/index.html", "w", encoding="utf-8") as f:
         f.write(html)
+    # lean public data for live client refresh (omit heavy nested assets)
+    lean_runs = []
+    for r in runs[:40]:
+        lean_runs.append({
+            "databaseId": r.get("databaseId"),
+            "name": r.get("name"),
+            "status": r.get("status"),
+            "conclusion": r.get("conclusion"),
+            "createdAt": r.get("createdAt"),
+            "updatedAt": r.get("updatedAt"),
+            "event": r.get("event"),
+            "orv_id": r.get("orv_id") or "",
+            "source": r.get("source") or "",
+        })
+    lean_releases = []
+    for r in releases[:20]:
+        lean_releases.append({
+            "tag": r.get("tag"),
+            "name": r.get("name"),
+            "created": r.get("created"),
+            "size": r.get("size") or 0,
+        })
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
-        json.dump({"generated": datetime.now(WIB).isoformat(), "stats": S, "runs": runs[:30], "releases": releases[:15]}, f, default=str)
+        json.dump({
+            "generated": datetime.now(WIB).isoformat(),
+            "stats": S,
+            "runs": lean_runs,
+            "releases": lean_releases,
+            "orv_map": orv_map[:80],
+        }, f, default=str)
     with open(f"{out}/manifest.json", "w") as f:
         json.dump({"name": "Rusemeva Dashboard", "short_name": "Rusemeva", "start_url": ".", "display": "standalone", "background_color": "#0d1117", "theme_color": "#0d1117", "icons": [{"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>", "sizes": "any", "type": "image/svg+xml"}]}, f)
     print(f"✅ Done: {os.path.getsize(f'{out}/index.html')/1024:.0f} KB")

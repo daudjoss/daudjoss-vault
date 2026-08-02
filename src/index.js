@@ -65,9 +65,29 @@ export default {
         }
         // === #4 Endpoint /dashboard: analytics dashboard HTML ===
         if (url.pathname === '/dashboard') {
-          return await handleDashboard(env);
-        }
-      }
+                  return await handleDashboard(env);
+                }
+                // Public read-only map run_id → RSM-ID for GitHub Pages dashboard
+                if (url.pathname === '/api/orv-map' || url.pathname === '/orv-map') {
+                  try {
+                    const raw = await env.RUSEMEVA_KV.get('orv:dash_map');
+                    const map = raw ? JSON.parse(raw) : [];
+                    return new Response(JSON.stringify({ ok: true, map: Array.isArray(map) ? map : [] }), {
+                      status: 200,
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Cache-Control': 'public, max-age=30',
+                      },
+                    });
+                  } catch (_) {
+                    return new Response(JSON.stringify({ ok: false, map: [] }), {
+                      status: 200,
+                      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+                    });
+                  }
+                }
+              }
 
       if (request.method === 'POST') {
         const url = new URL(request.url);
@@ -128,11 +148,29 @@ export default {
               return new Response('forbidden', { status: 403 });
             }
             if (runId && orvId) {
-              await env.RUSEMEVA_KV.put(`run:${runId}`, orvId, { expirationTtl: 21600 });
-              // Reverse map: orv_id -> run_id (biar /cancel <ORV> bisa resolve run)
-              await env.RUSEMEVA_KV.put(`orv:${orvId}:run`, String(runId), { expirationTtl: 21600 });
-              return new Response('OK');
-            }
+                          await env.RUSEMEVA_KV.put(`run:${runId}`, orvId, { expirationTtl: 21600 });
+                          // Reverse map: orv_id -> run_id (biar /cancel <ORV> bisa resolve run)
+                          await env.RUSEMEVA_KV.put(`orv:${orvId}:run`, String(runId), { expirationTtl: 21600 });
+                          // Public dash map (no secret read) — biar dashboard bisa tampilkan RSM-ID
+                          try {
+                            let map = [];
+                            try {
+                              const raw = await env.RUSEMEVA_KV.get('orv:dash_map');
+                              if (raw) map = JSON.parse(raw);
+                            } catch (_) {}
+                            if (!Array.isArray(map)) map = [];
+                            map = map.filter(x => x && String(x.run_id) !== String(runId));
+                            map.unshift({
+                              run_id: String(runId),
+                              orv_id: String(orvId),
+                              source: (body.source || '').toString() || undefined,
+                              ts: new Date().toISOString(),
+                            });
+                            if (map.length > 120) map = map.slice(0, 120);
+                            await env.RUSEMEVA_KV.put('orv:dash_map', JSON.stringify(map), { expirationTtl: 90 * 86400 });
+                          } catch (_) {}
+                          return new Response('OK');
+                        }
             return new Response('bad', { status: 400 });
           } catch (_) {
             return new Response('err', { status: 500 });
