@@ -746,14 +746,11 @@ body{background:
 @keyframes flowMove{from{left:0;opacity:0}10%{opacity:1}90%{opacity:1}to{left:100%;opacity:0}}
 .glass-mode .hero,.glass-mode .stat-card,.glass-mode .sec{backdrop-filter:blur(10px);background:rgba(22,27,34,.6);border:1px solid rgba(255,255,255,.08)}
 
-.hm-matrix 
-.hm-matrix 
-.hm-matrix 
-.hm-matrix .hm-cell2.l0{background:var(--bg3)}
-.hm-matrix .hm-cell2.l1{background:rgba(88,166,255,.2)}
-.hm-matrix .hm-cell2.l2{background:rgba(88,166,255,.4)}
-.hm-matrix .hm-cell2.l3{background:rgba(88,166,255,.6)}
-.hm-matrix .hm-cell2.l4{background:rgba(88,166,255,.9)}
+
+
+
+
+
 .insight-box{padding:10px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);margin:6px 0;font-size:11px;line-height:1.6}
 .insight-box b{color:var(--gn)}
 .insight-box .bad{color:var(--rd)}
@@ -822,6 +819,24 @@ body{background:
 
 .dash-clock{font-size:32px;font-weight:700;font-family:monospace;text-align:center;color:var(--bl);letter-spacing:2px}
 .dash-clock-date{font-size:11px;color:var(--t2);text-align:center;margin-top:4px}
+
+.dora-scorecard{padding:12px}
+.dora-grade{text-align:center;padding:12px;border-radius:12px;margin-bottom:12px}
+.dora-grade.elite{background:linear-gradient(135deg,rgba(63,185,80,.2),rgba(63,185,80,.05));border:2px solid var(--gn)}
+.dora-grade.high{background:linear-gradient(135deg,rgba(88,166,255,.2),rgba(88,166,255,.05));border:2px solid var(--bl)}
+.dora-grade.medium{background:linear-gradient(135deg,rgba(210,153,34,.2),rgba(210,153,34,.05));border:2px solid var(--yl)}
+.dora-grade.low{background:linear-gradient(135deg,rgba(248,81,73,.2),rgba(248,81,73,.05));border:2px solid var(--rd)}
+.dora-grade-label{font-size:28px;font-weight:700;letter-spacing:2px}
+.dora-grade-sub{font-size:10px;color:var(--t2);margin-top:4px}
+.dora-4grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.dora-metric{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px;text-align:center}
+.dora-metric-name{font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+.dora-metric-val{font-size:20px;font-weight:700;margin:4px 0}
+.dora-metric-bench{font-size:8px;color:var(--t3)}
+.dora-metric-bar{height:4px;border-radius:2px;background:var(--bg3);margin-top:6px;overflow:hidden}
+.dora-metric-bar-fg{height:100%;border-radius:2px;transition:width .5s}
+.dora-summary{font-size:11px;color:var(--t2);line-height:1.6;text-align:center;padding:8px;background:var(--bg3);border-radius:8px}
+
 
 .trigger-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin:8px 0}
 .trigger-card{background:var(--bg3);border-radius:8px;padding:8px;text-align:center}
@@ -1029,7 +1044,7 @@ body{background:
 <div class="sec" id="sec-donut"><div class="sh"><div class="st">🍩 Status Distribution</div></div><div id="donutWrap"></div></div>
 <div class="sec" id="sec-flow"><div class="sh"><div class="st">🔄 Pipeline Flow</div></div><div id="flow-diagram"></div></div>
 <div class="sec" id="sec-freqclock"><div class="sh"><div class="st">🕐 Run Frequency</div></div><div id="freqClockWrap"></div></div>
-<div class="sec" id="sec-hmmatrix"><div class="sh"><div class="st">📊 Hour x Day Matrix</div></div><div id="hmMatrixWrap"></div></div>
+
 <div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div></div>
 <div class="sec" id="sec-heatmap"><div class="sh"><div class="st">🔥 Heatmap (30 hari)</div><span style="font-size:9px;color:var(--t2)">Intensitas rekaman</span></div><div id="heatmap-grid"></div><div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="hm-cell" style="width:10px;height:10px"></div><div class="hm-cell l1" style="width:10px;height:10px"></div><div class="hm-cell l2" style="width:10px;height:10px"></div><div class="hm-cell l3" style="width:10px;height:10px"></div><div class="hm-cell l4" style="width:10px;height:10px"></div><span>More</span></div></div>
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
@@ -1313,7 +1328,7 @@ if(t==='customize'){
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.1</b>:<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Hour x Day heatmap matrix (7x24 grid)<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.1</b>:<br>• DORA Scorecard (Elite/High/Medium/Low grade)<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1386,6 +1401,7 @@ if(t==='player'){
 }
 if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
 if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='dora'){h.textContent='🏆 DORA Scorecard';b.innerHTML=renderDoraScorecard()}
 if(t==='trigger'){h.textContent='🎯 Trigger Analysis';b.innerHTML=renderTriggerAnalysis()}
 if(t==='runnum'){h.textContent='🔢 Run Number Tracker';b.innerHTML=renderRunNumberTracker()}
 if(t==='commitmsg'){h.textContent='💬 Commit Messages';b.innerHTML=renderCommitMessages()}
@@ -1507,7 +1523,7 @@ function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(fu
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();renderHmMatrix();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();renderHmMatrix();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -1771,6 +1787,73 @@ function genCurl(method,url){
 }
 function copyCurl(url){
   navigator.clipboard.writeText('curl '+url).then(function(){showToast('cURL copied!')}).catch(function(){})
+}
+
+
+
+// ═══ DORA Scorecard ═══
+function renderDoraScorecard(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  // 1. Deploy Frequency
+  var success=runs.filter(function(r){return r.conclusion==='success'});
+  var days={};
+  success.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    days[key]=(days[key]||0)+1;
+  });
+  var dayCount=Math.max(1,Object.keys(days).length);
+  var depPerDay=success.length/dayCount;
+  var dfGrade=depPerDay>=1?'elite':depPerDay>=0.1?'high':depPerDay>=0.01?'medium':'low';
+  var dfVal=depPerDay>=1?depPerDay.toFixed(1)+'/day':depPerDay>=0.1?depPerDay.toFixed(1)+'/day':'<1/day';
+  // 2. MTTR
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var recoveries=[];
+  for(var i=0;i<fails.length;i++){
+    var failTime=new Date(fails[i].createdAt||0).getTime();
+    for(var j=0;j<runs.length;j++){
+      if(runs[j].conclusion==='success'){
+        var succTime=new Date(runs[j].createdAt||0).getTime();
+        if(succTime>failTime){recoveries.push(Math.round((succTime-failTime)/60000));break}
+      }
+    }
+  }
+  var mttr=recoveries.length?Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length):0;
+  var mttrGrade=mttr===0?'elite':mttr<60?'elite':mttr<180?'high':mttr<720?'medium':'low';
+  // 3. Change Failure Rate
+  var total=st.total||runs.length||1;
+  var failed=st.failed||0;
+  var cfr=Math.round(failed/total*100);
+  var cfrGrade=cfr<15?'elite':cfr<30?'high':cfr<50?'medium':'low';
+  // 4. Lead Time
+  var durations=runs.map(function(r){return r.updatedAt&&r.createdAt?Math.round((r.updatedAt-r.createdAt)/60000):0}).filter(function(d){return d>0});
+  var avgLT=durations.length?Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length):0;
+  var ltGrade=avgLT<60?'elite':avgLT<240?'high':avgLT<720?'medium':'low';
+  // Overall grade
+  var grades={'elite':4,'high':3,'medium':2,'low':1};
+  var overall=Math.round((grades[dfGrade]+grades[mttrGrade]+grades[cfrGrade]+grades[ltGrade])/4);
+  var overallGrade=overall>=4?'elite':overall>=3?'high':overall>=2?'medium':'low';
+  var gradeLabels={'elite':'ELITE','high':'HIGH','medium':'MEDIUM','low':'LOW'};
+  var gradeColors={'elite':'var(--gn)','high':'var(--bl)','medium':'var(--yl)','low':'var(--rd)'};
+  var html='<div class="dora-scorecard">';
+  html+='<div class="dora-grade '+overallGrade+'">';
+  html+='<div class="dora-grade-label" style="color:'+gradeColors[overallGrade]+'">'+gradeLabels[overallGrade]+'</div>';
+  html+='<div class="dora-grade-sub">DORA Maturity Level</div>';
+  html+='</div>';
+  html+='<div class="dora-4grid">';
+  // Deploy Frequency
+  html+='<div class="dora-metric"><div class="dora-metric-name">🚀 Deploy Freq</div><div class="dora-metric-val" style="color:'+gradeColors[dfGrade]+'">'+dfVal+'</div><div class="dora-metric-bench">Elite: ≥1/day</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.min(100,depPerDay*50)+'%;background:'+gradeColors[dfGrade]+'"></div></div></div>';
+  // MTTR
+  html+='<div class="dora-metric"><div class="dora-metric-name">🔧 MTTR</div><div class="dora-metric-val" style="color:'+gradeColors[mttrGrade]+'">'+(mttr||0)+'m</div><div class="dora-metric-bench">Elite: <1h</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.max(5,100-mttr/7.2)+'%;background:'+gradeColors[mttrGrade]+'"></div></div></div>';
+  // CFR
+  html+='<div class="dora-metric"><div class="dora-metric-name">📉 Change Fail</div><div class="dora-metric-val" style="color:'+gradeColors[cfrGrade]+'">'+cfr+'%</div><div class="dora-metric-bench">Elite: <15%</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.max(5,100-cfr*2)+'%;background:'+gradeColors[cfrGrade]+'"></div></div></div>';
+  // Lead Time
+  html+='<div class="dora-metric"><div class="dora-metric-name">⏱️ Lead Time</div><div class="dora-metric-val" style="color:'+gradeColors[ltGrade]+'">'+avgLT+'m</div><div class="dora-metric-bench">Elite: <1h</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.max(5,100-avgLT/7.2)+'%;background:'+gradeColors[ltGrade]+'"></div></div></div>';
+  html+='</div>';
+  html+='<div class="dora-summary">Based on <b>'+total+'</b> runs · <b>'+success.length+'</b> successful deploys · <b>'+failed+'</b> failures<br>DORA benchmarks: Elite = 1+/day, <1h MTTR, <15% CFR, <1h Lead Time</div>';
+  html+='</div>';
+  return html;
 }
 
 
@@ -2572,30 +2655,6 @@ function renderClock(){
 
 
 // ═══ v9.0 features ═══
-function renderHmMatrix(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var matrix={};var maxVal=0;
-  runs.forEach(function(r){
-    var d=new Date(r.createdAt||0);
-    var dow=d.getDay();var hr=d.getHours();
-    var key=dow+'_'+hr;matrix[key]=(matrix[key]||0)+1;
-    if(matrix[key]>maxVal)maxVal=matrix[key];
-  });
-  var days=['Su','Mo','Tu','We','Th','Fr','Sa'];
-  var html='<div class="hm-matrix"><div></div>';
-  for(var h=0;h<24;h++)html+='<div class="hm-hdr">'+h+'</div>';
-  for(var d=0;d<7;d++){
-    html+='<div class="hm-lbl">'+days[d]+'</div>';
-    for(var h=0;h<24;h++){
-      var v=matrix[d+'_'+h]||0;
-      var lvl=maxVal>0?Math.ceil(v/maxVal*4):0;
-      if(v===0)lvl=0;
-      html+='<div class="hm-cell2 l'+lvl+'" title="'+days[d]+' '+h+':00 → '+v+' runs"></div>';
-    }
-  }
-  html+='</div>';
-  var el=document.getElementById('hmMatrixWrap');if(el)el.innerHTML=html;
-}
 function calcInsights(){
   var D=window.DASH||{};var runs=D.runs||[];
   var byDay={};var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -3206,7 +3265,7 @@ function renderHeatmap(){
 
 function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();renderHmMatrix();hideSkeleton();startStopwatch();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();}
 
 // ── honest client health ──
 function checkHealth(){
@@ -3344,6 +3403,7 @@ var CMD_ITEMS=[
   {cat:'View',label:'Refresh',act:"softRefresh().then(function(ok){if(!ok)location.reload()})"},
   {cat:'Help',label:'Keys',act:"showM('keys')"},
   {cat:'Help',label:'About',act:"showM('about')"},
+  {cat:'CI/CD',label:'DORA Scorecard',act:"showM('dora')"},
   {cat:'CI/CD',label:'Trigger Analysis',act:"showM('trigger')"},
   {cat:'CI/CD',label:'Run Number Tracker',act:"showM('runnum')"},
   {cat:'CI/CD',label:'Commit Messages',act:"showM('commitmsg')"},
