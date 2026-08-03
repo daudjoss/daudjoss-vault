@@ -1040,21 +1040,23 @@ body{background:
 <div class="pi"><div class="pv">''' + str(S['night']) + '''</div><div class="pl">Night</div></div>
 <div class="pi"><div class="pv">''' + str(S['top_hour']) + ''':00</div><div class="pl">Peak</div></div>
 </div></div>
-<div class="sec"><div class="sh"><div class="st">📅 Activity</div></div>
+<div class="g3">
 <div class="sec" id="sec-donut"><div class="sh"><div class="st">🍩 Status Distribution</div></div><div id="donutWrap"></div></div>
 <div class="sec" id="sec-flow"><div class="sh"><div class="st">🔄 Pipeline Flow</div></div><div id="flow-diagram"></div></div>
 <div class="sec" id="sec-freqclock"><div class="sh"><div class="st">🕐 Run Frequency</div></div><div id="freqClockWrap"></div></div>
-
-<div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div></div>
-
+</div>
+<div class="g2">
+<div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div>
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
 <div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:14px;height:14px"></div><div class="c c1" style="width:14px;height:14px"></div><div class="c c2" style="width:14px;height:14px"></div><div class="c c3" style="width:14px;height:14px"></div><div class="c c4" style="width:14px;height:14px"></div><div class="c c5" style="width:14px;height:14px"></div><span>More</span></div></div>
 <div class="sec" id="sec-week"><div class="sh"><div class="st">📅 This Week</div><span style="font-size:9px;color:var(--t2)">7 hari</span></div><div class="cd-grid">''' + cal_detail + '''</div></div>
-<div class="g2">
+</div>
+<div class="g3">
 <div class="sec"><div class="sh"><div class="st">📈 Daily</div></div><div class="ch"><canvas id="c1"></canvas></div></div>
 <div class="sec"><div class="sh"><div class="st">📊 Weekly</div></div><div class="ch"><canvas id="c2"></canvas></div></div>
-</div>
 <div class="sec"><div class="sh"><div class="st">⏰ Hours</div></div><div class="ch2"><canvas id="c3"></canvas></div></div>
+</div>
+<div class="g2">
 <div class="sec"><div class="sh"><div class="st">🖼 Gallery</div></div><div class="gal">''' + gallery_html + '''</div></div>
 <div class="sec"><div class="sh"><div class="st">🎲 Facts</div></div><div class="ff">
 <div class="ffi"><div class="ffi-icon">📺</div><div class="ffi-val">''' + str(S['total']) + '''</div><div class="ffi-label">Recordings</div></div>
@@ -1064,6 +1066,7 @@ body{background:
 <div class="ffi"><div class="ffi-icon">📅</div><div class="ffi-val">''' + str(S['top_day']) + '''</div><div class="ffi-label">Day</div></div>
 <div class="ffi"><div class="ffi-icon">💾</div><div class="ffi-val">''' + fmt_bytes(S.get('gh_bytes') or 0) + '''</div><div class="ffi-label">On GitHub</div></div>
 </div></div>
+<div class="g2">
 <div class="sec"><div class="sh"><div class="st">📊 Compare</div></div><div class="cmp">
 <div class="cmp-item"><div class="cmp-val">''' + str(S['success']) + '''</div><div class="cmp-label">Success</div></div>
 <div class="cmp-item"><div class="cmp-val">''' + str(S['failed']) + '''</div><div class="cmp-label">Failed</div></div>
@@ -1076,14 +1079,21 @@ body{background:
 <div class="backup"><div class="backup-label">Primary: GitHub (manifest only)</div><div class="backup-status">✅ ''' + fmt_bytes(S.get('gh_bytes') or 0) + ''' on GH · video di Telegram · lifetime ~''' + str(S.get('lifetime_est_gb') or 0) + ''' GB est (not stored on GH)</div></div>
 <div class="backup"><div class="backup-label">Secondary</div><div class="backup-status">Telegram bot delivery (bukan mirror file di GH)</div></div>
 </div>
+<div class="g3">
 <div class="sec"><div class="sh"><div class="st">🔍 Errors</div></div>''' + err_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">⚠️ Anomalies</div></div>''' + anom_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">📊 Quality</div></div>''' + qual_html + '''</div>
+</div>
+<div class="g3">
 <div class="sec"><div class="sh"><div class="st">📊 Sources</div></div>''' + src_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">⏰ Hours</div></div>''' + time_html + '''</div>
 <div class="sec" id="sec-ach"><div class="sh"><div class="st">🏆 Achievements (''' + str(len(S['achs'])) + ''')</div></div><div class="ach-grid">''' + ach_html + ach_locked + '''</div></div>
+</div>
+<div class="g2">
 <div class="sec"><div class="sh"><div class="st">🎨 Mood</div></div><div class="mb">''' + mbi_html + '''</div></div>
 <div class="sec"><div class="sh"><div class="st">🏷 Tags</div></div><div class="tc"><span class="tg">Pakai Tools → Tags (localStorage browser)</span></div></div>
+</div>
+<div class="g3">
 <div class="sec"><div class="sh"><div class="st">🎲 Random</div></div><div class="rand"><div style="font-size:11px;color:var(--t2);margin-bottom:6px">Feeling lucky?</div><button class="rand-btn" onclick="document.getElementById('rand-result').innerHTML=randData">🎬 Surprise!</button><div id="rand-result"></div></div></div>
 <div class="sec"><div class="sh"><div class="st">📋 Scheduler</div></div>
 <div class="sched"><div class="sched-title">Scheduler</div><div class="sched-detail">Jadwal rekam lewat Telegram bot / GHA dispatch — bukan cron di halaman ini.</div><div class="sched-status">ℹ️ External</div></div>
@@ -1098,19 +1108,20 @@ body{background:
 <div class="insight"><div class="insight-icon">🎬</div><div class="insight-text">Use "berkualitas" preset for talk shows</div></div>
 <div class="insight"><div class="insight-icon">💾</div><div class="insight-text">Clean up old temp releases</div></div>
 </div>
+<div class="g3">
 <div class="sec"><div class="sh"><div class="st">⚡ Optimization</div></div>
 <div class="opt"><div class="opt-label">Temp releases dibersihkan otomatis setelah encode</div><button class="opt-btn" onclick="showM('about')">Info</button></div>
 <div class="opt"><div class="opt-label">Cek Actions untuk run gagal / cancel</div><a class="opt-btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">Open</a></div>
 <div class="opt"><div class="opt-label">Re-encode lewat bot Telegram (bukan dashboard)</div><button class="opt-btn" onclick="showM('help')">Help</button></div>
 </div>
-
 <div class="sec"><div class="sh"><div class="st">🧩 Widgets</div></div><div class="gal">
 <div class="widget" onclick="showM('clock')"><div class="widget-icon">🕐</div><div class="widget-label">Clock</div></div>
 <div class="widget" onclick="showM('weather')"><div class="widget-icon">🌤</div><div class="widget-label">Weather</div></div>
 <div class="widget" onclick="showM('status')"><div class="widget-icon">📊</div><div class="widget-label">Status</div></div>
 <div class="widget" onclick="showM('music')"><div class="widget-icon">🎵</div><div class="widget-label">Music</div></div>
 </div></div>
-<div class="sec" id="sec-tools"><div class="sh"><div class="st">🛠 Tools</div></div>
+</div>
+<div class="sec" id="sec-tools">
 <div class="ag">
 <a class="ab" onclick="showM('notes')">📝 Notes</a>
 <a class="ab" onclick="showM('tags')">🏷 Tags</a>
