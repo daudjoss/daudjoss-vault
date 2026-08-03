@@ -403,7 +403,7 @@ def gen(S, runs, releases):
         pred_html += f'<div class="pred"><div class="pred-icon">🔮</div><div class="pred-text">{p}</div></div>'
 
     return '''<!DOCTYPE html>
-<html lang="id" data-t="dark">
+<html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=yes">
 <meta name="theme-color" content="#0d1117"><link rel="manifest" href="manifest.json">
@@ -411,9 +411,6 @@ def gen(S, runs, releases):
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--brd:#30363d;--t1:#e6edf3;--t2:#8b949e;--t3:#484f58;--bl:#58a6ff;--gn:#3fb950;--rd:#f85149;--yl:#d29922;--pr:#bc8cff;--or:#f0883e;--pn:#f778ba}
-[data-t="light"]{--bg:#f6f8fa;--bg2:#fff;--bg3:#f0f2f5;--brd:#d0d7de;--t1:#1f2328;--t2:#656d76;--t3:#8b949e}
-[data-t="ocean"]{--bg:#001220;--bg2:#002233;--bg3:#003355;--brd:#004477;--t1:#e0f0ff;--t2:#80b0d0;--t3:#5080a0;--bl:#00aaff;--gn:#00ff88;--rd:#ff4466;--yl:#ffaa00;--pr:#aa88ff;--or:#ff8844;--pn:#ff66aa}
-[data-t="forest"]{--bg:#0a1a0a;--bg2:#152015;--bg3:#203020;--brd:#304030;--t1:#e0f0e0;--t2:#80a080;--t3:#508050;--bl:#44aa44;--gn:#44ff44;--rd:#ff4444;--yl:#ffaa00;--pr:#aa88ff;--or:#ff8844;--pn:#ff66aa}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);padding:10px;min-height:100vh;transition:all .3s;overflow-x:hidden;-webkit-text-size-adjust:100%}
 .ct{max-width:1480px;margin:0 auto}
@@ -547,8 +544,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .opt-label{font-size:11px;flex:1}.opt-btn{padding:3px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg2);color:var(--t1);cursor:pointer;font-size:10px}
 .opt-btn:hover{border-color:var(--bl)}
 .theme{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin:8px 0}
-.theme-opt{padding:10px;border-radius:6px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
-.theme-opt:hover,.theme-opt.sel{border-color:var(--bl)}.theme-opt-icon{font-size:20px;margin-bottom:4px}.theme-opt-label{font-size:9px;color:var(--t2)}
+
 @media(max-width:768px){
   body{padding:6px}
   .hdr h1{font-size:16px}
@@ -627,15 +623,14 @@ body{background:
 .fi:hover{background:rgba(88,166,255,.07)}
 .fi-status{font-weight:600}
 .streak{border-radius:12px;box-shadow:0 4px 18px rgba(240,136,62,.08)}
-.gal-item,.widget,.theme-opt,.ffi,.ach,.pi,.cmp-item{border-radius:10px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.gal-item,.widget,
 .gal-item:hover,.widget:hover,.ffi:hover,.ach:hover{box-shadow:0 6px 18px rgba(0,0,0,.15)}
-.theme-opt{position:relative;overflow:hidden;min-height:64px}
-.theme-swatch{height:18px;border-radius:6px;margin:0 4px 6px;border:1px solid rgba(255,255,255,.08)}
-.theme-swatch.dark{background:linear-gradient(90deg,#0d1117,#21262d,#58a6ff)}
-.theme-swatch.light{background:linear-gradient(90deg,#f6f8fa,#fff,#0969da)}
-.theme-swatch.ocean{background:linear-gradient(90deg,#001220,#003355,#00aaff)}
-.theme-swatch.forest{background:linear-gradient(90deg,#0a1a0a,#203020,#44ff44)}
-.theme-opt.sel{box-shadow:0 0 0 1px var(--bl),0 6px 16px rgba(88,166,255,.15)}
+
+
+
+
+
+
 .nav{gap:6px;padding:6px;border-radius:12px;background:rgba(22,27,34,.85);border:1px solid var(--brd);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .nav-btn{width:32px;height:32px;border-radius:8px}
@@ -807,8 +802,8 @@ body{background:
 @media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}}
 
 
-@media(prefers-color-scheme:dark){:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--t1:#e6edf3;--t2:#7d8590;--brd:#30363d}}
-@media(prefers-color-scheme:light){:root{--bg:#fff;--bg2:#f6f8fa;--bg3:#eaeef2;--t1:#1f2328;--t2:#656d76;--brd:#d0d7de}}
+}
+}
 
 .rsm-card{background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;margin:8px 0;display:flex;align-items:center;gap:10px;font-size:12px}
 .rsm-card .rsm-ico{font-size:20px}.rsm-card .rsm-id{font-weight:700;color:var(--bl)}.rsm-card .rsm-status{font-size:11px;color:var(--t2)}
@@ -849,8 +844,8 @@ body{background:
   .nav{display:none!important}
   .bnav{display:grid}
   .sg{gap:8px}
-  .sc{border-radius:10px}
-}
+  .sc{border-radius:10px
+
 
 </style>
 </head>
@@ -865,7 +860,7 @@ body{background:
 <button class="nav-btn" onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})" title="Actions">⚡</button>
 </div>
 <div class="aria-live" id="ariaLive" aria-live="polite" aria-atomic="true"></div>
-<div class="quick-panel" id="quickPanel"><div class="quick-panel-title">⚡ Quick Actions</div><button class="quick-btn" data-action="copyRSM">📋 Copy last RSM</button><button class="quick-btn" data-action="export">📊 Export CSV</button><button class="quick-btn" data-action="theme">🌓 Toggle theme</button><button class="quick-btn" data-action="terminal">⌨️ Terminal</button><button class="quick-btn" data-action="snapshot">🔗 Snapshot URL</button><button class="quick-btn" data-action="glass">🪟 Toggle glass</button><button class="quick-btn" data-action="close">✕ Close</button></div>
+<div class="quick-panel" id="quickPanel"><div class="quick-panel-title">⚡ Quick Actions</div><button class="quick-btn" data-action="copyRSM">📋 Copy last RSM</button><button class="quick-btn" data-action="export">📊 Export CSV</button><button class="quick-btn" data-action="terminal">⌨️ Terminal</button><button class="quick-btn" data-action="snapshot">🔗 Snapshot URL</button><button class="quick-btn" data-action="glass">🪟 Toggle glass</button><button class="quick-btn" data-action="close">✕ Close</button></div>
 <div class="badge-toast" id="badgeToast"><span class="badge-icon" id="badgeIcon">🏆</span><div class="badge-info"><b id="badgeName">Achievement!</b><span id="badgeDesc"></span></div></div>
 <div class="toast" id="toast">Copied!</div>
 <div class="offline-banner" id="offlineBanner">⚠️ Offline — data tidak bisa refresh</div>
@@ -877,7 +872,6 @@ body{background:
 </div>
 <div class="hero-actions">
 <span class="live-pill"><span class="pulse-dot"></span> LIVE <span id="tmr">30s</span></span>
-<button class="btn" onclick="toggleTheme()" title="Theme">🌓</button>
 <button class="btn" onclick="softRefresh().then(function(ok){if(!ok)location.reload()})" title="Refresh">🔄</button>
 <button class="pwa-btn" id="pwaInstall" style="display:none" onclick="installPWA()">📱 Install</button>
 </div>
@@ -1000,12 +994,7 @@ body{background:
 <div class="opt"><div class="opt-label">Cek Actions untuk run gagal / cancel</div><a class="opt-btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">Open</a></div>
 <div class="opt"><div class="opt-label">Re-encode lewat bot Telegram (bukan dashboard)</div><button class="opt-btn" onclick="showM('help')">Help</button></div>
 </div>
-<div class="sec" id="sec-themes"><div class="sh"><div class="st">🎨 Themes</div><span style="font-size:9px;color:var(--t2)">tap to apply</span></div><div class="theme">
-<div class="theme-opt sel" data-theme="dark"><div class="theme-swatch dark"></div><div class="theme-opt-icon">🌙</div><div class="theme-opt-label">Dark</div></div>
-<div class="theme-opt" data-theme="light"><div class="theme-swatch light"></div><div class="theme-opt-icon">☀️</div><div class="theme-opt-label">Light</div></div>
-<div class="theme-opt" data-theme="ocean"><div class="theme-swatch ocean"></div><div class="theme-opt-icon">🌊</div><div class="theme-opt-label">Ocean</div></div>
-<div class="theme-opt" data-theme="forest"><div class="theme-swatch forest"></div><div class="theme-opt-icon">🌲</div><div class="theme-opt-label">Forest</div></div>
-</div></div>
+
 <div class="sec"><div class="sh"><div class="st">🧩 Widgets</div></div><div class="gal">
 <div class="widget" onclick="showM('clock')"><div class="widget-icon">🕐</div><div class="widget-label">Clock</div></div>
 <div class="widget" onclick="showM('weather')"><div class="widget-icon">🌤</div><div class="widget-label">Weather</div></div>
@@ -1097,9 +1086,8 @@ window.DASH = ''' + json.dumps({
         } for r in releases[:20]],
     }, default=str) + ''';
 function playRadio(url,name,btn){var p=document.getElementById('radioPlayer');if(p){p.src=url;p.play();var np=document.getElementById('radioNowPlaying');if(np)np.textContent='Now playing: '+name;var rl=document.getElementById('radioList');if(rl)rl.querySelectorAll('.radio-btn').forEach(function(b){b.style.background='';b.style.color=''});if(btn){btn.style.background='var(--bl)';btn.style.color='#fff'}}}
-function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-t')||'dark';var themes=['dark','light','ocean','forest'];var idx=themes.indexOf(c);if(idx<0)idx=0;idx=(idx+1)%themes.length;var nt=themes[idx];h.setAttribute('data-t',nt);localStorage.setItem('th',nt);document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel',el.getAttribute('data-theme')===nt)})}
-function setTheme(t){document.documentElement.setAttribute('data-t',t);localStorage.setItem('th',t);document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel',el.getAttribute('data-theme')===t)})}
-(function(){var s=localStorage.getItem('th');if(!s){var dark=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;s=dark?'dark':'light'}if(s){document.documentElement.setAttribute('data-t',s);setTimeout(function(){if(typeof setTheme==='function'){/* sync sel only */}document.querySelectorAll('.theme-opt').forEach(function(el){el.classList.toggle('sel',(el.getAttribute('onclick')||'').indexOf("setTheme('"+s+"')")>=0);});},0);}})();
+
+
 var randData=''' + "'" + rand_html.replace("'", "\\'") + "'" + ''';
 var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
 new Chart(document.getElementById('c1').getContext('2d'),{type:'bar',data:{labels:''' + dl + ''',datasets:[{data:''' + dd + ''',backgroundColor:cc.b,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',maxTicksLimit:6,font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
@@ -1299,7 +1287,7 @@ if(t==='player'){
 }
 if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
 if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
-if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'Elshinta FM',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Radio Dangdut 97.1',u:'http://202.147.199.99:8000/;'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2',u:'https://a8.siar.us/listen/campursari/stream'}];b.innerHTML='<audio id="radioPlayer" controls style="width:100%;margin-bottom:8px"></audio><div style="font-size:11px;color:var(--t2);margin-bottom:8px">Pilih stasiun radio:</div><div id="radioList"></div><div id="radioNowPlaying" style="font-size:10px;color:var(--bl);margin-top:8px"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'">📻 '+s.n+'</button>'});rl.innerHTML=html2}}
+if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'Elshinta FM Jakarta',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Radio Dangdut 97.1 FM',u:'http://202.147.199.99:8000/;'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2 FM',u:'https://a8.siar.us/listen/campursari/stream'},{n:'Suara Giri 98.4 FM',u:'http://streaming.girifm.com:8010/'},{n:'Wijaya FM 103.5 Surabaya',u:'http://wijayafm.onlivestreaming.net:9880/stream?'}];b.innerHTML='<audio id="radioPlayer" controls style="width:100%;margin-bottom:8px"></audio><div style="font-size:11px;color:var(--t2);margin-bottom:8px">Pilih stasiun radio:</div><div id="radioList"></div><div id="radioNowPlaying" style="font-size:10px;color:var(--bl);margin-top:8px"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'">📻 '+s.n+'</button>'});rl.innerHTML=html2}}
 }
 function toggleCust(btn){
   var k=btn.getAttribute('data-k');
@@ -1366,7 +1354,7 @@ function removeComment(i){var comments=JSON.parse(localStorage.getItem('rusemeva
 function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');var html='';if(!comments.length){html='<div style="color:var(--t2);font-size:11px;padding:8px 0">No comments yet.</div>'}comments.forEach(function(c,i){html+='<div style="padding:6px 4px;border-bottom:1px solid var(--brd);font-size:11px"><div style="display:flex;justify-content:space-between;align-items:start"><span style="flex:1">'+esc(c.text)+'</span><button class="btn" style="font-size:9px;padding:2px 6px;flex-shrink:0" onclick="removeComment('+i+')">×</button></div><div style="font-size:9px;color:var(--t2);margin-top:2px">'+esc(c.time)+'</div></div>'});var cl=document.getElementById('commentList');if(cl)cl.innerHTML=html;var cc=document.getElementById('commentCount');if(cc)cc.textContent=comments.length+' comment(s)'}
 
 
-document.addEventListener('click',function(e){var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}var row=e.target.closest('#rt tbody tr');if(row&&!e.target.closest('a')){var rid=row.getAttribute('data-rid');if(rid&&e.shiftKey)saveRunNote(rid)}var to=e.target.closest('.theme-opt');if(to){setTheme(to.getAttribute('data-theme'));return}var rb=e.target.closest('.radio-btn');if(rb){playRadio(rb.getAttribute('data-rurl'),rb.getAttribute('data-rname'),rb);return}var br=e.target.closest('.batch-sel-off');if(br&&e.ctrlKey){toggleBatchSel(br.getAttribute('data-rid')||'');return}var as=e.target.closest('.accent-swatch');if(as){setAccent(as.getAttribute('data-accent'));return}var ds=e.target.closest('.donut-slice');if(ds){var lbl=ds.getAttribute('data-label');if(lbl)donutFilter(lbl);return}var cu=e.target.closest('.curl-copy');if(cu){var box=cu.closest('.curl-box');if(box){var txt=box.textContent.replace('📋','').trim();var url=txt.split(' ')[1]||txt;copyCurl(url)}}});
+document.addEventListener('click',function(e){var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}var row=e.target.closest('#rt tbody tr');if(row&&!e.target.closest('a')){var rid=row.getAttribute('data-rid');if(rid&&e.shiftKey)saveRunNote(rid)}var rb=e.target.closest('.radio-btn');if(rb){playRadio(rb.getAttribute('data-rurl'),rb.getAttribute('data-rname'),rb);return}var br=e.target.closest('.batch-sel-off');if(br&&e.ctrlKey){toggleBatchSel(br.getAttribute('data-rid')||'');return}var as=e.target.closest('.accent-swatch');if(as){setAccent(as.getAttribute('data-accent'));return}var ds=e.target.closest('.donut-slice');if(ds){var lbl=ds.getAttribute('data-label');if(lbl)donutFilter(lbl);return}var cu=e.target.closest('.curl-copy');if(cu){var box=cu.closest('.curl-box');if(box){var txt=box.textContent.replace('📋','').trim();var url=txt.split(' ')[1]||txt;copyCurl(url)}}});
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd();return}
 if(e.key==='?'||e.key==='/'){e.preventDefault();openCheat();return}
 if(e.key==='t'||e.key==='T'){e.preventDefault();toggleTerminal();return}
@@ -1375,7 +1363,7 @@ if(e.key==='h'||e.key==='H'){e.preventDefault();toggleHC();return}
 if(e.key==='m'||e.key==='M'){e.preventDefault();expMD();return}
 if(e.key==='j'){e.preventDefault();kbNav(1);return}
 if(e.key==='k'){e.preventDefault();kbNav(-1);return}
-if(e.key==='Enter'&&kbNavIdx>=0){e.preventDefault();kbNavOpen();return}switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
+if(e.key==='Enter'&&kbNavIdx>=0){e.preventDefault();kbNavOpen();return}switch(e.key){case'r':location.reload();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
 document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value=''}});
 document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput2'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value='';var o2=document.getElementById('terminalOut2');if(o2)o2.innerHTML='Executed: '+e.target.value}});
 function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
@@ -1759,7 +1747,7 @@ function initQuickPanel(){
     var act=btn.getAttribute('data-action');
     if(act==='copyRSM'){var D=window.DASH||{};var r=(D.runs||[])[0];if(r)copyRSM(r.orv_id||r.databaseId||'')}
     else if(act==='export')expCSV();
-    else if(act==='theme')toggleTheme();
+    
     else if(act==='terminal')toggleTerminal();
     else if(act==='snapshot')saveSnapshot();
     else if(act==='glass')toggleGlass();
@@ -1985,7 +1973,7 @@ function execTerminal(cmd){
   else if(parts[0]==='search'&&parts[1]){var q=document.getElementById('q');if(q){q.value=parts.slice(1).join(' ');srch()}html+='Searching: '+esc(parts.slice(1).join(' '))}
   else if(c==='export csv'){html+='Exporting CSV...';expCSV()}
   else if(c==='export md'){html+='Exporting MD...';expMD()}
-  else if(c==='theme'){toggleTheme();html+='Theme toggled'}
+  
   else if(c==='clear'){html=''}
   else if(c==='fails'){html+=showFailReplay()}
   else if(c==='badges'){html+=renderBadges()}
@@ -2424,7 +2412,6 @@ var CMD_ITEMS=[
   {cat:'Tools',label:'Search',act:"showM('search')"},
   {cat:'Tools',label:'Export CSV',act:"expCSV()"},
   {cat:'Tools',label:'Export JSON',act:"expJSON()"},
-  {cat:'Tools',label:'Themes',act:"toggleTheme()"},
   {cat:'Tools',label:'Customize',act:"showM('customize')"},
   {cat:'Tools',label:'Player',act:"showM('player')"},
   {cat:'View',label:'Compact toggle',act:"toggleCompact()"},
