@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v8.8 — 14 new features: counters, flow, rings, gantt, fail replay, run notes, weekly report, threshold, embed, accent, column toggle, j/k nav, cURL copy, print."""
+"""Rusemeva Dashboard v8.9 — 14 new features: badges, streak cal, freq clock, fail pattern, duration predict, clustering, terminal, snapshot URL, drag-drop, swipe, stat sparkline, donut, particle flow, glass."""
 import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -721,6 +721,45 @@ body{background:
 .col-tog-btn{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);cursor:pointer;user-select:none}
 .col-tog-btn.on{background:var(--bl);color:#fff;border-color:var(--bl)}
 .kb-nav-hl{outline:2px solid var(--bl)!important;outline-offset:-2px}
+.badge-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--bg2);border:2px solid var(--or);border-radius:12px;padding:12px 20px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.3);display:none;align-items:center;gap:10px;animation:badgePop .5s ease}
+.badge-toast.on{display:flex}
+@keyframes badgePop{from{opacity:0;transform:translateX(-50%) scale(.8)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.badge-icon{font-size:28px}
+.badge-info b{display:block;font-size:13px}
+.badge-info span{font-size:10px;color:var(--t2)}
+.badge-grid{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.badge-item{padding:8px;border-radius:8px;border:1px solid var(--brd);background:var(--bg3);text-align:center;min-width:60px}
+.badge-item.locked{opacity:.3;filter:grayscale(1)}
+.badge-item .bi{font-size:20px}
+.badge-item .bl{font-size:8px;color:var(--t2);margin-top:2px}
+.streak-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;max-width:280px}
+.sc-day{aspect-ratio:1;border-radius:3px;background:var(--bg3);font-size:8px;display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.sc-day.ok{background:rgba(63,185,80,.3);color:var(--gn)}
+.sc-day.fail{background:rgba(248,81,73,.3);color:var(--rd)}
+.sc-day.empty{background:transparent;border:1px dashed var(--brd)}
+.sc-day.today{outline:2px solid var(--bl)}
+.freq-clock{position:relative;width:200px;height:200px;margin:8px auto}
+.freq-bar{transform-origin:100px 100px;transition:height .3s ease}
+.fail-pattern{padding:8px;border-radius:8px;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);margin:6px 0;font-size:11px}
+.session-group{padding:6px;border-radius:8px;border:1px solid var(--brd);margin:4px 0;background:var(--bg3)}
+.session-header{font-size:11px;font-weight:600;margin-bottom:4px}
+.terminal{background:#0d1117;border:1px solid var(--brd);border-radius:8px;padding:8px;font-family:monospace;font-size:11px;margin:8px 0;max-height:200px;overflow:auto}
+.terminal-input{background:transparent;border:none;color:var(--gn);font-family:monospace;font-size:11px;outline:none;width:100%}
+.terminal-out{color:var(--t2);white-space:pre-wrap;word-break:break-all}
+.terminal-prompt{color:var(--bl)}
+.stat-spark{display:inline-block;width:40px;height:14px;vertical-align:middle;margin-left:4px}
+.donut-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;justify-content:center}
+.donut-slice{cursor:pointer}
+.donut-slice:hover{opacity:.8}
+.flow-particle{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--bl);animation:flowMove 2s linear infinite}
+@keyframes flowMove{from{left:0;opacity:0}10%{opacity:1}90%{opacity:1}to{left:100%;opacity:0}}
+.glass-mode .hero,.glass-mode .stat-card,.glass-mode .sec{backdrop-filter:blur(10px);background:rgba(22,27,34,.6);border:1px solid rgba(255,255,255,.08)}
+.drag-handle{cursor:move;user-select:none;opacity:.3;font-size:12px}
+.drag-handle:hover{opacity:.7}
+.dragging{opacity:.5}
+.drop-target{border:2px dashed var(--bl)!important}
+@media(max-width:768px){.swipe-section{scroll-snap-align:start}}
+
 .curl-box{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:8px;font-size:10px;white-space:pre-wrap;word-break:break-all;margin:4px 0;position:relative}
 .curl-copy{position:absolute;top:4px;right:4px;font-size:9px;cursor:pointer;padding:2px 6px;border-radius:4px;background:var(--bg2);border:1px solid var(--brd)}
 @media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}}
@@ -783,6 +822,7 @@ body{background:
 <button class="nav-btn" onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})" title="Tools">🛠</button>
 <button class="nav-btn" onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})" title="Actions">⚡</button>
 </div>
+<div class="badge-toast" id="badgeToast"><span class="badge-icon" id="badgeIcon">🏆</span><div class="badge-info"><b id="badgeName">Achievement!</b><span id="badgeDesc"></span></div></div>
 <div class="toast" id="toast">Copied!</div>
 <div class="offline-banner" id="offlineBanner">⚠️ Offline — data tidak bisa refresh</div>
 <div class="hero" id="sec-home">
@@ -854,7 +894,10 @@ body{background:
 <div class="pi"><div class="pv">''' + str(S['top_hour']) + ''':00</div><div class="pl">Peak</div></div>
 </div></div>
 <div class="sec"><div class="sh"><div class="st">📅 Activity</div></div>
+<div class="sec" id="sec-donut"><div class="sh"><div class="st">🍩 Status Distribution</div></div><div id="donutWrap"></div></div>
 <div class="sec" id="sec-flow"><div class="sh"><div class="st">🔄 Pipeline Flow</div></div><div id="flow-diagram"></div></div>
+<div class="sec" id="sec-freqclock"><div class="sh"><div class="st">🕐 Run Frequency</div></div><div id="freqClockWrap"></div></div>
+<div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div></div>
 <div class="sec" id="sec-heatmap"><div class="sh"><div class="st">🔥 Heatmap (30 hari)</div><span style="font-size:9px;color:var(--t2)">Intensitas rekaman</span></div><div id="heatmap-grid"></div><div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="hm-cell" style="width:10px;height:10px"></div><div class="hm-cell l1" style="width:10px;height:10px"></div><div class="hm-cell l2" style="width:10px;height:10px"></div><div class="hm-cell l3" style="width:10px;height:10px"></div><div class="hm-cell l4" style="width:10px;height:10px"></div><span>More</span></div></div>
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
 <div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:10px;height:10px"></div><div class="c c1" style="width:10px;height:10px"></div><div class="c c2" style="width:10px;height:10px"></div><div class="c c3" style="width:10px;height:10px"></div><div class="c c4" style="width:10px;height:10px"></div><div class="c c5" style="width:10px;height:10px"></div><span>More</span></div></div>
@@ -944,7 +987,8 @@ body{background:
 <a class="ab" onclick="showM('analytics')">📊 Analytics</a>
 </div></div>
 <div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()">
-<div id="qchips" style="margin:4px 0"></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button></div></div>
+<div id="qchips" style="margin:4px 0"></div>
+<div class="terminal" id="terminalBox" style="display:none"><div class="terminal-out" id="terminalOut"></div><div><span class="terminal-prompt">rusemeva@dash:~$</span> <input class="terminal-input" id="terminalInput" placeholder="type help..."></div></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button></div></div>
 <div style="overflow-x:auto"><table id="rt"><thead><tr><th data-col="icon"></th><th data-col="id">ID</th><th data-col="time">Time</th><th data-col="status">Status</th><th data-col="link"></th></tr><tr><td colspan="5" style="padding:2px 0"><div class="col-toggle" id="colToggle"></div></td></tr></thead><tbody>''' + rh + '''</tbody></table></div></div>
 <div class="g2">
 <div class="sec"><div class="sh"><div class="st">🎞 Encode</div></div><div style="overflow-x:auto"><table id="et"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + eh + '''</tbody></table></div></div>
@@ -964,7 +1008,7 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.8 · Counters + flow + rings + gantt + fail replay + run notes + report + embed + accent · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.9 · Badges + streak cal + freq clock + terminal + donut + glass + drag-drop · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cheat-overlay" id="cheatOverlay" onclick="if(event.target===this)closeCheat()">
@@ -984,7 +1028,7 @@ body{background:
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-            "build": "v8.8-pro",
+            "build": "v8.9-elite",
         "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
@@ -1059,7 +1103,9 @@ function statBlock(){
 }
 if(t==='keys'){h.textContent='⌨️ Keys';b.innerHTML='<div class="sh2"><div class="sk"><span class="ky">?</span> Cheat sheet overlay</div><div class="sk"><span class="ky">P</span> Command palette (navigate + search)</div><div class="sk"><span class="ky">R</span> Soft-refresh (reload data)</div><div class="sk"><span class="ky">D</span> Toggle dark/light theme</div><div class="sk"><span class="ky">S</span> Focus search box</div><div class="sk"><span class="ky">E</span> Export CSV (filtered)</div><div class="sk"><span class="ky">Esc</span> Close modal / palette</div></div><div style="margin-top:8px;font-size:11px;color:var(--t2)">Fokus input/textarea = shortcut nonaktif. Enter di search = langsung cari.</div>'}
 if(t==='api'){h.textContent='📚 API';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Worker</b> <code>rusemeva.rusemeva-vault.workers.dev</code><br><br><b>Endpoints</b><br><div class="curl-box">GET /api/status → {status, uptime, version}<span class="curl-copy" >📋</span></div><code>POST /api/record</code> → trigger vault GHA<br><code>GET /api/runs</code> → recent run list<br><div class="curl-box">GET /api/orv-map → {map:[{run_id,orv_id,source}]}<span class="curl-copy" >📋</span></div><code>GET /rtcal?preset=slow</code> → RT encode calibration<br><br><b>Dashboard (static)</b><br><code>GET data.json</code> → {build,generated,stats,runs,releases,orv_map}<br><code>GET index.html</code> → full dashboard<br><code>GET manifest.json</code> → PWA manifest<br><br><b>Contoh curl</b><br><code style="display:block;white-space:pre-wrap;padding:6px;background:var(--bg3);border-radius:4px;margin:4px 0">curl rusemeva.rusemeva-vault.workers.dev/api/orv-map</code><br><code style="display:block;white-space:pre-wrap;padding:6px;background:var(--bg3);border-radius:4px;margin:4px 0">curl daudjoss.github.io/daudjoss-vault/data.json | jq .stats</code><br><br><b>Auth</b><br>• Worker endpoints: no auth (public read)<br>• POST /api/record: requires bot token<br>• GHA API: uses github.token in Actions<br><br><b>Rate limits</b><br>• Worker: 100k req/day (CF free)<br>• GHA API: 5000 req/hr (authenticated)<br>• Pages: unlimited (CDN cached)</div>'}
-if(t==='fails'){h.textContent='❌ Fail Replay';b.innerHTML=showFailReplay()}
+if(t==='fails'){h.textContent='❌ Fail Replay';b.innerHTML=showFailReplay()+detectFailPatterns()}
+if(t==='badges'){h.textContent='🏆 Badges';b.innerHTML=renderBadges()}
+if(t==='terminal'){h.textContent='⌨️ Terminal';b.innerHTML='<div class="terminal" style="display:block"><div class="terminal-out" id="terminalOut2"></div><div><span class="terminal-prompt">rusemeva@dash:~$</span> <input class="terminal-input" id="terminalInput2" placeholder="type help..." data-terminal="2"></div></div><div style="margin-top:4px;font-size:10px;color:var(--t2)">Press T untuk toggle mini terminal</div>'}
 if(t==='about'){h.textContent='ℹ️ About';var gen=D.generated||'—';var build=D.build||'—';var st=D.stats||{};var vaultC=vaultRuns().length;var encC=encRuns().length;var orvC=(D.runs||[]).filter(function(r){return r.orv_id}).length;b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Rusemeva Dashboard</b> v8.5.2<br>Live GHA + Worker RSM map + Telegram delivery<br><br><b>Tech stack</b><br>• Frontend: static HTML/CSS/JS (no framework)<br>• Charts: Chart.js (CDN)<br>• Data: GitHub Actions API → data.json<br>• Worker: Cloudflare (orv-map, status, notify)<br>• Hosting: GitHub Pages (free)<br>• Bot: Telegram @daudtrans_bot<br><br><b>Data sources</b><br>• GHA runs (get_runs 150) → lean 80 in data.json<br>• GH releases (get_releases 30) → storage + lifetime est<br>• Worker /api/orv-map → RSM-ID linking<br>• Soft-refresh: data.json + ORV map every 30s<br><br><b>Current snapshot</b><br>• Vault runs in payload: '+vaultC+'<br>• Encode runs in payload: '+encC+'<br>• RSM linked: '+orvC+'/'+(D.runs||[]).length+'<br>• GH storage: '+storageLabel()+'<br>• Build: <code>'+esc(build)+'</code><br>• Generated: <code>'+esc(gen)+'</code><br><br><b>Cost</b><br>• GitHub Actions: free tier (2000 min/mo)<br>• Cloudflare Worker: free tier (100k req/day)<br>• GitHub Pages: free<br>• Total: ~$0/mo<br><br><b>Links</b><br>• Repo: <a href="https://github.com/daudjoss/daudjoss-vault" target="_blank">daudjoss/daudjoss-vault</a><br>• Site: <a href="https://daudjoss.github.io/daudjoss-vault/" target="_blank">gh-pages</a><br>• Worker: <a href="https://rusemeva.rusemeva-vault.workers.dev/api/orv-map" target="_blank">orv-map</a></div>'}
 if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Catatan lokal (auto-save 2s setelah berhenti ketik)..." style="width:100%;min-height:120px"></textarea><div style="margin-top:6px;display:flex;gap:6px;align-items:center"><button class="btn" onclick="saveNote()">💾 Save</button> <button class="btn" onclick="clearNote()">🗑 Clear</button> <span id="noteStatus" style="font-size:10px;color:var(--t2)"></span> <span id="noteCount" style="font-size:10px;color:var(--t2);margin-left:auto">0 chars</span></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Auto-save 2s · localStorage: rusemeva-note · last saved: <span id="noteSaved">—</span></div></div>';loadNote();var na=document.getElementById('noteArea');var ns=document.getElementById('noteStatus');var nc=document.getElementById('noteCount');var nsv=document.getElementById('noteSaved');if(na){na.addEventListener('input',function(){if(nc)nc.textContent=na.value.length+' chars';if(ns)ns.textContent='typing...';clearTimeout(window._noteTimer);window._noteTimer=setTimeout(function(){saveNote();if(ns)ns.textContent='saved';if(nsv){var d=localStorage.getItem('rusemeva-note-saved');if(d)nsv.textContent=d}},2000)})}}
 if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag name..." style="flex:1;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:12px" onkeydown="if(event.keyCode===13)addTag()"><button class="btn" onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div><div id="tagCount" style="margin-top:6px;font-size:10px;color:var(--t2)">0 tags</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-tags · Enter untuk add · klik tag untuk hapus</div>';loadTags()}
@@ -1112,7 +1158,7 @@ if(t==='timeline'||t==='history'){
   });
   html+='</div>';
   b.innerHTML=html;
-if(t==='timeline'||t==='history'){var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
+if(t==='timeline'||t==='history'){var cl=document.createElement('div');cl.style.marginTop='8px';cl.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">🗂 Sessions</div>'+renderClusters();var mb3=document.getElementById('mb');if(mb3)mb3.appendChild(cl);var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
 if(t==='timeline'||t==='history'){var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
 }
 if(t==='timeline'||t==='history'){var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
@@ -1127,12 +1173,12 @@ if(t==='customize'){
     html+='<div class="opt"><div class="opt-label">'+k[1]+'</div><button class="opt-btn" data-k="'+k[0]+'" data-sel="'+k[2]+'" onclick="toggleCust(this)">'+(on?'ON':'OFF')+'</button></div>';
   });
   var soundOn=localStorage.getItem('dash_sound')==='1';var compactOn=document.body.classList.contains('compact');
-  html+='<div class="opt"><div class="opt-label">Accent color</div><div>'+Object.keys(ACCENTS).map(function(k){return '<span class="accent-swatch'+(localStorage.getItem('dash_accent')===k?' sel':'')+'" data-accent="'+k+'" style="background:'+ACCENTS[k]+'" ></span>'}).join('')+'</div></div>';html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Alert threshold (fails)</div><input class="threshold-input" id="thresholdInput" type="number" min="1" max="20" value="'+getAlertThreshold()+'" onchange="setThreshold(this.value)"></div>';html+='<div class="opt"><div class="opt-label">Sound alert on fail</div><button class="opt-btn" onclick="toggleSound()">'+(soundOn?'ON':'OFF')+'</button></div>';
+  html+='<div class="opt"><div class="opt-label">Accent color</div><div>'+Object.keys(ACCENTS).map(function(k){return '<span class="accent-swatch'+(localStorage.getItem('dash_accent')===k?' sel':'')+'" data-accent="'+k+'" style="background:'+ACCENTS[k]+'" ></span>'}).join('')+'</div></div>';html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Alert threshold (fails)</div><input class="threshold-input" id="thresholdInput" type="number" min="1" max="20" value="'+getAlertThreshold()+'" onchange="setThreshold(this.value)"></div>';html+='<div class="opt"><div class="opt-label">Glass morphism</div><button class="opt-btn" onclick="toggleGlass()">'+(document.body.classList.contains('glass-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Sound alert on fail</div><button class="opt-btn" onclick="toggleSound()">'+(soundOn?'ON':'OFF')+'</button></div>';
   html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung. Theme: tekan D atau 🌓 di hero.</div>';
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1161,7 +1207,7 @@ if(t==='stats'||t==='analytics'||t==='status'){
     if(gen&&gen!=='—'){ageMin=Math.round((Date.now()-new Date(gen).getTime())/60000);}
     extra='<br><b>System</b><br>• Dashboard: gh-pages (static)<br>• Soft-refresh: 30s (data.json + ORV map)<br>• Data age: '+ageMin+'m<br>• ORV linked: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+'/'+(D.runs||[]).length+'<br><br><b>Worker</b><br>• rusemeva.rusemeva-vault.workers.dev<br>• /api/orv-map, /api/status<br><br><b>Build</b><br>• '+(D.build||'—');
   }
-  b.innerHTML=statBlock()+extra;if(t==='stats'||t==='analytics'){var el=document.createElement('div');el.innerHTML=renderRateHistory();var mb=document.getElementById('mb');if(mb)mb.appendChild(el);var rb=document.createElement('button');rb.className='btn';rb.textContent='📋 Weekly Report';rb.onclick=function(){var txt=generateReport();var box=document.createElement('div');box.className='report-box';box.textContent=txt;mb.appendChild(box);var cb=document.createElement('button');cb.className='btn';cb.textContent='Copy';cb.onclick=function(){navigator.clipboard.writeText(txt).then(function(){showToast('Report copied!')})};mb.appendChild(cb)};mb.appendChild(rb)}
+  b.innerHTML=statBlock()+extra;var dp=predictDuration();if(t==='stats'||t==='analytics'){var el=document.createElement('div');el.innerHTML=renderRateHistory();if(dp){var dpEl=document.createElement('div');dpEl.style.marginTop='8px';dpEl.innerHTML='<div style="font-size:11px;font-weight:600">⏱ Duration Prediction</div><div style="font-size:11px">Avg: '+dp.avg+'m · Median: '+dp.median+'m · Samples: '+dp.samples+'</div>'}var mb=document.getElementById('mb');if(mb)mb.appendChild(el);var rb=document.createElement('button');rb.className='btn';rb.textContent='📋 Weekly Report';rb.onclick=function(){var txt=generateReport();var box=document.createElement('div');box.className='report-box';box.textContent=txt;mb.appendChild(box);var cb=document.createElement('button');cb.className='btn';cb.textContent='Copy';cb.onclick=function(){navigator.clipboard.writeText(txt).then(function(){showToast('Report copied!')})};mb.appendChild(cb)};mb.appendChild(rb)}
 if(t==='stats'||t==='analytics'){var mb3=document.getElementById('mb');if(mb3){var rb=document.createElement('button');rb.className='btn';rb.textContent='📋 Weekly Report';rb.style.margin='8px 0';rb.onclick=function(){var txt=generateReport();var box=document.createElement('div');box.className='report-box';box.textContent=txt;mb3.appendChild(box);var cb=document.createElement('button');cb.className='btn';cb.textContent='Copy';cb.onclick=function(){navigator.clipboard.writeText(txt).then(function(){showToast('Report copied!')})};mb3.appendChild(cb)};mb3.appendChild(rb)}}
 }
 if(t==='share'){
@@ -1175,7 +1221,8 @@ if(t==='share'){
   var cr=document.getElementById('copyRsm');if(cr)cr.onclick=function(){var l=base+'?rsm='+rid;navigator.clipboard.writeText(l).then(function(){cr.textContent='✅ Copied';setTimeout(function(){cr.textContent='📋 Copy RSM link'},1500)})}
   var bl=document.getElementById('buildLink');if(bl)bl.onclick=function(){var v=document.getElementById('customRsm');if(!v||!v.value.trim())return;var isRsm=v.value.indexOf('RSM')>=0;var link=base+'?'+(isRsm?'rsm':'run')+'='+encodeURIComponent(v.value.trim());var cl=document.getElementById('customLink');if(cl){cl.innerHTML='<code>'+esc(link)+'</code> <button class="btn" style="font-size:9px" <button class="btn" style="font-size:9px" id="copyCustomLink">📋</button>'}};var ccl=document.getElementById('copyCustomLink');if(ccl)ccl.onclick=function(){var cv=document.getElementById('customRsm');if(!cv||!cv.value.trim())return;var isRsm=cv.value.indexOf('RSM')>=0;var l=base+'?'+(isRsm?'rsm':'run')+'='+encodeURIComponent(cv.value.trim());navigator.clipboard.writeText(l).then(function(){ccl.textContent='✅';setTimeout(function(){ccl.textContent='📋'},1500)})}
 
-  var sc=document.createElement('button');sc.className='btn';sc.textContent='📊 Save stats card';sc.onclick=shareCard;var mb=document.getElementById('mb');if(mb)mb.appendChild(sc)
+  var sc=document.createElement('button');sc.className='btn';sc.textContent='📊 Save stats card';
+  var ss=document.createElement('button');ss.className='btn';ss.textContent='🔗 Snapshot URL';ss.onclick=saveSnapshot;var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(ss);sc.onclick=shareCard;var mb=document.getElementById('mb');if(mb)mb.appendChild(sc)
 }
 if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div id="commentList" style="margin-bottom:8px"></div><div><textarea class="note-area" id="commentArea" placeholder="Komentar lokal (tersimpan di browser)..." style="width:100%;min-height:80px"></textarea><div style="margin-top:4px;display:flex;gap:6px;align-items:center"><button class="btn" onclick="addComment()">💬 Add</button> <span id="commentCount" style="font-size:10px;color:var(--t2)"></span></div></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-comments · klik × untuk hapus</div>';loadComments()}
 if(t==='player'){
@@ -1270,10 +1317,13 @@ function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-c
 document.addEventListener('click',function(e){var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}var row=e.target.closest('#rt tbody tr');if(row&&!e.target.closest('a')){var rid=row.getAttribute('data-rid');if(rid&&e.shiftKey)saveRunNote(rid)}var as=e.target.closest('.accent-swatch');if(as){setAccent(as.getAttribute('data-accent'));return}var cu=e.target.closest('.curl-copy');if(cu){var box=cu.closest('.curl-box');if(box){var txt=box.textContent.replace('📋','').trim();var url=txt.split(' ')[1]||txt;copyCurl(url)}}});
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd();return}
 if(e.key==='?'||e.key==='/'){e.preventDefault();openCheat();return}
+if(e.key==='t'||e.key==='T'){e.preventDefault();toggleTerminal();return}
 if(e.key==='m'||e.key==='M'){e.preventDefault();expMD();return}
 if(e.key==='j'){e.preventDefault();kbNav(1);return}
 if(e.key==='k'){e.preventDefault();kbNav(-1);return}
 if(e.key==='Enter'&&kbNavIdx>=0){e.preventDefault();kbNavOpen();return}switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
+document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value=''}});
+document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput2'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value='';var o2=document.getElementById('terminalOut2');if(o2)o2.innerHTML='Executed: '+e.target.value}});
 function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
 function icoJs(c){return c==='success'?'✅':c==='failure'?'❌':c==='cancelled'?'⚪':'🔄'}
 function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'running'}
@@ -1284,7 +1334,7 @@ function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(fu
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();loadSnapshot();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -1551,6 +1601,205 @@ function copyCurl(url){
   navigator.clipboard.writeText('curl '+url).then(function(){showToast('cURL copied!')}).catch(function(){})
 }
 
+
+// ═══ v8.9 features ═══
+var ACHIEVEMENTS=[
+  {id:'run100',icon:'💯',name:'100 Runs',desc:'100 total vault runs',check:function(st){return (st.total||0)>=100}},
+  {id:'streak10',icon:'🔥',name:'10-Day Streak',desc:'10 hari streak berturut',check:function(st){return (st.streak||0)>=10}},
+  {id:'rate95',icon:'🎯',name:'95% Week',desc:'95% success rate',check:function(st){return (st.rate||0)>=95}},
+  {id:'firstfail',icon:'⚡',name:'Recovery',desc:'First fail → recovery',check:function(st){return (st.failed||0)>0&&(st.rate||0)>50}},
+  {id:'enc50',icon:'🎞',name:'50 Encodes',desc:'50 encode jobs OK',check:function(st){return (st.enc_ok||0)>=50}},
+  {id:'today5',icon:'📅',name:'5 Today',desc:'5 runs hari ini',check:function(st){return (st.today||0)>=5}},
+  {id:'streak5',icon:'🌱',name:'5-Day Streak',desc:'5 hari streak',check:function(st){return (st.streak||0)>=5}},
+  {id:'rate80',icon:'📈',name:'80% Club',desc:'80%+ success rate',check:function(st){return (st.rate||0)>=80}}
+];
+function checkAchievements(){
+  var st=(window.DASH||{}).stats||{};var unlocked=JSON.parse(localStorage.getItem('dash_badges')||'[]');
+  ACHIEVEMENTS.forEach(function(a){
+    if(unlocked.indexOf(a.id)<0&&a.check(st)){
+      unlocked.push(a.id);localStorage.setItem('dash_badges',JSON.stringify(unlocked));
+      showBadge(a);
+    }
+  });
+}
+function showBadge(a){
+  var el=document.getElementById('badgeToast');if(!el)return;
+  document.getElementById('badgeIcon').textContent=a.icon;
+  document.getElementById('badgeName').textContent=a.name;
+  document.getElementById('badgeDesc').textContent=a.desc;
+  el.classList.add('on');
+  setTimeout(function(){el.classList.remove('on')},3500);
+}
+function renderBadges(){
+  var st=(window.DASH||{}).stats||{};var unlocked=JSON.parse(localStorage.getItem('dash_badges')||'[]');
+  return '<div class="badge-grid">'+ACHIEVEMENTS.map(function(a){
+    var on=unlocked.indexOf(a.id)>=0||a.check(st);
+    return '<div class="badge-item'+(on?'':' locked')+'"><div class="bi">'+a.icon+'</div><div class="bl">'+esc(a.name)+'</div></div>';
+  }).join('')+'</div><div style="font-size:10px;color:var(--t2)">'+unlocked.length+'/'+ACHIEVEMENTS.length+' unlocked</div>';
+}
+function renderStreakCal(){
+  var D=window.DASH||{};var runs=D.runs||[];var daily=D.daily||D.stats&&D.stats.daily||{};
+  var now=new Date();var year=now.getFullYear();var month=now.getMonth();
+  var firstDay=new Date(year,month,1);var lastDay=new Date(year,month+1,0);
+  var startDow=firstDay.getDay();var days=lastDay.getDate();
+  var today=now.getDate();var html='<div class="streak-cal">';
+  for(var i=0;i<startDow;i++)html+='<div class="sc-day empty"></div>';
+  for(var d=1;d<=days;d++){
+    var dateStr=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var count=daily[dateStr]||0;
+    var fails=runs.filter(function(r){return r.conclusion==='failure'&&new Date(r.createdAt||0).toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'})===dateStr}).length;
+    var cls=count>0?(fails>0?'fail':'ok'):'';
+    var isToday=d===today;
+    html+='<div class="sc-day '+cls+(isToday?' today':'')+'" title="'+dateStr+': '+count+' runs">'+d+'</div>';
+  }
+  html+='</div>';var el=document.getElementById('streakCalGrid');if(el)el.innerHTML=html;
+}
+function renderFreqClock(){
+  var D=window.DASH||{};var runs=D.runs||[];var hours={};
+  runs.forEach(function(r){var h=new Date(r.createdAt||0).getHours();hours[h]=(hours[h]||0)+1});
+  var max=Math.max.apply(null,Object.values(hours).concat([1]));var cx=100,cy=100,r=80;
+  var html='<svg class="freq-clock" width="200" height="200" viewBox="0 0 200 200">';
+  for(var h=0;h<24;h++){
+    var count=hours[h]||0;var len=(count/max)*60;var angle=(h/24)*2*Math.PI-Math.PI/2;
+    var x2=cx+Math.cos(angle)*(r+len);var y2=cy+Math.sin(angle)*(r+len);
+    var x1=cx+Math.cos(angle)*r;var y1=cy+Math.sin(angle)*r;
+    var col=count>0?'var(--bl)':'var(--bg3)';
+    html+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="3" stroke-linecap="round" title="'+h+':00 → '+count+' runs"/>';
+  }
+  html+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--brd)" stroke-width="1"/>';
+  html+='<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dy=".3em" font-size="10" fill="var(--t2)">24h</text></svg>';
+  var el=document.getElementById('freqClockWrap');if(el)el.innerHTML=html+'<div style="font-size:9px;color:var(--t2);text-align:center">Intensitas runs per jam</div>';
+}
+function detectFailPatterns(){
+  var D=window.DASH||{};var runs=D.runs||[];var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  if(fails.length<2)return '';
+  var byHour={};var byDay={};var byName={};
+  fails.forEach(function(r){var d=new Date(r.createdAt||0);var h=d.getHours();var dw=d.getDay();var nm=r.name||'';
+    byHour[h]=(byHour[h]||0)+1;byDay[dw]=(byDay[dw]||0)+1;byName[nm]=(byName[nm]||0)+1});
+  var patterns=[];
+  Object.keys(byHour).forEach(function(h){if(byHour[h]>=2)patterns.push('Jam '+h+':00 — '+byHour[h]+' fail')});
+  Object.keys(byDay).forEach(function(d){var days=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];if(byDay[d]>=2)patterns.push(days[d]+' — '+byDay[d]+' fail')});
+  Object.keys(byName).forEach(function(n){if(byName[n]>=2)patterns.push(n+' — '+byName[n]+' fail')});
+  if(!patterns.length)return '';
+  return '<div class="fail-pattern">⚠️ <b>Pattern detected:</b><br>'+patterns.map(function(p){return '• '+p}).join('<br>')+'</div>';
+}
+function predictDuration(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var done=runs.filter(function(r){return r.conclusion==='success'&&r.name==='rusemeva-vault'&&r.createdAt&&r.updatedAt});
+  if(done.length<3)return null;
+  var durs=done.map(function(r){return new Date(r.updatedAt)-new Date(r.createdAt)}).sort(function(a,b){return a-b});
+  var avg=durs.reduce(function(a,b){return a+b},0)/durs.length;
+  var median=durs[Math.floor(durs.length/2)];
+  return {avg:Math.round(avg/60000),median:Math.round(median/60000),samples:durs.length};
+}
+function renderClusters(){
+  var D=window.DASH||{};var runs=(D.runs||[]).slice().sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)});
+  var sessions=[];var current=null;
+  runs.forEach(function(r){
+    var t=new Date(r.createdAt||0).getTime();if(!t)return;
+    if(current&&Math.abs(t-current.start)<3600000){current.runs.push(r);current.end=t}
+    else{current={start:t,end:t,runs:[r]};sessions.push(current)}
+  });
+  return sessions.slice(0,10).map(function(s){
+    var vault=s.runs.filter(function(r){return r.name==='rusemeva-vault'}).length;
+    var enc=s.runs.filter(function(r){return r.name==='rusemeva-encode'}).length;
+    var time=new Date(s.start).toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit'});
+    return '<div class="session-group"><div class="session-header">🕐 '+time+' WIB — '+s.runs.length+' runs ('+vault+' vault, '+enc+' enc)</div>'+s.runs.slice(0,5).map(rowRun).join('')+'</div>';
+  }).join('');
+}
+function toggleTerminal(){
+  var el=document.getElementById('terminalBox');if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+  if(el.style.display!=='none'){var inp=document.getElementById('terminalInput');if(inp)inp.focus()}
+}
+function execTerminal(cmd){
+  var out=document.getElementById('terminalOut');if(!out)return;
+  var c=cmd.trim().toLowerCase();var parts=c.split(/\s+/);var D=window.DASH||{};var st=D.stats||{};
+  var nl=String.fromCharCode(10);
+  var html='<span class="terminal-prompt">rusemeva@dash:~$</span> '+esc(cmd)+nl;
+  if(c==='help'){html+='Commands: stats, search <query>, export csv, export md, theme, clear, fails, badges, report, about'}
+  else if(c==='stats'){html+='Total: '+st.total+' | OK: '+st.success+' | Fail: '+st.failed+' | Rate: '+st.rate+'% | Streak: '+st.streak+'d'}
+  else if(parts[0]==='search'&&parts[1]){var q=document.getElementById('q');if(q){q.value=parts.slice(1).join(' ');srch()}html+='Searching: '+esc(parts.slice(1).join(' '))}
+  else if(c==='export csv'){html+='Exporting CSV...';expCSV()}
+  else if(c==='export md'){html+='Exporting MD...';expMD()}
+  else if(c==='theme'){toggleTheme();html+='Theme toggled'}
+  else if(c==='clear'){html=''}
+  else if(c==='fails'){html+=showFailReplay()}
+  else if(c==='badges'){html+=renderBadges()}
+  else if(c==='report'){html+=generateReport()}
+  else if(c==='about'){html+='Rusemeva Dashboard v8.9 — github.com/daudjoss/daudjoss-vault'}
+  else if(c===''){html+=''}
+  else{html+='Unknown command: '+esc(cmd)+'. Type help.'}
+  out.innerHTML=html+(c==='clear'?'':out.innerHTML);
+}
+function saveSnapshot(){
+  var state={q:(document.getElementById('q')||{}).value||'',theme:document.documentElement.getAttribute('data-t')||'dark',
+    accent:localStorage.getItem('dash_accent')||'blue',compact:document.body.classList.contains('compact')?'1':'0'};
+  var fb=document.querySelector('.fb.on');state.filter=fb?fb.getAttribute('data-f'):'all';
+  var hash=btoa(JSON.stringify(state));location.hash=hash;
+  showToast('Snapshot URL copied! Share the link.');
+}
+function loadSnapshot(){
+  if(!location.hash)return;try{var state=JSON.parse(atob(location.hash.slice(1)));
+    var q=document.getElementById('q');if(q&&state.q){q.value=state.q;srch()}
+    if(state.theme){document.documentElement.setAttribute('data-t',state.theme);localStorage.setItem('th',state.theme)}
+    if(state.accent){localStorage.setItem('dash_accent',state.accent);applyAccent()}
+    if(state.compact==='1'&&!document.body.classList.contains('compact'))toggleCompact();
+    if(state.filter){var fb=document.querySelector('.fb[data-f="'+state.filter+'"]');if(fb)fb.click()}
+  }catch(e){}
+}
+function renderStatSparkline(values,color){
+  var max=Math.max.apply(null,values.concat([1]));var w=40,h=14,step=w/(values.length-1);
+  var pts=values.map(function(v,i){return (i*step)+','+(h-(v/max*h))}).join(' ');
+  return '<svg class="stat-spark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1"/></svg>';
+}
+function renderDonut(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var ok=runs.filter(function(r){return r.conclusion==='success'}).length;
+  var fl=runs.filter(function(r){return r.conclusion==='failure'}).length;
+  var cn=runs.filter(function(r){return r.conclusion==='cancelled'}).length;
+  var rn=runs.filter(function(r){return statusKeyJs(r)==='in_progress'}).length;
+  var total=ok+fl+cn+rn;if(!total)return '';
+  var r=50,cx=60,cy=60,circ=2*Math.PI*r;var offset=0;
+  var slices=[{val:ok,col:'var(--gn)',label:'OK'},{val:fl,col:'var(--rd)',label:'Fail'},{val:cn,col:'var(--t2)',label:'Cancel'},{val:rn,col:'var(--bl)',label:'Running'}];
+  var html='<svg width="120" height="120" viewBox="0 0 120 120">';
+  slices.forEach(function(s){
+    var pct=s.val/total;var dash=pct*circ;
+    html+='<circle class="donut-slice" cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+s.col+'" stroke-width="12" stroke-dasharray="'+dash+' '+(circ-dash)+'" stroke-dashoffset="'+(-offset)+'" transform="rotate(-90 '+cx+' '+cy+')" data-label="'+s.label+'" />';
+    offset+=dash;
+  });
+  html+='<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dy=".3em" font-size="14" font-weight="bold" fill="var(--t1)">'+total+'</text></svg>';
+  html+='<div class="donut-legend">'+slices.map(function(s){return '<span style="color:'+s.col+';font-size:10px;cursor:pointer" >'+s.label+': '+s.val+'</span>'}).join(' · ')+'</div>';
+  return html;
+}
+function donutFilter(label){
+  var fb=document.querySelectorAll('.fb');
+  if(label==='Fail'){fb.forEach(function(b){if(b.getAttribute('data-f')==='fail')b.click()})}
+  else if(label==='Running'){fb.forEach(function(b){if(b.getAttribute('data-f')==='running')b.click()})}
+  else if(label==='OK'){fb.forEach(function(b){if(b.getAttribute('data-f')==='ok')b.click()})}
+  else{fb.forEach(function(b){if(b.getAttribute('data-f')==='all')b.click()})}
+}
+function renderFlowParticles(){
+  var flow=document.getElementById('flow-diagram');if(!flow)return;
+  var arrows=flow.querySelectorAll('.flow-arrow');
+  arrows.forEach(function(a){
+    for(var i=0;i<3;i++){
+      var p=document.createElement('div');p.className='flow-particle';p.style.animationDelay=(i*0.7)+'s';
+      a.style.position='relative';a.appendChild(p);
+    }
+  });
+}
+function toggleGlass(){
+  document.body.classList.toggle('glass-mode');
+  var on=document.body.classList.contains('glass-mode');
+  localStorage.setItem('dash_glass',on?'1':'0');
+}
+function applyGlass(){
+  if(localStorage.getItem('dash_glass')==='1')document.body.classList.add('glass-mode');
+}
+
+
+function renderDonutView(){var el=document.getElementById('donutWrap');if(el)el.innerHTML=renderDonut()}
 function renderGauge(){
   var st=(window.DASH||{}).stats||{};var rate=st.rate||0;
   var r=28,c=2*Math.PI*r,off=c-(rate/100*c);
@@ -1781,7 +2030,7 @@ function renderHeatmap(){
 
 function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();}
 
 // ── honest client health ──
 function checkHealth(){
@@ -2019,7 +2268,7 @@ def main():
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
         json.dump({
             "generated": datetime.now(WIB).isoformat(),
-            "build": "v8.8-pro",
+            "build": "v8.9-elite",
             "stats": S,
             "runs": lean_runs,
             "releases": lean_releases,
