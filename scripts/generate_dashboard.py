@@ -435,7 +435,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sec.collapsible .sh{cursor:pointer;user-select:none}
 .sec.collapsible .sh:active{opacity:.6}
 .sec.collapsible.collapsed > *:not(.sh){display:none}
-@media(max-width:768px){.sec.collapsible.collapsed > *:not(.sh){display:none}}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
 .fl{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
@@ -581,6 +580,16 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .sec{font-size:10px}
   .sh{margin-bottom:4px;padding-bottom:3px}
   .st{font-size:11px}
+  .swipe-section{scroll-snap-align:start}
+  .sec#sec-streakcal,.sec#sec-week,.sec#sec-rec{max-height:200px;overflow-y:auto}
+  .sec#sec-ach{max-height:180px;overflow-y:auto}
+  body{padding-bottom:84px}
+  .hero{padding:12px}
+  .hero-brand h1{font-size:18px}
+  .nav{display:none!important}
+  .bnav{display:grid}
+  .sg{gap:8px}
+  .sec.collapsible.collapsed > *:not(.sh){display:none}
 }
 @media(max-width:480px){
   .sg{grid-template-columns:repeat(2,1fr)}
@@ -918,21 +927,12 @@ body{background:
 .drag-handle:hover{opacity:.7}
 .dragging{opacity:.5}
 .drop-target{border:2px dashed var(--bl)!important}
-@media(max-width:768px){.swipe-section{scroll-snap-align:start}}
 
 .curl-box{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:8px;font-size:10px;white-space:pre-wrap;word-break:break-all;margin:4px 0;position:relative}
 .curl-copy{position:absolute;top:4px;right:4px;font-size:9px;cursor:pointer;padding:2px 6px;border-radius:4px;background:var(--bg2);border:1px solid var(--brd)}
 
-@media(max-width:768px){
-  .sec#sec-streakcal,.sec#sec-week,.sec#sec-rec{max-height:200px;overflow-y:auto}
-  .sec#sec-ach{max-height:180px;overflow-y:auto}
-}
 
 @media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}}
-
-
-}
-}
 
 .rsm-card{background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;margin:8px 0;display:flex;align-items:center;gap:10px;font-size:12px}
 .rsm-card .rsm-ico{font-size:20px}.rsm-card .rsm-id{font-weight:700;color:var(--bl)}.rsm-card .rsm-status{font-size:11px;color:var(--t2)}
@@ -966,16 +966,6 @@ body{background:
 .rate-ring{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;background:var(--bg3);font-size:11px}
 .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--gn);box-shadow:0 0 0 0 rgba(63,185,80,.5);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,185,80,.45)}70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
-@media(max-width:768px){
-  body{padding-bottom:84px}
-  .hero{padding:12px}
-  .hero-brand h1{font-size:18px}
-  .nav{display:none!important}
-  .bnav{display:grid}
-  .sg{gap:8px}
-  .sc{border-radius:10px
-
-
 </style>
 </head>
 <body>
@@ -1086,6 +1076,7 @@ body{background:
 <div class="ffi"><div class="ffi-icon">📅</div><div class="ffi-val">''' + str(S['top_day']) + '''</div><div class="ffi-label">Day</div></div>
 <div class="ffi"><div class="ffi-icon">💾</div><div class="ffi-val">''' + fmt_bytes(S.get('gh_bytes') or 0) + '''</div><div class="ffi-label">On GitHub</div></div>
 </div></div>
+</div>
 <div class="g2">
 <div class="sec"><div class="sh"><div class="st">📊 Compare</div></div><div class="cmp">
 <div class="cmp-item"><div class="cmp-val">''' + str(S['success']) + '''</div><div class="cmp-label">Success</div></div>
@@ -1098,6 +1089,7 @@ body{background:
 <div class="sec"><div class="sh"><div class="st">💾 Backup</div></div>
 <div class="backup"><div class="backup-label">Primary: GitHub (manifest only)</div><div class="backup-status">✅ ''' + fmt_bytes(S.get('gh_bytes') or 0) + ''' on GH · video di Telegram · lifetime ~''' + str(S.get('lifetime_est_gb') or 0) + ''' GB est (not stored on GH)</div></div>
 <div class="backup"><div class="backup-label">Secondary</div><div class="backup-status">Telegram bot delivery (bukan mirror file di GH)</div></div>
+</div>
 </div>
 <div class="g3">
 <div class="sec"><div class="sh"><div class="st">🔍 Errors</div></div>''' + err_html + '''</div>
@@ -1128,6 +1120,7 @@ body{background:
 <div class="insight"><div class="insight-icon">🎬</div><div class="insight-text">Use "berkualitas" preset for talk shows</div></div>
 <div class="insight"><div class="insight-icon">💾</div><div class="insight-text">Clean up old temp releases</div></div>
 </div>
+</div>
 <div class="g3">
 <div class="sec"><div class="sh"><div class="st">⚡ Optimization</div></div>
 <div class="opt"><div class="opt-label">Temp releases dibersihkan otomatis setelah encode</div><button class="opt-btn" onclick="showM('about')">Info</button></div>
@@ -1140,6 +1133,7 @@ body{background:
 <div class="widget" onclick="showM('status')"><div class="widget-icon">📊</div><div class="widget-label">Status</div></div>
 <div class="widget" onclick="showM('music')"><div class="widget-icon">🎵</div><div class="widget-label">Music</div></div>
 </div></div>
+</div>
 </div>
 <div class="sec" id="sec-tools">
 <div class="ag">
