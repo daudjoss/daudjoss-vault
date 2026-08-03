@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v8.5 — Last RSM + deep link + health + palette + compare."""
+"""Rusemeva Dashboard v8.5.1 — menu upgrades: richer stats/search/timeline/player."""
 import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -876,7 +876,7 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.5 · Last RSM + deep link + health + palette + compare · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.5.1 · Menu upgrades · richer stats/search/timeline · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cmd-overlay" id="cmdOverlay" onclick="if(event.target===this)closeCmd()">
@@ -885,7 +885,7 @@ body{background:
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-            "build": "v8.5-dash",
+            "build": "v8.5.1-upgrade",
         "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
@@ -964,7 +964,7 @@ function statBlock(){
 }
 if(t==='keys'){h.textContent='⌨️ Keys';b.innerHTML='<div class="sh2"><div class="sk"><span class="ky">R</span> Soft-refresh</div><div class="sk"><span class="ky">D</span> Theme</div><div class="sk"><span class="ky">S</span> Search</div><div class="sk"><span class="ky">E</span> Export</div><div class="sk"><span class="ky">P</span> Command palette</div><div class="sk"><span class="ky">Esc</span> Close modal</div></div><div style="margin-top:8px;font-size:11px;color:var(--t2)">Fokus input/textarea = shortcut nonaktif.</div>'}
 if(t==='api'){h.textContent='📚 API';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Worker</b> <code>rusemeva.rusemeva-vault.workers.dev</code><br><code>GET /api/status</code> Status<br><code>POST /api/record</code> Record<br><code>GET /api/runs</code> Runs<br><code>GET /api/orv-map</code> RSM map<br><code>GET /rtcal?preset=</code> RT kalibrasi<br><br><b>Dashboard static</b><br><code>GET data.json</code> Live soft-refresh payload<br><code>GET index.html</code> Full page</div>'}
-if(t==='about'){h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Rusemeva Dashboard</b> v8.5<br>Live GHA + Worker RSM map + Telegram delivery<br><br>Cost infra: ~$0 (GH free + CF Worker)<br>Repo: <a href="https://github.com/daudjoss/daudjoss-vault" target="_blank">daudjoss/daudjoss-vault</a><br>Site: <a href="https://daudjoss.github.io/daudjoss-vault/" target="_blank">gh-pages</a><br><br>Generated: <code>'+esc(D.generated||'—')+'</code></div>'}
+if(t==='about'){h.textContent='ℹ️ About';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Rusemeva Dashboard</b> v8.5.1<br>Live GHA + Worker RSM map + Telegram delivery<br><br>Cost infra: ~$0 (GH free + CF Worker)<br>Repo: <a href="https://github.com/daudjoss/daudjoss-vault" target="_blank">daudjoss/daudjoss-vault</a><br>Site: <a href="https://daudjoss.github.io/daudjoss-vault/" target="_blank">gh-pages</a><br><br>Generated: <code>'+esc(D.generated||'—')+'</code></div>'}
 if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Catatan lokal (tersimpan di browser)..."></textarea><div style="margin-top:6px"><button class="btn" onclick="saveNote()">Save</button> <button class="btn" onclick="clearNote()">Clear</button></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage key: rusemeva_notes</div></div>';loadNote()}
 if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag..."><button onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:6px"></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Disimpan lokal di browser</div>';loadTags()}
 if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div><div id="bookmarkList"></div><div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap"><input type="text" id="bmTime" placeholder="02:15" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note / RSM-ID..." style="flex:1;min-width:120px;padding:4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <button class="btn" onclick="addBookmark()">Add</button></div></div>';loadBookmarks()}
@@ -975,51 +975,92 @@ if(t==='comparison'){
   var v=vaultRuns(),e=encRuns();
   var vs=v.filter(function(r){return r.conclusion==='success'}).length;
   var vf=v.filter(function(r){return r.conclusion==='failure'}).length;
+  var vc=v.filter(function(r){return r.conclusion==='cancelled'}).length;
   var es=e.filter(function(r){return r.conclusion==='success'}).length;
   var ef=e.filter(function(r){return r.conclusion==='failure'}).length;
+  var ec=e.filter(function(r){return r.conclusion==='cancelled'}).length;
   b.innerHTML='<div class="cmp">'
     +'<div class="cmp-item"><div class="cmp-val">'+vs+'</div><div class="cmp-label">Vault OK</div></div>'
     +'<div class="cmp-item"><div class="cmp-val">'+vf+'</div><div class="cmp-label">Vault Fail</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+vc+'</div><div class="cmp-label">Vault Cancel</div></div>'
     +'<div class="cmp-item"><div class="cmp-val">'+(st.rate||0)+'%</div><div class="cmp-label">Vault Rate</div></div>'
     +'<div class="cmp-item"><div class="cmp-val">'+es+'</div><div class="cmp-label">Enc OK</div></div>'
     +'<div class="cmp-item"><div class="cmp-val">'+ef+'</div><div class="cmp-label">Enc Fail</div></div>'
+    +'<div class="cmp-item"><div class="cmp-val">'+ec+'</div><div class="cmp-label">Enc Cancel</div></div>'
     +'<div class="cmp-item"><div class="cmp-val">'+(st.enc_rate||0)+'%</div><div class="cmp-label">Enc Rate</div></div>'
-    +'</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Live dari window.DASH ('+v.length+' vault / '+e.length+' encode di payload)</div>';
+    +'</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Vault: '+v.length+' runs · Encode: '+e.length+' runs (live DASH)</div><div style="margin-top:4px;font-size:10px;color:var(--t2)">Cancelled tidak dihitung di rate gagal.</div>';
 }
 if(t==='timeline'||t==='history'){
   h.textContent=t==='timeline'?'⏱ Timeline':'📜 History';
-  var list=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'}).slice(0,25);
-  b.innerHTML='<div class="hist" style="max-height:360px;overflow:auto">'+list.map(rowRun).join('')+'</div>';
+  var list=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});
+  // group by date
+  var groups={};
+  list.forEach(function(r){
+    var d=agoJs(r.createdAt||'');
+    var date=d.replace(/[0-9]+[mjh]/,'').trim()||'baru';
+    if(!groups[date])groups[date]={items:[],ok:0,fail:0,run:0,cancel:0};
+    groups[date].items.push(r);
+    var s=statusKeyJs(r);
+    if(s==='success')groups[date].ok++;
+    else if(s==='failure')groups[date].fail++;
+    else if(s==='cancelled')groups[date].cancel++;
+    else groups[date].run++;
+  });
+  var dates=Object.keys(groups).slice(0,10);
+  var html='<div class="hist" style="max-height:380px;overflow:auto">';
+  dates.forEach(function(dt){
+    var g=groups[dt];
+    html+='<div style="padding:6px 0;border-bottom:1px solid var(--brd)"><div style="font-size:11px;font-weight:600;margin-bottom:4px">'+esc(dt)+' <span style="color:var(--t2);font-weight:400">('+g.items.length+' runs: ✅'+g.ok+' ❌'+g.fail+' 🔄'+g.run+' ⚪'+g.cancel+')</span></div>';
+    html+=g.items.slice(0,8).map(rowRun).join('');
+    html+='</div>';
+  });
+  html+='</div>';
+  b.innerHTML=html;
 }
-if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source / name</label><select id="srcFilter"><option value="All">All</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div></div><div style="margin-top:6px"><input class="si2" id="qAdv" placeholder="RSM-ID / run id / text..." style="width:100%;margin-bottom:6px"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button></div><div id="searchResults" style="margin-top:8px;max-height:280px;overflow:auto"></div>'}
-if(t==='export'){h.textContent='📥 Export';b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-label">TXT</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Export dari DASH.runs (live), bukan scrap DOM.</div>'}
+if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select id="srcFilter"><option value="All">All</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div><div class="search-filter"><label>Sort</label><select id="sortFilter"><option value="new">Newest</option><option value="old">Oldest</option></select></div></div><div style="margin-top:6px"><input class="si2" id="qAdv" placeholder="RSM-ID / run id / text..." style="width:100%;margin-bottom:6px" onkeydown="if(event.keyCode===13)advSearch()"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button> <span id="searchCount" style="font-size:10px;color:var(--t2);margin-left:4px"></span></div><div id="searchResults" style="margin-top:8px;max-height:320px;overflow:auto"></div>'}
+if(t==='export'){h.textContent='📥 Export';var n=filteredRows().length;b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-label">TXT</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">'+n+' rows akan di-export (hormati filter search aktif). Data dari window.DASH.runs.</div>'}
 if(t==='customize'){
   h.textContent='🎨 Customize';
-  var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts','#sec-week'],['hideStreak','Streak','.streak']];
+  var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts & activity','#sec-week'],['hideStreak','Streak bar','.streak']];
   var html='<div>';
   keys.forEach(function(k){
     var on=localStorage.getItem('dash_'+k[0])!=='1';
     html+='<div class="opt"><div class="opt-label">'+k[1]+'</div><button class="opt-btn" data-k="'+k[0]+'" data-sel="'+k[2]+'" onclick="toggleCust(this)">'+(on?'ON':'OFF')+'</button></div>';
   });
-  html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung</div>';
+  var compactOn=document.body.classList.contains('compact');
+  html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';
+  html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung. Theme: tekan D atau 🌓 di hero.</div>';
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai:</b><br>1. Lihat Recordings + filter ✅❌🔄<br>2. Soft-refresh 30s / tombol 🔄 di hero<br>3. Tools → Stats/Search/Export/Player<br>4. Themes & Customize (local)<br><br><b>RSM-ID</b> muncul kalau Worker map terisi (setelah record/encode link).<br><b>Storage</b> estimasi dari durasi release (file video di Telegram).<br><br><b>Shortcuts:</b> R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
+  if(t==='stats'){
+    var encList=encRuns();
+    var encCanc=encList.filter(function(r){return r.conclusion==='cancelled'}).length;
+    var encFail=encList.filter(function(r){return r.conclusion==='failure'}).length;
+    var vaultCanc=(st.cancelled||0);
+    extra='<br><br><b>Encode detail</b><br>• OK: '+(st.enc_ok||0)+' · Fail: '+encFail+' · Cancel: '+encCanc+'<br>• Rate: '+(st.enc_rate||0)+'%<br><br><b>Cancelled (excluded from fail)</b><br>• Vault: '+vaultCanc+' · Encode: '+encCanc+'<br><br><b>Storage</b><br>• '+storageLabel()+'<br><br><b>RSM map</b><br>• Linked: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+' / '+(D.runs||[]).length+' runs';
+  }
   if(t==='analytics'){
     var hours=D.hours||{};
-    var top=Object.keys(hours).sort(function(a,b){return (hours[b]||0)-(hours[a]||0)}).slice(0,5);
+    var top=Object.keys(hours).sort(function(a,b){return (hours[b]||0)-(hours[a]||0)}).slice(0,8);
     extra='<br><b>Top jam:</b><br>'+(top.map(function(hh){return '• '+hh+':00 → '+(hours[hh]||0)+' runs'}).join('<br>')||'• —');
-    var ins=(D.insights||[]).slice(0,4);
-    var pred=(D.predictions||[]).slice(0,3);
+    var days=D.days||{};
+    var topDays=Object.keys(days).sort(function(a,b){return (days[b]||0)-(days[a]||0)}).slice(0,7);
+    extra+='<br><br><b>Hari:</b><br>'+(topDays.map(function(dd){return '• '+dd+': '+(days[dd]||0)+' runs'}).join('<br>')||'• —');
+    var ins=(D.insights||[]).slice(0,5);
+    var pred=(D.predictions||[]).slice(0,5);
     extra+='<br><br><b>Insights</b><br>'+(ins.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
     extra+='<br><br><b>Predictions</b><br>'+(pred.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
   }
   if(t==='status'){
-    extra='<br><b>System</b><br>• Worker: rusemeva-vault<br>• Vault running: '+(st.running||0)+'<br>• Dashboard: gh-pages<br>• Soft-refresh: 30s<br>• ORV in payload: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+' runs';
+    var gen=D.generated||'—';
+    var ageMin=0;
+    if(gen&&gen!=='—'){ageMin=Math.round((Date.now()-new Date(gen).getTime())/60000);}
+    extra='<br><b>System</b><br>• Dashboard: gh-pages (static)<br>• Soft-refresh: 30s (data.json + ORV map)<br>• Data age: '+ageMin+'m<br>• ORV linked: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+'/'+(D.runs||[]).length+'<br><br><b>Worker</b><br>• rusemeva.rusemeva-vault.workers.dev<br>• /api/orv-map, /api/status<br><br><b>Build</b><br>• '+(D.build||'—');
   }
   b.innerHTML=statBlock()+extra;
 }
@@ -1038,12 +1079,21 @@ if(t==='share'){
 if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div><div id="commentList"></div><div style="margin-top:6px"><textarea class="note-area" id="commentArea" placeholder="Komentar lokal..."></textarea><div style="margin-top:4px"><button class="btn" onclick="addComment()">Add</button></div></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage only</div></div>';loadComments()}
 if(t==='player'){
   h.textContent='▶️ Player';
-  var list=vaultRuns().slice(0,12);
-  var html='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">File besar di Telegram / temporary GH release. Buka run atau Releases:</div>';
-  html+='<div style="margin-bottom:8px"><a class="btn" href="https://github.com/daudjoss/daudjoss-vault/releases" target="_blank" style="text-decoration:none">📦 Releases</a> <a class="btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">🔧 Actions</a></div>';
-  html+='<div class="hist" style="max-height:300px;overflow:auto">'+list.map(function(r){
+  var vList=vaultRuns();
+  var eList=encRuns();
+  var html='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">Video/HEVC dikirim ke Telegram. GitHub hanya manifest .txt. Buka run GHA untuk detail log.</div>';
+  html+='<div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap"><a class="btn" href="https://github.com/daudjoss/daudjoss-vault/releases" target="_blank" style="text-decoration:none">📦 Releases</a> <a class="btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">🔧 All Actions</a></div>';
+  html+='<div style="font-size:11px;font-weight:600;margin:8px 0 4px">📹 Vault recordings ('+vList.length+')</div>';
+  html+='<div class="hist" style="max-height:200px;overflow:auto">'+vList.slice(0,15).map(function(r){
     var id=r.orv_id||r.databaseId||'';
-    return '<div class="fi"><span class="fi-icon">'+icoJs(r.conclusion||'')+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><a class="btn" style="margin-left:auto;font-size:10px;text-decoration:none" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">Open</a></div>';
+    var c=clsJs(r.conclusion);
+    return '<div class="fi"><span class="fi-icon">'+icoJs(r.conclusion||'')+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-status '+c+'">'+esc(displayStatusJs(r))+'</span><a class="btn" style="margin-left:auto;font-size:10px;text-decoration:none" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">Open</a></div>';
+  }).join('')+'</div>';
+  html+='<div style="font-size:11px;font-weight:600;margin:8px 0 4px">🎞 Encode jobs ('+eList.length+')</div>';
+  html+='<div class="hist" style="max-height:180px;overflow:auto">'+eList.slice(0,10).map(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var c=clsJs(r.conclusion);
+    return '<div class="fi"><span class="fi-icon">'+icoJs(r.conclusion||'')+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-status '+c+'">'+esc(displayStatusJs(r))+'</span><a class="btn" style="margin-left:auto;font-size:10px;text-decoration:none" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">Open</a></div>';
   }).join('')+'</div>';
   b.innerHTML=html;
 }
@@ -1068,7 +1118,38 @@ function applyCustomize(){
   });
 }
 
-function advSearch(){var src=(document.getElementById('srcFilter')||{}).value||'All';var stv=(document.getElementById('statFilter')||{}).value||'All';var q=((document.getElementById('qAdv')||{}).value||'').toLowerCase().trim();var D=window.DASH||{runs:[]};var rows=(D.runs||[]).filter(function(r){  if(src!=='All'){    var hay=((r.name||'')+' '+(r.source||'')).toLowerCase();    if(hay.indexOf(src.toLowerCase())<0) return false;  }  var s=statusKeyJs(r);  if(stv!=='All' && s!==stv && (r.conclusion||'')!==stv) return false;  if(q){    var blob=((r.orv_id||'')+' '+(r.databaseId||'')+' '+(r.name||'')+' '+(r.source||'')+' '+(r.conclusion||'')).toLowerCase();    if(blob.indexOf(q)<0) return false;  }  return true;}).slice(0,40);var box=document.getElementById('searchResults');if(!box)return;if(!rows.length){box.innerHTML='<div class="ne">Tidak ada hasil</div>';return;}box.innerHTML=rows.map(function(r){  var id=r.orv_id||r.databaseId||'';  return '<div class="fi"><span class="fi-icon">'+icoJs(statusKeyJs(r)==='in_progress'?'':(r.conclusion||''))+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status">'+esc(displayStatusJs(r))+'</span><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">↗</a></div>';}).join('');}
+function advSearch(){
+var src=(document.getElementById('srcFilter')||{}).value||'All';
+var stv=(document.getElementById('statFilter')||{}).value||'All';
+var sortV=(document.getElementById('sortFilter')||{}).value||'new';
+var q=((document.getElementById('qAdv')||{}).value||'').toLowerCase().trim();
+var D=window.DASH||{runs:[]};
+var rows=(D.runs||[]).filter(function(r){
+  if(src!=='All'){var hay=((r.name||'')+' '+(r.source||'')).toLowerCase();if(hay.indexOf(src.toLowerCase())<0) return false;}
+  var s=statusKeyJs(r);
+  if(stv!=='All' && s!==stv && (r.conclusion||'')!==stv) return false;
+  if(q){var blob=((r.orv_id||'')+' '+(r.databaseId||'')+' '+(r.name||'')+' '+(r.source||'')+' '+(r.conclusion||'')).toLowerCase();if(blob.indexOf(q)<0) return false;}
+  return true;
+});
+rows.sort(function(a,b){
+  var da=new Date(a.createdAt||0).getTime();
+  var db=new Date(b.createdAt||0).getTime();
+  return sortV==='old'?da-db:db-da;
+});
+var total=rows.length;
+rows=rows.slice(0,50);
+var cnt=document.getElementById('searchCount');
+if(cnt)cnt.textContent=total+' result(s)';
+var box=document.getElementById('searchResults');
+if(!box)return;
+if(!rows.length){box.innerHTML='<div class="ne">Tidak ada hasil</div>';return;}
+box.innerHTML=rows.map(function(r){
+  var id=r.orv_id||r.databaseId||'';
+  var c=clsJs(r.conclusion);
+  return '<div class="fi" data-rid="'+esc(r.databaseId)+'"><span class="fi-icon">'+icoJs(statusKeyJs(r)==='in_progress'?'':(r.conclusion||''))+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(displayStatusJs(r))+'</span><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">↗</a><button data-cmp="'+r.databaseId+'" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>';
+}).join('');
+box.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(b.getAttribute('data-cmp'))}});
+}
 function clearSearch(){var s=document.getElementById('srcFilter');if(s)s.value='All';var st=document.getElementById('statFilter');if(st)st.value='All';var r=document.getElementById('searchResults');if(r)r.innerHTML=''}
 function clM(){document.getElementById('mo').classList.remove('on')}
 function saveNote(){localStorage.setItem('rusemeva-note',document.getElementById('noteArea').value);alert('Saved!')}
@@ -1367,7 +1448,7 @@ def main():
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
         json.dump({
             "generated": datetime.now(WIB).isoformat(),
-            "build": "v8.5-dash",
+            "build": "v8.5.1-upgrade",
             "stats": S,
             "runs": lean_runs,
             "releases": lean_releases,
