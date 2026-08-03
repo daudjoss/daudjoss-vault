@@ -432,6 +432,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sec{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px;margin-bottom:12px}
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--brd);flex-wrap:wrap;gap:6px}
 .st{font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px}
+.sec.collapsible .sh{cursor:pointer;user-select:none}
+.sec.collapsible .sh:active{opacity:.6}
+.sec.collapsible.collapsed > *:not(.sh){display:none}
+@media(max-width:768px){.sec.collapsible.collapsed > *:not(.sh){display:none}}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
 .fl{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
@@ -546,39 +550,49 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .theme{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin:8px 0}
 
 @media(max-width:768px){
-  body{padding:6px}
-  .hdr h1{font-size:16px}
-  .sg{grid-template-columns:repeat(2,1fr);gap:6px}
-  .sc{padding:8px}.sv{font-size:18px}
-  .g2{grid-template-columns:1fr;gap:8px}
-  .g3{grid-template-columns:1fr;gap:8px}
+  body{padding:4px}
+  .hdr h1{font-size:15px}
+  .ct{max-width:100%}
+  .sg{grid-template-columns:repeat(2,1fr);gap:4px}
+  .sc{padding:6px;border-radius:8px}.sv{font-size:16px}
+  .g2{grid-template-columns:1fr 1fr;gap:4px}
+  .g3{grid-template-columns:1fr 1fr;gap:4px}
   .pg{grid-template-columns:repeat(2,1fr)}
-  .ag{grid-template-columns:repeat(2,1fr)}
-  .ach-grid{grid-template-columns:1fr}
-  .ff{grid-template-columns:repeat(2,1fr)}
+  .ag{grid-template-columns:repeat(3,1fr)}
+  .ach-grid{grid-template-columns:repeat(2,1fr)}
+  .ff{grid-template-columns:repeat(3,1fr)}
   .mb{grid-template-columns:repeat(4,1fr)}
-  .cmp{grid-template-columns:1fr}
-  .gal{grid-template-columns:repeat(2,1fr)}
+  .cmp{grid-template-columns:repeat(2,1fr)}
+  .gal{grid-template-columns:repeat(3,1fr)}
   .nav{display:none}
   .si2{width:100%}
-  .feed{max-height:150px}
-  .ch{height:140px}.ch2{height:100px}
+  .feed{max-height:120px}
+  .ch{height:100px}.ch2{height:80px}
   .hg{grid-template-columns:1fr 1fr}
   .fl{width:100%}
   .fb{flex:1;text-align:center}
-  .cd-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
-  .cd{min-height:48px;padding:4px 1px;border-radius:7px}
-  .cd-day{font-size:8px}
-  .cd-num{font-size:10px}
-  .cd-cnt{font-size:9px}
-  
+  .cd-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+  .cd{min-height:36px;padding:2px 1px;border-radius:5px}
+  .cd-day{font-size:7px}
+  .cd-num{font-size:9px}
+  .cd-cnt{font-size:8px}
+  .streak-cal{max-width:100%;grid-template-columns:repeat(15,1fr)}
+  .cal-scroll{max-height:120px;overflow-y:auto}
+  .sec{font-size:10px}
+  .sh{margin-bottom:4px;padding-bottom:3px}
+  .st{font-size:11px}
 }
 @media(max-width:480px){
   .sg{grid-template-columns:repeat(2,1fr)}
+  .g2{grid-template-columns:1fr;gap:4px}
+  .g3{grid-template-columns:1fr;gap:4px}
   .pg{grid-template-columns:repeat(2,1fr)}
   .ag{grid-template-columns:1fr 1fr}
   .ff{grid-template-columns:1fr 1fr}
   .gal{grid-template-columns:1fr 1fr}
+  .ach-grid{grid-template-columns:1fr}
+  .feed{max-height:100px}
+  .ch{height:80px}.ch2{height:60px}
 }
 
 /* === v8.3 visual upgrade === */
@@ -908,6 +922,12 @@ body{background:
 
 .curl-box{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:8px;font-size:10px;white-space:pre-wrap;word-break:break-all;margin:4px 0;position:relative}
 .curl-copy{position:absolute;top:4px;right:4px;font-size:9px;cursor:pointer;padding:2px 6px;border-radius:4px;background:var(--bg2);border:1px solid var(--brd)}
+
+@media(max-width:768px){
+  .sec#sec-streakcal,.sec#sec-week,.sec#sec-rec{max-height:200px;overflow-y:auto}
+  .sec#sec-ach{max-height:180px;overflow-y:auto}
+}
+
 @media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}}
 
 
@@ -1534,7 +1554,22 @@ function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(fu
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements()}
+
+// Mobile section toggle
+function initSectionToggle(){
+  var isMobile=window.innerWidth<=768;
+  if(!isMobile)return;
+  document.querySelectorAll('.sec .sh').forEach(function(sh){
+    if(sh.getAttribute('data-toggle'))return;
+    sh.setAttribute('data-toggle','1');
+    sh.addEventListener('click',function(){
+      var sec=sh.parentElement;
+      sec.classList.toggle('collapsed');
+    });
+  });
+}
+
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements();initSectionToggle()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
