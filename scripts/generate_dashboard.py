@@ -843,6 +843,25 @@ body{background:
 .dash-clock{font-size:32px;font-weight:700;font-family:monospace;text-align:center;color:var(--bl);letter-spacing:2px}
 .dash-clock-date{font-size:11px;color:var(--t2);text-align:center;margin-top:4px}
 
+.flaky-row{display:grid;grid-template-columns:60px 1fr 40px 30px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.flaky-sha{font-family:monospace;color:var(--bl);font-size:9px}
+.flaky-wf{color:var(--t2);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flaky-badge{font-size:8px;padding:1px 4px;border-radius:4px}
+.flaky-badge.flaky{background:rgba(248,81,73,.2);color:var(--rd)}
+.flaky-badge.stable{background:rgba(63,185,80,.2);color:var(--gn)}
+.net-graph{padding:10px;text-align:center}
+.net-node{display:inline-block;padding:6px 12px;border-radius:8px;border:2px solid var(--brd);margin:4px;font-size:10px}
+.net-node.trigger{border-color:var(--bl);color:var(--bl)}
+.net-node.target{border-color:var(--gn);color:var(--gn)}
+.net-arrow{font-size:14px;color:var(--t2);margin:0 4px}
+.net-edge{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;margin:4px 0}
+.velocity-chart{padding:10px}
+.velocity-bar{display:inline-block;width:8px;border-radius:2px 2px 0 0;margin-right:1px;min-height:2px;vertical-align:bottom}
+.quiet-row{display:grid;grid-template-columns:1fr 50px 50px;gap:4px;padding:5px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.quiet-gap{font-size:12px;font-weight:700;color:var(--yl)}
+.quiet-time{color:var(--t3);font-size:9px}
+
+
 .release-timeline{padding:10px}
 .release-row{display:grid;grid-template-columns:1fr 60px 80px;gap:4px;padding:6px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
 .release-tag{font-family:monospace;color:var(--bl);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1366,7 +1385,7 @@ if(t==='customize'){
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.1</b>:<br>• Release Tracker (timeline + size distribution)<br>• DORA Scorecard (Elite/High/Medium/Low grade)<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.1</b>:<br>• Flaky Run Detector (same SHA, different conclusions)<br>• Workflow Network Graph (trigger → workflow edges)<br>• Run Velocity (moving average, speed trend)<br>• Quiet Periods (longest gaps, maintenance windows)<br>• Release Tracker (timeline + size distribution)<br>• DORA Scorecard (Elite/High/Medium/Low grade)<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1439,6 +1458,10 @@ if(t==='player'){
 }
 if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
 if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='flaky'){h.textContent='🌋 Flaky Run Detector';b.innerHTML=renderFlakyDetector()}
+if(t==='netgraph'){h.textContent='🕸 Workflow Network Graph';b.innerHTML=renderNetworkGraph()}
+if(t==='velocity'){h.textContent='🏃 Run Velocity';b.innerHTML=renderRunVelocity()}
+if(t==='quiet'){h.textContent='😴 Quiet Periods';b.innerHTML=renderQuietPeriods()}
 if(t==='releases'){h.textContent='📦 Release Tracker';b.innerHTML=renderReleaseTracker()}
 if(t==='dora'){h.textContent='🏆 DORA Scorecard';b.innerHTML=renderDoraScorecard()}
 if(t==='trigger'){h.textContent='🎯 Trigger Analysis';b.innerHTML=renderTriggerAnalysis()}
@@ -1844,6 +1867,180 @@ function copyCurl(url){
 }
 
 
+
+
+
+// ═══ Flaky Run Detector ═══
+function renderFlakyDetector(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var bySha={};
+  runs.forEach(function(r){
+    var sha=r.headSha||'';
+    if(!sha)return;
+    if(!bySha[sha])bySha[sha]={runs:[],name:r.name||'',conclusions:{}};
+    bySha[sha].runs.push(r);
+    var c=r.conclusion||'unknown';
+    bySha[sha].conclusions[c]=(bySha[sha].conclusions[c]||0)+1;
+  });
+  var flaky=[];var stable=[];
+  Object.keys(bySha).forEach(function(sha){
+    var d=bySha[sha];
+    if(d.runs.length<2)return;
+    var keys=Object.keys(d.conclusions);
+    if(keys.length>1){
+      flaky.push({sha:sha,name:d.name,conclusions:d.conclusions,total:d.runs.length,runs:d.runs});
+    }else{
+      stable.push({sha:sha,name:d.name,conclusion:keys[0],total:d.runs.length});
+    }
+  });
+  flaky.sort(function(a,b){return b.total-a.total});
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(flaky.length>0?'warn':'ok')+'">'+flaky.length+'</div><div class="metric-mini-lbl">Flaky SHAs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val ok">'+stable.length+'</div><div class="metric-mini-lbl">Stable SHAs</div></div>';
+  html+='</div>';
+  if(flaky.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No flaky runs detected! ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Same SHA with different conclusions:</div>';
+    flaky.forEach(function(f){
+      var shaShort=f.sha.substring(0,7);
+      var conclParts=Object.keys(f.conclusions).map(function(c){
+        var col=c==='success'?'var(--gn)':c==='failure'?'var(--rd)':'var(--yl)';
+        return '<span style="color:'+col+'">'+c+':'+f.conclusions[c]+'</span>';
+      });
+      html+='<div class="flaky-row"><span class="flaky-sha">'+shaShort+'</span><span class="flaky-wf">'+f.name+'</span><span class="flaky-badge flaky">FLAKY</span><span>'+f.total+'</span></div>';
+      html+='<div style="font-size:8px;color:var(--t3);padding:0 0 4px 64px">'+conclParts.join(' · ')+'</div>';
+    });
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ Workflow Network Graph ═══
+function renderNetworkGraph(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var edges={};
+  runs.forEach(function(r){
+    var ev=r.event||'unknown';
+    var wf=r.name||'unknown';
+    var key=ev+'→'+wf;
+    if(!edges[key])edges[key]={count:0,success:0,fail:0};
+    edges[key].count++;
+    if(r.conclusion==='success')edges[key].success++;
+    if(r.conclusion==='failure')edges[key].fail++;
+  });
+  var triggers={};
+  var targets={};
+  Object.keys(edges).forEach(function(key){
+    var parts=key.split('→');
+    var trig=parts[0];var tgt=parts[1];
+    if(!triggers[trig])triggers[trig]=0;
+    triggers[trig]++;
+    if(!targets[tgt])targets[tgt]=0;
+    targets[tgt]++;
+  });
+  var icons={'push':'📤','schedule':'⏰','workflow_dispatch':'👤','workflow_run':'🔄','repository_dispatch':'📡','pull_request':'🔀','release':'🏷','unknown':'❓'};
+  var html='<div class="net-graph">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Trigger → Workflow</div>';
+  var sortedEdges=Object.keys(edges).sort(function(a,b){return edges[b].count-edges[a].count});
+  sortedEdges.forEach(function(key){
+    var e=edges[key];
+    var parts=key.split('→');
+    var trig=parts[0];var tgt=parts[1];
+    var pct=e.count?Math.round(e.success/e.count*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="net-edge">';
+    html+='<span class="net-node trigger">'+(icons[trig]||'❓')+' '+trig+'</span>';
+    html+='<span class="net-arrow">→</span>';
+    html+='<span class="net-node target">'+tgt+'</span>';
+    html+='<span style="font-size:9px;color:'+col+';margin-left:8px">'+e.count+' runs · '+pct+'% ok</span>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══ Run Velocity ═══
+function renderRunVelocity(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withDur=runs.filter(function(r){return r.updatedAt&&r.createdAt}).sort(function(a,b){return new Date(a.createdAt)-new Date(b.createdAt)});
+  if(!withDur.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  var durations=withDur.map(function(r){return Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000)});
+  var window3=3;var window5=5;
+  var avg3=[];var avg5=[];
+  for(var i=0;i<durations.length;i++){
+    var s3=durations.slice(Math.max(0,i-window3+1),i+1);
+    avg3.push(Math.round(s3.reduce(function(a,b){return a+b},0)/s3.length));
+    var s5=durations.slice(Math.max(0,i-window5+1),i+1);
+    avg5.push(Math.round(s5.reduce(function(a,b){return a+b},0)/s5.length));
+  }
+  var recent3=Math.round(avg3.slice(-3).reduce(function(a,b){return a+b},0)/Math.min(3,avg3.length));
+  var recent5=Math.round(avg5.slice(-5).reduce(function(a,b){return a+b},0)/Math.min(5,avg5.length));
+  var overall=Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length);
+  var trend=recent3>overall*1.15?'📈 Slowing':recent3<overall*0.85?'📉 Speeding':'➡ Stable';
+  var trendCol=recent3>overall*1.15?'var(--rd)':recent3<overall*0.85?'var(--gn)':'var(--bl)';
+  var html='<div class="velocity-chart">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+overall+'m</div><div class="metric-mini-lbl">Overall Avg</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+recent3+'m</div><div class="metric-mini-lbl">Recent 3 MA</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+recent5+'m</div><div class="metric-mini-lbl">Recent 5 MA</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+trendCol+'">'+trend+'</div><div class="metric-mini-lbl">Trend</div></div>';
+  html+='</div>';
+  var maxV=Math.max.apply(null,durations)||1;
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Duration bars + 3-run moving average:</div>';
+  html+='<div style="height:50px;margin:8px 0;overflow:hidden">';
+  durations.slice(-20).forEach(function(d,i){
+    var h=Math.max(2,d/maxV*46);
+    var ma=avg3[avg3.length-20+i]||0;
+    var maH=Math.max(2,ma/maxV*46);
+    html+='<div class="velocity-bar" style="height:'+h+'px;background:'+(d>overall*1.5?'var(--rd)':'var(--bl)')+'" title="'+d+'m"></div>';
+    html+='<div class="velocity-bar" style="height:'+maH+'px;background:var(--or);opacity:.6" title="MA:'+ma+'m"></div>';
+  });
+  html+='</div><div style="font-size:8px;color:var(--t2)">🔵 actual · 🟠 3-run MA · last 20 runs</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ Quiet Periods ═══
+function renderQuietPeriods(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  if(sorted.length<2)return'<div style="padding:10px;color:var(--t2)">Need at least 2 runs</div>';
+  var gaps=[];
+  for(var i=1;i<sorted.length;i++){
+    var t1=new Date(sorted[i-1].createdAt||0).getTime();
+    var t2=new Date(sorted[i].createdAt||0).getTime();
+    var gapMin=Math.round((t2-t1)/60000);
+    if(gapMin>0){
+      gaps.push({
+        gap:gapMin,
+        before:sorted[i-1],
+        after:sorted[i],
+        gapHours:Math.round(gapMin/60*10)/10,
+        gapDays:Math.round(gapMin/1440*10)/10
+      });
+    }
+  }
+  gaps.sort(function(a,b){return b.gap-a.gap});
+  var avgGap=gaps.length?Math.round(gaps.reduce(function(a,g){return a+g.gap},0)/gaps.length):0;
+  var maxGap=gaps.length?gaps[0]:null;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val warn">'+(maxGap?maxGap.gapHours+'h':'—')+'</div><div class="metric-mini-lbl">Longest Gap</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+(avgGap<60?avgGap+'m':Math.round(avgGap/60*10)/10+'h')+'</div><div class="metric-mini-lbl">Avg Gap</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+gaps.filter(function(g){return g.gap>360}).length+'</div><div class="metric-mini-lbl">Gaps >6h</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Top 10 quiet periods (potential maintenance windows):</div>';
+  gaps.slice(0,10).forEach(function(g,idx){
+    var beforeTime=g.before.createdAt?new Date(g.before.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    var afterTime=g.after.createdAt?new Date(g.after.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    var label=g.gap>=1440?g.gapDays+'d':g.gap>=60?g.gapHours+'h':g.gap+'m';
+    html+='<div class="quiet-row"><span><span class="quiet-gap">'+label+'</span> <span class="quiet-time">('+beforeTime+' → '+afterTime+')</span></span><span class="quiet-time">'+(g.before.name||'').substring(0,12)+'</span><span class="quiet-time">'+(g.after.name||'').substring(0,12)+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
 
 
 // ═══ Release Tracker ═══
@@ -3461,6 +3658,10 @@ var CMD_ITEMS=[
   {cat:'View',label:'Refresh',act:"softRefresh().then(function(ok){if(!ok)location.reload()})"},
   {cat:'Help',label:'Keys',act:"showM('keys')"},
   {cat:'Help',label:'About',act:"showM('about')"},
+  {cat:'CI/CD',label:'Flaky Run Detector',act:"showM('flaky')"},
+  {cat:'CI/CD',label:'Workflow Network Graph',act:"showM('netgraph')"},
+  {cat:'CI/CD',label:'Run Velocity',act:"showM('velocity')"},
+  {cat:'CI/CD',label:'Quiet Periods',act:"showM('quiet')"},
   {cat:'CI/CD',label:'Release Tracker',act:"showM('releases')"},
   {cat:'CI/CD',label:'DORA Scorecard',act:"showM('dora')"},
   {cat:'CI/CD',label:'Trigger Analysis',act:"showM('trigger')"},
