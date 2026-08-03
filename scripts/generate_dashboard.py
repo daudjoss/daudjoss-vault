@@ -643,9 +643,9 @@ body{background:
   background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg2)}
 .mo{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .ft{opacity:.85}
-.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;max-width:100%;overflow-x:auto}
+.heatmap{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;max-width:100%;overflow-x:auto;padding:4px}
 
-.hm-cell.l1{background:rgba(63,185,80,.25)}.hm-cell.l2{background:rgba(63,185,80,.5)}
+.hm-cell{width:14px;height:14px;border-radius:3px;background:var(--bg3);min-width:14px;min-height:14px}.hm-cell.l1{background:rgba(63,185,80,.25)}.hm-cell.l2{background:rgba(63,185,80,.5)}
 .hm-cell.l3{background:rgba(63,185,80,.75)}.hm-cell.l4{background:rgba(63,185,80,1)}
 .spark{display:inline-block;vertical-align:middle;margin-left:6px}
 .alert-chip{padding:4px 10px;border-radius:8px;background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.4);color:#f85149;font-size:11px;animation:pulse 2s infinite}
@@ -787,14 +787,14 @@ body{background:
 
 .heatmap-wrap{padding:10px;overflow-x:auto}
 .heatmap-grid{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:2px;max-width:100%}
-.heatmap-cell{width:10px;height:10px;border-radius:2px;background:var(--bg3)}
+.heatmap-cell{width:14px;height:14px;border-radius:2px;background:var(--bg3)}
 .heatmap-cell.l1{background:rgba(63,185,80,.25)}
 .heatmap-cell.l2{background:rgba(63,185,80,.5)}
 .heatmap-cell.l3{background:rgba(63,185,80,.75)}
 .heatmap-cell.l4{background:var(--gn)}
 .heatmap-cell.lf{background:var(--rd);opacity:.7}
 .heatmap-legend{display:flex;gap:4px;align-items:center;font-size:10px;color:var(--t2);margin-top:8px;justify-content:center}
-.heatmap-legend .heatmap-cell{width:10px;height:10px}
+.heatmap-legend .heatmap-cell{width:14px;height:14px}
 .heatmap-months{display:flex;gap:2px;font-size:8px;color:var(--t2);margin-bottom:4px}
 .achv-wrap{padding:10px}
 .achv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
@@ -1046,9 +1046,9 @@ body{background:
 <div class="sec" id="sec-freqclock"><div class="sh"><div class="st">🕐 Run Frequency</div></div><div id="freqClockWrap"></div></div>
 
 <div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div></div>
-<div class="sec" id="sec-heatmap"><div class="sh"><div class="st">🔥 Heatmap (30 hari)</div><span style="font-size:9px;color:var(--t2)">Intensitas rekaman</span></div><div id="heatmap-grid"></div><div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="hm-cell" style="width:10px;height:10px"></div><div class="hm-cell l1" style="width:10px;height:10px"></div><div class="hm-cell l2" style="width:10px;height:10px"></div><div class="hm-cell l3" style="width:10px;height:10px"></div><div class="hm-cell l4" style="width:10px;height:10px"></div><span>More</span></div></div>
+<div class="sec" id="sec-heatmap"><div class="sh"><div class="st">🔥 Heatmap (30 hari)</div><span style="font-size:9px;color:var(--t2)">Intensitas rekaman</span></div><div id="heatmap-grid"></div><div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="hm-cell" style="width:14px;height:14px"></div><div class="hm-cell l1" style="width:14px;height:14px"></div><div class="hm-cell l2" style="width:14px;height:14px"></div><div class="hm-cell l3" style="width:14px;height:14px"></div><div class="hm-cell l4" style="width:14px;height:14px"></div><span>More</span></div></div>
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
-<div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:10px;height:10px"></div><div class="c c1" style="width:10px;height:10px"></div><div class="c c2" style="width:10px;height:10px"></div><div class="c c3" style="width:10px;height:10px"></div><div class="c c4" style="width:10px;height:10px"></div><div class="c c5" style="width:10px;height:10px"></div><span>More</span></div></div>
+<div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:14px;height:14px"></div><div class="c c1" style="width:14px;height:14px"></div><div class="c c2" style="width:14px;height:14px"></div><div class="c c3" style="width:14px;height:14px"></div><div class="c c4" style="width:14px;height:14px"></div><div class="c c5" style="width:14px;height:14px"></div><span>More</span></div></div>
 <div class="sec" id="sec-week"><div class="sh"><div class="st">📅 This Week</div><span style="font-size:9px;color:var(--t2)">7 hari</span></div><div class="cd-grid">''' + cal_detail + '''</div></div>
 <div class="g2">
 <div class="sec"><div class="sh"><div class="st">📈 Daily</div></div><div class="ch"><canvas id="c1"></canvas></div></div>
