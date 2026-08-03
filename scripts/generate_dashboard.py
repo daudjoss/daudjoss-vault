@@ -972,13 +972,9 @@ function rowRun(r){
   var id=r.orv_id||r.databaseId||'';
   var s=displayStatusJs(r);
   var link='https://github.com/daudjoss/daudjoss-vault/actions/runs/'+(r.databaseId||'');
-  return '<div class="fi" data-s="'+esc(sk(r))+'" data-rid="'+esc(r.databaseId||'')+'" data-orv="'+esc(r.orv_id||'')+'">'
-    +'<span class="fi-icon">'+icoJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'</span>'
-    +'<span class="fi-time">'+agoJs(r.createdAt||'')+'</span>'
-    +'<span class="fi-id"><code title="'+esc(r.databaseId||'')+'">'+esc(id)+'</code></span>'
-    +'<span class="fi-name">'+esc(r.name||'')+'</span>'
-    +'<span class="fi-status '+clsJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'">'+esc(s)+'</span>'
-    +' <a href="'+link+'" target="_blank" style="font-size:10px">↗</a></div>';
+  var dur='';
+  if(r.createdAt&&r.updatedAt){var ms=new Date(r.updatedAt)-new Date(r.createdAt);if(ms>0){var mins=Math.round(ms/60000);var pct=Math.min(mins/120*100,100);var col=r.conclusion==='success'?'var(--gn)':(r.conclusion==='failure'?'var(--rd)':'var(--bl)');dur='<div class="dur-bar"><div class="dur-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'}}
+  return '<div class="fi" data-s="'+esc(sk(r))+'" data-rid="'+esc(r.databaseId||'')+'" data-orv="'+esc(r.orv_id||'')+'"><span class="fi-icon">'+icoJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code title="'+esc(r.databaseId||'')+'">'+esc(id)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+clsJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'">'+esc(s)+'</span> <a href="'+link+'" target="_blank" style="font-size:10px">↗</a>'+dur+'</div>';
 }
 function storageLabel(){
   var ghB=st.gh_bytes!=null?Number(st.gh_bytes):(Number(st.total_size||0)*1024*1024*1024);
