@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v9.2 — 16 new features: bingo, pet, betting, tree, pomodoro, kanban, sticky notes, cal export, data diff, story gen, 2048, snake, memory match, matrix rain, cemetery, spinning wheel."""
+"""Rusemeva Dashboard v10.0 — 16 new features: bingo, pet, betting, tree, pomodoro, kanban, sticky notes, cal export, data diff, story gen, 2048, snake, memory match, matrix rain, cemetery, spinning wheel."""
 import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -792,76 +792,76 @@ body{background:
 .skeleton-stat{width:60px;height:40px;margin:4px}
 
 
-.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;max-width:300px;margin:8px auto}
-.bingo-cell{aspect-ratio:1;border:1px solid var(--brd);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;text-align:center;padding:2px;cursor:pointer;transition:all .2s}
-.bingo-cell.marked{background:rgba(63,185,80,.3);border-color:var(--gn)}
-.bingo-cell.bingo{background:rgba(88,166,255,.4);border-color:var(--bl);animation:pulseDot 1s infinite}
-.pet-wrap{text-align:center;padding:12px}
-.pet-emoji{font-size:64px;cursor:pointer;transition:transform .3s;display:inline-block}
-.pet-emoji:hover{transform:scale(1.1)}
-.pet-status{font-size:11px;color:var(--t2);margin-top:8px;line-height:1.6}
-.pet-level{color:var(--gn);font-weight:700}
-.pet-meter{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;margin:2px auto 0;max-width:200px}
-.pet-meter-fg{height:100%;transition:width .5s ease}
-.bet-wrap{padding:10px;text-align:center}
-.bet-btn{padding:8px 16px;border-radius:8px;border:2px solid;cursor:pointer;font-size:13px;margin:4px;transition:all .2s}
-.bet-btn.ok{border-color:var(--gn);color:var(--gn)}
-.bet-btn.fail{border-color:var(--rd);color:var(--rd)}
-.bet-btn:hover{background:rgba(255,255,255,.05)}
-.bet-score{font-size:11px;color:var(--t2);margin-top:8px}
-.tree-wrap{text-align:center;padding:12px}
-.tree-emoji{font-size:48px;display:inline-block;transition:all .5s}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .tree-info{font-size:11px;color:var(--t2);margin-top:8px}
-.pomo-wrap{text-align:center;padding:12px}
-.pomo-time{font-size:48px;font-weight:700;font-family:monospace;color:var(--bl)}
-.pomo-phase{font-size:12px;color:var(--t2);margin-top:4px}
-.pomo-controls{margin-top:10px;display:flex;gap:6px;justify-content:center}
-.pomo-session{font-size:10px;color:var(--t2);margin-top:6px}
-.kanban-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
-.kanban-col{background:var(--bg3);border-radius:8px;padding:6px;min-height:120px}
-.kanban-col-title{font-size:10px;font-weight:700;text-align:center;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--brd)}
-.kanban-card{background:var(--bg2);border:1px solid var(--brd);border-radius:6px;padding:6px;margin-bottom:4px;font-size:9px;cursor:grab}
-.kanban-card:active{cursor:grabbing;opacity:.7}
-.sticky-wrap{position:relative;min-height:200px;margin:8px 0}
-.sticky-note{position:absolute;width:120px;min-height:80px;border-radius:4px;padding:6px;font-size:10px;cursor:move;box-shadow:2px 2px 6px rgba(0,0,0,.3);user-select:none}
-.sticky-note textarea{width:100%;height:50px;background:transparent;border:none;font-size:10px;resize:none;color:#333}
-.cal-export{padding:10px;text-align:center}
-.diff-wrap{padding:10px;font-size:11px;line-height:1.6}
-.diff-add{color:var(--gn)}
-.diff-del{color:var(--rd)}
-.diff-chg{color:var(--yl)}
-.story-wrap{padding:10px;font-size:12px;line-height:1.8;color:var(--t1)}
-.story-wrap b{color:var(--bl)}
-.game-wrap{text-align:center;padding:12px}
-.g2048-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:240px;margin:8px auto;background:var(--bg3);padding:4px;border-radius:8px}
-.g2048-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
-.g2048-cell.v0{background:var(--bg2)}
-.g2048-cell.v2{background:#58a6ff;color:#fff}
-.g2048-cell.v4{background:#3fb950;color:#fff}
-.g2048-cell.v8{background:#d29922;color:#fff}
-.g2048-cell.v16{background:#f0883e;color:#fff}
-.g2048-cell.v32{background:#f85149;color:#fff}
-.g2048-cell.v64{background:#bc8cff;color:#fff}
-.g2048-cell.v128{background:#f778ba;color:#fff;font-size:14px}
-.g2048-cell.v256{background:#58a6ff;color:#fff;font-size:14px}
-.g2048-cell.v512{background:#3fb950;color:#fff;font-size:14px}
-.g2048-cell.v1024{background:#d29922;color:#fff;font-size:12px}
-.g2048-cell.v2048{background:#f85149;color:#fff;font-size:12px}
-.snake-canvas{border:2px solid var(--brd);border-radius:4px;background:var(--bg3);margin:8px auto;display:block}
-.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:240px;margin:8px auto}
-.mem-card{aspect-ratio:1;border:1px solid var(--brd);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all .2s}
-.mem-card.flipped{background:var(--bg2)}
-.mem-card.matched{background:rgba(63,185,80,.2);border-color:var(--gn);cursor:default}
-.mem-card.hidden{background:var(--bg3);font-size:0}
-.mem-card.hidden::after{content:'?';font-size:20px;color:var(--t2)}
-.matrix-rain{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:.08;pointer-events:none}
-.cemetery-wrap{padding:10px}
-.grave{border:1px solid var(--brd);border-radius:8px;padding:8px;margin:6px 0;font-size:10px;line-height:1.5}
-.grave-epitaph{color:var(--t2);font-style:italic;margin-top:4px}
-.wheel-wrap{text-align:center;padding:12px}
-.wheel-canvas{margin:8px auto;display:block;cursor:pointer}
-.wheel-result{font-size:14px;font-weight:700;color:var(--bl);margin-top:8px}
-.game-score{font-size:11px;color:var(--t2);margin-top:4px}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .heatmap-wrap{padding:10px;overflow-x:auto}
 .heatmap-grid{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:2px;max-width:100%}
@@ -893,19 +893,65 @@ body{background:
 .compare-col{font-size:10px}
 .compare-col h4{font-size:11px;margin:4px 0}
 .compare-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--brd)}
-.theme-builder{padding:10px}
-.theme-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin:8px 0}
-.theme-swatch{display:flex;align-items:center;gap:4px;font-size:10px}
-.theme-swatch input[type=color]{width:24px;height:24px;border:none;border-radius:4px;cursor:pointer;background:transparent}
-.theme-preset{padding:4px 8px;border-radius:6px;border:1px solid var(--brd);cursor:pointer;font-size:10px;margin:2px;display:inline-block}
-.settings-io{padding:10px;text-align:center}
-.settings-io textarea{width:100%;height:80px;background:var(--bg3);border:1px solid var(--brd);border-radius:4px;color:var(--t1);font-size:9px;padding:4px;resize:vertical}
+
+
+
+
+
+
+
 .dash-clock{font-size:32px;font-weight:700;font-family:monospace;text-align:center;color:var(--bl);letter-spacing:2px}
 .dash-clock-date{font-size:11px;color:var(--t2);text-align:center;margin-top:4px}
-.dash-clock-tz{font-size:9px;color:var(--t3);text-align:center;margin-top:2px}
+
+.metric-card{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px;margin:6px 0}
+.metric-label{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+.metric-value{font-size:24px;font-weight:700;margin:4px 0}
+.metric-value.ok{color:var(--gn)}
+.metric-value.warn{color:var(--yl)}
+.metric-value.bad{color:var(--rd)}
+.metric-trend{font-size:10px;color:var(--t3);margin-top:2px}
+.metric-trend.up{color:var(--gn)}
+.metric-trend.down{color:var(--rd)}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:8px 0}
+.metric-mini{background:var(--bg3);border-radius:6px;padding:8px;text-align:center}
+.metric-mini-val{font-size:18px;font-weight:700}
+.metric-mini-lbl{font-size:9px;color:var(--t2);margin-top:2px}
+.dora-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0}
+.dora-card{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px;text-align:center}
+.dora-val{font-size:20px;font-weight:700}
+.dora-lbl{font-size:9px;color:var(--t2);margin-top:4px}
+.pattern-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:8px 0}
+.pattern-cell{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px}
+.pattern-cell.empty{background:var(--bg3)}
+.pattern-cell.s1{background:rgba(63,185,80,.2)}
+.pattern-cell.s2{background:rgba(63,185,80,.4)}
+.pattern-cell.s3{background:rgba(63,185,80,.6)}
+.pattern-cell.s4{background:rgba(63,185,80,.9)}
+.pattern-cell.fail{background:rgba(248,81,73,.5)}
+.pattern-label{font-size:8px;color:var(--t2);text-align:center;padding:2px}
+.hour-bar{display:flex;align-items:end;gap:1px;height:60px;margin:8px 0}
+.hour-col{flex:1;background:var(--bl);border-radius:2px 2px 0 0;min-height:2px;position:relative}
+.hour-col.fail{background:var(--rd)}
+.duration-trend{margin:8px 0}
+.branch-bar{height:16px;border-radius:3px;margin:2px 0;display:flex;align-items:center;padding:0 4px;font-size:8px;color:#fff}
+.minutes-bar{height:12px;border-radius:3px;background:var(--gn);transition:width .5s}
+.minutes-bar.warn{background:var(--yl)}
+.minutes-bar.bad{background:var(--rd)}
+.commit-row{display:grid;grid-template-columns:60px 1fr 40px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.commit-sha{font-family:monospace;color:var(--bl);cursor:pointer}
+.commit-result{font-size:9px}
+.timeline-track{position:relative;height:30px;background:var(--bg3);border-radius:6px;margin:4px 0;overflow:hidden}
+.timeline-dot{position:absolute;width:8px;height:8px;border-radius:50%;top:11px;transform:translateX(-50%)}
+.timeline-dot.ok{background:var(--gn)}
+.timeline-dot.fail{background:var(--rd)}
+.retry-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--brd);font-size:10px}
+.concurrency-bar{height:20px;background:var(--bl);border-radius:3px;margin:1px 0;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff}
+.workflow-row{display:grid;grid-template-columns:1fr 40px 40px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px}
+
+
 .md-export{padding:10px;text-align:center}
-.pwa-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--bl);border-radius:12px;padding:12px 20px;display:none;z-index:1000;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.4)}
-.pwa-banner.show{display:flex;gap:10px;align-items:center}
+
+
 
 .drag-handle{cursor:move;user-select:none;opacity:.3;font-size:12px}
 .drag-handle:hover{opacity:.7}
@@ -1159,7 +1205,7 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px"><span class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></span> v9.0 HM matrix + insights + stopwatch + quingo + Heatmap + Achievements + Charts + Gantt + Compare + PWA + Theme Builder · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px"><span class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></span> v9.0 HM matrix + insights + stopwatch + quingo + CI/CD Metrics + DORA + Run Analysis + Actions Minutes + Commit Impact · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cheat-overlay" id="cheatOverlay" onclick="if(event.target===this)closeCheat()">
@@ -1179,7 +1225,7 @@ body{background:
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-            "build": "v9.2-max",
+            "build": "v10.0-max",
         "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
@@ -1325,12 +1371,12 @@ if(t==='customize'){
     html+='<div class="opt"><div class="opt-label">'+k[1]+'</div><button class="opt-btn" data-k="'+k[0]+'" data-sel="'+k[2]+'" onclick="toggleCust(this)">'+(on?'ON':'OFF')+'</button></div>';
   });
   var soundOn=localStorage.getItem('dash_sound')==='1';var compactOn=document.body.classList.contains('compact');
-  html+='<div class="opt"><div class="opt-label">Accent color</div><div>'+Object.keys(ACCENTS).map(function(k){return '<span class="accent-swatch'+(localStorage.getItem('dash_accent')===k?' sel':'')+'" data-accent="'+k+'" style="background:'+ACCENTS[k]+'" ></span>'}).join('')+'</div></div>';html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Alert threshold (fails)</div><input class="threshold-input" id="thresholdInput" type="number" min="1" max="20" value="'+getAlertThreshold()+'" onchange="setThreshold(this.value)"></div>';html+='<div class="opt"><div class="opt-label">Matrix Rain</div><button class="opt-btn" onclick="toggleMatrixRain()">'+(localStorage.getItem('dash_matrix')==='1'?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">High contrast</div><button class="opt-btn" onclick="toggleHC()">'+(document.body.classList.contains('hc-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Font size: '+(parseInt(localStorage.getItem('dash_fontsize')||'14',10))+'px</div><div class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></div></div>';html+='<div class="opt"><div class="opt-label">Glass morphism</div><button class="opt-btn" onclick="toggleGlass()">'+(document.body.classList.contains('glass-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Sound alert on fail</div><button class="opt-btn" onclick="toggleSound()">'+(soundOn?'ON':'OFF')+'</button></div>';
+  html+='<div class="opt"><div class="opt-label">Accent color</div><div>'+Object.keys(ACCENTS).map(function(k){return '<span class="accent-swatch'+(localStorage.getItem('dash_accent')===k?' sel':'')+'" data-accent="'+k+'" style="background:'+ACCENTS[k]+'" ></span>'}).join('')+'</div></div>';html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Alert threshold (fails)</div><input class="threshold-input" id="thresholdInput" type="number" min="1" max="20" value="'+getAlertThreshold()+'" onchange="setThreshold(this.value)"></div>';;html+='<div class="opt"><div class="opt-label">High contrast</div><button class="opt-btn" onclick="toggleHC()">'+(document.body.classList.contains('hc-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Font size: '+(parseInt(localStorage.getItem('dash_fontsize')||'14',10))+'px</div><div class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></div></div>';html+='<div class="opt"><div class="opt-label">Glass morphism</div><button class="opt-btn" onclick="toggleGlass()">'+(document.body.classList.contains('glass-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Sound alert on fail</div><button class="opt-btn" onclick="toggleSound()">'+(soundOn?'ON':'OFF')+'</button></div>';
   html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung. Theme: tekan D atau 🌓 di hero.</div>';
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v9.2</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.1</b>:<br>• Run Bingo (5x5 event grid)<br>• Dashboard Pet (Tamagotchi)<br>• Run Betting (predict next)<br>• Progress Tree<br>• Pomodoro Timer (25/5)<br>• Kanban Board (drag runs)<br>• Sticky Notes (draggable)<br>• Calendar Export (.ics)<br>• Data Diff (refresh changes)<br>• Story Generator<br>• 2048 Game<br>• Snake Game<br>• Memory Match<br>• Matrix Rain<br>• Run Cemetery<br>• Spinning Wheel<br><br><b>v9.0</b>:<br>• Hour x Day heatmap matrix (7x24 grid)<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Hour x Day heatmap matrix (7x24 grid)<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1403,31 +1449,46 @@ if(t==='player'){
 }
 if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
 if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='depfreq'){h.textContent='🚀 Deploy Frequency';b.innerHTML=renderDeployFrequency()}
+if(t==='mttr'){h.textContent='🔧 MTTR';b.innerHTML=renderMTTR()}
+if(t==='cfr'){h.textContent='📉 Change Failure Rate';b.innerHTML=renderCFR()}
+if(t==='leadtime'){h.textContent='⏱️ Lead Time';b.innerHTML=renderLeadTime()}
+if(t==='failpattern'){h.textContent='🔍 Failure Patterns';b.innerHTML=renderFailurePattern()}
+if(t==='durtrend'){h.textContent='📈 Duration Trends';b.innerHTML=renderDurationTrend()}
+if(t==='successday'){h.textContent='📊 Success by Day';b.innerHTML=renderSuccessByDay()}
+if(t==='successhour'){h.textContent='🕐 Success by Hour';b.innerHTML=renderSuccessByHour()}
+if(t==='branchhealth'){h.textContent='🌿 Branch Health';b.innerHTML=renderBranchHealth()}
+if(t==='minutes'){h.textContent='⏰ Actions Minutes';b.innerHTML=renderActionsMinutes()}
+if(t==='workflowcomp'){h.textContent='⚙️ Workflow Comparison';b.innerHTML=renderWorkflowComparison()}
+if(t==='concurrency'){h.textContent='🔄 Concurrency';b.innerHTML=renderConcurrency()}
+if(t==='commitimpact'){h.textContent='📦 Commit Impact';b.innerHTML=renderCommitImpact()}
+if(t==='deploymt'){h.textContent='📅 Deploy Timeline';b.innerHTML=renderDeployTimeline()}
+if(t==='retry'){h.textContent='🔁 Retry Tracker';b.innerHTML=renderRetryTracker()}
 if(t==='heatmap'){h.textContent='🔥 Heatmap';b.innerHTML=renderHeatmap()}
 if(t==='achievements'){h.textContent='🏆 Achievements';b.innerHTML=renderAchievements()}
 if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML=renderAnalytics()}
 if(t==='gantt'){h.textContent='📅 Gantt Timeline';b.innerHTML=renderGantt()}
 if(t==='compare2'){h.textContent='⚖️ Run Comparison';b.innerHTML=renderCompare()}
 if(t==='mdexport'){h.textContent='📝 Markdown Report';b.innerHTML='<div class="md-export"><button class="btn" onclick="exportMarkdown()">📝 Export .md</button></div>'}
-if(t==='themebuilder'){h.textContent='🎨 Theme Builder';b.innerHTML=renderThemeBuilder()}
-if(t==='settingsio'){h.textContent='⚙️ Settings I/O';b.innerHTML=renderSettingsIO()}
+
+
 if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
-if(t==='ascii'){h.textContent='ASCII Art';b.innerHTML=renderAsciiArt()}
-if(t==='bingo'){h.textContent='🎲 Run Bingo';b.innerHTML=renderBingo()}
-if(t==='pet'){h.textContent='🐾 Dashboard Pet';b.innerHTML=renderPet()}
-if(t==='betting'){h.textContent='🎰 Run Betting';b.innerHTML=renderBet()}
-if(t==='tree'){h.textContent='🌳 Progress Tree';b.innerHTML=renderTree()}
-if(t==='pomodoro'){h.textContent='⏱️ Pomodoro';b.innerHTML=renderPomo()}
-if(t==='kanban'){h.textContent='📋 Kanban Board';b.innerHTML=renderKanban()}
-if(t==='sticky'){h.textContent='📝 Sticky Notes';b.innerHTML=renderStickyNotes()}
-if(t==='calendar'){h.textContent='📅 Calendar Export';b.innerHTML='<div class="cal-export"><button class="btn" onclick="exportICS()">📅 Export .ics</button><div style="font-size:10px;color:var(--t2);margin-top:8px">Download calendar file untuk import ke Google Calendar / Outlook</div></div>'}
-if(t==='datadiff'){h.textContent='📊 Data Diff';b.innerHTML=renderDataDiff()}
-if(t==='story'){h.textContent='📖 Story';b.innerHTML=renderStory()}
-if(t==='game2048'){h.textContent='🎮 2048';b.innerHTML=render2048()}
-if(t==='snake'){h.textContent='🐍 Snake';b.innerHTML=renderSnake()}
-if(t==='memory'){h.textContent='🃏 Memory Match';b.innerHTML=renderMemory()}
-if(t==='cemetery'){h.textContent='⚰️ Run Cemetery';b.innerHTML=renderCemetery()}
-if(t==='wheel'){h.textContent='🎡 Spinning Wheel';b.innerHTML=renderWheel()}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'Elshinta FM Jakarta',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2 FM',u:'https://a8.siar.us/listen/campursari/stream'},{n:'Suara Soneta',u:'https://a2.siar.us//listen//suarasoneta//radio.mp3'},{n:'Beat Radio Dangdut',u:'https://stream.beatradioid.com:8000//dangdut'},{n:'Dengerin Musik Indonesia',u:'https://stream.denger.in/'},{n:'Sunda Radio',u:'https://sundaradio.com/live/sundaradio'},{n:'Classy NetRadio',u:'https://streaming.classynetradio.com:8000/classySD'},{n:'POP FM Semarang',u:'https://i.klikhost.com:9612/stream.aac'},{n:'Style 94.6 FM Tasikmalaya',u:'https://stream.stylefmtasik.com/listen/stylefmtasik/stream'},{n:'Suara Salira',u:'https://live.suarasalira.com/listen/suarasalira/stream'},{n:'Mettaswara Dangdut',u:'https://mettaswara.com:8700/d4d'},{n:'Alternatif Radio Jakarta',u:'https://void.idserverhost.com/8016/stream'},{n:'Volcano Radio',u:'https://volcano.out.airtime.pro/volcano_a'},{n:'The Beat Radio Bali',u:'https://c1.siar.us/radio/8030/stream'},{n:'Tebet Radio Jakarta',u:'https://stream-ssl.arenastreaming.com:8066/stream'},{n:'Spirit Online',u:'https://radio.spirittoc.com:8060/spirit_online'},{n:'Radio Wisata FM',u:'https://c2.siar.us:9889/live'},{n:'Radio VOSS',u:'https://live.voss.my.id/listen/voss/voss'},{n:'Hitz 91.2 FM Belitung',u:'https://play.bilitonesefm.com/listen/radiohitzfm/stream'},{n:'Loker Musik Indonesia',u:'https://stream.lokermusik.com/listen/lokermusik/lokermusik'},{n:'Radio Kita Tasikmalaya',u:'https://stream.radiokita.my.id/listen/radiokita/radiokita'},{n:'Bellasalam 87.6 FM Tasikmalaya',u:'https://listen.bellasalamfm.com/listen/radiobellasalam/live'},{n:'Radio Sehati',u:'https://c4.siar.us:8092/autodj'},{n:'106.1 Geronimo FM',u:'https://ig.idstreamer.com:8090//live'},{n:'Bimasakti FM Kebumen',u:'https://i.klikhost.com:9622/stream'},{n:'Classy Worship',u:'https://streaming.classynetradio.com/listen/classyworship/worshipLQ'},{n:'Ada Radio Online',u:'https://adaradio.kradionews.com/listen/adaradio/stream'},{n:'ELPAS 88.6 FM Bogor',u:'https://live.elpasradio.com/listen/elpasradio/stream'},{n:'Bens Radio',u:'https://streaming.bensradio.com:8522/stream'},{n:'Damu Lumajang',u:'https://stream.radiodakwahmustofa.com:8724/damu'},{n:'Delta FM Bandung',u:'https://stream-pd-bdg.dimasalfaridzi.my.id/delta'},{n:'Firza MPC Radio',u:'https://mpc1.mediacp.eu/stream/firzaradio'},{n:'Mettaswara Indo 2000',u:'https://mettaswara.com:8700//indo00'},{n:'Mettaswara SoftRock',u:'https://mettaswara.com:8700/slowrock'},{n:'Radio CMN Hits',u:'https://stream.coolkas.com/listen/radiocmn/radiocmn'},{n:'KLCBS Fusion',u:'https://streaming.klcbsofficial.com/listen/fusion/klcbs-fusion'},{n:'KLCBS New Age',u:'https://streaming.klcbsofficial.com/listen/newage/klcbs-newage'},{n:'Yasika FM Jogja',u:'https://i.klikhost.com:9610/stream'},{n:'Fajri FM',u:'https://ars.mitradio.com:8000/radio.mp3'},{n:'Radio Kasih',u:'https://onlineradiobox.com/json/id/kasih/play'},{n:'Radio Klik FM Surabaya',u:'https://c1.alhastream.com:3210/radio'},{n:'Telkom Radio',u:'https://sukmben.radiogentara.com/radio/8140/stream'},{n:'Utaindo Radio',u:'https://streaming.classynetradio.com/listen/utaindo_radio/utaindo-aac'},{n:'ARB FM Jakarta',u:'https://void.idserverhost.com/8018/stream'},{n:'Galuh Media FM Cianjur',u:'https://stream-sg1.galuhmedia.co.id/listen/galuhmedia/stream'},{n:'KR-Radio 107.2 FM Jogja',u:'https://s1.gntr.net/listen/kr_radio/radio'},{n:'Radio Bravo 96.1 FM Kebumen',u:'https://stream.swadesifm.com/radio/8090/radio.mp3'},{n:'B 104.6 FM',u:'https://play.bilitonesefm.com/listen/radiobfm/stream'},{n:'Free FM Jakarta',u:'https://rocafmadrid.radioca.st/stream'},{n:'Galau Jikan FM',u:'https://radio.gjfm.my.id/listen/gjfm/siaran'},{n:'GCD 98.6 FM Yogyakarta',u:'https://studio1.indostreamers.com:8014/stream/1/'},{n:'Gemini 101 FM',u:'https://relay.gemini101fm.com/listen/gemini_fm/radio.mp3'},{n:'Istara FM Surabaya',u:'https://live.radioistara.com/listen/radioistara/radioistara'},{n:'R-Lisa FM',u:'https://a4.siar.us/radio/8360/radio.mp3'},{n:'Radiks FM Semarang',u:'https://i.klikhost.com:9620/;'},{n:'Radio Airmen FM 107.9',u:'https://void.idserverhost.com:8024/stream'},{n:'Mettaswara Indonesia Gold',u:'https://mettaswara.com:8700//disco'},{n:'Mettaswara Java',u:'https://mettaswara.com:8700//java'},{n:'MSTRI 104.2 FM',u:'https://c2.siar.us:8120/live'},{n:'Insania FM Indonesia',u:'https://stream-sg1.galuhmedia.co.id/listen/insaniamataram/876mataram'},{n:'Bharata Radio',u:'https://c1.siar.us:8800/live'},{n:'Braya Radio',u:'https://live.brayaradio.com/listen/brayaradio/stream'},{n:'Comfy Radio',u:'https://station.comfyradio.id/listen/comfyradio/radio.mp3'},{n:'KLCBS',u:'https://streaming.klcbs.id/listen/klcbs/klcbsfm-hd'},{n:'KLCBS Tropical',u:'https://streaming.klcbsofficial.com/listen/tropical/klcbs-tropical'},{n:'PAS FM Jakarta',u:'https://i.klikhost.com/8266/stream'},{n:'Radio Rumah Oma',u:'https://radiorumahoma.com:30443/;'},{n:'PTPN FM Solo',u:'https://ssg.streamingmurah.com:8040/stream'},{n:'Radio Andika',u:'https://r5.siar.us:1057/andikafm'},{n:'Radio Elshinta Bandung',u:'https://stream-ssl.arenastreaming.com:8005/bandung'},{n:'Radio Imelda FM',u:'https://server.radioimeldafm.co.id/listen/imeldafm/imeldafm'}];b.innerHTML='<audio id="radioPlayer" controls style="width:100%;margin-bottom:8px"></audio><div style="font-size:11px;color:var(--t2);margin-bottom:8px">Pilih stasiun radio:</div><div id="radioList"></div><div id="radioNowPlaying" style="font-size:10px;color:var(--bl);margin-top:8px"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'">📻 '+s.n+'</button>'});rl.innerHTML=html2}}
 }
 function toggleCust(btn){
@@ -1495,21 +1556,13 @@ function removeComment(i){var comments=JSON.parse(localStorage.getItem('rusemeva
 function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');var html='';if(!comments.length){html='<div style="color:var(--t2);font-size:11px;padding:8px 0">No comments yet.</div>'}comments.forEach(function(c,i){html+='<div style="padding:6px 4px;border-bottom:1px solid var(--brd);font-size:11px"><div style="display:flex;justify-content:space-between;align-items:start"><span style="flex:1">'+esc(c.text)+'</span><button class="btn" style="font-size:9px;padding:2px 6px;flex-shrink:0" onclick="removeComment('+i+')">×</button></div><div style="font-size:9px;color:var(--t2);margin-top:2px">'+esc(c.time)+'</div></div>'});var cl=document.getElementById('commentList');if(cl)cl.innerHTML=html;var cc=document.getElementById('commentCount');if(cc)cc.textContent=comments.length+' comment(s)'}
 
 
-document.addEventListener('click',function(e){var tp=e.target.closest('[data-preset]');if(tp){applyPreset(tp.getAttribute('data-preset'));return}var tk=e.target.closest('[data-tk]');if(tk&&e.type==='change'){setThemeColor(tk.getAttribute('data-tk'));return}var bc=e.target.closest('[data-bingo]');if(bc){var bl=bc.getAttribute('data-bingo');if(_bingoState[bl])delete _bingoState[bl];else _bingoState[bl]=true;localStorage.setItem('dash_bingo',JSON.stringify(_bingoState));var grid=bc.closest('.bingo-grid');if(grid){var bm=renderBingo().match(/<div class="bingo-grid">([\s\S]*?)<\/div>/);if(bm)grid.innerHTML=bm[1]}return}var bt=e.target.closest('[data-bet]');if(bt){placeBet(bt.getAttribute('data-bet'));return}var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}var row=e.target.closest('#rt tbody tr');if(row&&!e.target.closest('a')){var rid=row.getAttribute('data-rid');if(rid&&e.shiftKey)saveRunNote(rid)}var rb=e.target.closest('.radio-btn');if(rb){playRadio(rb.getAttribute('data-rurl'),rb.getAttribute('data-rname'),rb);return}var br=e.target.closest('.batch-sel-off');if(br&&e.ctrlKey){toggleBatchSel(br.getAttribute('data-rid')||'');return}var as=e.target.closest('.accent-swatch');if(as){setAccent(as.getAttribute('data-accent'));return}var ds=e.target.closest('.donut-slice');if(ds){var lbl=ds.getAttribute('data-label');if(lbl)donutFilter(lbl);return}var cu=e.target.closest('.curl-copy');if(cu){var box=cu.closest('.curl-box');if(box){var txt=box.textContent.replace('📋','').trim();var url=txt.split(' ')[1]||txt;copyCurl(url)}}});
-document.addEventListener('change',function(e){var tk=e.target.closest('[data-tk]');if(tk){setThemeColor(tk.getAttribute('data-tk'));return}var cmp=e.target.closest('[data-cmp]');if(cmp){renderCompareDetail();return}});
+document.addEventListener('click',function(e){var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}var row=e.target.closest('#rt tbody tr');if(row&&!e.target.closest('a')){var rid=row.getAttribute('data-rid');if(rid&&e.shiftKey)saveRunNote(rid)}var rb=e.target.closest('.radio-btn');if(rb){playRadio(rb.getAttribute('data-rurl'),rb.getAttribute('data-rname'),rb);return}var br=e.target.closest('.batch-sel-off');if(br&&e.ctrlKey){toggleBatchSel(br.getAttribute('data-rid')||'');return}var as=e.target.closest('.accent-swatch');if(as){setAccent(as.getAttribute('data-accent'));return}var ds=e.target.closest('.donut-slice');if(ds){var lbl=ds.getAttribute('data-label');if(lbl)donutFilter(lbl);return}var cu=e.target.closest('.curl-copy');if(cu){var box=cu.closest('.curl-box');if(box){var txt=box.textContent.replace('📋','').trim();var url=txt.split(' ')[1]||txt;copyCurl(url)}}});
+document.addEventListener('change',function(e){});
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd();return}
 if(e.key==='?'||e.key==='/'){e.preventDefault();openCheat();return}
 if(e.key==='t'||e.key==='T'){e.preventDefault();toggleTerminal();return}
 if(e.key==='a'||e.key==='A'){e.preventDefault();toggleQuickPanel();return}
-var _gameActive=document.getElementById('mb')&&document.getElementById('mb').style.display!=='none'&&_g2048State;
-if(_gameActive){
-if(e.key==='ArrowLeft'){e.preventDefault();move2048('left')}
-if(e.key==='ArrowRight'){e.preventDefault();move2048('right')}
-if(e.key==='ArrowUp'){e.preventDefault();move2048('up')}
-if(e.key==='ArrowDown'){e.preventDefault();move2048('down')}
-}
 if(e.key==='h'||e.key==='H'){e.preventDefault();toggleHC();return}
-if(e.key==='m'||e.key==='M'){e.preventDefault();toggleMatrixRain();return}
 if(e.key==='m'||e.key==='M'){e.preventDefault();expMD();return}
 if(e.key==='j'){e.preventDefault();kbNav(1);return}
 if(e.key==='k'){e.preventDefault();kbNav(-1);return}
@@ -1526,7 +1579,7 @@ function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(fu
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();applyMatrix();loadSnapshot();initPWA();printAsciiArt();applyCustomTheme();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();renderHmMatrix();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();captureDataSnapshot();renderHmMatrix();startStopwatch();ariaAnnounce('Dashboard updated');checkBet((D.runs||[])[0]||{});checkAchievements()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();renderHmMatrix();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();renderHmMatrix();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -1797,6 +1850,422 @@ function copyCurl(url){
 
 
 
+
+// ═══ v10.0 CI/CD Metrics ═══
+function renderDeployFrequency(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var success=runs.filter(function(r){return r.conclusion==='success'});
+  var days={};
+  success.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    days[key]=(days[key]||0)+1;
+  });
+  var dayCount=Object.keys(days).length||1;
+  var freq=(success.length/dayCount).toFixed(1);
+  var totalDays=Math.max(1,Math.ceil((Date.now()-(runs[runs.length-1]||{}).createdAt||Date.now())/86400000));
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val ok">'+freq+'</div><div class="metric-mini-lbl">Deploys/Day</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+success.length+'</div><div class="metric-mini-lbl">Total Deploys</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+dayCount+'</div><div class="metric-mini-lbl">Active Days</div></div>';
+  html+='</div>';
+  var weekData=[];
+  var now=new Date();
+  for(var i=6;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    var count=days[key]||0;
+    weekData.push(count);
+  }
+  var maxW=Math.max.apply(null,weekData)||1;
+  html+='<div class="hour-bar">';
+  weekData.forEach(function(c){
+    var h=Math.max(2,(c/maxW*56));
+    html+='<div class="hour-col" style="height:'+h+'px" title="'+c+' deploys"></div>';
+  });
+  html+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>7d ago</span><span>Today</span></div>';
+  html+='</div>';
+  return html;
+}
+
+function renderMTTR(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var recoveries=[];
+  for(var i=0;i<fails.length;i++){
+    var failTime=new Date(fails[i].createdAt||0).getTime();
+    for(var j=0;j<runs.length;j++){
+      if(runs[j].conclusion==='success'){
+        var succTime=new Date(runs[j].createdAt||0).getTime();
+        if(succTime>failTime){
+          recoveries.push(Math.round((succTime-failTime)/60000));
+          break;
+        }
+      }
+    }
+  }
+  var avgMTTR=recoveries.length?Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length):0;
+  var maxMTTR=recoveries.length?Math.max.apply(null,recoveries):0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(avgMTTR<30?'ok':avgMTTR<60?'warn':'bad')+'">'+avgMTTR+'m</div><div class="metric-mini-lbl">Avg MTTR</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+maxMTTR+'m</div><div class="metric-mini-lbl">Max MTTR</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+recoveries.length+'</div><div class="metric-mini-lbl">Recoveries</div></div>';
+  html+='</div>';
+  if(recoveries.length>0){
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Recent recovery times:</div>';
+    recoveries.slice(0,5).forEach(function(r,i){
+      html+='<div class="retry-row"><span>Recovery #'+(i+1)+'</span><span style="color:'+(r<30?'var(--gn)':r<60?'var(--yl)':'var(--rd)')+'">'+r+' min</span></div>';
+    });
+  }else{
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No failures detected! 🎉</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function renderCFR(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var total=st.total||runs.length||1;
+  var failed=st.failed||0;
+  var cfr=Math.round(failed/total*100);
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(cfr<10?'ok':cfr<25?'warn':'bad')+'">'+cfr+'%</div><div class="metric-mini-lbl">Change Fail Rate</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+failed+'</div><div class="metric-mini-lbl">Failed Runs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+total+'</div><div class="metric-mini-lbl">Total Runs</div></div>';
+  html+='</div>';
+  var weeks={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var week=Math.floor(d.getDate()/7);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-W'+week;
+    if(!weeks[key])weeks[key]={total:0,fail:0};
+    weeks[key].total++;
+    if(r.conclusion==='failure')weeks[key].fail++;
+  });
+  var wKeys=Object.keys(weeks).slice(-4);
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Weekly failure rate:</div>';
+  wKeys.forEach(function(k){
+    var w=weeks[k];
+    var pct=w.total?Math.round(w.fail/w.total*100):0;
+    html+='<div style="margin:4px 0"><div style="font-size:10px;display:flex;justify-content:space-between"><span>'+k+'</span><span style="color:'+(pct<25?'var(--gn)':'var(--rd)')+'">'+pct+'% ('+w.fail+'/'+w.total+')</span></div><div style="height:6px;background:var(--bg3);border-radius:3px;margin-top:2px"><div style="height:100%;width:'+pct+'%;background:'+(pct<25?'var(--gn)':'var(--rd)')+';border-radius:3px"></div></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderLeadTime(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var durations=runs.map(function(r){return r.updatedAt&&r.createdAt?Math.round((r.updatedAt-r.createdAt)/60000):0}).filter(function(d){return d>0});
+  var avg=durations.length?Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length):0;
+  var min=durations.length?Math.min.apply(null,durations):0;
+  var max=durations.length?Math.max.apply(null,durations):0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(avg<10?'ok':avg<30?'warn':'bad')+'">'+avg+'m</div><div class="metric-mini-lbl">Avg Lead Time</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+min+'m</div><div class="metric-mini-lbl">Fastest</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+max+'m</div><div class="metric-mini-lbl">Slowest</div></div>';
+  html+='</div></div>';
+  return html;
+}
+
+function renderFailurePattern(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var byHour={};
+  var byDay={};
+  fails.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var h=d.getHours();
+    byHour[h]=(byHour[h]||0)+1;
+    var day=d.getDay();
+    byDay[day]=(byDay[day]||0)+1;
+  });
+  var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">By Day of Week</div>';
+  html+='<div class="pattern-grid">';
+  for(var i=0;i<7;i++){
+    var count=byDay[i]||0;
+    var cls=count===0?'empty':count>=3?'fail':'s'+Math.min(4,count);
+    html+='<div class="pattern-cell '+cls+'">'+dayNames[i][0]+'</div>';
+  }
+  html+='</div><div class="pattern-label">'+dayNames.join(' ')+'</div>';
+  html+='<div style="font-size:12px;font-weight:700;margin:12px 0 8px">By Hour (WIB)</div>';
+  var maxH=Math.max.apply(null,Object.values(byHour).concat([1]));
+  html+='<div class="hour-bar">';
+  for(var h=0;h<24;h++){
+    var count=byHour[h]||0;
+    var height=Math.max(2,count/maxH*56);
+    html+='<div class="hour-col fail" style="height:'+height+'px" title="'+h+':00 - '+count+' fails"></div>';
+  }
+  html+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>00:00</span><span>12:00</span><span>23:00</span></div>';
+  html+='</div>';
+  return html;
+}
+
+function renderDurationTrend(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withDur=runs.filter(function(r){return r.updatedAt&&r.createdAt}).slice(0,30).reverse();
+  if(!withDur.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  var durations=withDur.map(function(r){return Math.round((r.updatedAt-r.createdAt)/60000)});
+  var maxD=Math.max.apply(null,durations)||1;
+  var avg=Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length);
+  var recent=durations.slice(-5);
+  var recentAvg=Math.round(recent.reduce(function(a,b){return a+b},0)/recent.length);
+  var trend=recentAvg>avg*1.2?'up':recentAvg<avg*0.8?'down':'';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+avg+'m</div><div class="metric-mini-lbl">Avg Duration</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(!trend?'ok':'')+'">'+recentAvg+'m</div><div class="metric-mini-lbl">Recent Avg</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(trend==='up'?'bad':'ok')+'">'+(trend==='up'?'📈':trend==='down'?'📉':'➡')+'</div><div class="metric-mini-lbl">Trend</div></div>';
+  html+='</div>';
+  html+='<div class="duration-trend">';
+  durations.forEach(function(d,i){
+    var h=Math.max(2,d/maxD*40);
+    html+='<div style="display:inline-block;width:6px;height:'+h+'px;background:'+(d>avg*1.5?'var(--rd)':'var(--bl)')+';margin-right:1px;border-radius:2px 2px 0 0" title="Run '+(i+1)+': '+d+'m"></div>';
+  });
+  html+='</div><div style="font-size:8px;color:var(--t2)">Last '+durations.length+' runs (oldest → newest)</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderSuccessByDay(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byDay={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var day=d.getDay();
+    if(!byDay[day])byDay[day]={total:0,success:0};
+    byDay[day].total++;
+    if(r.conclusion==='success')byDay[day].success++;
+  });
+  var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Success Rate by Day of Week</div>';
+  for(var i=0;i<7;i++){
+    var d=byDay[i]||{total:0,success:0};
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div style="display:flex;align-items:center;gap:8px;margin:4px 0">';
+    html+='<span style="width:30px;font-size:10px;color:var(--t2)">'+dayNames[i]+'</span>';
+    html+='<div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+col+';transition:width .5s"></div></div>';
+    html+='<span style="width:50px;font-size:10px;text-align:right;color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span>';
+    html+='</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function renderSuccessByHour(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byHour={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var h=new Date(r.createdAt).getHours();
+    if(!byHour[h])byHour[h]={total:0,success:0};
+    byHour[h].total++;
+    if(r.conclusion==='success')byHour[h].success++;
+  });
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Success Rate by Hour (WIB)</div>';
+  html+='<div class="hour-bar">';
+  for(var h=0;h<24;h++){
+    var d=byHour[h]||{total:0,success:0};
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var height=Math.max(2,d.total/((runs.length/24)||1)*56);
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="hour-col" style="height:'+height+'px;background:'+col+'" title="'+h+':00 - '+pct+'% ('+d.success+'/'+d.total+')" ></div>';
+  }
+  html+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>00:00</span><span>12:00</span><span>23:00</span></div>';
+  html+='</div>';
+  return html;
+}
+
+function renderBranchHealth(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var branches={};
+  runs.forEach(function(r){
+    var b=r.headBranch||'master';
+    if(!branches[b])branches[b]={total:0,success:0,fail:0};
+    branches[b].total++;
+    if(r.conclusion==='success')branches[b].success++;
+    if(r.conclusion==='failure')branches[b].fail++;
+  });
+  var html='<div style="padding:10px">';
+  var sorted=Object.keys(branches).sort(function(a,b){return branches[b].total-branches[a].total});
+  sorted.forEach(function(b){
+    var d=branches[b];
+    var pct=Math.round(d.success/d.total*100);
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div style="margin:6px 0">';
+    html+='<div style="font-size:10px;display:flex;justify-content:space-between"><span>'+b+'</span><span style="color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span></div>';
+    html+='<div class="branch-bar" style="width:'+pct+'%;background:'+col+'">'+d.success+' ok / '+d.fail+' fail</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderActionsMinutes(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var totalMinutes=0;
+  runs.forEach(function(r){
+    if(r.updatedAt&&r.createdAt)totalMinutes+=Math.round((r.updatedAt-r.createdAt)/60000);
+  });
+  var freeTier=2000;
+  var used=Math.min(totalMinutes,freeTier);
+  var pct=Math.round(used/freeTier*100);
+  var remaining=freeTier-used;
+  var col=pct<60?'var(--gn)':pct<85?'var(--yl)':'var(--rd)';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+totalMinutes+'</div><div class="metric-mini-lbl">Minutes Used</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val ok">'+remaining+'</div><div class="metric-mini-lbl">Remaining</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+pct+'%</div><div class="metric-mini-lbl">Used</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:10px;color:var(--t2);margin-bottom:4px">Free Tier: 2000 min/month</div>';
+  html+='<div style="height:12px;background:var(--bg3);border-radius:6px;overflow:hidden"><div class="minutes-bar '+(pct>=85?'bad':pct>=60?'warn':'')+'" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
+  html+='<div style="font-size:9px;color:var(--t3);margin-top:4px">Estimate based on '+runs.length+' runs (actual billing may differ)</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderWorkflowComparison(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var workflows={};
+  runs.forEach(function(r){
+    var w=r.name||'unknown';
+    if(!workflows[w])workflows[w]={total:0,success:0,fail:0};
+    workflows[w].total++;
+    if(r.conclusion==='success')workflows[w].success++;
+    if(r.conclusion==='failure')workflows[w].fail++;
+  });
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:10px;color:var(--t2);border-bottom:1px solid var(--brd);padding-bottom:4px;margin-bottom:4px;display:grid;grid-template-columns:1fr 40px 40px"><span>Workflow</span><span>Total</span><span>Rate</span></div>';
+  var sorted=Object.keys(workflows).sort(function(a,b){return workflows[b].total-workflows[a].total});
+  sorted.forEach(function(w){
+    var d=workflows[w];
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="workflow-row"><span>'+w.substring(0,25)+'</span><span>'+d.total+'</span><span style="color:'+col+'">'+pct+'%</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderConcurrency(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var slots={};
+  runs.forEach(function(r){
+    if(!r.createdAt||!r.updatedAt)return;
+    var s=new Date(r.createdAt).getTime();
+    var e=new Date(r.updatedAt).getTime();
+    if(!s||!e)return;
+    var key=Math.floor(s/60000);
+    if(!slots[key])slots[key]={count:0,runs:[]};
+    slots[key].count++;
+    slots[key].runs.push(r);
+  });
+  var maxConc=0;
+  Object.values(slots).forEach(function(s){if(s.count>maxConc)maxConc=s.count});
+  var currentRunning=runs.filter(function(r){return r.status==='in_progress'||r.conclusion===null}).length;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--bl)">'+currentRunning+'</div><div class="metric-mini-lbl">Running Now</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val warn">'+maxConc+'</div><div class="metric-mini-lbl">Peak Concurrent</div></div>';
+  html+='</div>';
+  var sortedSlots=Object.keys(slots).sort(function(a,b){return slots[b].count-slots[a].count}).slice(0,10);
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Top 10 concurrency moments:</div>';
+  sortedSlots.forEach(function(k){
+    var s=slots[k];
+    var d=new Date(parseInt(k)*60000);
+    var time=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+    html+='<div class="concurrency-bar" style="width:100%">'+time+' — '+s.count+' parallel</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderCommitImpact(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withSha=runs.filter(function(r){return r.headSha}).slice(0,20);
+  if(!withSha.length){
+    // Use databaseId as proxy
+    withSha=runs.slice(0,20);
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:10px;color:var(--t2);border-bottom:1px solid var(--brd);padding-bottom:4px;margin-bottom:4px;display:grid;grid-template-columns:60px 1fr 40px"><span>SHA</span><span>Workflow</span><span>Result</span></div>';
+  withSha.forEach(function(r){
+    var sha=(r.headSha||'').substring(0,7)||(r.databaseId||'').toString().substring(0,7);
+    var col=r.conclusion==='success'?'var(--gn)':'var(--rd)';
+    html+='<div class="commit-row"><span class="commit-sha">'+sha+'</span><span style="color:var(--t2)">'+(r.name||'').substring(0,20)+'</span><span class="commit-result" style="color:'+col+'">'+(r.conclusion==='success'?'✅':'❌')+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderDeployTimeline(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var deploys=runs.filter(function(r){return r.conclusion==='success'}).slice(0,30).reverse();
+  if(!deploys.length)return'<div style="padding:10px;color:var(--t2)">No deploys</div>';
+  var firstTime=new Date(deploys[0].createdAt||0).getTime();
+  var lastTime=new Date(deploys[deploys.length-1].createdAt||0).getTime();
+  var span=Math.max(1,lastTime-firstTime);
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Deploy Timeline ('+deploys.length+' deploys)</div>';
+  html+='<div class="timeline-track">';
+  deploys.forEach(function(r){
+    var t=new Date(r.createdAt||0).getTime();
+    var pct=((t-firstTime)/span*100).toFixed(1);
+    html+='<div class="timeline-dot ok" style="left:'+pct+'%" title="'+(r.orv_id||'')+' — '+new Date(t).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'Asia/Jakarta'})+'"></div>';
+  });
+  html+='</div>';
+  var fD=new Date(firstTime).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  var lD=new Date(lastTime).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>'+fD+'</span><span>'+lD+'</span></div>';
+  html+='</div>';
+  return html;
+}
+
+function renderRetryTracker(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var retried=[];
+  for(var i=0;i<runs.length-1;i++){
+    if(runs[i].conclusion==='failure'){
+      var next=runs[i+1];
+      if(next&&next.name===runs[i].name){
+        var isRetry=true;
+        var t1=new Date(runs[i].createdAt||0).getTime();
+        var t2=new Date(next.createdAt||0).getTime();
+        if(t2-t1<3600000)retried.push({fail:runs[i],retry:next,success:next.conclusion==='success'});
+      }
+    }
+  }
+  var successRate=retried.length?Math.round(retried.filter(function(r){return r.success}).length/retried.length*100):0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+retried.length+'</div><div class="metric-mini-lbl">Retries</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(successRate>=50?'ok':'warn')+'">'+successRate+'%</div><div class="metric-mini-lbl">Retry Success</div></div>';
+  html+='</div>';
+  if(retried.length>0){
+    retried.slice(0,10).forEach(function(r,i){
+      html+='<div class="retry-row"><span>'+(r.fail.orv_id||r.fail.databaseId||'')+'</span><span style="color:'+(r.success?'var(--gn)':'var(--rd)')+'">'+(r.success?'✅ Recovered':'❌ Still failing')+'</span></div>';
+    });
+  }else{
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No retries needed! 🎉</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+
 // ═══ v9.2 features ═══
 function renderHeatmap(){
   var D=window.DASH||{};var runs=D.runs||[];
@@ -1847,10 +2316,7 @@ var _achvList=[
   {id:'streak7',icon:'📅',name:'7-Day Streak',desc:'7 day success streak',check:function(s){return s.streak>=7},max:7},
   {id:'rate80',icon:'📈',name:'80% Rate',desc:'80%+ success rate',check:function(s){return s.rate>=80},max:80},
   {id:'rate90',icon:'🏆',name:'90% Rate',desc:'90%+ success rate',check:function(s){return s.rate>=90},max:90},
-  {id:'nofails',icon:'🛡️',name:'No Fails',desc:'0 failed runs',check:function(s){return s.failed===0&&s.total>=5},max:1},
-  {id:'radio_lover',icon:'📻',name:'Radio Lover',desc:'Played radio 10x',check:function(s){return(localStorage.getItem('dash_radio_plays')||0)>=10},max:10},
-  {id:'bingo_win',icon:'🎲',name:'Bingo!',desc:'Complete a bingo',check:function(s){var b=JSON.parse(localStorage.getItem('dash_bingo')||'{}');return Object.keys(b).length>=5},max:5},
-  {id:'pet_master',icon:'🐾',name:'Pet Master',desc:'Pet level 10+',check:function(s){var p=JSON.parse(localStorage.getItem('dash_pet')||'{}');return(p.level||1)>=10},max:10}
+  {id:'nofails',icon:'🛡️',name:'No Fails',desc:'0 failed runs',check:function(s){return s.failed===0&&s.total>=5},max:1}
 ];
 var _achvUnlocked=JSON.parse(localStorage.getItem('dash_achv')||'{}');
 function renderAchievements(){
@@ -2035,600 +2501,7 @@ function renderClock(){
   return html;
 }
 
-function renderThemeBuilder(){
-  var saved=JSON.parse(localStorage.getItem('dash_custom_theme')||'{}');
-  var keys=[
-    {key:'--bg',label:'Background',def:'#0d1117'},
-    {key:'--bg2',label:'Card BG',def:'#161b22'},
-    {key:'--bg3',label:'Input BG',def:'#21262d'},
-    {key:'--t1',label:'Text',def:'#c9d1d9'},
-    {key:'--t2',label:'Text Muted',def:'#8b949e'},
-    {key:'--bl',label:'Blue',def:'#58a6ff'},
-    {key:'--gn',label:'Green',def:'#3fb950'},
-    {key:'--rd',label:'Red',def:'#f85149'},
-    {key:'--yl',label:'Yellow',def:'#d29922'},
-    {key:'--brd',label:'Border',def:'#30363d'}
-  ];
-  var html='<div class="theme-builder"><div style="font-size:11px;color:var(--t2);margin-bottom:8px">Pick colors and Apply. Save persists to localStorage.</div>';
-  html+='<div class="theme-picker">';
-  keys.forEach(function(k){
-    var val=saved[k.key]||k.def;
-    html+='<div class="theme-swatch"><input type="color" id="tb_'+k.key+'" value="'+val.replace('#','')+'" > <span>'+k.label+'</span></div>';
-  });
-  html+='</div>';
-  html+='<div style="margin-top:8px"><button class="btn" onclick="applyCustomTheme()">Apply</button> <button class="btn" onclick="resetCustomTheme()">Reset</button></div>';
-  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Presets:</div>';
-  var presets=[
-    {name:'Dark (default)',vars:{}},
-    {name:'Midnight',vars:{'--bg':'#0a0a12','--bg2':'#141428','--bg3':'#1e1e3c','--bl':'#7c7cff','--gn':'#00ff88','--rd':'#ff4466','--yl':'#ffaa00'}},
-    {name:'Sepia',vars:{'--bg':'#1a1410','--bg2':'#241e18','--bg3':'#2e2620','--t1':'#d4c4a8','--t2':'#a89878','--bl':'#6b8ec9','--gn':'#7a9b5e','--rd':'#c97064','--yl':'#c9a84e'}},
-    {name:'Nord',vars:{'--bg':'#2e3440','--bg2':'#3b4252','--bg3':'#434c5e','--t1':'#d8dee9','--t2':'#81a1c1','--bl':'#88c0d0','--gn':'#a3be8c','--rd':'#bf616a','--yl':'#ebcb8b'}},
-    {name:'Dracula',vars:{'--bg':'#282a36','--bg2':'#383a50','--bg3':'#44475a','--t1':'#f8f8f2','--t2':'#6272a4','--bl':'#8be9fd','--gn':'#50fa7b','--rd':'#ff5555','--yl':'#f1fa8c'}}
-  ];
-  presets.forEach(function(p){
-    html+='<span class="theme-preset" '+p.name+'</span>';
-  });
-  html+='</div>';
-  return html;
-}
-function setThemeColor(key){
-  var inp=document.getElementById('tb_'+key);
-  if(!inp)return;
-  var val='#'+inp.value.replace('#','');
-  var saved=JSON.parse(localStorage.getItem('dash_custom_theme')||'{}');
-  saved[key]=val;
-  localStorage.setItem('dash_custom_theme',JSON.stringify(saved));
-}
-function applyCustomTheme(){
-  var saved=JSON.parse(localStorage.getItem('dash_custom_theme')||'{}');
-  Object.keys(saved).forEach(function(k){document.documentElement.style.setProperty(k,saved[k])});
-  showToast('Theme applied!');
-}
-function resetCustomTheme(){
-  localStorage.removeItem('dash_custom_theme');
-  location.reload();
-}
-function applyPreset(name){
-  var presets={
-    'Midnight':{'--bg':'#0a0a12','--bg2':'#141428','--bg3':'#1e1e3c','--bl':'#7c7cff','--gn':'#00ff88','--rd':'#ff4466','--yl':'#ffaa00'},
-    'Sepia':{'--bg':'#1a1410','--bg2':'#241e18','--bg3':'#2e2620','--t1':'#d4c4a8','--t2':'#a89878','--bl':'#6b8ec9','--gn':'#7a9b5e','--rd':'#c97064','--yl':'#c9a84e'},
-    'Nord':{'--bg':'#2e3440','--bg2':'#3b4252','--bg3':'#434c5e','--t1':'#d8dee9','--t2':'#81a1c1','--bl':'#88c0d0','--gn':'#a3be8c','--rd':'#bf616a','--yl':'#ebcb8b'},
-    'Dracula':{'--bg':'#282a36','--bg2':'#383a50','--bg3':'#44475a','--t1':'#f8f8f2','--t2':'#6272a4','--bl':'#8be9fd','--gn':'#50fa7b','--rd':'#ff5555','--yl':'#f1fa8c'}
-  };
-  var p=presets[name];
-  if(!p)return;
-  localStorage.setItem('dash_custom_theme',JSON.stringify(p));
-  applyCustomTheme();
-}
 
-function exportSettings(){
-  var settings={};
-  for(var i=0;i<localStorage.length;i++){
-    var key=localStorage.key(i);
-    if(key&&key.indexOf('dash_')===0)settings[key]=localStorage.getItem(key);
-  }
-  var json=JSON.stringify(settings,null,2);
-  var el=document.getElementById('settingsExportTA');
-  if(el)el.value=json;
-  downloadBlob(json,'rusemeva-settings.json','application/json');
-  showToast('Settings exported!');
-}
-function importSettings(){
-  var el=document.getElementById('settingsImportTA');
-  if(!el||!el.value)return;
-  try{
-    var settings=JSON.parse(el.value);
-    Object.keys(settings).forEach(function(k){if(k.indexOf('dash_')===0)localStorage.setItem(k,settings[k])});
-    showToast('Settings imported! Reloading...');
-    setTimeout(function(){location.reload()},1000);
-  }catch(e){showToast('Invalid JSON')}
-}
-function renderSettingsIO(){
-  var html='<div class="settings-io">';
-  html+='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">Export all dashboard settings (themes, bingo, pet, sticky notes, etc.) to JSON</div>';
-  html+='<button class="btn" onclick="exportSettings()">📤 Export Settings</button>';
-  html+='<div style="margin-top:12px;font-size:11px;color:var(--t2);margin-bottom:4px">Import settings JSON:</div>';
-  html+='<textarea id="settingsImportTA" placeholder="Paste JSON here..."></textarea>';
-  html+='<button class="btn" onclick="importSettings()" style="margin-top:4px">📥 Import Settings</button>';
-  html+='</div>';
-  return html;
-}
-
-function renderAsciiArt(){
-  var arts=['RUSEMEVA DASHBOARD','RSM VAULT CI/CD','ENCODE PIPELINE'];
-  var art=arts[Math.floor(Math.random()*arts.length)];
-  var style='color:#3fb950;font-family:monospace;font-size:14px;font-weight:700;letter-spacing:2px;padding:10px;text-align:center';
-  return '<div style="'+style+'">'+art+'</div>';
-}
-function printAsciiArt(){
-  var arts=['RUSEMEVA DASHBOARD','RSM VAULT CI/CD','ENCODE PIPELINE'];
-  var art=arts[Math.floor(Math.random()*arts.length)];
-  if(typeof console!=='undefined'&&console.log)console.log('%c'+art,'color:#3fb950;font-family:monospace;font-weight:bold;font-size:14px');
-}
-
-var _pwaBannerShown=false;
-function initPWA(){
-  var manifest={name:'Rusemeva Dashboard',short_name:'Rusemeva',start_url:'.',display:'standalone',background_color:'#0d1117',theme_color:'#0d1117',icons:[]};
-  var manifestBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  var mLink=document.querySelector('link[rel=manifest]');
-  if(!mLink){mLink=document.createElement('link');mLink.rel='manifest';document.head.appendChild(mLink)}
-  mLink.setAttribute('href',URL.createObjectURL(manifestBlob));
-  var tLink=document.querySelector('meta[name=theme-color]');
-  if(!tLink){tLink=document.createElement('meta');tLink.name='theme-color';document.head.appendChild(tLink)}
-  tLink.setAttribute('content','#0d1117');
-  if('serviceWorker'in navigator){
-    var swCode='var CACHE="rusemeva-v1";self.addEventListener("install",function(e){self.skipWaiting()});self.addEventListener("activate",function(e){e.waitUntil(self.clients.claim())});self.addEventListener("fetch",function(e){e.respondWith(fetch(e.request).catch(function(){return caches.match(e.request)}))})';
-    try{
-      var swBlob=new Blob([swCode],{type:'application/javascript'});
-      var swURL=URL.createObjectURL(swBlob);
-      navigator.serviceWorker.register(swURL).catch(function(){});
-    }catch(e){}
-  }
-  window.addEventListener('beforeinstallprompt',function(e){
-    e.preventDefault();
-    window._deferredPrompt=e;
-    if(!_pwaBannerShown){showPWABanner(e)}
-  });
-}
-function showPWABanner(e){
-  _pwaBannerShown=true;
-  var banner=document.createElement('div');
-  banner.className='pwa-banner show';
-  banner.innerHTML='<span>📱 Install Rusemeva Dashboard?</span><button class="btn" id="pwaInstall">Install</button><button class="btn" id="pwaDismiss">×</button>';
-  document.body.appendChild(banner);
-  var installBtn=document.getElementById('pwaInstall');
-  var dismissBtn=document.getElementById('pwaDismiss');
-  if(installBtn)installBtn.onclick=function(){e.prompt();banner.remove()};
-  if(dismissBtn)dismissBtn.onclick=function(){banner.remove()};
-}
-
-
-// ═══ v9.1 features ═══
-var BINGO_ITEMS=[
-  {label:'Success Run',icon:'✅'},
-  {label:'Fail Run',icon:'❌'},
-  {label:'New RSM',icon:'🆔'},
-  {label:'Streak 3+',icon:'🔥'},
-  {label:'Rate 80%+',icon:'📊'},
-  {label:'Morning Run',icon:'🌅'},
-  {label:'Night Run',icon:'🌙'},
-  {label:'Encode Done',icon:'🎬'},
-  {label:'No Fails Today',icon:'🛡️'},
-  {label:'5 Runs Today',icon:'🏃'},
-  {label:'Recovery',icon:'♻️'},
-  {label:'Long Run 2h+',icon:'⏰'},
-  {label:'Quick Run 5m-',icon:'⚡'},
-  {label:'Weekend Run',icon:'📅'},
-  {label:'Perfect Week',icon:'🏆'},
-  {label:'New Badge',icon:'🎖️'},
-  {label:'Snapshot Saved',icon:'🔗'},
-  {label:'Export CSV',icon:'📥'},
-  {label:'Radio Played',icon:'📻'},
-  {label:'Terminal Used',icon:'⌨️'},
-  {label:'Search Done',icon:'🔍'},
-  {label:'Badge Unlocked',icon:'🏅'},
-  {label:'Productivity 80+',icon:'📈'},
-  {label:'Streak Calendar',icon:'📅'},
-  {label:'BINGO!',icon:'🎉'}
-];
-var _bingoState=JSON.parse(localStorage.getItem('dash_bingo')||'{}');
-function renderBingo(){
-  var html='<div class="bingo-grid">';
-  var shuffled=JSON.parse(localStorage.getItem('dash_bingo_order')||'null');
-  if(!shuffled){shuffled=BINGO_ITEMS.slice();for(var i=shuffled.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t2=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=t2}localStorage.setItem('dash_bingo_order',JSON.stringify(shuffled.map(function(x){return x.label})))}
-  for(var i=0;i<25;i++){
-    var item=shuffled[i]||BINGO_ITEMS[i%25];
-    var label=typeof item==='string'?item:item.label;
-    var icon=typeof item==='string'?'':item.icon;
-    var marked=_bingoState[label]?'marked':'';
-    if(label==='BINGO!'&&marked)marked='bingo';
-    html+='<div class="bingo-cell '+marked+'" data-bingo="'+label+'">'+(icon||label.substring(0,8))+'</div>';
-  }
-  html+='</div><div style="text-align:center;margin-top:8px"><button class="btn" onclick="resetBingo()">Reset</button></div>';
-  return html;
-}
-function resetBingo(){_bingoState={};localStorage.removeItem('dash_bingo');localStorage.removeItem('dash_bingo_order');var el=document.getElementById('mb');if(el){var c=el.querySelector('.bingo-grid');if(c){var m=renderBingo().match(/<div class="bingo-grid">([\s\S]*?)<\/div>/);if(m)c.innerHTML=m[1]}}}
-
-var _petState=JSON.parse(localStorage.getItem('dash_pet')||'{"level":1,"happy":50,"energy":100,"lastUpdate":0}');
-function getPetEmoji(){
-  var p=_petState;
-  if(p.happy>=80)return '😺';
-  if(p.happy>=50)return '😸';
-  if(p.happy>=30)return '😹';
-  if(p.happy>=10)return '🙀';
-  return '😿';
-}
-function renderPet(){
-  var p=_petState;
-  var now=Date.now();
-  var elapsed=p.lastUpdate?Math.min(60,Math.floor((now-p.lastUpdate)/60000)):0;
-  p.happy=Math.max(0,p.happy-elapsed*0.5);
-  p.energy=Math.max(0,p.energy-elapsed*0.3);
-  p.lastUpdate=now;
-  localStorage.setItem('dash_pet',JSON.stringify(p));
-  var st=(window.DASH||{}).stats||{};
-  if(st.streak>=1)p.happy=Math.min(100,p.happy+5);
-  var emoji=getPetEmoji();
-  var happyCol=p.happy>=50?'var(--gn)':'var(--rd)';
-  var html='<div class="pet-wrap">';
-  html+='<div class="pet-emoji" onclick="feedPet()">'+emoji+'</div>';
-  html+='<div class="pet-status"><span class="pet-level">Level '+p.level+'</span><br>Happy: '+Math.round(p.happy)+'% | Energy: '+Math.round(p.energy)+'%</div>';
-  html+='<div class="pet-meter"><div class="pet-meter-fg" style="width:'+p.happy+'%;background:'+happyCol+'"></div></div>';
-  html+='<div class="pet-meter"><div class="pet-meter-fg" style="width:'+p.energy+'%;background:var(--bl)"></div></div>';
-  html+='<div style="margin-top:8px"><button class="btn" onclick="feedPet()">🍎 Feed</button> <button class="btn" onclick="playPet()">🎾 Play</button></div>';
-  html+='</div>';
-  return html;
-}
-function feedPet(){_petState.happy=Math.min(100,_petState.happy+20);_petState.energy=Math.min(100,_petState.energy+30);_petState.lastUpdate=Date.now();localStorage.setItem('dash_pet',JSON.stringify(_petState));var el=document.getElementById('mb');if(el){var w=el.querySelector('.pet-wrap');if(w){var m=renderPet().match(/<div class="pet-wrap">([\s\S]*?)<\/div>/);if(m)w.innerHTML=m[1]}}showToast('Pet fed! 😺')}
-function playPet(){_petState.happy=Math.min(100,_petState.happy+15);_petState.energy=Math.max(0,_petState.energy-10);_petState.level+=1;_petState.lastUpdate=Date.now();localStorage.setItem('dash_pet',JSON.stringify(_petState));var el=document.getElementById('mb');if(el){var w=el.querySelector('.pet-wrap');if(w){var m=renderPet().match(/<div class="pet-wrap">([\s\S]*?)<\/div>/);if(m)w.innerHTML=m[1]}}showToast('Pet played! 🎾 Level up!')}
-
-var _betState=JSON.parse(localStorage.getItem('dash_bet')||'{"correct":0,"wrong":0,"prediction":""}');
-function renderBet(){
-  var b=_betState;
-  var acc=b.correct+b.wrong>0?Math.round(b.correct/(b.correct+b.wrong)*100):0;
-  var html='<div class="bet-wrap">';
-  html+='<div style="font-size:13px;margin-bottom:8px">Predict next run:</div>';
-  html+='<button class="bet-btn ok" >✅ Success</button>';
-  html+='<button class="bet-btn fail" >❌ Fail</button>';
-  if(b.prediction)html+='<div style="margin-top:8px;font-size:11px">Your bet: <b>'+(b.prediction==='success'?'Success':'Fail')+'</b></div>';
-  html+='<div class="bet-score">Score: '+b.correct+'/'+(b.correct+b.wrong)+' ('+acc+'% accuracy)</div>';
-  html+='</div>';
-  return html;
-}
-function placeBet(pred){_betState.prediction=pred;localStorage.setItem('dash_bet',JSON.stringify(_betState));var el=document.getElementById('mb');if(el){var w=el.querySelector('.bet-wrap');if(w)w.outerHTML=renderBet()}showToast('Bet placed: '+(pred==='success'?'Success':'Fail'))}
-function checkBet(latestRun){
-  if(!_betState.prediction)return;
-  if(_betState.prediction===latestRun.conclusion){_betState.correct++;showToast('Bet won! ✅')}else{_betState.wrong++;showToast('Bet lost ❌')}
-  _betState.prediction='';localStorage.setItem('dash_bet',JSON.stringify(_betState));
-}
-
-function renderTree(){
-  var st=(window.DASH||{}).stats||{};
-  var total=st.total||0;
-  var stage=Math.min(5,Math.floor(total/10)+1);
-  var emojis=['🌱','🌿','🌳','🌴','🎄','🌲'];
-  var tree=emojis[Math.min(stage,emojis.length-1)];
-  var leaves=Math.max(0,10-(st.failed||0));
-  var html='<div class="tree-wrap">';
-  html+='<div class="tree-emoji">'+tree+'</div>';
-  html+='<div class="tree-info">Stage: '+stage+'/6<br>Total runs: '+total+'<br>Leaves: '+leaves+'/10</div>';
-  html+='</div>';
-  return html;
-}
-
-var _pomoState={time:1500,phase:'work',running:false,timer:null,sessions:0};
-function renderPomo(){
-  var m=Math.floor(_pomoState.time/60),s=_pomoState.time%60;
-  var phase=_pomoState.phase==='work'?'🎯 Focus':'☕ Break';
-  var html='<div class="pomo-wrap">';
-  html+='<div class="pomo-time">'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s+'</div>';
-  html+='<div class="pomo-phase">'+phase+'</div>';
-  html+='<div class="pomo-controls"><button class="btn" onclick="togglePomo()">'+(_pomoState.running?'⏸ Pause':'▶ Start')+'</button><button class="btn" onclick="resetPomo()">⟲ Reset</button></div>';
-  html+='<div class="pomo-session">Sessions: '+_pomoState.sessions+'</div>';
-  html+='</div>';
-  return html;
-}
-function togglePomo(){
-  if(_pomoState.running){_pomoState.running=false;clearInterval(_pomoState.timer)}
-  else{_pomoState.running=true;_pomoState.timer=setInterval(function(){_pomoState.time--;if(_pomoState.time<=0){if(_pomoState.phase==='work'){_pomoState.phase='break';_pomoState.time=300;_pomoState.sessions++}else{_pomoState.phase='work';_pomoState.time=1500}}var el=document.getElementById('mb');if(el){var w=el.querySelector('.pomo-wrap');if(w){var m2=renderPomo();if(m2)w.outerHTML=m2}}},1000)}
-  var el=document.getElementById('mb');if(el){var w=el.querySelector('.pomo-wrap');if(w)w.outerHTML=renderPomo()}
-}
-function resetPomo(){_pomoState.running=false;if(_pomoState.timer)clearInterval(_pomoState.timer);_pomoState.time=1500;_pomoState.phase='work';var el=document.getElementById('mb');if(el){var w=el.querySelector('.pomo-wrap');if(w)w.outerHTML=renderPomo()}}
-
-function renderKanban(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var cols={queued:[],running:[],done:[],failed:[]};
-  runs.forEach(function(r){
-    var sk=statusKeyJs(r);
-    if(sk==='in_progress')cols.running.push(r);
-    else if(r.conclusion==='success')cols.done.push(r);
-    else if(r.conclusion==='failure')cols.failed.push(r);
-    else cols.queued.push(r);
-  });
-  var titles={queued:'⏳ Queued',running:'🔄 Running',done:'✅ Done',failed:'❌ Failed'};
-  var html='<div class="kanban-wrap">';
-  Object.keys(cols).forEach(function(k){
-    html+='<div class="kanban-col"><div class="kanban-col-title">'+titles[k]+' ('+cols[k].length+')</div>';
-    cols[k].slice(0,5).forEach(function(r){
-      html+='<div class="kanban-card" draggable="true" data-rid="'+(r.databaseId||'')+'">'+(r.orv_id||r.databaseId||'')+'<br><span style="color:var(--t2)">'+(r.name||'').substring(0,20)+'</span></div>';
-    });
-    html+='</div>';
-  });
-  html+='</div>';
-  return html;
-}
-
-function renderStickyNotes(){
-  var notes=JSON.parse(localStorage.getItem('dash_sticky')||'[]');
-  var colors=['#ffd966','#ffb366','#ff9999','#99ccff','#99ff99','#cc99ff'];
-  var html='<div class="sticky-wrap" id="stickyWrap">';
-  notes.forEach(function(n,i){
-    html+='<div class="sticky-note" style="left:'+n.x+'px;top:'+n.y+'px;background:'+colors[n.color%colors.length]+'" data-sid="'+i+'"><textarea onblur="saveStickyNote('+i+',this.value)" onmousedown="dragSticky(event,'+i+')">'+(n.text||'')+'</textarea></div>';
-  });
-  html+='</div><button class="btn" onclick="addStickyNote()">+ Add Note</button>';
-  return html;
-}
-function addStickyNote(){
-  var notes=JSON.parse(localStorage.getItem('dash_sticky')||'[]');
-  notes.push({text:'',x:Math.random()*200+50,y:Math.random()*100+20,color:notes.length});
-  localStorage.setItem('dash_sticky',JSON.stringify(notes));
-  var el=document.getElementById('mb');if(el){var w=el.querySelector('.sticky-wrap');if(w)w.outerHTML=renderStickyNotes()}
-}
-function saveStickyNote(i,text){
-  var notes=JSON.parse(localStorage.getItem('dash_sticky')||'[]');
-  if(notes[i])notes[i].text=text;
-  localStorage.setItem('dash_sticky',JSON.stringify(notes));
-}
-var _dragStickyData={};
-function dragSticky(e,i){
-  _dragStickyData={i:i,sx:e.clientX,sy:e.clientY};
-  var notes=JSON.parse(localStorage.getItem('dash_sticky')||'[]');
-  var el=e.target.closest('.sticky-note');
-  if(el&&notes[i])_dragStickyData.ox=notes[i].x;_dragStickyData.oy=notes[i].y;
-  document.addEventListener('mousemove',moveSticky);
-  document.addEventListener('mouseup',endDragSticky);
-}
-function moveSticky(e){
-  if(!_dragStickyData.i&&_dragStickyData.i!==0)return;
-  var dx=e.clientX-_dragStickyData.sx,dy=e.clientY-_dragStickyData.sy;
-  var notes=JSON.parse(localStorage.getItem('dash_sticky')||'[]');
-  if(notes[_dragStickyData.i]){
-    notes[_dragStickyData.i].x=Math.max(0,_dragStickyData.ox+dx);
-    notes[_dragStickyData.i].y=Math.max(0,_dragStickyData.oy+dy);
-    var el=document.querySelector('[data-sid="'+_dragStickyData.i+'"]');
-    if(el)el.style.left=notes[_dragStickyData.i].x+'px';
-    if(el)el.style.top=notes[_dragStickyData.i].y+'px';
-  }
-}
-function endDragSticky(e){
-  var notes=JSON.parse(localStorage.getItem('dash_sticky')||'[]');
-  localStorage.setItem('dash_sticky',JSON.stringify(notes));
-  _dragStickyData={};
-  document.removeEventListener('mousemove',moveSticky);
-  document.removeEventListener('mouseup',endDragSticky);
-  if(e)e.stopPropagation();
-}
-
-function exportICS(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var nl=String.fromCharCode(10);
-  var ics='BEGIN:VCALENDAR'+nl+'VERSION:2.0'+nl+'PRODID:-//Rusemeva Dashboard//EN'+nl;
-  runs.forEach(function(r){
-    if(!r.createdAt)return;
-    var d=new Date(r.createdAt);
-    var dtstart=d.getUTCFullYear()+('0'+(d.getUTCMonth()+1)).slice(-2)+('0'+d.getUTCDate()).slice(-2)+'T'+('0'+d.getUTCHours()).slice(-2)+('0'+d.getUTCMinutes()).slice(-2)+'00Z';
-    var dtend=dtstart;
-    if(r.updatedAt){var e=new Date(r.updatedAt);dtend=e.getUTCFullYear()+('0'+(e.getUTCMonth()+1)).slice(-2)+('0'+e.getUTCDate()).slice(-2)+'T'+('0'+e.getUTCHours()).slice(-2)+('0'+e.getUTCMinutes()).slice(-2)+'00Z'}
-    ics+='BEGIN:VEVENT'+nl+'UID:'+(r.databaseId||'')+'@rusemeva'+nl+'DTSTART:'+dtstart+nl+'DTEND:'+dtend+nl+'SUMMARY:'+(r.name||'Run')+' '+(r.conclusion||r.status||'')+nl+'END:VEVENT'+nl;
-  });
-  ics+='END:VCALENDAR'+nl;
-  downloadBlob(ics,'rusemeva-runs.ics','text/calendar');
-  showToast('Calendar exported!');
-}
-
-var _lastDataSnapshot=null;
-function captureDataSnapshot(){_lastDataSnapshot=JSON.parse(JSON.stringify((window.DASH||{}).runs||[]))}
-function renderDataDiff(){
-  if(!_lastDataSnapshot)return '<div class="diff-wrap">No previous snapshot. Wait for next refresh.</div>';
-  var old=_lastDataSnapshot;
-  var D=window.DASH||{};var cur=D.runs||[];
-  var oldIds={},curIds={};
-  old.forEach(function(r){oldIds[r.databaseId]=r});
-  cur.forEach(function(r){curIds[r.databaseId]=r});
-  var added=0,removed=0,changed=0;
-  cur.forEach(function(r){if(!oldIds[r.databaseId])added++;else if(oldIds[r.databaseId].conclusion!==r.conclusion)changed++});
-  old.forEach(function(r){if(!curIds[r.databaseId])removed++});
-  var st=D.stats||{};
-  var html='<div class="diff-wrap">';
-  if(added)html+='<div class="diff-add">+ '+added+' new run(s)</div>';
-  if(removed)html+='<div class="diff-del">- '+removed+' removed run(s)</div>';
-  if(changed)html+='<div class="diff-chg">~ '+changed+' status changed</div>';
-  if(!added&&!removed&&!changed)html+='<div style="color:var(--t2)">No changes since last refresh</div>';
-  html+='</div>';
-  return html;
-}
-
-function renderStory(){
-  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
-  var vault=runs.filter(function(r){return r.name==='rusemeva-vault'});
-  var fails=vault.filter(function(r){return r.conclusion==='failure'});
-  var success=vault.filter(function(r){return r.conclusion==='success'});
-  var lastRun=vault[0];
-  var html='<div class="story-wrap">';
-  html+='<b>Once upon a time</b> in the Rusemeva pipeline...<br><br>';
-  html+='There have been <b>'+(st.total||0)+'</b> total vault runs. ';
-  html+='<b>'+(st.success||0)+'</b> succeeded, ';
-  html+='<b>'+(st.failed||0)+'</b> failed. ';
-  html+='The success rate is <b>'+(st.rate||0)+'%</b>.<br><br>';
-  if(lastRun){
-    var d=new Date(lastRun.createdAt||0);
-    var day=d.toLocaleDateString('en-GB',{weekday:'long',timeZone:'Asia/Jakarta'});
-    var time=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
-    html+='The latest run was on <b>'+day+'</b> at <b>'+time+' WIB</b>. ';
-    html+='It was <b>'+(lastRun.conclusion||'unknown')+'</b>.<br><br>';
-  }
-  if(st.streak>0)html+='A streak of <b>'+st.streak+' days</b> burns bright!<br><br>';
-  if(fails.length>0){
-    html+='But it wasnt always smooth. <b>'+fails.length+' runs</b> have failed. ';
-    html+='Each failure taught us something new.<br><br>';
-  }
-  html+='And so the story continues...';
-  html+='</div>';
-  return html;
-}
-
-var _g2048State=null;
-function render2048(){
-  if(!_g2048State){
-    _g2048State=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
-    add2048Tile();add2048Tile();
-  }
-  var html='<div class="game-wrap"><div class="game-score">Score: '+get2048Score()+'</div>';
-  html+='<div class="g2048-grid" id="g2048Grid">';
-  for(var r=0;r<4;r++)for(var c=0;c<4;c++){
-    var v=_g2048State[r][c];
-    html+='<div class="g2048-cell v'+v+'">'+(v||'')+'</div>';
-  }
-  html+='</div>';
-  html+='<div style="margin-top:8px"><button class="btn" onclick="reset2048()">New Game</button></div>';
-  html+='<div style="font-size:9px;color:var(--t2);margin-top:4px">Arrow keys to move</div></div>';
-  return html;
-}
-function add2048Tile(){var empty=[];for(var r=0;r<4;r++)for(var c=0;c<4;c++)if(_g2048State[r][c]===0)empty.push([r,c]);if(!empty.length)return;var p=empty[Math.floor(Math.random()*empty.length)];_g2048State[p[0]][p[1]]=Math.random()<0.9?2:4}
-function get2048Score(){var s=0;for(var r=0;r<4;r++)for(var c=0;c<4;c++)s+=_g2048State[r][c];return s}
-function reset2048(){_g2048State=null;var el=document.getElementById('mb');if(el){var w=el.querySelector('.game-wrap');if(w)w.outerHTML=render2048()}}
-function move2048(dir){
-  if(!_g2048State)return;
-  var moved=false;
-  var rotate=function(g,times){for(var t=0;t<times;t++){var n=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];for(var r=0;r<4;r++)for(var c=0;c<4;c++)n[c][3-r]=g[r][c];g=n}};
-  var g=_g2048State;
-  var rotations={left:0,up:1,right:2,down:3};
-  rotate(g,rotations[dir]||0);
-  for(var r=0;r<4;r++){var row=g[r].filter(function(x){return x!==0});for(var c=0;c<row.length-1;c++){if(row[c]===row[c+1]){row[c]*=2;row[c+1]=0;row.splice(c+1,1)}};while(row.length<4)row.push(0);g[r]=row}
-  rotate(g,(4-(rotations[dir]||0))%4);
-  _g2048State=g;
-  add2048Tile();
-  var el=document.getElementById('mb');if(el){var w=el.querySelector('.game-wrap');if(w)w.outerHTML=render2048()}
-}
-
-var _snakeState=null;
-function renderSnake(){
-  if(!_snakeState){
-    _snakeState={snake:[{x:5,y:5}],food:{x:10,y:10},dir:'right',score:0,dead:false};
-  }
-  var html='<div class="game-wrap"><div class="game-score">Score: '+_snakeState.score+'</div>';
-  html+='<canvas class="snake-canvas" id="snakeCanvas" width="200" height="200"></canvas>';
-  if(_snakeState.dead)html+='<div style="color:var(--rd);margin-top:4px">Game Over!</div>';
-  html+='<div style="margin-top:8px"><button class="btn" onclick="resetSnake()">New Game</button></div>';
-  html+='<div style="font-size:9px;color:var(--t2);margin-top:4px">Arrow keys to move</div></div>';
-  setTimeout(function(){drawSnake();if(!_snakeState.dead)startSnakeLoop()},50);
-  return html;
-}
-function drawSnake(){
-  var c=document.getElementById('snakeCanvas');if(!c)return;var ctx=c.getContext('2d');
-  ctx.fillStyle='#21262d';ctx.fillRect(0,0,200,200);
-  ctx.fillStyle='#3fb950';_snakeState.snake.forEach(function(s){ctx.fillRect(s.x*10,s.y*10,9,9)});
-  ctx.fillStyle='#f85149';ctx.fillRect(_snakeState.food.x*10,_snakeState.food.y*10,9,9);
-}
-function startSnakeLoop(){
-  if(_snakeState.dead)return;
-  var head=_snakeState.snake[0];
-  var nx=head.x,ny=head.y;
-  if(_snakeState.dir==='right')nx++;else if(_snakeState.dir==='left')nx--;else if(_snakeState.dir==='up')ny--;else if(_snakeState.dir==='down')ny++;
-  if(nx<0||nx>=20||ny<0||ny>=20){_snakeState.dead=true;drawSnake();return}
-  for(var i=0;i<_snakeState.snake.length;i++){if(_snakeState.snake[i].x===nx&&_snakeState.snake[i].y===ny){_snakeState.dead=true;drawSnake();return}}
-  _snakeState.snake.unshift({x:nx,y:ny});
-  if(nx===_snakeState.food.x&&ny===_snakeState.food.y){_snakeState.score++;_snakeState.food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}}
-  else{_snakeState.snake.pop()}
-  drawSnake();
-  setTimeout(startSnakeLoop,150);
-}
-function resetSnake(){_snakeState=null;var el=document.getElementById('mb');if(el){var w=el.querySelector('.game-wrap');if(w)w.outerHTML=renderSnake()}}
-
-var _memState=null;
-function renderMemory(){
-  var emojis=['🎬','📡','🎮','🎯','🏆','🎨','🎵','⚡'];
-  var pairs=emojis.concat(emojis);
-  if(!_memState){_memState={cards:pairs.map(function(e,i){return{emoji:e,flipped:false,matched:false,id:i}}),first:null,score:0,moves:0};for(var i=_memState.cards.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t2=_memState.cards[i];_memState.cards[i]=_memState.cards[j];_memState.cards[j]=t2}}
-  var html='<div class="game-wrap"><div class="game-score">Moves: '+_memState.moves+' | Matched: '+_memState.cards.filter(function(c){return c.matched}).length+'/8</div>';
-  html+='<div class="mem-grid" id="memGrid">';
-  _memState.cards.forEach(function(c){
-    var cls=c.matched?'matched':(c.flipped?'flipped':'hidden');
-    var content=c.flipped||c.matched?c.emoji:'';
-    html+='<div class="mem-card '+cls+'" data-mid="'+c.id+'" onclick="flipMem('+c.id+')">'+content+'</div>';
-  });
-  html+='</div><div style="margin-top:8px"><button class="btn" onclick="resetMemory()">New Game</button></div></div>';
-  return html;
-}
-function flipMem(id){
-  if(!_memState)return;var c=_memState.cards[id];
-  if(c.flipped||c.matched)return;
-  c.flipped=true;
-  if(!_memState.first){_memState.first=c;var el=document.getElementById('mb');if(el){var w=el.querySelector('.game-wrap');if(w)w.outerHTML=renderMemory()}return}
-  if(_memState.first.emoji===c.emoji){c.matched=true;_memState.first.matched=true;_memState.first=null;if(_memState.cards.every(function(x){return x.matched}))showToast('Memory complete! 🎉')}
-  else{var firstId=_memState.first.id;_memState.first=null;setTimeout(function(){_memState.cards[id].flipped=false;_memState.cards[firstId].flipped=false;var el2=document.getElementById('mb');if(el2){var w2=el2.querySelector('.game-wrap');if(w2)w2.outerHTML=renderMemory()}},800)}
-  _memState.moves++;
-  var el=document.getElementById('mb');if(el){var w=el.querySelector('.game-wrap');if(w)w.outerHTML=renderMemory()}
-}
-function resetMemory(){_memState=null;var el=document.getElementById('mb');if(el){var w=el.querySelector('.game-wrap');if(w)w.outerHTML=renderMemory()}}
-
-var _matrixCanvas=null,_matrixCtx=null,_matrixDrops=[];
-function toggleMatrixRain(){
-  if(_matrixCanvas){_matrixCanvas.remove();_matrixCanvas=null;localStorage.setItem('dash_matrix','0');showToast('Matrix rain off');return}
-  _matrixCanvas=document.createElement('canvas');_matrixCanvas.className='matrix-rain';_matrixCanvas.width=window.innerWidth;_matrixCanvas.height=window.innerHeight;
-  document.body.appendChild(_matrixCanvas);
-  _matrixCtx=_matrixCanvas.getContext('2d');
-  var cols=Math.floor(_matrixCanvas.width/14);
-  _matrixDrops=Array(cols).fill(1);
-  localStorage.setItem('dash_matrix','1');
-  function draw(){
-    if(!_matrixCanvas)return;
-    _matrixCtx.fillStyle='rgba(13,17,23,0.05)';_matrixCtx.fillRect(0,0,_matrixCanvas.width,_matrixCanvas.height);
-    _matrixCtx.fillStyle='#3fb950';_matrixCtx.font='14px monospace';
-    for(var i=0;i<_matrixDrops.length;i++){var txt=String.fromCharCode(0x30A0+Math.random()*96);_matrixCtx.fillText(txt,i*14,_matrixDrops[i]*14);if(_matrixDrops[i]*14>_matrixCanvas.height&&Math.random()>0.975)_matrixDrops[i]=0;_matrixDrops[i]++}
-    requestAnimationFrame(draw);
-  }
-  draw();
-  showToast('Matrix rain on');
-}
-function applyMatrix(){if(localStorage.getItem('dash_matrix')==='1')toggleMatrixRain()}
-
-function renderCemetery(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var fails=runs.filter(function(r){return r.conclusion==='failure'}).slice(0,10);
-  if(!fails.length)return '<div class="cemetery-wrap"><div style="text-align:center;color:var(--gn);padding:20px">No failures. All runs are alive! 🎉</div></div>';
-  var epitaphs=['Died valiantly in the encoding wars.','Taken too soon by a timeout.','Rest in pieces, little run.','Here lies a brave soul who tried.','Gone but not forgotten.','May the logs rest in peace.','A moment of silence for this run.','It fought hard, but the server won.'];
-  var html='<div class="cemetery-wrap">';
-  fails.forEach(function(r,i){
-    var d=new Date(r.createdAt||0);
-    var dateStr=d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Jakarta'});
-    html+='<div class="grave">⚰️ <b>'+(r.orv_id||r.databaseId||'Unknown')+'</b><br>'+dateStr+'<div class="grave-epitaph">'+epitaphs[i%epitaphs.length]+'</div></div>';
-  });
-  html+='</div>';
-  return html;
-}
-
-function renderWheel(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  if(!runs.length)return '<div class="wheel-wrap">No runs to spin</div>';
-  var html='<div class="wheel-wrap"><canvas class="wheel-canvas" id="wheelCanvas" width="200" height="200" onclick="spinWheel()"></canvas>';
-  html+='<div class="wheel-result" id="wheelResult">Click wheel to spin!</div></div>';
-  setTimeout(function(){drawWheel(runs)},50);
-  return html;
-}
-function drawWheel(runs){
-  var c=document.getElementById('wheelCanvas');if(!c)return;var ctx=c.getContext('2d');
-  var cx=100,cy=100,r=90;var n=Math.min(runs.length,8);
-  var colors=['#58a6ff','#3fb950','#f85149','#d29922','#bc8cff','#f778ba','#f0883e','#8b949e'];
-  for(var i=0;i<n;i++){
-    var a1=(i/n)*2*Math.PI-Math.PI/2;
-    var a2=((i+1)/n)*2*Math.PI-Math.PI/2;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a1,a2);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();
-    ctx.strokeStyle='#0d1117';ctx.stroke();
-    ctx.fillStyle='#fff';ctx.font='10px sans-serif';ctx.textAlign='center';
-    var midA=(a1+a2)/2;var tx=cx+Math.cos(midA)*r*0.6;var ty=cy+Math.sin(midA)*r*0.6;
-    ctx.fillText((runs[i].orv_id||'').substring(0,8),tx,ty);
-  }
-  ctx.fillStyle='#f778ba';ctx.beginPath();ctx.arc(cx,cy,8,0,2*Math.PI);ctx.fill();
-}
-var _wheelSpinning=false;
-function spinWheel(){
-  if(_wheelSpinning)return;
-  var D=window.DASH||{};var runs=D.runs||[];if(!runs.length)return;
-  _wheelSpinning=true;
-  var c=document.getElementById('wheelCanvas');if(!c)return;var ctx=c.getContext('2d');
-  var angle=0,spins=0;
-  var targetSpins=5+Math.floor(Math.random()*3);
-  var targetAngle=Math.random()*2*Math.PI;
-  function _wheelFrame(){
-    angle+=0.3;spins+=0.3/(2*Math.PI);
-    ctx.save();ctx.translate(100,100);ctx.rotate(angle);ctx.translate(-100,-100);
-    drawWheel(runs);ctx.restore();
-    if(spins<targetSpins||Math.abs(angle%(2*Math.PI)-targetAngle)>0.3){requestAnimationFrame(_wheelFrame)}
-    else{_wheelSpinning=false;var idx=Math.floor((targetAngle/(2*Math.PI))*Math.min(runs.length,8));var r=runs[idx%runs.length];var el=document.getElementById('wheelResult');if(el)el.textContent='Selected: '+(r.orv_id||r.databaseId||'')+' — '+r.name}
-  }
-  frame();
-}
 
 
 // ═══ v9.0 features ═══
@@ -3405,21 +3278,21 @@ var CMD_ITEMS=[
   {cat:'View',label:'Refresh',act:"softRefresh().then(function(ok){if(!ok)location.reload()})"},
   {cat:'Help',label:'Keys',act:"showM('keys')"},
   {cat:'Help',label:'About',act:"showM('about')"},
-  {cat:'Games',label:'2048',act:"showM('game2048')"},
-  {cat:'Games',label:'Snake',act:"showM('snake')"},
-  {cat:'Games',label:'Memory Match',act:"showM('memory')"},
-  {cat:'Fun',label:'Run Bingo',act:"showM('bingo')"},
-  {cat:'Fun',label:'Dashboard Pet',act:"showM('pet')"},
-  {cat:'Fun',label:'Run Betting',act:"showM('betting')"},
-  {cat:'Fun',label:'Progress Tree',act:"showM('tree')"},
-  {cat:'Fun',label:'Run Cemetery',act:"showM('cemetery')"},
-  {cat:'Fun',label:'Spinning Wheel',act:"showM('wheel')"},
-  {cat:'Productivity',label:'Pomodoro Timer',act:"showM('pomodoro')"},
-  {cat:'Productivity',label:'Kanban Board',act:"showM('kanban')"},
-  {cat:'Productivity',label:'Sticky Notes',act:"showM('sticky')"},
-  {cat:'Productivity',label:'Calendar Export',act:"showM('calendar')"},
-  {cat:'Productivity',label:'Data Diff',act:"showM('datadiff')"},
-  {cat:'Productivity',label:'Story Generator',act:"showM('story')"},
+  {cat:'CI/CD',label:'Deploy Frequency',act:"showM('depfreq')"},
+  {cat:'CI/CD',label:'MTTR',act:"showM('mttr')"},
+  {cat:'CI/CD',label:'Change Failure Rate',act:"showM('cfr')"},
+  {cat:'CI/CD',label:'Lead Time',act:"showM('leadtime')"},
+  {cat:'CI/CD',label:'Failure Patterns',act:"showM('failpattern')"},
+  {cat:'CI/CD',label:'Duration Trends',act:"showM('durtrend')"},
+  {cat:'CI/CD',label:'Success by Day',act:"showM('successday')"},
+  {cat:'CI/CD',label:'Success by Hour',act:"showM('successhour')"},
+  {cat:'CI/CD',label:'Branch Health',act:"showM('branchhealth')"},
+  {cat:'CI/CD',label:'Actions Minutes',act:"showM('minutes')"},
+  {cat:'CI/CD',label:'Workflow Comparison',act:"showM('workflowcomp')"},
+  {cat:'CI/CD',label:'Concurrency',act:"showM('concurrency')"},
+  {cat:'CI/CD',label:'Commit Impact',act:"showM('commitimpact')"},
+  {cat:'CI/CD',label:'Deploy Timeline',act:"showM('deploymt')"},
+  {cat:'CI/CD',label:'Retry Tracker',act:"showM('retry')"},
   {cat:'Data',label:'Heatmap',act:"showM('heatmap')"},
   {cat:'Data',label:'Achievements',act:"showM('achievements')"},
   {cat:'Data',label:'Analytics Charts',act:"showM('analytics')"},
@@ -3427,9 +3300,6 @@ var CMD_ITEMS=[
   {cat:'Data',label:'Run Comparison',act:"showM('compare2')"},
   {cat:'Data',label:'Markdown Report',act:"showM('mdexport')"},
   {cat:'Tools',label:'Dashboard Clock',act:"showM('clock')"},
-  {cat:'Tools',label:'ASCII Art',act:"showM('ascii')"},
-  {cat:'Customize',label:'Theme Builder',act:"showM('themebuilder')"},
-  {cat:'Customize',label:'Settings I/O',act:"showM('settingsio')"},
   {cat:'Help',label:'Updates',act:"showM('updates')"}
 ];
 var cmdSel=0;
@@ -3453,9 +3323,7 @@ function filterCmd(){
 }
 function cmdKey(e){
   if(e.key==='Escape'){closeCmd();return;}
-  if(e.key==='ArrowDown'){e.preventDefault();cmdSel++;filterCmd();}
-  if(e.key==='ArrowUp'){e.preventDefault();cmdSel=Math.max(0,cmdSel-1);filterCmd();}
-  if(e.key==='Enter'){var items=document.querySelectorAll('.cmd-item');if(items[cmdSel])items[cmdSel].click();}
+      if(e.key==='Enter'){var items=document.querySelectorAll('.cmd-item');if(items[cmdSel])items[cmdSel].click();}
 }
 
 // ── export filtered (override dashRows to respect current filter) ──
@@ -3529,7 +3397,7 @@ def main():
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
         json.dump({
             "generated": datetime.now(WIB).isoformat(),
-            "build": "v9.2-max",
+            "build": "v10.0-max",
             "stats": S,
             "runs": lean_runs,
             "releases": lean_releases,
