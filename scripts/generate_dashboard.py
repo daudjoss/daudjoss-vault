@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v8.6 — 10 new features: heatmap, sparkline, duration bars, notif, alert, ETA, PWA, theme auto, cheat sheet, stats card."""
+"""Rusemeva Dashboard v8.7 — 14 new features: gauge, rate history, slide-in, tab title, favicon badge, sound, freshness, copy RSM, search history, quick chips, offline, confetti, MD export, rate zone."""
 import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -672,6 +672,29 @@ body{background:
 .card-preview{border:1px solid var(--brd);border-radius:10px;padding:16px;background:var(--bg3);text-align:center;margin:8px 0}
 .card-preview .card-stat{font-size:24px;font-weight:700}
 .card-preview .card-label{font-size:10px;color:var(--t2)}
+.gauge{position:relative;width:64px;height:64px;display:inline-block;vertical-align:middle}
+.gauge svg{transform:rotate(-90deg)}
+.gauge-bg{stroke:var(--bg3);stroke-width:6;fill:none}
+.gauge-fg{stroke-width:6;fill:none;stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+.gauge-txt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.fi-new{animation:slideIn .4s ease}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.3}}
+.fresh-dot{display:inline-block;width:8px;height:8px;border-radius:50%;animation:pulseDot 2s infinite;margin-right:4px}
+.fresh-dot.ok{background:var(--gn)}.fresh-dot.warn{background:var(--or)}.fresh-dot.stale{background:var(--rd)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:8px 16px;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+.qchip{display:inline-block;padding:3px 10px;border-radius:12px;border:1px solid var(--brd);background:var(--bg3);font-size:11px;cursor:pointer;margin:2px;user-select:none}
+.qchip.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+.offline-banner{position:fixed;top:0;left:0;right:0;background:rgba(248,81,73,.9);color:#fff;text-align:center;padding:4px;font-size:12px;z-index:1000;display:none}
+.offline-banner.on{display:block}
+.rate-zone{padding:2px 8px;border-radius:6px;font-weight:700;font-size:13px}
+.rate-zone.good{background:rgba(63,185,80,.15);color:var(--gn)}
+.rate-zone.mid{background:rgba(240,136,62,.15);color:var(--or)}
+.rate-zone.bad{background:rgba(248,81,73,.15);color:var(--rd)}
+.shist-item{font-size:10px;color:var(--t2);cursor:pointer;padding:2px 6px;border-radius:4px;display:inline-block;margin:2px}
+.shist-item:hover{background:var(--bg3)}
+
 @media(prefers-color-scheme:dark){:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--t1:#e6edf3;--t2:#7d8590;--brd:#30363d}}
 @media(prefers-color-scheme:light){:root{--bg:#fff;--bg2:#f6f8fa;--bg3:#eaeef2;--t1:#1f2328;--t2:#656d76;--brd:#d0d7de}}
 
@@ -729,6 +752,8 @@ body{background:
 <button class="nav-btn" onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})" title="Tools">🛠</button>
 <button class="nav-btn" onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})" title="Actions">⚡</button>
 </div>
+<div class="toast" id="toast">Copied!</div>
+<div class="offline-banner" id="offlineBanner">⚠️ Offline — data tidak bisa refresh</div>
 <div class="hero" id="sec-home">
 <div class="hero-top">
 <div class="hero-brand">
@@ -751,6 +776,8 @@ body{background:
 <div id="hero-rsm"></div>
 <div class="storage-story" id="hero-storage"></div>
 <div class="diff-chips" id="hero-diff"></div>
+<div id="hero-gauge"></div>
+<div id="hero-fresh"></div>
 <div id="hero-spark"></div>
 <div id="hero-alert"></div>
 </div>
@@ -883,7 +910,8 @@ body{background:
 <a class="ab" onclick="showM('player')">▶️ Player</a>
 <a class="ab" onclick="showM('analytics')">📊 Analytics</a>
 </div></div>
-<div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()"><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button></div></div>
+<div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()">
+<div id="qchips" style="margin:4px 0"></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button></div></div>
 <div style="overflow-x:auto"><table id="rt"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + rh + '''</tbody></table></div></div>
 <div class="g2">
 <div class="sec"><div class="sh"><div class="st">🎞 Encode</div></div><div style="overflow-x:auto"><table id="et"><thead><tr><th></th><th>ID</th><th>Time</th><th>Status</th><th></th></tr></thead><tbody>''' + eh + '''</tbody></table></div></div>
@@ -903,7 +931,7 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.6 · Heatmap + sparkline + notif + ETA + PWA + cheat sheet · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px">v8.7 · Gauge + favicon + sound + confetti + quick chips + offline · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cheat-overlay" id="cheatOverlay" onclick="if(event.target===this)closeCheat()">
@@ -923,7 +951,7 @@ body{background:
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-            "build": "v8.6-features",
+            "build": "v8.7-smart",
         "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
@@ -1052,7 +1080,7 @@ if(t==='timeline'||t==='history'){
   b.innerHTML=html;
 }
 if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select id="srcFilter"><option value="All">All</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div><div class="search-filter"><label>Sort</label><select id="sortFilter"><option value="new">Newest</option><option value="old">Oldest</option></select></div></div><div style="margin-top:6px"><input class="si2" id="qAdv" placeholder="RSM-ID / run id / text..." style="width:100%;margin-bottom:6px" onkeydown="if(event.keyCode===13)advSearch()"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button> <span id="searchCount" style="font-size:10px;color:var(--t2);margin-left:4px"></span></div><div id="searchResults" style="margin-top:8px;max-height:320px;overflow:auto"></div>'}
-if(t==='export'){h.textContent='📥 Export';var n=filteredRows().length;b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-label">TXT</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">'+n+' rows akan di-export (hormati filter search aktif). Data dari window.DASH.runs.</div>'}
+if(t==='export'){h.textContent='📥 Export';var n=filteredRows().length;b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-label">TXT</div></div><div class="export-opt" onclick="expMD()"><div class="export-opt-label">MD</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">'+n+' rows akan di-export (hormati filter search aktif). Data dari window.DASH.runs.</div>'}
 if(t==='customize'){
   h.textContent='🎨 Customize';
   var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts & activity','#sec-week'],['hideStreak','Streak bar','.streak']];
@@ -1061,13 +1089,13 @@ if(t==='customize'){
     var on=localStorage.getItem('dash_'+k[0])!=='1';
     html+='<div class="opt"><div class="opt-label">'+k[1]+'</div><button class="opt-btn" data-k="'+k[0]+'" data-sel="'+k[2]+'" onclick="toggleCust(this)">'+(on?'ON':'OFF')+'</button></div>';
   });
-  var compactOn=document.body.classList.contains('compact');
-  html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';
+  var soundOn=localStorage.getItem('dash_sound')==='1';var compactOn=document.body.classList.contains('compact');
+  html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Sound alert on fail</div><button class="opt-btn" onclick="toggleSound()">'+(soundOn?'ON':'OFF')+'</button></div>';
   html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung. Theme: tekan D atau 🌓 di hero.</div>';
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1096,7 +1124,7 @@ if(t==='stats'||t==='analytics'||t==='status'){
     if(gen&&gen!=='—'){ageMin=Math.round((Date.now()-new Date(gen).getTime())/60000);}
     extra='<br><b>System</b><br>• Dashboard: gh-pages (static)<br>• Soft-refresh: 30s (data.json + ORV map)<br>• Data age: '+ageMin+'m<br>• ORV linked: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+'/'+(D.runs||[]).length+'<br><br><b>Worker</b><br>• rusemeva.rusemeva-vault.workers.dev<br>• /api/orv-map, /api/status<br><br><b>Build</b><br>• '+(D.build||'—');
   }
-  b.innerHTML=statBlock()+extra;
+  b.innerHTML=statBlock()+extra;if(t==='stats'||t==='analytics'){var el=document.createElement('div');el.innerHTML=renderRateHistory();var mb=document.getElementById('mb');if(mb)mb.appendChild(el)}
 }
 if(t==='share'){
   h.textContent='🔗 Share';
@@ -1201,19 +1229,21 @@ function removeComment(i){var comments=JSON.parse(localStorage.getItem('rusemeva
 function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');var html='';if(!comments.length){html='<div style="color:var(--t2);font-size:11px;padding:8px 0">No comments yet.</div>'}comments.forEach(function(c,i){html+='<div style="padding:6px 4px;border-bottom:1px solid var(--brd);font-size:11px"><div style="display:flex;justify-content:space-between;align-items:start"><span style="flex:1">'+esc(c.text)+'</span><button class="btn" style="font-size:9px;padding:2px 6px;flex-shrink:0" onclick="removeComment('+i+')">×</button></div><div style="font-size:9px;color:var(--t2);margin-top:2px">'+esc(c.time)+'</div></div>'});var cl=document.getElementById('commentList');if(cl)cl.innerHTML=html;var cc=document.getElementById('commentCount');if(cc)cc.textContent=comments.length+' comment(s)'}
 
 
+document.addEventListener('click',function(e){var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}});
 document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd();return}
-if(e.key==='?'||e.key==='/'){e.preventDefault();openCheat();return}switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
+if(e.key==='?'||e.key==='/'){e.preventDefault();openCheat();return}
+if(e.key==='m'||e.key==='M'){e.preventDefault();expMD();return}switch(e.key){case'r':location.reload();break;case'd':toggleTheme();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
 function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
 function icoJs(c){return c==='success'?'✅':c==='failure'?'❌':c==='cancelled'?'⚪':'🔄'}
 function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'running'}
 function statusKeyJs(r){var c=(r.conclusion||'').trim();if(c==='success'||c==='failure'||c==='cancelled')return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return c||st||'?';}
 function displayStatusJs(r){var c=(r.conclusion||'').trim();if(c)return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return st||'?';}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])})}
-function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span><button data-cmp="rid" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>';}).join('')}
+function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15).map(function(r){var sk=statusKeyJs(r);var newCls=r._isNew?' fi-new':'';var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi'+newCls+'" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span><button data-cmp="rid" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>';}).join('')}
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null)setTxt('st-rate',st.rate+'%');if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();checkNewRuns(data);}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -1300,6 +1330,166 @@ function shareCard(){
   ctx.fillStyle=t2;ctx.font='9px sans-serif';ctx.fillText('daudjoss.github.io/daudjoss-vault',20,180);
   var a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='rusemeva-stats.png';a.click();
 }
+
+// ═══ v8.7 features ═══
+function renderGauge(){
+  var st=(window.DASH||{}).stats||{};var rate=st.rate||0;
+  var r=28,c=2*Math.PI*r,off=c-(rate/100*c);
+  var col=rate>=80?'var(--gn)':(rate>=60?'var(--or)':'var(--rd)');
+  var svg='<div class="gauge"><svg width="64" height="64"><circle class="gauge-bg" cx="32" cy="32" r="'+r+'"/><circle class="gauge-fg" cx="32" cy="32" r="'+r+'" stroke="'+col+'" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'"/></svg><div class="gauge-txt" style="color:'+col+'">'+rate+'%</div></div>';
+  var el=document.getElementById('hero-gauge');if(el)el.innerHTML=svg;
+}
+function renderFreshness(){
+  var D=window.DASH||{};var gen=D.generated;var cls='ok',txt='Live';
+  if(gen){var min=(Date.now()-new Date(gen).getTime())/60000;
+    cls=min<5?'ok':(min<30?'warn':'stale');
+    txt=min<5?'Live ('+Math.round(min)+'m)':(min<30?'Stale ('+Math.round(min)+'m)':'Stale ('+Math.round(min)+'m)');
+  }
+  var el=document.getElementById('hero-fresh');
+  if(el)el.innerHTML='<span class="fresh-dot '+cls+'"></span><span style="font-size:10px;color:var(--t2)">'+txt+'</span>';
+}
+function rateZoneHtml(rate){
+  var cls=rate>=80?'good':(rate>=60?'mid':'bad');
+  return '<span class="rate-zone '+cls+'">'+rate+'%</span>';
+}
+function updateTabTitle(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=D.runs||[];
+  var rn=st.running||0;var fl=st.failed||0;var t='';
+  if(rn>0)t+='🔄'+rn+' running · ';
+  if(fl>0)t+='❌'+fl+' fail · ';
+  t+='Rusemeva';
+  document.title=t;
+}
+function updateFavicon(){
+  var D=window.DASH||{};var st=D.stats||{};var fl=st.failed||0;
+  if(fl===0){var link=document.querySelector("link[rel='icon']");if(link)link.href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>';return}
+  var c=document.createElement('canvas');c.width=32;c.height=32;var ctx=c.getContext('2d');
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,32,32);
+  ctx.font='20px sans-serif';ctx.fillText('🎬',2,24);
+  ctx.fillStyle='#f85149';ctx.beginPath();ctx.arc(26,6,7,0,2*Math.PI);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText(String(fl),26,9);
+  var link=document.querySelector("link[rel='icon']");if(!link){link=document.createElement('link');link.rel='icon';document.head.appendChild(link)}
+  link.href=c.toDataURL();
+}
+var lastFailCount=0;
+function checkSoundAlert(data){
+  if(localStorage.getItem('dash_sound')!=='1')return;
+  var st=data.stats||{};var fl=st.failed||0;
+  if(lastFailCount===0){lastFailCount=fl;return}
+  if(fl>lastFailCount){
+    try{var ctx=new (window.AudioContext||window.webkitAudioContext)();var osc=ctx.createOscillator();var gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=220;osc.type='sine';
+      gain.gain.setValueAtTime(0,ctx.currentTime);gain.gain.linearRampToValueAtTime(0.3,ctx.currentTime+0.1);
+      gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.5);osc.start();osc.stop(ctx.currentTime+0.5)}catch(e){}
+  }
+  lastFailCount=fl;
+}
+function showToast(msg){
+  var t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.classList.add('on');
+  clearTimeout(window._toastTimer);window._toastTimer=setTimeout(function(){t.classList.remove('on')},1500);
+}
+function copyRSM(id){
+  if(!id)return;
+  navigator.clipboard.writeText(id).then(function(){showToast('Copied: '+id)}).catch(function(){})
+}
+function renderSHist(){var hist=JSON.parse(localStorage.getItem(\'dash_shist\')||\'[]\');var el=document.getElementById(\'qchips\');if(!el)return;var html=\'<div style="margin-top:2px">\';if(hist.length){html+=\'<span style="font-size:9px;color:var(--t2)">Recent:</span> \';hist.forEach(function(h,i){html+=\'<span class="shist-item" onclick="reuseSearch(\'+i+\')">\'+esc(h)+\'</span>\'})}html+=\'</div>\';el.insertAdjacentHTML(\'beforeend\',html)}\nfunction reuseSearch(i){var hist=JSON.parse(localStorage.getItem(\'dash_shist\')||\'[]\');var q=document.getElementById(\'q\');if(q&&hist[i]){q.value=hist[i];srch()}}
+function renderQChips(){
+  var chips=[['today','Today'],['fail','Failed'],['running','Running'],['rsm','RSM'],['enc','Encode']];
+  var html=chips.map(function(c){
+    var on=document.body.getAttribute('data-qchip-'+c[0])==='1';
+    return '<span class="qchip'+(on?' on':'')+'" onclick="toggleQChip(this)" data-key="'+c[0]+'">'+c[1]+'</span>';
+  }).join('');
+  var el=document.getElementById('qchips');if(el)el.innerHTML=html;
+}
+function toggleQChip(el){
+  var key=el.getAttribute('data-key');
+  var on=document.body.getAttribute('data-qchip-'+key)==='1';
+  document.body.setAttribute('data-qchip-'+key,on?'0':'1');
+  renderQChips();srch();
+}
+function applyQChips(rows){
+  var today=document.body.getAttribute('data-qchip-today')==='1';
+  var fail=document.body.getAttribute('data-qchip-fail')==='1';
+  var running=document.body.getAttribute('data-qchip-running')==='1';
+  var rsm=document.body.getAttribute('data-qchip-rsm')==='1';
+  var enc=document.body.getAttribute('data-qchip-enc')==='1';
+  if(!today&&!fail&&!running&&!rsm&&!enc)return rows;
+  return rows.filter(function(r){
+    if(rsm&&String(r.orv_id||'').indexOf('RSM')<0)return false;
+    if(enc&&r.name!=='rusemeva-encode')return false;
+    if(fail&&r.conclusion!=='failure')return false;
+    if(running&&statusKeyJs(r)!=='in_progress')return false;
+    if(today){var d=new Date(r.createdAt||0).toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});var now=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});if(d!==now)return false}
+    return true;
+  });
+}
+function checkOffline(){
+  var el=document.getElementById('offlineBanner');
+  if(!el)return;
+  function update(){el.classList.toggle('on',!navigator.onLine)}
+  update();
+  window.addEventListener('online',update);
+  window.addEventListener('offline',update);
+}
+function fireConfetti(){
+  var c=document.createElement('canvas');c.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+  c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+  var ctx=c.getContext('2d');var parts=[];var colors=['#58a6ff','#3fb950','#f0883e','#bc8cff','#f778ba'];
+  for(var i=0;i<80;i++){parts.push({x:c.width/2,y:c.height/3,vx:(Math.random()-0.5)*8,vy:Math.random()*-8+2,color:colors[i%5],size:Math.random()*4+2,life:1})}
+  var start=Date.now();
+  function frame(){
+    ctx.clearRect(0,0,c.width,c.height);
+    parts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life-=0.012;
+      ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,p.size,p.size)});
+    if(Date.now()-start<2500)requestAnimationFrame(frame);else c.remove();
+  }
+  frame();
+}
+function checkStreakConfetti(data){
+  var st=data.stats||{};var streak=st.streak||0;
+  var key='confetti_streak_'+streak;
+  if((streak===5||streak===10||streak===15||streak===20)&&!localStorage.getItem(key)){
+    fireConfetti();localStorage.setItem(key,'1');
+  }
+}
+function expMD(){
+  var rows=filteredRows();if(!rows.length)return;
+  var nl=String.fromCharCode(10);var md='| ID | Name | Status | Created | RSM-ID |'+nl+'|---|---|---|---|---|'+nl;
+  md+=rows.map(function(r){
+    var id=r.databaseId||'';var orv=r.orv_id||'';
+    return '| '+id+' | '+esc(r.name||'')+' | '+esc(displayStatusJs(r))+' | '+agoJs(r.createdAt||'')+' | '+orv+' |';
+  }).join(nl);
+  downloadBlob(new Blob([md],{type:'text/markdown'}),'rusemeva-runs.md');
+}
+function renderRateHistory(){
+  var D=window.DASH||{};var daily=D.daily||D.stats&&D.stats.daily||{};
+  var days=30;var today=new Date();var vals=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    var key=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+    vals.push({key:key,count:daily[key]||0});
+  }
+  var max=Math.max.apply(null,vals.map(function(v){return v.count}))||1;
+  var w=280,h=40,step=w/(vals.length-1);
+  var pts=vals.map(function(v,i){return (i*step)+','+(h-(v.count/max*h))}).join(' ');
+  var svg='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="var(--bl)" stroke-width="1.5"/></svg>';
+  return '<div style="margin-top:8px"><div style="font-size:11px;font-weight:600;margin-bottom:4px">Rate history 30 hari</div>'+svg+'<div style="font-size:9px;color:var(--t2);margin-top:2px">Max: '+max+' runs/day</div></div>';
+}
+var _lastFeedIds={};
+function markNewFeed(data){
+  var runs=data.runs||[];
+  runs.forEach(function(r){
+    var rid=String(r.databaseId||'');
+    if(rid&&!_lastFeedIds[rid]){
+      if(Object.keys(_lastFeedIds).length>0)r._isNew=true;
+      _lastFeedIds[rid]=1;
+    }
+  });
+  setTimeout(function(){runs.forEach(function(r){r._isNew=false})},500);
+}
+
+
 function renderSparkline(){
   var D=window.DASH||{};var daily=D.daily||D.stats&&D.stats.daily||{};
   var days=7;var today=new Date();var vals=[];
@@ -1372,7 +1562,7 @@ function renderHeatmap(){
 
 function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();}
 
 // ── honest client health ──
 function checkHealth(){
@@ -1456,6 +1646,7 @@ function delView(i){
 }
 
 // ── compact mode ──
+function toggleSound(){var on=localStorage.getItem('dash_sound')==='1';localStorage.setItem('dash_sound',on?'0':'1');var btn=document.querySelector('[onclick*=toggleSound]');if(btn)btn.textContent=on?'OFF':'ON'}
 function toggleCompact(){
   document.body.classList.toggle('compact');
   var on=document.body.classList.contains('compact');
@@ -1608,7 +1799,7 @@ def main():
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
         json.dump({
             "generated": datetime.now(WIB).isoformat(),
-            "build": "v8.6-features",
+            "build": "v8.7-smart",
             "stats": S,
             "runs": lean_runs,
             "releases": lean_releases,
