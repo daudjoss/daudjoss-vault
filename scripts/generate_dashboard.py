@@ -14,7 +14,7 @@ def gh(args):
     except: return ""
 
 def get_runs(n=100):
-    raw = gh(["run","list","--repo",REPO,"--limit",str(n),"--json","databaseId,name,status,conclusion,createdAt,event,updatedAt,headBranch,headSha,runNumber,displayTitle,workflowDatabaseId"])
+    raw = gh(["run","list","--repo",REPO,"--limit",str(n),"--json","databaseId,name,status,conclusion,createdAt,event,updatedAt,headBranch,headSha,number,displayTitle"])
     return json.loads(raw) if raw else []
 
 def get_releases(n=30):
@@ -1174,7 +1174,7 @@ window.DASH = ''' + json.dumps({
             "event": r.get("event"),
             "headBranch": r.get("headBranch") or "",
             "headSha": r.get("headSha") or "",
-            "runNumber": r.get("runNumber") or 0,
+            "runNumber": r.get("number") or 0,
             "displayTitle": r.get("displayTitle") or "",
             "orv_id": r.get("orv_id") or "",
             "source": r.get("source") or "",
@@ -3444,7 +3444,7 @@ def main():
             "event": r.get("event"),
             "headBranch": r.get("headBranch") or "",
             "headSha": r.get("headSha") or "",
-            "runNumber": r.get("runNumber") or 0,
+            "runNumber": r.get("number") or 0,
             "displayTitle": r.get("displayTitle") or "",
             "orv_id": r.get("orv_id") or "",
             "source": r.get("source") or "",
