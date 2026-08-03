@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rusemeva Dashboard v10.0 — 16 new features: bingo, pet, betting, tree, pomodoro, kanban, sticky notes, cal export, data diff, story gen, 2048, snake, memory match, matrix rain, cemetery, spinning wheel."""
+"""Rusemeva Dashboard v10.1 — 16 new features: bingo, pet, betting, tree, pomodoro, kanban, sticky notes, cal export, data diff, story gen, 2048, snake, memory match, matrix rain, cemetery, spinning wheel."""
 import json, os, subprocess, random, re
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -14,7 +14,7 @@ def gh(args):
     except: return ""
 
 def get_runs(n=100):
-    raw = gh(["run","list","--repo",REPO,"--limit",str(n),"--json","databaseId,name,status,conclusion,createdAt,event,updatedAt"])
+    raw = gh(["run","list","--repo",REPO,"--limit",str(n),"--json","databaseId,name,status,conclusion,createdAt,event,updatedAt,headBranch,headSha,runNumber,displayTitle,workflowDatabaseId"])
     return json.loads(raw) if raw else []
 
 def get_releases(n=30):
@@ -506,8 +506,8 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .src{display:flex;align-items:center;gap:8px;margin-bottom:4px}.src-label{font-size:10px;min-width:60px}.src-bar{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}.src-fill{height:100%;background:var(--bl);border-radius:3px}.src-pct{font-size:9px;color:var(--t2);min-width:30px;text-align:right}
 .time{display:flex;align-items:center;gap:6px;margin-bottom:2px}.time-label{font-size:8px;min-width:30px;color:var(--t3)}.time-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}.time-fill{height:100%;background:var(--pr);border-radius:3px}.time-cnt{font-size:8px;color:var(--t2);min-width:15px;text-align:right}
 .cd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 2px;background:var(--bg3);border-radius:8px;border:1px solid var(--brd);min-height:52px;text-align:center;transition:transform .15s,border-color .15s}.cd:hover{transform:translateY(-1px);border-color:var(--bl)}.cd.on{border-color:var(--bl);box-shadow:0 0 0 1px rgba(88,166,255,.35)}.cd.act{background:rgba(63,185,80,.12)}.cd-day{font-size:9px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.3px;line-height:1}.cd-num{font-size:11px;font-weight:700;color:var(--t1);line-height:1.1}.cd-cnt{font-size:10px;color:var(--gn);font-weight:600;line-height:1}.cd.c0 .cd-cnt{color:var(--t3)}
-.cal-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
-.cal-grid{display:grid;grid-template-columns:repeat(35,1fr);gap:1px;min-width:500px}
+
+
 .cd-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:100%}
 .note-area{width:100%;min-height:60px;padding:6px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px;resize:vertical;font-family:inherit}
 .tag-input{display:flex;gap:4px;margin:6px 0}.tag-input input{flex:1;padding:5px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px}.tag-input button{padding:5px 10px;border-radius:5px;border:1px solid var(--brd);background:var(--bl);color:#fff;cursor:pointer;font-size:11px}
@@ -571,7 +571,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .cd-day{font-size:8px}
   .cd-num{font-size:10px}
   .cd-cnt{font-size:9px}
-  .cal-grid{min-width:0;grid-template-columns:repeat(35,minmax(6px,1fr))}
+  
 }
 @media(max-width:480px){
   .sg{grid-template-columns:repeat(2,1fr)}
@@ -627,10 +627,6 @@ body{background:
 .gal-item:hover,.widget:hover,.ffi:hover,.ach:hover{box-shadow:0 6px 18px rgba(0,0,0,.15)}
 
 
-
-
-
-
 .nav{gap:6px;padding:6px;border-radius:12px;background:rgba(22,27,34,.85);border:1px solid var(--brd);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .nav-btn{width:32px;height:32px;border-radius:8px}
@@ -648,7 +644,7 @@ body{background:
 .mo{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .ft{opacity:.85}
 .heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;max-width:100%;overflow-x:auto}
-.hm-cell{width:10px;height:10px;border-radius:2px;background:var(--bg3)}
+
 .hm-cell.l1{background:rgba(63,185,80,.25)}.hm-cell.l2{background:rgba(63,185,80,.5)}
 .hm-cell.l3{background:rgba(63,185,80,.75)}.hm-cell.l4{background:rgba(63,185,80,1)}
 .spark{display:inline-block;vertical-align:middle;margin-left:6px}
@@ -656,7 +652,7 @@ body{background:
 .dur-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;margin:2px 0}
 .dur-fill{height:100%;border-radius:3px}
 .eta-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(88,166,255,.15);color:var(--bl);margin-left:4px}
-.pwa-btn{font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--bl);background:rgba(88,166,255,.1);color:var(--bl);cursor:pointer}
+
 .cheat-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:998;display:none;align-items:center;justify-content:center;padding:20px}
 .cheat-overlay.on{display:flex}
 .cheat-box{background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:20px;max-width:360px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,.5)}
@@ -749,10 +745,10 @@ body{background:
 .flow-particle{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--bl);animation:flowMove 2s linear infinite}
 @keyframes flowMove{from{left:0;opacity:0}10%{opacity:1}90%{opacity:1}to{left:100%;opacity:0}}
 .glass-mode .hero,.glass-mode .stat-card,.glass-mode .sec{backdrop-filter:blur(10px);background:rgba(22,27,34,.6);border:1px solid rgba(255,255,255,.08)}
-.hm-matrix{display:grid;grid-template-columns:auto repeat(24,1fr);gap:1px;font-size:7px;overflow-x:auto;max-width:100%}
-.hm-matrix .hm-lbl{color:var(--t2);text-align:right;padding-right:3px;white-space:nowrap}
-.hm-matrix .hm-hdr{color:var(--t2);text-align:center;padding:1px 0}
-.hm-matrix .hm-cell2{border-radius:2px;min-width:8px;aspect-ratio:1;cursor:default}
+
+.hm-matrix 
+.hm-matrix 
+.hm-matrix 
 .hm-matrix .hm-cell2.l0{background:var(--bg3)}
 .hm-matrix .hm-cell2.l1{background:rgba(88,166,255,.2)}
 .hm-matrix .hm-cell2.l2{background:rgba(88,166,255,.4)}
@@ -792,77 +788,6 @@ body{background:
 .skeleton-stat{width:60px;height:40px;margin:4px}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.tree-info{font-size:11px;color:var(--t2);margin-top:8px}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .heatmap-wrap{padding:10px;overflow-x:auto}
 .heatmap-grid{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:2px;max-width:100%}
 .heatmap-cell{width:10px;height:10px;border-radius:2px;background:var(--bg3)}
@@ -895,13 +820,21 @@ body{background:
 .compare-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--brd)}
 
 
-
-
-
-
-
 .dash-clock{font-size:32px;font-weight:700;font-family:monospace;text-align:center;color:var(--bl);letter-spacing:2px}
 .dash-clock-date{font-size:11px;color:var(--t2);text-align:center;margin-top:4px}
+
+.trigger-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin:8px 0}
+.trigger-card{background:var(--bg3);border-radius:8px;padding:8px;text-align:center}
+.trigger-icon{font-size:20px}
+.trigger-name{font-size:9px;color:var(--t2);margin-top:2px}
+.trigger-count{font-size:14px;font-weight:700}
+.runnum-track{margin:8px 0}
+.runnum-row{display:grid;grid-template-columns:40px 1fr 40px;gap:4px;padding:3px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.runnum-gap{color:var(--rd);font-size:9px}
+.commit-msg{font-size:10px;color:var(--t1);padding:4px 0;border-bottom:1px solid var(--brd);line-height:1.4}
+.commit-msg-sha{font-family:monospace;color:var(--bl);font-size:9px}
+.trigger-bar{height:8px;border-radius:3px;background:var(--bl);margin:2px 0}
+
 
 .metric-card{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:10px;margin:6px 0}
 .metric-label{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
@@ -952,7 +885,6 @@ body{background:
 .md-export{padding:10px;text-align:center}
 
 
-
 .drag-handle{cursor:move;user-select:none;opacity:.3;font-size:12px}
 .drag-handle:hover{opacity:.7}
 .dragging{opacity:.5}
@@ -970,8 +902,8 @@ body{background:
 .rsm-card{background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;margin:8px 0;display:flex;align-items:center;gap:10px;font-size:12px}
 .rsm-card .rsm-ico{font-size:20px}.rsm-card .rsm-id{font-weight:700;color:var(--bl)}.rsm-card .rsm-status{font-size:11px;color:var(--t2)}
 .rsm-card .rsm-link{margin-left:auto;font-size:10px;text-decoration:none}
-.diff-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
-.diff-chip{padding:3px 8px;border-radius:6px;background:var(--bg3);font-size:10px;color:var(--t2)}
+
+
 .diff-chip b{color:var(--t1)}
 .storage-story{font-size:10px;color:var(--t2);padding:6px 10px;background:var(--bg3);border-radius:8px;margin:6px 0;line-height:1.5}
 .storage-story b{color:var(--t1)}
@@ -1205,7 +1137,7 @@ body{background:
 <button onclick="document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"><span class="bi">🛠</span>Tools</button>
 <button onclick="document.getElementById('sec-act').scrollIntoView({behavior:'smooth'})"><span class="bi">⚡</span>More</button>
 </div>
-<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px"><span class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></span> v9.0 HM matrix + insights + stopwatch + quingo + CI/CD Metrics + DORA + Run Analysis + Actions Minutes + Commit Impact · Auto-refresh 30s</p></div>
+<div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px"><span class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></span> v9.0 HM matrix + insights + stopwatch + quingo + Trigger Analysis + Run# Tracker + Commit Messages + Event Timeline + Gap Detection · Auto-refresh 30s</p></div>
 </div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cheat-overlay" id="cheatOverlay" onclick="if(event.target===this)closeCheat()">
@@ -1225,7 +1157,7 @@ body{background:
 <script>
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
-            "build": "v10.0-max",
+            "build": "v10.1-max",
         "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
@@ -1239,6 +1171,11 @@ window.DASH = ''' + json.dumps({
             "conclusion": r.get("conclusion"),
             "createdAt": r.get("createdAt"),
             "updatedAt": r.get("updatedAt"),
+            "event": r.get("event"),
+            "headBranch": r.get("headBranch") or "",
+            "headSha": r.get("headSha") or "",
+            "runNumber": r.get("runNumber") or 0,
+            "displayTitle": r.get("displayTitle") or "",
             "orv_id": r.get("orv_id") or "",
             "source": r.get("source") or "",
         } for r in runs[:80]],
@@ -1376,7 +1313,7 @@ if(t==='customize'){
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Hour x Day heatmap matrix (7x24 grid)<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.1</b>:<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Hour x Day heatmap matrix (7x24 grid)<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1449,6 +1386,11 @@ if(t==='player'){
 }
 if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
 if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='trigger'){h.textContent='🎯 Trigger Analysis';b.innerHTML=renderTriggerAnalysis()}
+if(t==='runnum'){h.textContent='🔢 Run Number Tracker';b.innerHTML=renderRunNumberTracker()}
+if(t==='commitmsg'){h.textContent='💬 Commit Messages';b.innerHTML=renderCommitMessages()}
+if(t==='eventtl'){h.textContent='📅 Event Timeline';b.innerHTML=renderEventTimeline()}
+if(t==='rungap'){h.textContent='⚠️ Run Number Gaps';b.innerHTML=renderRunNumberGap()}
 if(t==='depfreq'){h.textContent='🚀 Deploy Frequency';b.innerHTML=renderDeployFrequency()}
 if(t==='mttr'){h.textContent='🔧 MTTR';b.innerHTML=renderMTTR()}
 if(t==='cfr'){h.textContent='📉 Change Failure Rate';b.innerHTML=renderCFR()}
@@ -1473,20 +1415,6 @@ if(t==='mdexport'){h.textContent='📝 Markdown Report';b.innerHTML='<div class=
 
 
 if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'Elshinta FM Jakarta',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2 FM',u:'https://a8.siar.us/listen/campursari/stream'},{n:'Suara Soneta',u:'https://a2.siar.us//listen//suarasoneta//radio.mp3'},{n:'Beat Radio Dangdut',u:'https://stream.beatradioid.com:8000//dangdut'},{n:'Dengerin Musik Indonesia',u:'https://stream.denger.in/'},{n:'Sunda Radio',u:'https://sundaradio.com/live/sundaradio'},{n:'Classy NetRadio',u:'https://streaming.classynetradio.com:8000/classySD'},{n:'POP FM Semarang',u:'https://i.klikhost.com:9612/stream.aac'},{n:'Style 94.6 FM Tasikmalaya',u:'https://stream.stylefmtasik.com/listen/stylefmtasik/stream'},{n:'Suara Salira',u:'https://live.suarasalira.com/listen/suarasalira/stream'},{n:'Mettaswara Dangdut',u:'https://mettaswara.com:8700/d4d'},{n:'Alternatif Radio Jakarta',u:'https://void.idserverhost.com/8016/stream'},{n:'Volcano Radio',u:'https://volcano.out.airtime.pro/volcano_a'},{n:'The Beat Radio Bali',u:'https://c1.siar.us/radio/8030/stream'},{n:'Tebet Radio Jakarta',u:'https://stream-ssl.arenastreaming.com:8066/stream'},{n:'Spirit Online',u:'https://radio.spirittoc.com:8060/spirit_online'},{n:'Radio Wisata FM',u:'https://c2.siar.us:9889/live'},{n:'Radio VOSS',u:'https://live.voss.my.id/listen/voss/voss'},{n:'Hitz 91.2 FM Belitung',u:'https://play.bilitonesefm.com/listen/radiohitzfm/stream'},{n:'Loker Musik Indonesia',u:'https://stream.lokermusik.com/listen/lokermusik/lokermusik'},{n:'Radio Kita Tasikmalaya',u:'https://stream.radiokita.my.id/listen/radiokita/radiokita'},{n:'Bellasalam 87.6 FM Tasikmalaya',u:'https://listen.bellasalamfm.com/listen/radiobellasalam/live'},{n:'Radio Sehati',u:'https://c4.siar.us:8092/autodj'},{n:'106.1 Geronimo FM',u:'https://ig.idstreamer.com:8090//live'},{n:'Bimasakti FM Kebumen',u:'https://i.klikhost.com:9622/stream'},{n:'Classy Worship',u:'https://streaming.classynetradio.com/listen/classyworship/worshipLQ'},{n:'Ada Radio Online',u:'https://adaradio.kradionews.com/listen/adaradio/stream'},{n:'ELPAS 88.6 FM Bogor',u:'https://live.elpasradio.com/listen/elpasradio/stream'},{n:'Bens Radio',u:'https://streaming.bensradio.com:8522/stream'},{n:'Damu Lumajang',u:'https://stream.radiodakwahmustofa.com:8724/damu'},{n:'Delta FM Bandung',u:'https://stream-pd-bdg.dimasalfaridzi.my.id/delta'},{n:'Firza MPC Radio',u:'https://mpc1.mediacp.eu/stream/firzaradio'},{n:'Mettaswara Indo 2000',u:'https://mettaswara.com:8700//indo00'},{n:'Mettaswara SoftRock',u:'https://mettaswara.com:8700/slowrock'},{n:'Radio CMN Hits',u:'https://stream.coolkas.com/listen/radiocmn/radiocmn'},{n:'KLCBS Fusion',u:'https://streaming.klcbsofficial.com/listen/fusion/klcbs-fusion'},{n:'KLCBS New Age',u:'https://streaming.klcbsofficial.com/listen/newage/klcbs-newage'},{n:'Yasika FM Jogja',u:'https://i.klikhost.com:9610/stream'},{n:'Fajri FM',u:'https://ars.mitradio.com:8000/radio.mp3'},{n:'Radio Kasih',u:'https://onlineradiobox.com/json/id/kasih/play'},{n:'Radio Klik FM Surabaya',u:'https://c1.alhastream.com:3210/radio'},{n:'Telkom Radio',u:'https://sukmben.radiogentara.com/radio/8140/stream'},{n:'Utaindo Radio',u:'https://streaming.classynetradio.com/listen/utaindo_radio/utaindo-aac'},{n:'ARB FM Jakarta',u:'https://void.idserverhost.com/8018/stream'},{n:'Galuh Media FM Cianjur',u:'https://stream-sg1.galuhmedia.co.id/listen/galuhmedia/stream'},{n:'KR-Radio 107.2 FM Jogja',u:'https://s1.gntr.net/listen/kr_radio/radio'},{n:'Radio Bravo 96.1 FM Kebumen',u:'https://stream.swadesifm.com/radio/8090/radio.mp3'},{n:'B 104.6 FM',u:'https://play.bilitonesefm.com/listen/radiobfm/stream'},{n:'Free FM Jakarta',u:'https://rocafmadrid.radioca.st/stream'},{n:'Galau Jikan FM',u:'https://radio.gjfm.my.id/listen/gjfm/siaran'},{n:'GCD 98.6 FM Yogyakarta',u:'https://studio1.indostreamers.com:8014/stream/1/'},{n:'Gemini 101 FM',u:'https://relay.gemini101fm.com/listen/gemini_fm/radio.mp3'},{n:'Istara FM Surabaya',u:'https://live.radioistara.com/listen/radioistara/radioistara'},{n:'R-Lisa FM',u:'https://a4.siar.us/radio/8360/radio.mp3'},{n:'Radiks FM Semarang',u:'https://i.klikhost.com:9620/;'},{n:'Radio Airmen FM 107.9',u:'https://void.idserverhost.com:8024/stream'},{n:'Mettaswara Indonesia Gold',u:'https://mettaswara.com:8700//disco'},{n:'Mettaswara Java',u:'https://mettaswara.com:8700//java'},{n:'MSTRI 104.2 FM',u:'https://c2.siar.us:8120/live'},{n:'Insania FM Indonesia',u:'https://stream-sg1.galuhmedia.co.id/listen/insaniamataram/876mataram'},{n:'Bharata Radio',u:'https://c1.siar.us:8800/live'},{n:'Braya Radio',u:'https://live.brayaradio.com/listen/brayaradio/stream'},{n:'Comfy Radio',u:'https://station.comfyradio.id/listen/comfyradio/radio.mp3'},{n:'KLCBS',u:'https://streaming.klcbs.id/listen/klcbs/klcbsfm-hd'},{n:'KLCBS Tropical',u:'https://streaming.klcbsofficial.com/listen/tropical/klcbs-tropical'},{n:'PAS FM Jakarta',u:'https://i.klikhost.com/8266/stream'},{n:'Radio Rumah Oma',u:'https://radiorumahoma.com:30443/;'},{n:'PTPN FM Solo',u:'https://ssg.streamingmurah.com:8040/stream'},{n:'Radio Andika',u:'https://r5.siar.us:1057/andikafm'},{n:'Radio Elshinta Bandung',u:'https://stream-ssl.arenastreaming.com:8005/bandung'},{n:'Radio Imelda FM',u:'https://server.radioimeldafm.co.id/listen/imeldafm/imeldafm'}];b.innerHTML='<audio id="radioPlayer" controls style="width:100%;margin-bottom:8px"></audio><div style="font-size:11px;color:var(--t2);margin-bottom:8px">Pilih stasiun radio:</div><div id="radioList"></div><div id="radioNowPlaying" style="font-size:10px;color:var(--bl);margin-top:8px"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'">📻 '+s.n+'</button>'});rl.innerHTML=html2}}
@@ -1613,7 +1541,6 @@ function diff24Html(){
     +'<span class="diff-chip">enc selesai: <b>'+es+'</b></span>'
     +'<span class="diff-chip">streak: <b>'+(st.streak||0)+'d</b></span>';
 }
-
 
 
 var lastRunId=0;
@@ -1847,8 +1774,150 @@ function copyCurl(url){
 }
 
 
+// ═══ v10.1 Enriched Data Features ═══
+function renderTriggerAnalysis(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var triggers={};
+  runs.forEach(function(r){
+    var ev=r.event||'unknown';
+    if(!triggers[ev])triggers[ev]={total:0,success:0,fail:0};
+    triggers[ev].total++;
+    if(r.conclusion==='success')triggers[ev].success++;
+    if(r.conclusion==='failure')triggers[ev].fail++;
+  });
+  var icons={'push':'📤','schedule':'⏰','workflow_dispatch':'👤','pull_request':'🔀','release':'🏷️','repository_dispatch':'📡','unknown':'❓'};
+  var html='<div style="padding:10px">';
+  html+='<div class="trigger-grid">';
+  var sorted=Object.keys(triggers).sort(function(a,b){return triggers[b].total-triggers[a].total});
+  sorted.forEach(function(ev){
+    var d=triggers[ev];
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="trigger-card"><div class="trigger-icon">'+(icons[ev]||'❓')+'</div><div class="trigger-name">'+ev+'</div><div class="trigger-count" style="color:'+col+'">'+d.total+'</div><div style="font-size:8px;color:var(--t2)">'+pct+'% ok</div></div>';
+  });
+  html+='</div>';
+  var total=runs.length||1;
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Distribution:</div>';
+  sorted.forEach(function(ev){
+    var d=triggers[ev];
+    var pct=Math.round(d.total/total*100);
+    html+='<div style="margin:4px 0"><div style="font-size:10px;display:flex;justify-content:space-between"><span>'+(icons[ev]||'')+' '+ev+'</span><span>'+d.total+' ('+pct+'%)</span></div><div class="trigger-bar" style="width:'+pct+'%"></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
 
+function renderRunNumberTracker(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withNum=runs.filter(function(r){return r.runNumber}).sort(function(a,b){return (b.runNumber||0)-(a.runNumber||0)});
+  if(!withNum.length)return'<div style="padding:10px;color:var(--t2)">No run numbers available</div>';
+  var nums=withNum.map(function(r){return r.runNumber});
+  var max=Math.max.apply(null,nums);
+  var min=Math.min.apply(null,nums);
+  var expected=max-min+1;
+  var gaps=expected-nums.length;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+max+'</div><div class="metric-mini-lbl">Latest Run #</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+min+'</div><div class="metric-mini-lbl">Oldest Run #</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(gaps>0?'warn':'ok')+'">'+gaps+'</div><div class="metric-mini-lbl">Missing Runs</div></div>';
+  html+='</div>';
+  if(gaps>0){
+    var numSet={};
+    nums.forEach(function(n){numSet[n]=true});
+    var missing=[];
+    for(var i=min;i<=max;i++){if(!numSet[i])missing.push(i)}
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--rd)">⚠️ '+missing.length+' run number(s) missing (deleted or expired):</div>';
+    html+='<div style="max-height:120px;overflow:auto;margin-top:4px">';
+    missing.slice(0,20).forEach(function(n){
+      html+='<div class="runnum-row"><span class="runnum-gap">#'+n+'</span><span style="color:var(--t2)">missing</span><span>—</span></div>';
+    });
+    if(missing.length>20)html+='<div style="font-size:9px;color:var(--t2);padding:4px">+'+(missing.length-20)+' more...</div>';
+    html+='</div>';
+  }else{
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No gaps! All '+nums.length+' runs present ✅</div>';
+  }
+  html+='</div>';
+  return html;
+}
 
+function renderCommitMessages(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withTitle=runs.filter(function(r){return r.displayTitle}).slice(0,30);
+  if(!withTitle.length)return'<div style="padding:10px;color:var(--t2)">No commit messages available</div>';
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📋 Commit Messages → Run Results</div>';
+  withTitle.forEach(function(r){
+    var sha=(r.headSha||'').substring(0,7);
+    var col=r.conclusion==='success'?'var(--gn)':'var(--rd)';
+    var time=r.createdAt?new Date(r.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    html+='<div class="commit-msg"><span class="commit-msg-sha">'+sha+'</span> <span style="color:'+col+'">'+(r.conclusion==='success'?'✅':'❌')+'</span> '+esc(r.displayTitle||'')+'<br><span style="color:var(--t3);font-size:8px">'+time+' WIB · #'+(r.runNumber||'')+' · '+(r.headBranch||'')+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderEventTimeline(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  if(!runs.length)return'<div style="padding:10px;color:var(--t2)">No runs</div>';
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📅 Event Timeline (chronological)</div>';
+  var byEvent={};
+  sorted.forEach(function(r){
+    var ev=r.event||'unknown';
+    if(!byEvent[ev])byEvent[ev]=[];
+    byEvent[ev].push(r);
+  });
+  Object.keys(byEvent).forEach(function(ev){
+    var items=byEvent[ev];
+    var success=items.filter(function(r){return r.conclusion==='success'}).length;
+    var pct=items.length?Math.round(success/items.length*100):0;
+    html+='<div style="margin:8px 0;padding:8px;border:1px solid var(--brd);border-radius:8px">';
+    html+='<div style="font-size:11px;font-weight:700;margin-bottom:4px">'+ev+' <span style="color:var(--t2)">('+items.length+' runs, '+pct+'% success)</span></div>';
+    items.slice(-5).reverse().forEach(function(r){
+      var time=r.createdAt?new Date(r.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+      var col=r.conclusion==='success'?'var(--gn)':'var(--rd)';
+      html+='<div style="font-size:9px;padding:2px 0;color:var(--t2)"><span style="color:'+col+'">'+(r.conclusion==='success'?'✅':'❌')+'</span> '+time+' · #'+(r.runNumber||'')+' · '+(r.displayTitle||r.name||'').substring(0,30)+'</div>';
+    });
+    if(items.length>5)html+='<div style="font-size:8px;color:var(--t3);padding:2px">+'+(items.length-5)+' more...</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderRunNumberGap(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withNum=runs.filter(function(r){return r.runNumber}).sort(function(a,b){return (a.runNumber||0)-(b.runNumber||0)});
+  if(withNum.length<2)return'<div style="padding:10px;color:var(--t2)">Need at least 2 runs with run numbers</div>';
+  var gaps=[];
+  for(var i=1;i<withNum.length;i++){
+    var prev=withNum[i-1].runNumber;
+    var curr=withNum[i].runNumber;
+    if(curr-prev>1){
+      gaps.push({from:prev+1,to:curr-1,count:curr-prev-1});
+    }
+  }
+  var totalMissing=gaps.reduce(function(a,g){return a+g.count},0);
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+gaps.length+'</div><div class="metric-mini-lbl">Gap Periods</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(totalMissing>0?'warn':'ok')+'">'+totalMissing+'</div><div class="metric-mini-lbl">Total Missing</div></div>';
+  html+='</div>';
+  if(gaps.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No gaps! Consecutive run numbers ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Gap details:</div>';
+    gaps.forEach(function(g){
+      html+='<div style="margin:4px 0;padding:6px;border:1px solid var(--brd);border-radius:6px;font-size:10px"><span style="color:var(--rd)">⚠️ #'+g.from;
+      if(g.count>1)html+=' → #'+g.to;
+      html+='</span> <span style="color:var(--t2)">'+g.count+' run(s) missing</span></div>';
+    });
+  }
+  html+='</div>';
+  return html;
+}
 
 
 // ═══ v10.0 CI/CD Metrics ═══
@@ -2502,8 +2571,6 @@ function renderClock(){
 }
 
 
-
-
 // ═══ v9.0 features ═══
 function renderHmMatrix(){
   var D=window.DASH||{};var runs=D.runs||[];
@@ -3088,7 +3155,6 @@ function renderSparkline(){
 }
 
 
-
 function renderETA(){
   var D=window.DASH||{};var runs=D.runs||[];
   var running=runs.filter(function(r){return statusKeyJs(r)==='in_progress'&&r.name==='rusemeva-vault'});
@@ -3278,6 +3344,11 @@ var CMD_ITEMS=[
   {cat:'View',label:'Refresh',act:"softRefresh().then(function(ok){if(!ok)location.reload()})"},
   {cat:'Help',label:'Keys',act:"showM('keys')"},
   {cat:'Help',label:'About',act:"showM('about')"},
+  {cat:'CI/CD',label:'Trigger Analysis',act:"showM('trigger')"},
+  {cat:'CI/CD',label:'Run Number Tracker',act:"showM('runnum')"},
+  {cat:'CI/CD',label:'Commit Messages',act:"showM('commitmsg')"},
+  {cat:'CI/CD',label:'Event Timeline',act:"showM('eventtl')"},
+  {cat:'CI/CD',label:'Run Number Gaps',act:"showM('rungap')"},
   {cat:'CI/CD',label:'Deploy Frequency',act:"showM('depfreq')"},
   {cat:'CI/CD',label:'MTTR',act:"showM('mttr')"},
   {cat:'CI/CD',label:'Change Failure Rate',act:"showM('cfr')"},
@@ -3371,6 +3442,10 @@ def main():
             "createdAt": r.get("createdAt"),
             "updatedAt": r.get("updatedAt"),
             "event": r.get("event"),
+            "headBranch": r.get("headBranch") or "",
+            "headSha": r.get("headSha") or "",
+            "runNumber": r.get("runNumber") or 0,
+            "displayTitle": r.get("displayTitle") or "",
             "orv_id": r.get("orv_id") or "",
             "source": r.get("source") or "",
         }
@@ -3397,7 +3472,7 @@ def main():
     with open(f"{out}/data.json", "w", encoding="utf-8") as f:
         json.dump({
             "generated": datetime.now(WIB).isoformat(),
-            "build": "v10.0-max",
+            "build": "v10.1-max",
             "stats": S,
             "runs": lean_runs,
             "releases": lean_releases,
