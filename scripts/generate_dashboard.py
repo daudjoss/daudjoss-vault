@@ -643,10 +643,10 @@ body{background:
   background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--bg2)}
 .mo{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .ft{opacity:.85}
-.heatmap{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;max-width:100%;overflow-x:auto;padding:4px}
 
-.hm-cell{width:14px;height:14px;border-radius:3px;background:var(--bg3);min-width:14px;min-height:14px}.hm-cell.l1{background:rgba(63,185,80,.25)}.hm-cell.l2{background:rgba(63,185,80,.5)}
-.hm-cell.l3{background:rgba(63,185,80,.75)}.hm-cell.l4{background:rgba(63,185,80,1)}
+
+
+
 .spark{display:inline-block;vertical-align:middle;margin-left:6px}
 .alert-chip{padding:4px 10px;border-radius:8px;background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.4);color:#f85149;font-size:11px;animation:pulse 2s infinite}
 .dur-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;margin:2px 0}
@@ -1046,7 +1046,7 @@ body{background:
 <div class="sec" id="sec-freqclock"><div class="sh"><div class="st">🕐 Run Frequency</div></div><div id="freqClockWrap"></div></div>
 
 <div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div></div>
-<div class="sec" id="sec-heatmap"><div class="sh"><div class="st">🔥 Heatmap (30 hari)</div><span style="font-size:9px;color:var(--t2)">Intensitas rekaman</span></div><div id="heatmap-grid"></div><div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="hm-cell" style="width:14px;height:14px"></div><div class="hm-cell l1" style="width:14px;height:14px"></div><div class="hm-cell l2" style="width:14px;height:14px"></div><div class="hm-cell l3" style="width:14px;height:14px"></div><div class="hm-cell l4" style="width:14px;height:14px"></div><span>More</span></div></div>
+
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
 <div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:14px;height:14px"></div><div class="c c1" style="width:14px;height:14px"></div><div class="c c2" style="width:14px;height:14px"></div><div class="c c3" style="width:14px;height:14px"></div><div class="c c4" style="width:14px;height:14px"></div><div class="c c5" style="width:14px;height:14px"></div><span>More</span></div></div>
 <div class="sec" id="sec-week"><div class="sh"><div class="st">📅 This Week</div><span style="font-size:9px;color:var(--t2)">7 hari</span></div><div class="cd-grid">''' + cal_detail + '''</div></div>
@@ -1726,7 +1726,7 @@ function checkThresholdAlert(){
 function applyEmbedMode(){
   var p=new URLSearchParams(location.search);
   if(p.get('embed')==='1'){
-    var hides=['.bnav','.tools-panel','.sec-feed','.sec-health','.sec-week','#sec-flow','#sec-heatmap','.hero-actions','#qchips','.fb-row'];
+    var hides=['.bnav','.tools-panel','.sec-feed','.sec-health','.sec-week','#sec-flow','','.hero-actions','#qchips','.fb-row'];
     hides.forEach(function(s){var els=document.querySelectorAll(s);els.forEach(function(e){e.classList.add('embed-hide')})});
     document.body.classList.add('embed-mode');
   }
@@ -2419,45 +2419,6 @@ function renderRetryTracker(){
 
 
 // ═══ v9.2 features ═══
-function renderHeatmap(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var days={};
-  runs.forEach(function(r){
-    if(!r.createdAt)return;
-    var d=new Date(r.createdAt);
-    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
-    if(!days[key])days[key]={total:0,success:0,fail:0};
-    days[key].total++;
-    if(r.conclusion==='success')days[key].success++;
-    if(r.conclusion==='failure')days[key].fail++;
-  });
-  var now=new Date();
-  var start=new Date(now.getFullYear(),0,1);
-  var daysArr=[];
-  for(var d=new Date(start);d<=now;d=new Date(d.getTime()+86400000)){
-    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
-    daysArr.push({key:key,date:new Date(d),data:days[key]||null});
-  }
-  var html='<div class="heatmap-wrap"><div class="heatmap-grid" id="heatmapGrid">';
-  var months=[];
-  var lastMonth=-1;
-  daysArr.forEach(function(day){
-    var m=day.date.getMonth();
-    if(m!==lastMonth){months.push(day.date.toLocaleDateString('en',{month:'short'}));lastMonth=m}
-    else months.push('');
-    var cls='heatmap-cell';
-    if(day.data){
-      if(day.data.fail>0&&day.data.success===0)cls+=' lf';
-      else if(day.data.success>=5)cls+=' l4';
-      else if(day.data.success>=3)cls+=' l3';
-      else if(day.data.success>=1)cls+=' l2';
-      else cls+=' l1';
-    }
-    html+='<div class="'+cls+'" title="'+day.key+': '+(day.data?day.data.total+' runs':'0')+'"></div>';
-  });
-  html+='</div><div class="heatmap-legend">Less <div class="heatmap-cell"></div><div class="heatmap-cell l1"></div><div class="heatmap-cell l2"></div><div class="heatmap-cell l3"></div><div class="heatmap-cell l4"></div> More &nbsp; <div class="heatmap-cell lf"></div> Fail</div></div>';
-  return html;
-}
 
 var _achvList=[
   {id:'first_run',icon:'🎯',name:'First Run',desc:'Complete 1 run',check:function(s){return s.total>=1},max:1},
@@ -3259,13 +3220,13 @@ function renderHeatmap(){
     html+='<div class="hm-cell '+cls+'" title="'+key+': '+count+' runs"></div>';
   }
   html+='</div>';
-  var el=document.getElementById('heatmap-grid');
+  var el=null;
   if(el)el.innerHTML=html;
 }
 
 function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderHeatmap();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();}
 
 // ── honest client health ──
 function checkHealth(){
