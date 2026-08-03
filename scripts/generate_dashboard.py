@@ -1250,6 +1250,7 @@ function showCmpModal(){
   document.getElementById('mb').innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
     +'<div>'+fmt(r1)+'</div><div>'+fmt(r2)+'</div></div>'
     +'<div style="margin-top:8px"><button class="btn" id="cmpClearBtn">Clear</button></div>';var cb=document.getElementById('cmpClearBtn');if(cb)cb.onclick=function(){cmpPick=[];clM();document.querySelectorAll('.fi').forEach(function(e){e.style.outline=''})}
+}
 var CMD_ITEMS=[
   {cat:'Navigate',label:'Home',act:"document.querySelector('.hero').scrollIntoView({behavior:'smooth'})"},
   {cat:'Navigate',label:'Feed',act:"document.getElementById('sec-feed').scrollIntoView({behavior:'smooth'})"},
@@ -1270,7 +1271,6 @@ var CMD_ITEMS=[
   {cat:'Help',label:'Updates',act:"showM('updates')"}
 ];
 var cmdSel=0;
-}
 function openCmd(){document.getElementById('cmdOverlay').classList.add('on');var i=document.getElementById('cmdInput');i.value='';i.focus();cmdSel=0;filterCmd()}
 function closeCmd(){document.getElementById('cmdOverlay').classList.remove('on')}
 function filterCmd(){
