@@ -760,6 +760,33 @@ body{background:
 .dur-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;margin:2px 0}
 .dur-fill{height:100%;border-radius:3px}
 .eta-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(88,166,255,.15);color:var(--bl);margin-left:4px}
+.dur-pred-badge{font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(88,166,255,.18);color:var(--bl);margin-left:4px;white-space:nowrap;display:inline-block}
+.fail-streak-badge{font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(248,81,73,.18);border:1px solid rgba(248,81,73,.3);color:var(--rd);margin-left:4px;white-space:nowrap;display:inline-block}
+.fail-streak-card{padding:8px 12px;border-radius:10px;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);color:var(--rd);font-size:11px;margin-top:6px;animation:pulse 2s infinite}
+.fail-streak-card .fs-title{font-weight:700;margin-bottom:2px}
+.fail-streak-card .fs-item{font-size:10px;padding:1px 0}
+/* Timeline view */
+.tl-wrap{margin:8px 0;padding:12px;background:var(--bg3);border-radius:10px;border:1px solid var(--brd)}
+.tl-track{position:relative;height:80px;background:var(--bg2);border-radius:6px;border:1px solid var(--brd);overflow:hidden}
+.tl-grid-line{position:absolute;top:0;bottom:0;width:1px;background:var(--brd);opacity:.3}
+.tl-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;cursor:pointer;transition:transform .15s;z-index:2}
+.tl-dot:hover{transform:translate(-50%,-50%) scale(1.5);z-index:5}
+.tl-dot.success{background:var(--gn)}
+.tl-dot.failure{background:var(--rd)}
+.tl-dot.running{background:var(--yl);animation:pulse 1.5s infinite}
+.tl-dot.cancelled{background:var(--t3)}
+.tl-now-line{position:absolute;top:0;bottom:0;width:2px;background:var(--bl);z-index:4;box-shadow:0 0 4px var(--bl)}
+.tl-now-label{position:absolute;top:2px;font-size:9px;color:var(--bl);white-space:nowrap;transform:translateX(-50%);z-index:5}
+.tl-hours{display:flex;justify-content:space-between;margin-top:4px;padding:0 1px}
+.tl-hour-label{font-size:8px;color:var(--t3);text-align:center;flex:1}
+.tl-legend{display:flex;gap:10px;margin-top:8px;font-size:10px;color:var(--t2);flex-wrap:wrap}
+.tl-legend span{display:flex;align-items:center;gap:3px}
+.tl-legend .lg-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.tl-legend .lg-dot.success{background:var(--gn)}
+.tl-legend .lg-dot.failure{background:var(--rd)}
+.tl-legend .lg-dot.running{background:var(--yl)}
+.tl-legend .lg-dot.cancelled{background:var(--t3)}
+.tl-tooltip{position:fixed;z-index:1000;padding:6px 10px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;font-size:10px;pointer-events:none;max-width:240px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 
 .cheat-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:998;display:none;align-items:center;justify-content:center;padding:20px}
 .cheat-overlay.on{display:flex}
@@ -1169,6 +1196,31 @@ body{background:
 #refreshTimer.stale{color:var(--rd)}
 .sound-tog{cursor:pointer;border:none;background:none;font-size:16px;padding:2px 4px;transition:opacity .2s}
 .sound-tog.off{opacity:.4}
+/* === Filter Presets === */
+.preset-row{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:4px 0}
+.preset-btn{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:10px;border:1px solid var(--or);background:rgba(240,136,62,.12);color:var(--or);font-size:10px;cursor:pointer;transition:all .2s;user-select:none}
+.preset-btn:hover{background:rgba(240,136,62,.25);border-color:var(--or)}
+.preset-btn .preset-del{font-size:11px;line-height:1;opacity:.5;cursor:pointer;border:none;background:none;color:var(--rd);padding:0;margin-left:2px}
+.preset-btn .preset-del:hover{opacity:1}
+.save-preset-btn{padding:3px 8px;border-radius:10px;border:1px dashed var(--or);background:transparent;color:var(--or);font-size:10px;cursor:pointer;transition:all .2s}
+.save-preset-btn:hover{background:rgba(240,136,62,.1);border-style:solid}
+.save-preset-btn.hid{display:none}
+/* === Run Grouping === */
+.group-toggle{padding:3px 10px;border-radius:10px;border:1px solid var(--brd);background:transparent;color:var(--t2);font-size:10px;cursor:pointer;transition:all .2s;user-select:none}
+.group-toggle:hover{border-color:var(--pr);color:var(--pr)}
+.group-toggle.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.grp-header{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;background:rgba(188,140,255,.08);border:1px solid rgba(188,140,255,.2);margin:4px 0;cursor:pointer;user-select:none;transition:background .2s}
+.grp-header:hover{background:rgba(188,140,255,.15)}
+.grp-toggle-icon{font-size:10px;color:var(--pr);transition:transform .2s}
+.grp-header.collapsed .grp-toggle-icon{transform:rotate(-90deg)}
+.grp-name{font-size:11px;font-weight:600;color:var(--pr);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grp-count{font-size:10px;color:var(--t2);background:var(--bg3);padding:1px 6px;border-radius:8px}
+.grp-rate{font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px}
+.grp-rate.good{background:rgba(63,185,80,.15);color:var(--gn)}
+.grp-rate.mid{background:rgba(240,136,62,.15);color:var(--or)}
+.grp-rate.bad{background:rgba(248,81,73,.15);color:var(--rd)}
+.grp-body{margin-left:8px;border-left:2px solid rgba(188,140,255,.2);padding-left:6px}
+.grp-body.collapsed{display:none}
 </style>
 </head>
 <body>
@@ -1216,6 +1268,7 @@ body{background:
 <div id="hero-fresh"></div>
 <div id="hero-spark"></div>
 <div id="hero-alert"></div>
+<div id="hero-fstreak"></div>
 <div id="hero-predins"></div>
 </div>
 <div class="sg">
@@ -1249,7 +1302,7 @@ body{background:
 <button class="view-btn" onclick="saveCurrentView()">💾 Save</button>
 <button class="view-btn" id="compactBtn" onclick="toggleCompact()">📐 Compact</button>
 </div><div id="saved-views" style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap"></div></div>
-<div class="sec" id="sec-feed"><div class="sh"><div class="st">📰 Feed</div><span style="font-size:9px;color:var(--t2)">Last 15</span></div><div class="feed">''' + feed + '''</div></div>
+<div class="sec" id="sec-feed"><div class="sh"><div class="st">📰 Feed</div><div class="fl"><button class="group-toggle" id="groupToggle" data-action="toggleGrouping">🗂 Group by Workflow</button></div></div><div class="feed" id="feedList">''' + feed + '''</div></div>
 <div class="sec"><div class="sh"><div class="st">💡 Insights</div></div>''' + insight_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">🔮 Predictions</div></div>''' + pred_html + '''</div>
 <div class="sec"><div class="sh"><div class="st">⚡ Performance</div></div><div class="pg">
@@ -1368,7 +1421,7 @@ body{background:
 </div></div>
 <div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()">
 <div id="qchips" style="margin:4px 0"></div>
-<div class="terminal" id="terminalBox" style="display:none"><div class="terminal-out" id="terminalOut"></div><div><span class="terminal-prompt">rusemeva@dash:~$</span> <input class="terminal-input" id="terminalInput" placeholder="type help..."></div></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button></div></div>
+<div class="terminal" id="terminalBox" style="display:none"><div class="terminal-out" id="terminalOut"></div><div><span class="terminal-prompt">rusemeva@dash:~$</span> <input class="terminal-input" id="terminalInput" placeholder="type help..."></div></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button><button class="save-preset-btn hid" id="savePresetBtn" data-action="savePreset">⭐ Save Preset</button></div><div class="preset-row" id="presetRow"></div></div>
 <div style="overflow-x:auto"><table id="rt"><thead><tr><th data-col="icon"></th><th data-col="id">ID</th><th data-col="time">Time</th><th data-col="status">Status</th><th data-col="link"></th></tr><tr><td colspan="5" style="padding:2px 0"><div class="col-toggle" id="colToggle"></div>
 <div class="batch-bar" id="batchBar"><span style="font-size:11px"><b id="batchCount">0</b> selected</span><button class="btn" data-batch="tag">🏷 Tag all</button><button class="btn" data-batch="note">📝 Note all</button><button class="btn" data-batch="clear">✕ Clear</button></div></td></tr></thead><tbody>''' + rh + '''</tbody></table></div></div>
 <div class="g2">
@@ -1454,8 +1507,18 @@ var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
 new Chart(document.getElementById('c1').getContext('2d'),{type:'bar',data:{labels:''' + dl + ''',datasets:[{data:''' + dd + ''',backgroundColor:cc.b,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',maxTicksLimit:6,font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
 new Chart(document.getElementById('c2').getContext('2d'),{type:'line',data:{labels:''' + wl + ''',datasets:[{label:'OK',data:''' + ws + ''',borderColor:cc.g,backgroundColor:'rgba(63,185,80,.08)',fill:true,tension:.4},{label:'Fail',data:''' + wf + ''',borderColor:cc.r,backgroundColor:'rgba(248,81,73,.08)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b949e',font:{size:9}}}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
 new Chart(document.getElementById('c3').getContext('2d'),{type:'bar',data:{labels:''' + hl + ''',datasets:[{data:''' + hv + ''',backgroundColor:'rgba(188,140,255,.5)',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:8}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:8}}}}}});
-function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));r.classList.toggle('hid',!match);})}
-function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',!r.dataset.q.includes(q))})}
+function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));r.classList.toggle('hid',!match);});updateSavePresetBtn()}
+function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',!r.dataset.q.includes(q))});updateSavePresetBtn()}
+function getActiveFilterState(){var q=document.getElementById('q');var searchText=(q&&q.value)?q.value.trim():'';var onFb=document.querySelector('.fb.on');var filter=onFb?onFb.getAttribute('data-f')||'all':'all';return{search:searchText,filter:filter}}
+function hasActiveFilters(){var st=getActiveFilterState();return st.search!==''||st.filter!=='all'}
+function updateSavePresetBtn(){var btn=document.getElementById('savePresetBtn');if(!btn)return;btn.classList.toggle('hid',!hasActiveFilters())}
+function getPresets(){try{return JSON.parse(localStorage.getItem('dashPresets')||'[]')}catch(e){return[]}}
+function savePresets(arr){localStorage.setItem('dashPresets',JSON.stringify(arr))}
+function savePreset(){var st=getActiveFilterState();if(!hasActiveFilters())return;var name=prompt('Preset name:','');if(!name||!name.trim())return;name=name.trim();var presets=getPresets();var existing=-1;for(var i=0;i<presets.length;i++){if(presets[i].name===name){existing=i;break}}var entry={name:name,search:st.search,filter:st.filter};if(existing>=0){presets[existing]=entry}else{presets.push(entry)}savePresets(presets);renderPresets()}
+function renderPresets(){var el=document.getElementById('presetRow');if(!el)return;var presets=getPresets();var html='';presets.forEach(function(p,i){html+='<span class="preset-btn" data-preset-idx="'+i+'"><span data-preset-apply="'+i+'">'+esc(p.name)+'</span><button class="preset-del" data-preset-del="'+i+'" title="Delete preset">x</button></span>'});el.innerHTML=html}
+function applyPreset(i){var presets=getPresets();if(!presets[i])return;var p=presets[i];var q=document.getElementById('q');if(q){q.value=p.search||'';srch()}var fb=document.querySelector('.fb[data-f="'+(p.filter||'all')+'"]');if(fb){filt(p.filter||'all',fb)}}
+function deletePreset(i,ev){if(ev)ev.stopPropagation();var presets=getPresets();if(i<0||i>=presets.length)return;presets.splice(i,1);savePresets(presets);renderPresets()}
+function initPresetClicks(){var row=document.getElementById('presetRow');if(row){row.addEventListener('click',function(e){var delBtn=e.target.closest('[data-preset-del]');if(delBtn){e.stopPropagation();deletePreset(parseInt(delBtn.getAttribute('data-preset-del'),10),e);return}var applyEl=e.target.closest('[data-preset-apply]');if(applyEl){applyPreset(parseInt(applyEl.getAttribute('data-preset-apply'),10))}})}var saveBtn=document.getElementById('savePresetBtn');if(saveBtn){saveBtn.addEventListener('click',function(){savePreset()})}var grpBtn=document.getElementById('groupToggle');if(grpBtn){grpBtn.addEventListener('click',function(){toggleGrouping()})}}
 function dashRows(){var D=window.DASH||{runs:[]};return (D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'})}
 function expCSV(){var rows=filteredRows();var nl=String.fromCharCode(10);var lines=['id,orv_id,name,status,conclusion,createdAt,source'];rows.forEach(function(r){lines.push([r.databaseId||'',r.orv_id||'',r.name||'',r.status||'',r.conclusion||'',r.createdAt||'',r.source||''].map(function(x){return '"'+String(x).replace(/"/g,'""')+'"'}).join(','))});downloadBlob(lines.join(nl),'rusemeva-runs.csv','text/csv')}
 function expJSON(){var D=window.DASH||{};downloadBlob(JSON.stringify({generated:D.generated,stats:D.stats,runs:filteredRows()},null,2),'rusemeva-runs.json','application/json')}
@@ -1697,6 +1760,7 @@ if(t==='compare2'){h.textContent='⚖️ Run Comparison';b.innerHTML=renderCompa
 if(t==='mdexport'){h.textContent='📝 Markdown Report';b.innerHTML='<div class="md-export"><button class="btn" onclick="exportMarkdown()">📝 Export .md</button></div>'}
 if(t==='leaderboard'){h.textContent='🏆 Leaderboard';b.innerHTML=renderLeaderboard()}
 if(t==='exportreport'){h.textContent='📄 Export Report';b.innerHTML=renderExportReport()}
+if(t==='timeline24'){h.textContent='📅 24h Timeline';b.innerHTML=renderTimelineView()}
 
 
 if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
@@ -1789,6 +1853,14 @@ function statusKeyJs(r){var c=(r.conclusion||'').trim();if(c==='success'||c==='f
 function displayStatusJs(r){var c=(r.conclusion||'').trim();if(c)return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return st||'?';}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])})}
 function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15).map(function(r){var sk=statusKeyJs(r);var newCls=r._isNew?' fi-new':'';var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi'+newCls+' batch-sel-off" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'" ><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span><button data-cmp="rid" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>';}).join('')}
+function getFeedRuns(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15)}
+function isGroupingOn(){return localStorage.getItem('dashGrouping')==='1'}
+function toggleGrouping(){var on=isGroupingOn();localStorage.setItem('dashGrouping',on?'0':'1');applyGroupingState();renderFeed()}
+function applyGroupingState(){var btn=document.getElementById('groupToggle');if(!btn)return;btn.classList.toggle('on',isGroupingOn())}
+function buildGroupedFeedHtml(runs){var items=getFeedRuns(runs);var groups={};var order=[];items.forEach(function(r){var name=r.name||'Unknown';if(!groups[name]){groups[name]={runs:[],success:0,total:0};order.push(name)}groups[name].runs.push(r);groups[name].total++;if(r.conclusion==='success')groups[name].success++});var html='';order.forEach(function(name){var g=groups[name];var rate=g.total>0?Math.round(g.success/g.total*100):0;var rateClass=rate>=80?'good':(rate>=50?'mid':'bad');var gid='grp_'+name.replace(/[^a-zA-Z0-9]/g,'_');html+='<div class="grp-header" data-grp="'+esc(gid)+'"><span class="grp-toggle-icon">▼</span><span class="grp-name">'+esc(name)+'</span><span class="grp-count">'+g.total+'</span><span class="grp-rate '+rateClass+'">'+rate+'%</span></div>';html+='<div class="grp-body" data-grp-body="'+esc(gid)+'">';g.runs.forEach(function(r){var sk=statusKeyJs(r);var newCls=r._isNew?' fi-new':'';var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;html+='<div class="fi'+newCls+' batch-sel-off" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'" ><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span><button data-cmp="rid" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>'});html+='</div>'});return html}
+function renderFeed(){var feed=document.getElementById('feedList');if(!feed)return;var D=window.DASH||{};var runs=D.runs||[];if(isGroupingOn()){feed.innerHTML=buildGroupedFeedHtml(runs)}else{feed.innerHTML=buildFeedHtml(runs)}attachFeedCmpHandlers(feed)}
+function attachFeedCmpHandlers(feed){if(!feed)return;feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})}
+function initGroupHeaderClicks(){var feed=document.getElementById('feedList');if(!feed)return;feed.addEventListener('click',function(e){var hdr=e.target.closest('.grp-header');if(hdr){var gid=hdr.getAttribute('data-grp');var body=feed.querySelector('[data-grp-body="'+gid+'"]');if(body){var isCollapsed=hdr.classList.toggle('collapsed');body.classList.toggle('collapsed',isCollapsed)}}})}
 function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
@@ -1807,7 +1879,7 @@ function initSectionToggle(){
   });
 }
 
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;var feed=document.querySelector('#sec-feed .feed');if(feed){feed.innerHTML=buildFeedHtml(data.runs);feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})};var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements();initSectionToggle()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements();checkFailurePatterns();renderRunDurationPrediction();initSectionToggle()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -4745,9 +4817,133 @@ function renderStatSparklines(){
   el=document.getElementById(\'spark-failed\');if(el)el.innerHTML=miniSpark(failures,\'var(--rd)\');
 }
 
-function renderHero(){var r=document.getElementById(\'hero-rsm\');if(r)r.innerHTML=lastRsmHtml();
+function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();renderStatSparklines();renderPredictiveInsights();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();renderStatSparklines();renderPredictiveInsights();checkFailurePatterns();renderRunDurationPrediction();}
+
+// ── FEATURE 1: Run Duration Prediction ──
+function calcAvgDurationByWorkflow(wfName){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var done=runs.filter(function(r){return r.conclusion&&(r.conclusion==='success'||r.conclusion==='failure')&&r.name===wfName&&r.createdAt&&r.updatedAt});
+  if(!done.length)return 0;
+  var total=0;done.forEach(function(r){total+=new Date(r.updatedAt)-new Date(r.createdAt)});
+  return total/done.length;
+}
+function formatRemaining(ms){
+  if(ms<=0)return '~0m left';
+  var mins=Math.floor(ms/60000);var secs=Math.floor((ms%60000)/1000);
+  if(mins<=0)return '~'+secs+'s left';
+  return '~'+mins+'m left';
+}
+function renderRunDurationPrediction(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var running=runs.filter(function(r){return statusKeyJs(r)==='in_progress'});
+  running.forEach(function(r){
+    var wfName=r.name||'';
+    var avgMs=calcAvgDurationByWorkflow(wfName);
+    if(!avgMs)return;
+    var elapsed=Date.now()-new Date(r.createdAt).getTime();
+    var remain=Math.max(0,avgMs-elapsed);
+    var badgeText=formatRemaining(remain);
+    var fi=document.querySelector('[data-rid="'+(r.databaseId||'')+'"]');
+    if(fi){
+      var existing=fi.querySelector('.dur-pred-badge');
+      if(existing){existing.textContent=badgeText}
+      else{var statusEl=fi.querySelector('.fi-status');if(statusEl){var badge=document.createElement('span');badge.className='dur-pred-badge';badge.textContent=badgeText;statusEl.appendChild(badge)}}
+    }
+    var swEl=document.getElementById('sw-'+(r.databaseId||''));
+    if(swEl){
+      var existingSw=swEl.parentNode.querySelector('.dur-pred-badge');
+      if(existingSw){existingSw.textContent=badgeText}
+      else{var badge2=document.createElement('span');badge2.className='dur-pred-badge';badge2.textContent=badgeText;swEl.parentNode.insertBefore(badge2,swEl.nextSibling)}
+    }
+  });
+}
+if(!window._durPredTimer){window._durPredTimer=setInterval(function(){renderRunDurationPrediction()},10000)}
+
+// ── FEATURE 2: Failure Pattern Detection ──
+function checkFailurePatterns(){
+  var D=window.DASH||{};var runs=(D.runs||[]).slice();
+  var byWf={};
+  runs.forEach(function(r){var nm=r.name||'';if(!nm)return;if(!byWf[nm])byWf[nm]=[];byWf[nm].push(r)});
+  var streaks=[];
+  Object.keys(byWf).forEach(function(nm){
+    var wfRuns=byWf[nm].slice().sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)});
+    var streak=0;
+    for(var i=0;i<wfRuns.length;i++){
+      var sk=statusKeyJs(wfRuns[i]);
+      if(sk==='failure'){streak++}
+      else if(sk==='in_progress'){continue}
+      else{break}
+    }
+    if(streak>=2){streaks.push({name:nm,streak:streak,latestRun:wfRuns[0]})}
+  });
+  var heroEl=document.getElementById('hero-fstreak');
+  if(heroEl){
+    if(streaks.length){
+      var html='<div class="fail-streak-card"><div class="fs-title">\u26a0\ufe0f Consecutive Failure Streaks</div>';
+      streaks.forEach(function(s){html+='<div class="fs-item">\u2022 '+esc(s.name)+' \u2014 '+s.streak+' fails in a row</div>'});
+      html+='</div>';heroEl.innerHTML=html;
+    }else{heroEl.innerHTML=''}
+  }
+  streaks.forEach(function(s){
+    var feedItems=document.querySelectorAll('#sec-feed .fi');
+    var latestFi=null;
+    feedItems.forEach(function(fi){
+      var nameEl=fi.querySelector('.fi-name');
+      if(nameEl&&nameEl.textContent===s.name){if(!latestFi)latestFi=fi}
+    });
+    if(latestFi&&!latestFi.querySelector('.fail-streak-badge')){
+      var statusEl=latestFi.querySelector('.fi-status');
+      if(statusEl){var badge=document.createElement('span');badge.className='fail-streak-badge';badge.textContent='\u26a0\ufe0f '+s.streak+' fails in a row';statusEl.appendChild(badge)}
+    }
+  });
+}
+
+// ── FEATURE 3: Timeline View ──
+function renderTimelineView(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=new Date();
+  var todayRuns=runs.filter(function(r){if(!r.createdAt)return false;try{var d=new Date(r.createdAt);return d.toDateString()===now.toDateString()}catch(e){return false}});
+  todayRuns=todayRuns.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var html='<div class="tl-wrap">';
+  html+='<div style="font-size:13px;font-weight:700;margin-bottom:8px">\ud83d\udcc5 Timeline \u2014 '+now.toLocaleDateString('en-GB',{weekday:'long',month:'short',day:'numeric'})+'</div>';
+  html+='<div class="tl-track" id="tlTrack">';
+  for(var h=0;h<24;h+=3){var pct=(h/24)*100;html+='<div class="tl-grid-line" style="left:'+pct+'%"></div>'}
+  var nowPct=(now.getHours()+now.getMinutes()/60)/24*100;
+  html+='<div class="tl-now-line" style="left:'+nowPct+'%"></div>';
+  html+='<div class="tl-now-label" style="left:'+nowPct+'%">NOW</div>';
+  todayRuns.forEach(function(r){
+    var d=new Date(r.createdAt);
+    var dotPct=(d.getHours()+d.getMinutes()/60)/24*100;
+    var sk=statusKeyJs(r);
+    var cls=sk==='success'?'success':sk==='failure'?'failure':sk==='in_progress'?'running':'cancelled';
+    var id=r.orv_id||r.databaseId||'';
+    var timeStr=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    var tooltip=esc(id+' \u00b7 '+r.name+' \u00b7 '+sk+' \u00b7 '+timeStr);
+    html+='<div class="tl-dot '+cls+'" style="left:'+dotPct+'%" data-tl="'+tooltip+'" data-rid="'+esc(r.databaseId||'')+'"></div>';
+  });
+  html+='</div>';
+  html+='<div class="tl-hours">';
+  for(var h2=0;h2<24;h2++){html+='<div class="tl-hour-label">'+h2+'</div>'}
+  html+='</div>';
+  html+='<div class="tl-legend"><span><span class="lg-dot success"></span>Success</span><span><span class="lg-dot failure"></span>Fail</span><span><span class="lg-dot running"></span>Running</span><span><span class="lg-dot cancelled"></span>Cancelled</span></div>';
+  var byStatus={success:0,failure:0,in_progress:0,cancelled:0};
+  todayRuns.forEach(function(r){var sk=statusKeyJs(r);byStatus[sk]=(byStatus[sk]||0)+1});
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Total today: '+todayRuns.length+' \u00b7 Success: '+byStatus.success+' \u00b7 Fail: '+byStatus.failure+' \u00b7 Running: '+(byStatus.in_progress||0)+' \u00b7 Cancelled: '+(byStatus.cancelled||0)+'</div>';
+  if(!todayRuns.length){html+='<div style="text-align:center;padding:20px;font-size:11px;color:var(--t2)">No runs today yet.</div>'}
+  html+='</div>';
+  setTimeout(function(){
+    var track=document.getElementById('tlTrack');if(!track)return;
+    track.querySelectorAll('.tl-dot').forEach(function(dot){
+      dot.onmouseenter=function(e){var tip=document.createElement('div');tip.className='tl-tooltip';tip.innerHTML=dot.getAttribute('data-tl');document.body.appendChild(tip);tip.style.left=(e.clientX+10)+'px';tip.style.top=(e.clientY+10)+'px';window._tlTip=tip};
+      dot.onmouseleave=function(){if(window._tlTip){window._tlTip.remove();window._tlTip=null}};
+      dot.onmousemove=function(e){if(window._tlTip){window._tlTip.style.left=(e.clientX+10)+'px';window._tlTip.style.top=(e.clientY+10)+'px'}};
+      dot.onclick=function(){var rid=dot.getAttribute('data-rid');if(rid)location.href='?run='+rid};
+    });
+  },50);
+  return html;
+}
 
 // ── honest client health ──
 function checkHealth(){
@@ -4937,6 +5133,7 @@ var CMD_ITEMS=[
   {cat:'Tools',label:'Dashboard Clock',act:"showM('clock')"},
   {cat:'Tools',label:'🏆 Leaderboard',act:"showM('leaderboard')"},
   {cat:'Tools',label:'📄 Export Report',act:"showM('exportreport')"},
+  {cat:'Tools',label:'📅 24h Timeline',act:"showM('timeline24')"},
   {cat:'Help',label:'Updates',act:"showM('updates')"}
 ];
 var cmdSel=0;
@@ -4977,6 +5174,7 @@ async function softRefresh(){var sp=document.getElementById('dashSpinner');if(sp
 var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
 // initial soft patch shortly after load (pick up fresher data.json / orv-map)
 applyCustomize();if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var b=document.getElementById('compactBtn');if(b)b.textContent='📐 Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd()}});if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var cb=document.getElementById('compactBtn');if(cb)cb.textContent='Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();setTimeout(function(){softRefresh()},2500);
+renderPresets();updateSavePresetBtn();applyGroupingState();initGroupHeaderClicks();initPresetClicks();
 if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
 // ── auto-refresh timer ("Updated Xs ago") ──
 setInterval(function(){var D=window.DASH||{};var gen=D.generated;if(!gen)return;var el=document.getElementById('refreshTimer');if(!el)return;var sec=Math.round((Date.now()-new Date(gen).getTime())/1000);if(sec<1){el.textContent='Updated just now';el.className='';return}el.textContent='Updated '+sec+'s ago';el.className=sec>120?'stale':(sec>60?'warn':'')},1000);
@@ -5005,7 +5203,7 @@ def main():
     html = gen(S, runs, releases)
     out = os.environ.get("DASHBOARD_DIR", "/tmp/gh-pages")
     os.makedirs(out, exist_ok=True)
-    with open(f"{out}/index.html", "w", encoding="utf-8") as f:
+    with open(f"{out}/index.html", "w", encoding="utf-8", errors="surrogatepass") as f:
         f.write(html)
     # lean public data — prioritize vault/encode so soft-refresh keeps Recording tables
     def _lean(r):
