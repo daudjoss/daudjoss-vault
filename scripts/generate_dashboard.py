@@ -843,6 +843,28 @@ body{background:
 .dash-clock{font-size:32px;font-weight:700;font-family:monospace;text-align:center;color:var(--bl);letter-spacing:2px}
 .dash-clock-date{font-size:11px;color:var(--t2);text-align:center;margin-top:4px}
 
+.fpred-box{padding:10px}
+.fpred-ring{display:flex;justify-content:center;margin:8px}
+.fpred-row{display:grid;grid-template-columns:1fr 40px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.sla-row{display:grid;grid-template-columns:1fr 40px 40px 30px;gap:4px;padding:5px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.sla-breach{color:var(--rd);font-weight:700}
+.sla-ok{color:var(--gn)}
+.cancel-row{display:grid;grid-template-columns:60px 1fr 40px 30px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.streak-big{text-align:center;margin:10px}
+.streak-num{font-size:32px;font-weight:700}
+.streak-label{font-size:9px;color:var(--t2)}
+.reliab-row{display:grid;grid-template-columns:1fr 30px 40px;gap:4px;padding:5px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.peak-row{display:grid;grid-template-columns:1fr 50px 60px;gap:4px;padding:5px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.cluster-box{padding:6px;margin:4px 0;border-radius:6px;border:1px solid var(--brd)}
+.cluster-fail{background:rgba(248,81,73,.08);border-color:rgba(248,81,73,.3)}
+.waste-row{display:grid;grid-template-columns:1fr 50px 30px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.pctile-row{display:grid;grid-template-columns:40px 1fr 40px;gap:4px;padding:4px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.pctile-bar{height:8px;border-radius:4px}
+.lifecycle-row{display:grid;grid-template-columns:1fr 50px 40px;gap:4px;padding:5px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+.density-cell{display:inline-block;width:6px;height:14px;border-radius:1px;margin-right:1px;vertical-align:bottom}
+.dup-row{display:grid;grid-template-columns:1fr 40px 30px;gap:4px;padding:5px 0;border-bottom:1px solid var(--brd);font-size:10px;align-items:center}
+
+
 .health-score-wrap{padding:12px;text-align:center}
 .health-score-ring{display:inline-block;position:relative;width:100px;height:100px;margin:8px}
 .health-score-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28px;font-weight:700}
@@ -1410,7 +1432,7 @@ if(t==='customize'){
   b.innerHTML=html;
 }
 if(t==='help'){h.textContent='❓ Help';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
-if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.2</b>:<br>• CI/CD Health Score (composite 0-100, grade A-F)<br>• Week-over-Week Delta (7d vs 7d, arrow indicators)<br>• Workflow Duration Breakdown (avg/min/max per workflow)<br>• SVG charts: sparklines, donut gauges, bar charts<br>• Upgraded: Deploy Freq, MTTR, Success by Hour, Branch Health, DORA<br><br><b>v10.1</b>:<br>• Flaky Run Detector (same SHA, different conclusions)<br>• Workflow Network Graph (trigger → workflow edges)<br>• Run Velocity (moving average, speed trend)<br>• Quiet Periods (longest gaps, maintenance windows)<br>• Release Tracker (timeline + size distribution)<br>• DORA Scorecard (Elite/High/Medium/Low grade)<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
+if(t==='updates'){h.textContent='🆕 Updates';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>v10.3</b>:<br>• Failure Prediction (probability + risk factors)<br>• SLA Breach Tracker (avg×1.5 threshold)<br>• Cancel Rate Analysis (waste + by workflow)<br>• Run Streak Analysis (win/loss streaks + SVG)<br>• Workflow Reliability (composite per-wf score)<br>• Peak Load Detector (concurrent + hourly)<br>• Failure Clusters (failure waves detection)<br>• Run Waste Analyzer (minutes burned)<br>• Performance Percentile (P50/P90/P99 + rank)<br>• Workflow Lifecycle (active/dormant status)<br>• Run Density Map (day×hour heatmap)<br>• Duplicate Run Detector (same wf+branch <5m)<br><br><b>v10.2</b>:<br>• CI/CD Health Score (composite 0-100, grade A-F)<br>• Week-over-Week Delta (7d vs 7d, arrow indicators)<br>• Workflow Duration Breakdown (avg/min/max per workflow)<br>• SVG charts: sparklines, donut gauges, bar charts<br>• Upgraded: Deploy Freq, MTTR, Success by Hour, Branch Health, DORA<br><br><b>v10.1</b>:<br>• Flaky Run Detector (same SHA, different conclusions)<br>• Workflow Network Graph (trigger → workflow edges)<br>• Run Velocity (moving average, speed trend)<br>• Quiet Periods (longest gaps, maintenance windows)<br>• Release Tracker (timeline + size distribution)<br>• DORA Scorecard (Elite/High/Medium/Low grade)<br>• Trigger Analysis (push/schedule/manual/PR)<br>• Run Number Tracker (missing run detection)<br>• Commit Messages (SHA → result)<br>• Event Timeline (chronological by trigger)<br>• Run Number Gap Detection<br>• Enriched data: headBranch, headSha, runNumber, displayTitle<br><br><b>v10.0</b>:<br>• Deploy Frequency (DORA)<br>• MTTR (Mean Time To Recovery)<br>• Change Failure Rate (DORA)<br>• Lead Time estimation<br>• Failure Pattern Analysis (by hour/day)<br>• Duration Trends (slowdown detection)<br>• Success Rate by Day of Week<br>• Success Rate by Hour<br>• Branch Health (per branch)<br>• Actions Minutes Counter (free tier)<br>• Workflow Comparison<br>• Concurrency Monitor<br>• Commit Impact Tracker<br>• Deploy Timeline<br>• Retry Tracker<br>• Removed: 21 non-relevant features (games, fun, games, PWA, theme builder)<br><br><b>v10</b>:<br>• Heatmap Calendar (GitHub-style)<br>• Achievement System (12 badges)<br>• Analytics Charts (Chart.js)<br>• Gantt Timeline<br>• Run Comparison<br>• Markdown Report Export<br>• Dashboard Clock<br>• ASCII Art Header<br>• Custom Theme Builder (4 presets)<br>• Settings Import/Export (JSON)<br>• PWA Support (installable + offline)<br><br><b>v9.0</b>:<br>• Best/worst day insight<br>• Time-to-recovery metric<br>• Productivity score (composite)<br>• Live run stopwatch (ticking)<br>• Quick actions panel (press A)<br>• Batch tag/note (select runs)<br>• QR code (scan to open)<br>• OG image generator<br>• Embed widget snippet<br>• High contrast mode<br>• Font size control (A-/A+)<br>• ARIA live announcements<br>• Loading skeleton<br><br><b>v8.9</b>:<br>• Achievement badges (milestone + toast)<br>• Streak calendar (monthly, color-coded)<br>• Run frequency clock (radial polar)<br>• Recurring failure detection<br>• Run duration prediction (confidence)<br>• Run clustering (sessions per hour)<br>• Mini terminal (type commands)<br>• Dashboard snapshot URL (hash state)<br>• Custom layout drag-drop<br>• Mobile swipe gestures<br>• Mini sparkline per stat card<br>• Status distribution donut (click filter)<br>• Animated pipeline particles<br>• Glass morphism toggle<br><br><b>v8.8</b>:<br>• Animated number counters (count up on load)<br>• Pipeline flow diagram (vault→encode→Telegram)<br>• Activity rings (daily/weekly/monthly targets)<br>• Gantt-style timeline (overlapping bars)<br>• Fail replay view (last 5 fails)<br>• Run notes per run (click row)<br>• Weekly auto-report (copy summary)<br>• Custom alert threshold<br>• Embed mode (?embed=1)<br>• Theme accent picker (4 colors)<br>• Table column toggle<br>• j/k keyboard navigation<br>• Copy as cURL (API menu)<br>• Print-friendly layout<br><br><b>v8.7</b>:<br>• Gauge/donut success rate (SVG ring di hero)<br>• Rate history 30 hari mini-chart (Stats)<br>• Animated feed slide-in (run baru)<br>• Tab title live counter (running/fail)<br>• Favicon badge (fail count red dot)<br>• Sound alert on fail (Web Audio, toggle)<br>• Data freshness dot (hijau/kuning/merah)<br>• Copy RSM on click (clipboard + toast)<br>• Search history (5 terakhir)<br>• Quick filter chips (Today/Fail/Running/RSM/Encode)<br>• Offline indicator (navigator.onLine)<br>• Confetti on streak 5/10/15/20<br>• Export as Markdown (.md table)<br>• Success rate color zone (green/yellow/red badge)<br><br><b>v8.6</b>:<br>• Activity heatmap (30 hari, GitHub-style)<br>• Sparkline trend 7 hari di hero<br>• Duration bars di Timeline<br>• Browser notification (run baru)<br>• Failure pattern alert (hero chip)<br>• ETA estimate untuk running jobs<br>• PWA install button<br>• System theme auto (prefers-color-scheme)<br>• Press ? cheat sheet<br>• Share as stats card (PNG)<br><br><b>v8.5.2</b>:<br>• About: tech stack, data sources, cost breakdown<br>• API: curl examples, response shape, rate limits<br>• Help: FAQ, deep link docs, troubleshooting<br>• Keys: all shortcuts listed<br>• Notes: auto-save 2s + char count + timestamp<br>• Tags: colored + count + Enter to add<br>• Bookmarks: RSM deep link + better UI<br>• Comments: delete + count + WIB timestamp<br>• Share: deep link builder + copy buttons<br>• Clock: date + weekday + larger display<br><br><b>v8.5.1</b>:<br>• Stats: enc breakdown, cancelled, storage, ORV<br>• Search: sort + count + Enter + ⚖ compare<br>• Timeline: grouped by date + status counts<br>• Player: vault + encode sections<br>• Compare: cancel counts<br>• Export: filter count<br>• Customize: compact toggle<br><br><b>v8.5</b>:<br>• Last RSM card + storage story + 24h diff<br>• Deep link ?rsm= / ?run=<br>• Honest client health<br>• Command palette (P)<br>• Compact mode + saved views<br>• Compare 2 runs<br>• Export filtered<br><br><b>v8.4.2</b>:<br>• window.DASH + menus data-driven<br>• Storage est dari durasi (bukan 0.0 GB)<br>• Customize beneran (hide sections)<br>• Search/Export/Player/Compare live<br>• Soft-refresh sync DASH<br><br><b>v8.3</b>: hero, glass, mobile nav<br><b>v8.2</b>: audit feed/WIB/filters<br><b>v8.0</b>: All20 features</div>'}
 if(t==='stats'||t==='analytics'||t==='status'){
   h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
   var extra='';
@@ -1483,6 +1505,18 @@ if(t==='player'){
 }
 if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
 if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='fpred'){h.textContent='🔮 Failure Prediction';b.innerHTML=renderFailurePrediction()}
+if(t==='sla'){h.textContent='⏱ SLA Breach Tracker';b.innerHTML=renderSLABreach()}
+if(t==='cancel'){h.textContent='🚫 Cancel Rate Analysis';b.innerHTML=renderCancelRate()}
+if(t==='streaka'){h.textContent='🔥 Run Streak Analysis';b.innerHTML=renderStreakAnalysis()}
+if(t==='reliab'){h.textContent='📊 Workflow Reliability';b.innerHTML=renderWorkflowReliability()}
+if(t==='peak'){h.textContent='🏋 Peak Load Detector';b.innerHTML=renderPeakLoad()}
+if(t==='cluster'){h.textContent='💥 Failure Clusters';b.innerHTML=renderFailureClusters()}
+if(t==='waste'){h.textContent='🗑 Run Waste Analyzer';b.innerHTML=renderWasteAnalyzer()}
+if(t==='pctile'){h.textContent='📐 Performance Percentile';b.innerHTML=renderPercentile()}
+if(t==='lifecycle'){h.textContent='📋 Workflow Lifecycle';b.innerHTML=renderLifecycle()}
+if(t==='density'){h.textContent='🌊 Run Density Map';b.innerHTML=renderDensityMap()}
+if(t==='dup'){h.textContent='👥 Duplicate Run Detector';b.innerHTML=renderDuplicateDetector()}
 if(t==='healthscore'){h.textContent='🏥 CI/CD Health Score';b.innerHTML=renderHealthScore()}
 if(t==='wow'){h.textContent='📈 Week-over-Week';b.innerHTML=renderWoWDelta()}
 if(t==='wfduration'){h.textContent='⏱ Workflow Duration';b.innerHTML=renderWFDuration()}
@@ -2326,6 +2360,422 @@ function renderRunNumberGap(){
 
 
 // ═══ v10.0 CI/CD Metrics ═══
+
+
+
+// ═══ 1. Failure Prediction ═══
+function renderFailurePrediction(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var total=runs.length||1;
+  var baseRate=fails.length/total;
+  var byHour={};var byDay={};
+  fails.forEach(function(r){
+    var d=new Date(r.createdAt||0);
+    var h=d.getHours();
+    byHour[h]=(byHour[h]||0)+1;
+    var day=d.getDay();
+    byDay[day]=(byDay[day]||0)+1;
+  });
+  var maxHour=Object.keys(byHour).sort(function(a,b){return byHour[b]-byHour[a]})[0]||12;
+  var maxDay=Object.keys(byDay).sort(function(a,b){return byDay[b]-byDay[a]})[0]||1;
+  var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var hourRate=byHour[maxHour]?Math.round(byHour[maxHour]/(runs.filter(function(r){return new Date(r.createdAt||0).getHours()==maxHour}).length||1)*100):0;
+  var prediction=Math.min(95,Math.round(baseRate*100*0.5+hourRate*0.3+10));
+  if(fails.length===0)prediction=0;
+  var col=prediction>=50?'var(--rd)':prediction>=25?'var(--yl)':'var(--gn)';
+  var r=30,c=2*Math.PI*r,offset=c-(prediction/100*c);
+  var html='<div class="fpred-box">';
+  html+='<div class="fpred-ring"><div style="position:relative;display:inline-block;width:70px;height:70px"><svg width="70" height="70" style="transform:rotate(-90deg)"><circle cx="35" cy="35" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="5"/><circle cx="35" cy="35" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="5" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round"/></svg><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:700;color:'+col+'">'+prediction+'%</div></div></div>';
+  html+='<div style="text-align:center;font-size:9px;color:var(--t2)">Predicted failure risk for next run</div>';
+  html+='<div class="fpred-row"><span>Highest risk hour</span><span style="color:'+col+'">'+maxHour+':00</span></div>';
+  html+='<div class="fpred-row"><span>Highest risk day</span><span style="color:'+col+'">'+dayNames[maxDay]+'</span></div>';
+  html+='<div class="fpred-row"><span>Overall fail rate</span><span>'+Math.round(baseRate*100)+'%</span></div>';
+  html+='<div class="fpred-row"><span>Recent trend (last 10)</span><span>'+Math.round(fails.slice(0,10).length/Math.min(10,runs.length)*100)+'%</span></div>';
+  if(prediction>=50)html+='<div style="margin-top:8px;padding:6px;background:rgba(248,81,73,.1);border-radius:6px;font-size:10px;color:var(--rd)"><b>⚠️ High risk:</b> Next run at '+maxHour+':00 on '+dayNames[maxDay]+' has '+prediction+'% chance of failure</div>';
+  else if(prediction>0)html+='<div style="margin-top:8px;padding:6px;background:rgba(63,185,80,.1);border-radius:6px;font-size:10px;color:var(--gn)">✅ Low risk — pipeline is stable</div>';
+  else html+='<div style="margin-top:8px;text-align:center;color:var(--gn);padding:6px">No failures detected — pipeline is perfect! ✨</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 2. SLA Breach Tracker ═══
+function renderSLABreach(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var name=r.name||'unknown';
+    if(!r.updatedAt||!r.createdAt)return;
+    var dur=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);
+    if(dur<=0)return;
+    if(!byWf[name])byWf[name]={durations:[]};
+    byWf[name].durations.push(dur);
+  });
+  var html='<div style="padding:10px">';
+  var allBreaches=[];
+  Object.keys(byWf).forEach(function(wf){
+    var d=byWf[wf];
+    var avg=Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length);
+    var sla=Math.round(avg*1.5);
+    runs.forEach(function(r){
+      if(r.name!==wf||!r.updatedAt||!r.createdAt)return;
+      var dur=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);
+      if(dur>sla){
+        allBreaches.push({wf:wf,dur:dur,sla:sla,over:Math.round((dur-sla)/sla*100),id:r.databaseId||'',orv:r.orv_id||''});
+      }
+    });
+  });
+  allBreaches.sort(function(a,b){return b.over-a.over});
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val sla-breach">'+allBreaches.length+'</div><div class="metric-mini-lbl">SLA Breaches</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val sla-ok">'+(runs.length-allBreaches.length)+'</div><div class="metric-mini-lbl">Within SLA</div></div>';
+  html+='</div>';
+  if(allBreaches.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">All runs within SLA! ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">SLA = avg duration × 1.5. Breaches (sorted by severity):</div>';
+    allBreaches.slice(0,15).forEach(function(b){
+      html+='<div class="sla-row"><span class="wfd-name">'+b.wf+'</span><span style="color:var(--t3)">'+b.sla+'m</span><span class="sla-breach">'+b.dur+'m</span><span style="color:var(--rd)">+'+b.over+'%</span></div>';
+    });
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ 3. Cancel Rate Analysis ═══
+function renderCancelRate(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var cancelled=runs.filter(function(r){return r.conclusion==='cancelled'});
+  var cancelledByWf={};
+  cancelled.forEach(function(r){var n=r.name||'';cancelledByWf[n]=(cancelledByWf[n]||0)+1});
+  var total=runs.length||1;
+  var rate=Math.round(cancelled.length/total*100);
+  var col=rate<10?'var(--gn)':rate<25?'var(--yl)':'var(--rd)';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+rate+'%</div><div class="metric-mini-lbl">Cancel Rate</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+cancelled.length+'</div><div class="metric-mini-lbl">Cancelled</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+total+'</div><div class="metric-mini-lbl">Total Runs</div></div>';
+  html+='</div>';
+  if(cancelled.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No cancelled runs! ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Cancelled by workflow:</div>';
+    Object.keys(cancelledByWf).sort(function(a,b){return cancelledByWf[b]-cancelledByWf[a]}).forEach(function(wf){
+      html+='<div class="cancel-row"><span class="wfd-name">'+wf+'</span><span style="color:var(--t3)">'+cancelledByWf[wf]+'</span><span style="color:var(--yl)">'+Math.round(cancelledByWf[wf]/cancelled.length*100)+'%</span><span style="color:var(--rd)">'+Math.round(cancelledByWf[wf]/total*100)+'%</span></div>';
+    });
+    html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Cancelled runs waste Actions minutes without producing output.</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ 4. Run Streak Analysis ═══
+function renderStreakAnalysis(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var maxWin=0,maxLoss=0,curWin=0,curLoss=0,curStreakType='none',curStreak=0;
+  for(var i=0;i<sorted.length;i++){
+    if(sorted[i].conclusion==='success'){curWin++;if(curLoss>maxLoss)maxLoss=curLoss;curLoss=0}
+    else if(sorted[i].conclusion==='failure'){curLoss++;if(curWin>maxWin)maxWin=curWin;curWin=0}
+  }
+  if(curWin>maxWin)maxWin=curWin;
+  if(curLoss>maxLoss)maxLoss=curLoss;
+  var last=sorted[sorted.length-1];
+  var currentStreak=last?(last.conclusion==='success'?curWin:(last.conclusion==='failure'?curLoss:0)):0;
+  var isWin=last?last.conclusion==='success':false;
+  var html='<div style="padding:10px">';
+  html+='<div class="streak-big"><div class="streak-num" style="color:'+(isWin?'var(--gn)':'var(--rd)')+'">'+currentStreak+'</div><div class="streak-label">Current '+(isWin?'Win':'Loss')+' Streak</div></div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--gn)">'+maxWin+'</div><div class="metric-mini-lbl">Longest Win Streak</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--rd)">'+maxLoss+'</div><div class="metric-mini-lbl">Longest Loss Streak</div></div>';
+  html+='</div>';
+  var svg='<svg width="280" height="40" viewBox="0 0 280 40">';
+  var barW=280/Math.max(sorted.length,1);
+  sorted.forEach(function(r,i){
+    var h=6;var col='var(--bg3)';
+    if(r.conclusion==='success'){col='var(--gn)';h=12}
+    else if(r.conclusion==='failure'){col='var(--rd)';h=12}
+    svg+='<rect x="'+(i*barW)+'" y="'+(40-h)+'" width="'+Math.max(barW-1,1)+'" height="'+h+'" fill="'+col+'" rx="1"/>';
+  });
+  svg+='</svg>';
+  html+='<div style="margin-top:8px">'+svg+'</div>';
+  html+='<div style="font-size:8px;color:var(--t2);text-align:center;margin-top:2px">Green = success streak, Red = failure streak</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 5. Workflow Reliability ═══
+function renderWorkflowReliability(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var n=r.name||'unknown';
+    if(!byWf[n])byWf[n]={total:0,success:0,fail:0,cancel:0,durations:[]};
+    byWf[n].total++;
+    if(r.conclusion==='success')byWf[n].success++;
+    if(r.conclusion==='failure')byWf[n].fail++;
+    if(r.conclusion==='cancelled')byWf[n].cancel++;
+    if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)byWf[n].durations.push(d)}
+  });
+  var sorted=Object.keys(byWf).sort(function(a,b){return byWf[b].total-byWf[a].total});
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Per-Workflow Composite Reliability</div>';
+  sorted.forEach(function(wf){
+    var d=byWf[wf];
+    var sr=Math.round(d.success/d.total*100);
+    var avgDur=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length):0;
+    var variance=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+Math.abs(b-avgDur)},0)/d.durations.length):0;
+    var consistency=variance<avgDur*0.3?100:variance<avgDur*0.5?75:variance<avgDur*0.8?50:25;
+    var cancelRate=d.total?Math.round(d.cancel/d.total*100):0;
+    var reliability=Math.round(sr*0.5+consistency*0.3+(100-cancelRate)*0.2);
+    var col=reliability>=80?'var(--gn)':reliability>=60?'var(--yl)':reliability>=40?'var(--or)':'var(--rd)';
+    html+='<div class="reliab-row"><span class="wfd-name">'+wf+'</span><span style="color:'+col+';font-weight:700">'+reliability+'</span><span style="color:var(--t3)">SR:'+sr+'%</span></div>';
+    html+='<div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:'+reliability+'%;background:'+col+';border-radius:2px"></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══ 6. Peak Load Detector ═══
+function renderPeakLoad(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var maxConcurrent=0,maxTime='';
+  var current=[];
+  for(var i=0;i<sorted.length;i++){
+    var start=new Date(sorted[i].createdAt||0).getTime();
+    var end=new Date(sorted[i].updatedAt||sorted[i].createdAt||0).getTime();
+    current=current.filter(function(r){return r.end>start});
+    current.push({start:start,end:end,run:sorted[i]});
+    if(current.length>maxConcurrent){maxConcurrent=current.length;maxTime=sorted[i].createdAt||''}
+  }
+  var byHour={};
+  sorted.forEach(function(r){
+    var h=new Date(r.createdAt||0).getHours();
+    byHour[h]=(byHour[h]||0)+1;
+  });
+  var peakHour=Object.keys(byHour).sort(function(a,b){return byHour[b]-byHour[a]})[0]||0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val sla-breach">'+maxConcurrent+'</div><div class="metric-mini-lbl">Peak Concurrent</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+byHour[peakHour]+'</div><div class="metric-mini-lbl">Peak Hour Volume</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+peakHour+':00</div><div class="metric-mini-lbl">Busiest Hour</div></div>';
+  html+='</div>';
+  if(maxTime){
+    html+='<div style="margin-top:8px;padding:6px;background:rgba(248,81,73,.08);border-radius:6px;font-size:10px"><b>Peak:</b> '+maxConcurrent+' concurrent runs at '+new Date(maxTime).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'})+' WIB</div>';
+  }
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Hourly load distribution:</div>';
+  var maxH=byHour[peakHour]||1;
+  var vals=[];var cols=[];
+  for(var h=0;h<24;h++){vals.push(byHour[h]||0);cols.push((byHour[h]||0)>=maxH*0.8?'var(--rd)':(byHour[h]||0)>=maxH*0.5?'var(--yl)':'var(--bl)')}
+  html+=svgBars(vals,280,50,cols);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>';
+  if(maxConcurrent>=5)html+='<div style="margin-top:8px;font-size:10px;color:var(--rd)"><b>⚠️ High load:</b> '+maxConcurrent+' concurrent runs may slow down CI</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 7. Failure Clusters ═══
+function renderFailureClusters(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'}).sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var clusters=[];
+  var currentCluster=[];
+  for(var i=0;i<fails.length;i++){
+    if(currentCluster.length===0){currentCluster.push(fails[i])}
+    else{
+      var prevTime=new Date(currentCluster[currentCluster.length-1].createdAt||0).getTime();
+      var currTime=new Date(fails[i].createdAt||0).getTime();
+      if(currTime-prevTime<3600000){currentCluster.push(fails[i])}
+      else{if(currentCluster.length>=2)clusters.push(currentCluster);currentCluster=[fails[i]]}
+    }
+  }
+  if(currentCluster.length>=2)clusters.push(currentCluster);
+  clusters.sort(function(a,b){return b.length-a.length});
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(clusters.length>0?'warn':'ok')+'">'+clusters.length+'</div><div class="metric-mini-lbl">Failure Waves</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+fails.length+'</div><div class="metric-mini-lbl">Total Fails</div></div>';
+  html+='</div>';
+  if(clusters.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No failure clusters detected ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Failure waves (≥2 fails within 1h):</div>';
+    clusters.slice(0,10).forEach(function(c,i){
+      var first=c[0];var last=c[c.length-1];
+      var span=Math.round((new Date(last.createdAt||0)-new Date(first.createdAt||0))/60000);
+      html+='<div class="cluster-box '+(c.length>=3?'cluster-fail':'')+'">';
+      html+='<div style="font-size:10px;font-weight:700;color:var(--rd)"><2728> Wave #'+(i+1)+': '+c.length+' fails in '+span+'m</div>';
+      var t=new Date(first.createdAt||0).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+      html+='<div style="font-size:9px;color:var(--t3)">Started: '+t+' WIB</div>';
+      html+='</div>';
+    });
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ 8. Run Waste Analyzer ═══
+function renderWasteAnalyzer(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var wasted=runs.filter(function(r){return r.conclusion==='failure'||r.conclusion==='cancelled'});
+  var totalWasteMin=0;var byType={failure:0,cancelled:0};
+  wasted.forEach(function(r){
+    if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0){totalWasteMin+=d;byType[r.conclusion]=(byType[r.conclusion]||0)+d}}
+  });
+  var totalRunsMin=0;
+  runs.forEach(function(r){if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)totalRunsMin+=d}});
+  var wastePct=totalRunsMin?Math.round(totalWasteMin/totalRunsMin*100):0;
+  var col=wastePct<15?'var(--gn)':wastePct<30?'var(--yl)':'var(--rd)';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+totalWasteMin+'m</div><div class="metric-mini-lbl">Wasted Minutes</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+wasted.length+'</div><div class="metric-mini-lbl">Wasted Runs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+wastePct+'%</div><div class="metric-mini-lbl">Waste Ratio</div></div>';
+  html+='</div>';
+  var byWf={};
+  wasted.forEach(function(r){var n=r.name||'';if(!byWf[n])byWf[n]={count:0,mins:0};byWf[n].count++;if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)byWf[n].mins+=d}});
+  if(Object.keys(byWf).length>0){
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Waste by workflow:</div>';
+    Object.keys(byWf).sort(function(a,b){return byWf[b].mins-byWf[a].mins}).forEach(function(wf){
+      var d=byWf[wf];
+      html+='<div class="waste-row"><span class="wfd-name">'+wf+'</span><span style="color:var(--rd)">'+d.mins+'m</span><span style="color:var(--t3)">'+d.count+'x</span></div>';
+    });
+  }
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Waste = failed + cancelled runs. These consume Actions minutes without producing output.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 9. Performance Percentile ═══
+function renderPercentile(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var durations=runs.filter(function(r){return r.updatedAt&&r.createdAt}).map(function(r){return Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000)}).filter(function(d){return d>0}).sort(function(a,b){return a-b});
+  if(!durations.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  function pct(p){var idx=Math.floor(durations.length*p/100);return durations[Math.min(idx,durations.length-1)]}
+  var p50=pct(50),p90=pct(90),p99=pct(99);
+  var latest=runs[0];
+  var latestDur=latest&&latest.updatedAt&&latest.createdAt?Math.round((new Date(latest.updatedAt)-new Date(latest.createdAt))/60000):0;
+  var rank=0;
+  for(var i=0;i<durations.length;i++){if(latestDur>=durations[i])rank++}
+  var rankPct=Math.round(rank/durations.length*100);
+  var col=rankPct>=90?'var(--rd)':rankPct>=50?'var(--yl)':'var(--gn)';
+  var html='<div style="padding:10px">';
+  html+='<div style="text-align:center;margin:8px"><div style="font-size:28px;font-weight:700;color:'+col+'">'+rankPct+'%</div><div style="font-size:9px;color:var(--t2)">Latest run is slower than '+rankPct+'% of all runs</div></div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val wfd-fast">'+p50+'m</div><div class="metric-mini-lbl">P50 (median)</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--yl)">'+p90+'m</div><div class="metric-mini-lbl">P90</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val wfd-slow">'+p99+'m</div><div class="metric-mini-lbl">P99</div></div>';
+  html+='</div>';
+  var maxV=durations[durations.length-1]||1;
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Duration Distribution (P50→P99):</div>';
+  var vals=[p50,p90,p99,latestDur];
+  var cols=['var(--gn)','var(--yl)','var(--rd)',col];
+  html+=svgBars(vals,280,40,cols);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>P50</span><span>P90</span><span>P99</span><span>Latest</span></div></div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 10. Workflow Lifecycle ═══
+function renderLifecycle(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var n=r.name||'unknown';
+    if(!byWf[n])byWf[n]={first:null,last:null,count:0,active:false};
+    var t=new Date(r.createdAt||0).getTime();
+    if(byWf[n].first===null||t<byWf[n].first)byWf[n].first=t;
+    if(byWf[n].last===null||t>byWf[n].last)byWf[n].last=t;
+    byWf[n].count++;
+  });
+  var now=Date.now();
+  Object.keys(byWf).forEach(function(wf){
+    var d=byWf[wf];
+    d.activeDays=Math.round((now-(d.last||0))/86400000);
+    d.lifespan=Math.round(((d.last||0)-(d.first||0))/86400000);
+    d.active=d.activeDays<7;
+    d.dormant=d.activeDays>=30;
+  });
+  var sorted=Object.keys(byWf).sort(function(a,b){return byWf[b].count-byWf[a].count});
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Workflow Lifecycle</div>';
+  sorted.forEach(function(wf){
+    var d=byWf[wf];
+    var status=d.active?'<span style="color:var(--gn)">Active</span>':d.dormant?'<span style="color:var(--rd)">Dormant</span>':'<span style="color:var(--yl)">Idle</span>';
+    html+='<div class="lifecycle-row"><span class="wfd-name">'+wf+'</span><span>'+d.count+'x</span><span style="font-size:9px">'+d.lifespan+'d span</span></div>';
+    var age=d.activeDays;
+    var ageStr=age===0?'today':age+'d ago';
+    html+='<div style="font-size:9px;color:var(--t3);margin-bottom:6px">Last: '+ageStr+' | '+status+'</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══ 11. Run Density Map ═══
+function renderDensityMap(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byHourDay={};
+  runs.forEach(function(r){
+    var d=new Date(r.createdAt||0);
+    var day=d.getDay();var hour=d.getHours();
+    var key=day+'_'+hour;
+    byHourDay[key]=(byHourDay[key]||0)+1;
+  });
+  var max=1;
+  Object.keys(byHourDay).forEach(function(k){if(byHourDay[k]>max)max=byHourDay[k]});
+  var dayNames=['S','M','T','W','T','F','S'];
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Run Density (Day × Hour)</div>';
+  for(var day=0;day<7;day++){
+    html+='<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><span style="font-size:8px;color:var(--t2);width:10px">'+dayNames[day]+'</span>';
+    for(var hour=0;hour<24;hour++){
+      var key=day+'_'+hour;
+      var count=byHourDay[key]||0;
+      var intensity=count/max;
+      var col=count===0?'var(--bg3)':intensity>0.7?'rgba(63,185,80,.9)':intensity>0.4?'rgba(63,185,80,.5)':'rgba(63,185,80,.2)';
+      html+='<div class="density-cell" style="background:'+col+'" title="'+dayNames[day]+' '+hour+':00 — '+count+' runs"></div>';
+    }
+    html+='</div>';
+  }
+  html+='<div style="display:flex;justify-content:space-between;font-size:7px;color:var(--t2);margin-top:2px;padding-left:14px"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>';
+  html+='<div style="font-size:8px;color:var(--t3);margin-top:4px;text-align:center">Darker = more runs. Identifies when CI is most active.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 12. Duplicate Run Detector ═══
+function renderDuplicateDetector(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var dups=[];
+  for(var i=1;i<sorted.length;i++){
+    var prev=sorted[i-1];var curr=sorted[i];
+    if(prev.name===curr.name&&(prev.headBranch||'')===(curr.headBranch||'')){
+      var gap=new Date(curr.createdAt||0).getTime()-new Date(prev.createdAt||0).getTime();
+      if(gap>0&&gap<300000){
+        dups.push({name:curr.name,branch:curr.headBranch||'',gap:Math.round(gap/1000),prevId:prev.databaseId,currId:curr.databaseId,prevOrv:prev.orv_id||'',currOrv:curr.orv_id||''});
+      }
+    }
+  }
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(dups.length>0?'warn':'ok')+'">'+dups.length+'</div><div class="metric-mini-lbl">Duplicate Runs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+(runs.length-dups.length)+'</div><div class="metric-mini-lbl">Unique Runs</div></div>';
+  html+='</div>';
+  if(dups.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No duplicate runs detected ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Same workflow+branch within 5 min:</div>';
+    dups.slice(0,15).forEach(function(d){
+      html+='<div class="dup-row"><span class="wfd-name">'+d.name+'</span><span style="color:var(--yl)">'+d.gap+'s</span><span style="color:var(--t3)">'+(d.prevOrv||d.prevId)+'</span></div>';
+    });
+    html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Duplicates may indicate accidental re-triggers or webhook issues.</div>';
+  }
+  html+='</div>';
+  return html;
+}
 
 
 // ═══ CI/CD Health Score (composite 0-100) ═══
@@ -3865,6 +4315,18 @@ var CMD_ITEMS=[
   {cat:'View',label:'Refresh',act:"softRefresh().then(function(ok){if(!ok)location.reload()})"},
   {cat:'Help',label:'Keys',act:"showM('keys')"},
   {cat:'Help',label:'About',act:"showM('about')"},
+  {cat:'CI/CD',label:'Failure Prediction',act:"showM('fpred')"},
+  {cat:'CI/CD',label:'SLA Breach Tracker',act:"showM('sla')"},
+  {cat:'CI/CD',label:'Cancel Rate Analysis',act:"showM('cancel')"},
+  {cat:'CI/CD',label:'Run Streak Analysis',act:"showM('streaka')"},
+  {cat:'CI/CD',label:'Workflow Reliability',act:"showM('reliab')"},
+  {cat:'CI/CD',label:'Peak Load Detector',act:"showM('peak')"},
+  {cat:'CI/CD',label:'Failure Clusters',act:"showM('cluster')"},
+  {cat:'CI/CD',label:'Run Waste Analyzer',act:"showM('waste')"},
+  {cat:'CI/CD',label:'Performance Percentile',act:"showM('pctile')"},
+  {cat:'CI/CD',label:'Workflow Lifecycle',act:"showM('lifecycle')"},
+  {cat:'CI/CD',label:'Run Density Map',act:"showM('density')"},
+  {cat:'CI/CD',label:'Duplicate Run Detector',act:"showM('dup')"},
   {cat:'CI/CD',label:'CI/CD Health Score',act:"showM('healthscore')"},
   {cat:'CI/CD',label:'Week-over-Week Delta',act:"showM('wow')"},
   {cat:'CI/CD',label:'Workflow Duration',act:"showM('wfduration')"},
