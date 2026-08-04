@@ -2861,29 +2861,6 @@ function renderAnalytics(){
   return html;
 }
 
-function renderGantt(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var vault=runs.slice(0,20);
-  if(!vault.length)return'<div class="gantt-wrap">No runs</div>';
-  var minTime=Math.min.apply(null,vault.map(function(r){return new Date(r.createdAt||0).getTime()||Date.now()}));
-  var maxTime=Math.max.apply(null,vault.map(function(r){return new Date(r.updatedAt||r.createdAt||0).getTime()||Date.now()}));
-  var span=Math.max(1,maxTime-minTime);
-  var html='<div class="gantt-wrap"><div class="gantt-axis">Timeline (last 20 runs)</div>';
-  vault.forEach(function(r){
-    var start=new Date(r.createdAt||0).getTime();
-    var end=new Date(r.updatedAt||r.createdAt||0).getTime();
-    if(!end||end<start)end=start+60000;
-    var leftPct=((start-minTime)/span*100).toFixed(1);
-    var widthPct=Math.max(2,((end-start)/span*100)).toFixed(1);
-    var col=r.conclusion==='success'?'var(--gn)':r.conclusion==='failure'?'var(--rd)':'var(--yl)';
-    var label=(r.orv_id||r.databaseId||'').toString().substring(0,12);
-    html+='<div class="gantt-bar" style="margin-left:'+leftPct+'%;width:'+widthPct+'%;background:'+col+'">'+label+'</div>';
-  });
-  var startD=new Date(minTime).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  var endD=new Date(maxTime).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  html+='<div class="gantt-axis" style="text-align:center;margin-top:4px">'+startD+' → '+endD+'</div></div>';
-  return html;
-}
 
 function renderCompare(){
   var D=window.DASH||{};var runs=D.runs||[];
@@ -3168,15 +3145,6 @@ var ACHIEVEMENTS=[
   {id:'streak5',icon:'🌱',name:'5-Day Streak',desc:'5 hari streak',check:function(st){return (st.streak||0)>=5}},
   {id:'rate80',icon:'📈',name:'80% Club',desc:'80%+ success rate',check:function(st){return (st.rate||0)>=80}}
 ];
-function checkAchievements(){
-  var st=(window.DASH||{}).stats||{};var unlocked=JSON.parse(localStorage.getItem('dash_badges')||'[]');
-  ACHIEVEMENTS.forEach(function(a){
-    if(unlocked.indexOf(a.id)<0&&a.check(st)){
-      unlocked.push(a.id);localStorage.setItem('dash_badges',JSON.stringify(unlocked));
-      showBadge(a);
-    }
-  });
-}
 function showBadge(a){
   var el=document.getElementById('badgeToast');if(!el)return;
   document.getElementById('badgeIcon').textContent=a.icon;
