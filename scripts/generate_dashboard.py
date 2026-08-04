@@ -2298,6 +2298,40 @@ function renderRunNumberGap(){
 
 
 // ═══ v10.0 CI/CD Metrics ═══
+
+// ═══ UPGRADED v10.2 — SVG charts + interactivity ═══
+
+// Helper: SVG mini sparkline
+function svgSpark(vals,w,h,col){
+  if(!vals||!vals.length)return'';
+  var max=Math.max.apply(null,vals)||1,min=Math.min.apply(null,vals);
+  var range=max-min||1;
+  var step=w/Math.max(vals.length-1,1);
+  var pts=vals.map(function(v,i){return(i*step)+','+(h-((v-min)/range*h))}).join(' ');
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+(col||'var(--bl)')+'" stroke-width="1.5" stroke-linejoin="round"/><circle cx="'+((vals.length-1)*step)+'" cy="'+(h-((vals[vals.length-1]-min)/range*h))+'" r="2" fill="'+(col||'var(--bl)')+'"/></svg>';
+}
+
+// Helper: SVG donut gauge
+function svgGauge(pct,r,col,label){
+  var c=2*Math.PI*r;
+  var offset=c-(pct/100*c);
+  return '<div style="display:inline-block;position:relative;width:'+((r+8)*2)+'px;height:'+((r+8)*2)+'px"><svg width="'+((r+8)*2)+'" height="'+((r+8)*2)+'" style="transform:rotate(-90deg)"><circle cx="'+(r+8)+'" cy="'+(r+8)+'" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="6"/><circle cx="'+(r+8)+'" cy="'+(r+8)+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="6" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round" style="transition:stroke-dashoffset .5s ease"/></svg><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:16px;font-weight:700">'+pct+'%</div><div style="font-size:8px;color:var(--t2)">'+label+'</div></div></div>';
+}
+
+// Helper: SVG bar chart
+function svgBars(vals,w,h,cols){
+  if(!vals||!vals.length)return'';
+  var max=Math.max.apply(null,vals)||1;
+  var bw=w/vals.length;
+  var bars=vals.map(function(v,i){
+    var bh=Math.max(2,(v/max)*(h-4));
+    var col=cols?(typeof cols==='function'?cols(v,i):cols[i]||'var(--bl)'):'var(--bl)';
+    return '<rect x="'+(i*bw+1)+'" y="'+(h-bh)+'" width="'+(bw-2)+'" height="'+bh+'" fill="'+col+'" rx="2"><title>'+(v)+'</title></rect>';
+  }).join('');
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+bars+'</svg>';
+}
+
+// UPGRADE: Deploy Frequency — add SVG sparkline + trend
 function renderDeployFrequency(){
   var D=window.DASH||{};var runs=D.runs||[];
   var success=runs.filter(function(r){return r.conclusion==='success'});
@@ -2308,34 +2342,42 @@ function renderDeployFrequency(){
     var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
     days[key]=(days[key]||0)+1;
   });
-  var dayCount=Object.keys(days).length||1;
+  var dayCount=Math.max(1,Object.keys(days).length);
   var freq=(success.length/dayCount).toFixed(1);
-  var totalDays=Math.max(1,Math.ceil((Date.now()-(runs[runs.length-1]||{}).createdAt||Date.now())/86400000));
   var html='<div style="padding:10px">';
   html+='<div class="metric-grid">';
-  html+='<div class="metric-mini"><div class="metric-mini-val ok">'+freq+'</div><div class="metric-mini-lbl">Deploys/Day</div></div>';
+  var col=freq>=1?'var(--gn)':freq>=0.5?'var(--yl)':'var(--rd)';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+freq+'</div><div class="metric-mini-lbl">Deploys/Day</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+success.length+'</div><div class="metric-mini-lbl">Total Deploys</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+dayCount+'</div><div class="metric-mini-lbl">Active Days</div></div>';
   html+='</div>';
-  var weekData=[];
+  // 14-day sparkline
   var now=new Date();
+  var vals14=[];
+  for(var i=13;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    vals14.push(days[key]||0);
+  }
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">14-Day Trend</div>'+svgSpark(vals14,260,40,col)+'</div>';
+  // 7-day bar chart
+  var weekData=[];
   for(var i=6;i>=0;i--){
     var d=new Date(now.getTime()-i*86400000);
     var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
-    var count=days[key]||0;
-    weekData.push(count);
+    weekData.push(days[key]||0);
   }
-  var maxW=Math.max.apply(null,weekData)||1;
-  html+='<div class="hour-bar">';
-  weekData.forEach(function(c){
-    var h=Math.max(2,(c/maxW*56));
-    html+='<div class="hour-col" style="height:'+h+'px" title="'+c+' deploys"></div>';
-  });
-  html+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>7d ago</span><span>Today</span></div>';
+  var dayNames=['S','M','T','W','T','F','S'];
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">7-Day Bars</div>';
+  html+=svgBars(weekData,260,50,function(v,i){return v===0?'var(--bg3)':'var(--bl)'});
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px">';
+  for(var i=6;i>=0;i--){var d=new Date(now.getTime()-i*86400000);html+='<span>'+dayNames[d.getDay()]+'</span>'}
+  html+='</div></div>';
   html+='</div>';
   return html;
 }
 
+// UPGRADE: MTTR — add SVG sparkline + recovery gauge
 function renderMTTR(){
   var D=window.DASH||{};var runs=D.runs||[];
   var fails=runs.filter(function(r){return r.conclusion==='failure'});
@@ -2345,32 +2387,102 @@ function renderMTTR(){
     for(var j=0;j<runs.length;j++){
       if(runs[j].conclusion==='success'){
         var succTime=new Date(runs[j].createdAt||0).getTime();
-        if(succTime>failTime){
-          recoveries.push(Math.round((succTime-failTime)/60000));
-          break;
-        }
+        if(succTime>failTime){recoveries.push(Math.round((succTime-failTime)/60000));break}
       }
     }
   }
   var avgMTTR=recoveries.length?Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length):0;
   var maxMTTR=recoveries.length?Math.max.apply(null,recoveries):0;
   var html='<div style="padding:10px">';
+  var score=Math.max(0,100-avgMTTR);
+  var col=avgMTTR<30?'var(--gn)':avgMTTR<60?'var(--yl)':'var(--rd)';
+  html+='<div style="text-align:center;margin-bottom:8px">'+svgGauge(score,30,col,'Recovery')+'</div>';
   html+='<div class="metric-grid">';
-  html+='<div class="metric-mini"><div class="metric-mini-val '+(avgMTTR<30?'ok':avgMTTR<60?'warn':'bad')+'">'+avgMTTR+'m</div><div class="metric-mini-lbl">Avg MTTR</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+avgMTTR+'m</div><div class="metric-mini-lbl">Avg MTTR</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+maxMTTR+'m</div><div class="metric-mini-lbl">Max MTTR</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+recoveries.length+'</div><div class="metric-mini-lbl">Recoveries</div></div>';
   html+='</div>';
   if(recoveries.length>0){
-    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Recent recovery times:</div>';
+    html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Recovery Trend</div>'+svgSpark(recoveries.slice(0,15).reverse(),260,40,'var(--or)')+'</div>';
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Recent recoveries:</div>';
     recoveries.slice(0,5).forEach(function(r,i){
       html+='<div class="retry-row"><span>Recovery #'+(i+1)+'</span><span style="color:'+(r<30?'var(--gn)':r<60?'var(--yl)':'var(--rd)')+'">'+r+' min</span></div>';
     });
   }else{
-    html+='<div style="text-align:center;color:var(--gn);padding:10px">No failures detected! 🎉</div>';
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No failures detected! \u2728</div>';
   }
   html+='</div>';
   return html;
 }
+
+// UPGRADE: Success by Hour — SVG bar chart with color gradient
+function renderSuccessByHour(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byHour={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var h=new Date(r.createdAt).getHours();
+    if(!byHour[h])byHour[h]={total:0,success:0};
+    byHour[h].total++;
+    if(r.conclusion==='success')byHour[h].success++;
+  });
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Success Rate by Hour (WIB)</div>';
+  var vals=[];var cols=[];
+  for(var h=0;h<24;h++){
+    var d=byHour[h]||{total:0,success:0};
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    vals.push(d.total);
+    cols.push(pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)');
+  }
+  html+=svgBars(vals,280,60,cols);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span></div>';
+  // Detail table
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Peak hours:</div>';
+  var peakHours=Object.keys(byHour).sort(function(a,b){return byHour[b].total-byHour[a].total}).slice(0,5);
+  peakHours.forEach(function(h){
+    var d=byHour[h];
+    var pct=Math.round(d.success/d.total*100);
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="retry-row"><span>'+h+':00 WIB</span><span style="color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// UPGRADE: Branch Health — SVG progress bars
+function renderBranchHealth(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var branches={};
+  runs.forEach(function(r){
+    var b=r.headBranch||'master';
+    if(!branches[b])branches[b]={total:0,success:0,fail:0};
+    branches[b].total++;
+    if(r.conclusion==='success')branches[b].success++;
+    if(r.conclusion==='failure')branches[b].fail++;
+  });
+  var html='<div style="padding:10px">';
+  var sorted=Object.keys(branches).sort(function(a,b){return branches[b].total-branches[a].total});
+  sorted.forEach(function(b){
+    var d=branches[b];
+    var pct=Math.round(d.success/d.total*100);
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div style="margin:8px 0">';
+    html+='<div style="font-size:11px;display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-weight:600">'+b+'</span><span style="color:'+col+'">'+pct+'%</span></div>';
+    html+='<div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;position:relative">';
+    html+='<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:5px;transition:width .5s"></div>';
+    html+='</div>';
+    html+='<div style="font-size:9px;color:var(--t2);margin-top:2px">'+d.success+' \u2713 / '+d.fail+' \u2717 / '+d.total+' total</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// UPGRADE: DORA Scorecard — SVG gauges for each metric
+
+
+
 
 function renderCFR(){
   var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
@@ -2509,55 +2621,7 @@ function renderSuccessByDay(){
   return html;
 }
 
-function renderSuccessByHour(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var byHour={};
-  runs.forEach(function(r){
-    if(!r.createdAt)return;
-    var h=new Date(r.createdAt).getHours();
-    if(!byHour[h])byHour[h]={total:0,success:0};
-    byHour[h].total++;
-    if(r.conclusion==='success')byHour[h].success++;
-  });
-  var html='<div style="padding:10px">';
-  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Success Rate by Hour (WIB)</div>';
-  html+='<div class="hour-bar">';
-  for(var h=0;h<24;h++){
-    var d=byHour[h]||{total:0,success:0};
-    var pct=d.total?Math.round(d.success/d.total*100):0;
-    var height=Math.max(2,d.total/((runs.length/24)||1)*56);
-    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
-    html+='<div class="hour-col" style="height:'+height+'px;background:'+col+'" title="'+h+':00 - '+pct+'% ('+d.success+'/'+d.total+')" ></div>';
-  }
-  html+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>00:00</span><span>12:00</span><span>23:00</span></div>';
-  html+='</div>';
-  return html;
-}
 
-function renderBranchHealth(){
-  var D=window.DASH||{};var runs=D.runs||[];
-  var branches={};
-  runs.forEach(function(r){
-    var b=r.headBranch||'master';
-    if(!branches[b])branches[b]={total:0,success:0,fail:0};
-    branches[b].total++;
-    if(r.conclusion==='success')branches[b].success++;
-    if(r.conclusion==='failure')branches[b].fail++;
-  });
-  var html='<div style="padding:10px">';
-  var sorted=Object.keys(branches).sort(function(a,b){return branches[b].total-branches[a].total});
-  sorted.forEach(function(b){
-    var d=branches[b];
-    var pct=Math.round(d.success/d.total*100);
-    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
-    html+='<div style="margin:6px 0">';
-    html+='<div style="font-size:10px;display:flex;justify-content:space-between"><span>'+b+'</span><span style="color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span></div>';
-    html+='<div class="branch-bar" style="width:'+pct+'%;background:'+col+'">'+d.success+' ok / '+d.fail+' fail</div>';
-    html+='</div>';
-  });
-  html+='</div>';
-  return html;
-}
 
 function renderActionsMinutes(){
   var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
