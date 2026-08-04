@@ -676,6 +676,19 @@ body{background:
   border:1px solid var(--brd);box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .hero::before{content:'';position:absolute;inset:-40% -20% auto auto;width:220px;height:220px;border-radius:50%;
   background:radial-gradient(circle,rgba(88,166,255,.25),transparent 70%);pointer-events:none}
+.hero-aurora{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;z-index:0}
+.hero-aurora::before{content:'';position:absolute;top:-30%;left:-30%;width:160%;height:160%;
+  background:conic-gradient(from 0deg at 50% 50%,
+    rgba(88,166,255,.10),rgba(188,140,255,.08),rgba(63,185,80,.06),
+    rgba(0,180,180,.09),rgba(88,166,255,.10));
+  filter:blur(40px);opacity:.6;animation:auroraShift 20s linear infinite}
+.hero-aurora::after{content:'';position:absolute;top:-20%;left:-20%;width:140%;height:140%;
+  background:radial-gradient(ellipse at 30% 40%,rgba(88,166,255,.08),transparent 50%),
+    radial-gradient(ellipse at 70% 60%,rgba(188,140,255,.06),transparent 50%),
+    radial-gradient(ellipse at 50% 80%,rgba(0,180,180,.07),transparent 45%);
+  filter:blur(30px);animation:auroraPulse 10s ease-in-out infinite alternate}
+@keyframes auroraShift{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.1)}100%{transform:rotate(360deg) scale(1)}}
+@keyframes auroraPulse{0%{opacity:.4;transform:translate(0,0)}100%{opacity:.7;transform:translate(3%,-2%)}}
 .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
 .hero-brand{display:flex;flex-direction:column;gap:4px}
 .hero-brand h1{font-size:22px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,var(--t1),var(--bl));
@@ -696,6 +709,17 @@ body{background:
 .sc.yl{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(210,153,34,.06)}
 .sc.pr{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(188,140,255,.06)}
 .sc.or{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(240,136,62,.06)}
+.stat-spark{position:absolute;bottom:6px;right:6px;opacity:.85;pointer-events:none}
+.stat-spark svg{display:block}
+.predins-card{background:linear-gradient(135deg,rgba(188,140,255,.08),rgba(88,166,255,.05));border:1px solid rgba(188,140,255,.2);border-radius:10px;padding:10px 12px;margin-top:10px;position:relative;z-index:1;animation:fi .4s ease}
+.predins-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--pr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.predins-list{display:flex;flex-direction:column;gap:4px}
+.predins-item{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:var(--t1);line-height:1.4;padding:3px 0}
+.predins-item .predins-bullet{color:var(--pr);font-size:10px;flex-shrink:0;margin-top:2px}
+.predins-item .predins-text{flex:1}
+.predins-item.warn .predins-bullet{color:var(--yl)}
+.predins-item.danger .predins-bullet{color:var(--rd)}
+.predins-item.good .predins-bullet{color:var(--gn)}
 .sc.pn{box-shadow:0 4px 16px rgba(0,0,0,.12),0 0 24px rgba(247,120,186,.06)}
 .sv{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .sec{border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--bg2);
@@ -871,6 +895,11 @@ body{background:
 .mini-player .mp-eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
 .mini-player .mp-eq .eq-bar{width:2px;height:3px}
 .mini-player .mp-pause{font-size:16px;color:var(--bl);flex-shrink:0;line-height:1}
+.mp-vol-wrap{display:flex;align-items:center;gap:4px;padding-left:6px;border-left:1px solid var(--brd);margin-left:4px}
+.mp-vol{width:60px;height:4px;-webkit-appearance:none;appearance:none;border-radius:2px;background:var(--bg2);cursor:pointer;outline:none}
+.mp-vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;background:var(--bl);border:1px solid rgba(255,255,255,.3);box-shadow:0 0 4px rgba(88,166,255,.5);cursor:pointer}
+.mp-vol::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--bl);border:1px solid rgba(255,255,255,.3);box-shadow:0 0 4px rgba(88,166,255,.5);cursor:pointer;appearance:none}
+.mp-vol-label{font-size:9px;color:var(--t2);min-width:24px;text-align:center;font-weight:600;line-height:1}
 #radioList{display:grid;
 .batch-sel{cursor:pointer;user-select:none}
 .batch-sel.on{background:rgba(88,166,255,.15);outline:1px solid var(--bl)}
@@ -1096,7 +1125,9 @@ body{background:
 .curl-copy{position:absolute;top:4px;right:4px;font-size:9px;cursor:pointer;padding:2px 6px;border-radius:4px;background:var(--bg2);border:1px solid var(--brd)}
 
 
-@media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}}
+@media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row,.modal{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}#printReport{position:static!important;left:0!important;top:0!important;width:100%!important;background:#fff!important;color:#000!important;padding:20px!important;font-family:Arial,sans-serif!important;font-size:12px!important;display:block!important}#printReport h1{font-size:20px}#printReport h2{font-size:14px;border-bottom:1px solid #ccc;padding-bottom:3px}#printReport table{border-collapse:collapse;width:100%}#printReport th,#printReport td{border:1px solid #ccc;padding:4px 8px}#printReport th{background:#f5f5f5;text-align:left}}
+.lb-table{width:100%;border-collapse:collapse;font-size:11px}.lb-th{cursor:pointer;padding:6px 8px;text-align:left;border-bottom:2px solid var(--brd);user-select:none;white-space:nowrap}.lb-th:hover{color:var(--bl)}.lb-table td{padding:6px 4px;border-bottom:1px solid var(--brd)}.lb-table tr:hover{background:var(--bg3)}
+.report-preview{background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:12px}.report-preview table{border-collapse:collapse}.report-preview th,.report-preview td{border:1px solid var(--brd);padding:3px 6px}
 
 .rsm-card{background:var(--bg3);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;margin:8px 0;display:flex;align-items:center;gap:10px;font-size:12px}
 .rsm-card .rsm-ico{font-size:20px}.rsm-card .rsm-id{font-weight:700;color:var(--bl)}.rsm-card .rsm-status{font-size:11px;color:var(--t2)}
@@ -1157,6 +1188,7 @@ body{background:
 <div class="toast" id="toast">Copied!</div>
 <div class="offline-banner" id="offlineBanner">⚠️ Offline — data tidak bisa refresh</div>
 <div class="hero" id="sec-home">
+<div class="hero-aurora"></div>
 <div class="hero-top">
 <div class="hero-brand">
 <h1>🎬 Rusemeva</h1>
@@ -1184,11 +1216,12 @@ body{background:
 <div id="hero-fresh"></div>
 <div id="hero-spark"></div>
 <div id="hero-alert"></div>
+<div id="hero-predins"></div>
 </div>
 <div class="sg">
-<div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Vault total</div></div>
-<div class="sc gn"><div class="si">✅</div><div class="sv" id="st-success">''' + str(S['success']) + '''</div><div class="sl">Vault OK</div></div>
-<div class="sc rd"><div class="si">❌</div><div class="sv" id="st-failed">''' + str(S['failed']) + '''</div><div class="sl">Vault fail</div></div>
+<div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Vault total</div><div class="stat-spark" id="spark-total"></div></div>
+<div class="sc gn"><div class="si">✅</div><div class="sv" id="st-success">''' + str(S['success']) + '''</div><div class="sl">Vault OK</div><div class="stat-spark" id="spark-success"></div></div>
+<div class="sc rd"><div class="si">❌</div><div class="sv" id="st-failed">''' + str(S['failed']) + '''</div><div class="sl">Vault fail</div><div class="stat-spark" id="spark-failed"></div></div>
 <div class="sc yl"><div class="si">📊</div><div class="sv" id="st-rate" style="font-size:18px;line-height:1;padding-top:4px;padding-bottom:4px">''' + str(S['rate']) + '''%</div><div class="sl">Vault rate</div></div>
 <div class="sc" id="sc-rate-ring" style="text-align:center"><div id="rate-ring-container"></div></div>
 <div class="sc pr"><div class="si">🎞</div><div class="sv" id="st-enc">''' + str(S['enc']) + '''</div><div class="sl">Encode</div></div>
@@ -1358,7 +1391,7 @@ body{background:
 </div>
 <div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px"><span class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></span> v9.0 HM matrix + insights + stopwatch + quingo + Trigger Analysis + Run# Tracker + Commit Messages + Event Timeline + Gap Detection · Auto-refresh 30s</p></div>
 </div>
-<div class="mini-player" id="miniPlayer" onclick="scrollToRadio()"><span class="mp-eq" id="mpEq"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span><span class="mp-name" id="mpName">—</span><span class="mp-pause" id="mpPause" onclick="event.stopPropagation();pauseRadio()">⏸</span></div>
+<div class="mini-player" id="miniPlayer" onclick="scrollToRadio()"><span class="mp-eq" id="mpEq"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span><span class="mp-name" id="mpName">—</span><span class="mp-pause" id="mpPause" onclick="event.stopPropagation();pauseRadio()">⏸</span><span class="mp-vol-wrap" onclick="event.stopPropagation()"><input type="range" min="0" max="100" value="80" class="mp-vol" id="mpVol" oninput="setRadioVol(this.value)"><span class="mp-vol-label" id="mpVolLabel">80%</span></span></div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cheat-overlay" id="cheatOverlay" onclick="if(event.target===this)closeCheat()">
 <div class="cheat-box"><h3>⌨️ Shortcuts</h3>
@@ -1406,6 +1439,8 @@ window.DASH = ''' + json.dumps({
     }, default=str) + ''';
 var radioCurrentName=\'\';
 function updateEqState(playing){var np=document.getElementById(\'radioNowPlaying\');var mp=document.getElementById(\'miniPlayer\');var mpEq=document.getElementById(\'mpEq\');var mpP=document.getElementById(\'mpPause\');if(np){if(playing){np.classList.add(\'eq-playing\')}else{np.classList.remove(\'eq-playing\')}}if(mpEq){if(playing){mpEq.classList.add(\'eq-playing\')}else{mpEq.classList.remove(\'eq-playing\')}}if(mpP){mpP.textContent=playing?\'⏸\':\'▶\'}}function pauseRadio(){var p=document.getElementById(\'radioPlayer\');if(p){if(p.paused){p.play()}else{p.pause()}}}function scrollToRadio(){var m=document.querySelector(\'a[onclick*="music"]\');if(m){m.click()}var np=document.getElementById(\'radioNowPlaying\');if(np){np.scrollIntoView({behavior:\'smooth\',block:\'center\'})}}
+function setRadioVol(v){v=Math.max(0,Math.min(100,parseInt(v)||0));var p=document.getElementById(\'radioPlayer\');if(p){p.volume=v/100}var s=document.getElementById(\'mpVol\');if(s){s.value=v}var l=document.getElementById(\'mpVolLabel\');if(l){l.textContent=v+\'%\'}}
+document.addEventListener(\'keydown\',function(e){if(e.target.tagName===\'INPUT\'||e.target.tagName===\'TEXTAREA\')return;var p=document.getElementById(\'radioPlayer\');if(!p||!p.src)return;if(e.key===\'ArrowUp\'||e.key===\'ArrowDown\'){e.preventDefault();var s=document.getElementById(\'mpVol\');var cur=s?parseInt(s.value):80;var nv=e.key===\'ArrowUp\'?Math.min(100,cur+5):Math.max(0,cur-5);setRadioVol(nv)}});
 function playRadio(url,name,btn){var p=document.getElementById(\'radioPlayer\');if(p){p.src=url;p.play();radioCurrentName=name;var np=document.getElementById(\'radioNowPlaying\');if(np){np.innerHTML=\'<div class="eq-playing" style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.4);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎵</span><div><div style="font-size:14px;font-weight:600;color:#fff">Now Playing</div><div style="font-size:12px;color:var(--bl);margin-top:2px">\'+name+\'</div></div><span class="eq"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span></div>\'}p.onplay=function(){updateEqState(true);var mp=document.getElementById(\'miniPlayer\');var mn=document.getElementById(\'mpName\');if(mp){mp.classList.add(\'on\')}if(mn){mn.textContent=radioCurrentName}};p.onpause=function(){updateEqState(false)};p.onerror=function(){updateEqState(false);var mp=document.getElementById(\'miniPlayer\');if(mp){mp.classList.remove(\'on\')}};var rl=document.getElementById(\'radioList\');if(rl)rl.querySelectorAll(\'.radio-btn\').forEach(function(b){b.style.background=\'\';b.style.color=\'\';b.style.borderColor=\'\';b.removeAttribute(\'data-playing\')});if(btn){btn.style.background=\'var(--bl)\';btn.style.color=\'#fff\';btn.style.borderColor=\'var(--bl)\';btn.setAttribute(\'data-playing\',\'1\')}}}
 function filterRadio(q){q=(q||\'\').toLowerCase();var rl=document.getElementById(\'radioList\');if(!rl)return;rl.querySelectorAll(\'.radio-btn\').forEach(function(b){var n=b.getAttribute(\'data-rname\')||\'\';var r=b.getAttribute(\'data-region\')||\'\';var fav=b.getAttribute(\'data-fav\')===\'1\';var favOnly=document.getElementById(\'favFilterBtn\')&&document.getElementById(\'favFilterBtn\').getAttribute(\'data-on\')===\'1\';var chip=document.querySelector(\'.radio-chip.on\');var chipR=chip?chip.getAttribute(\'data-region\'):\'\';var match=n.toLowerCase().indexOf(q)>=0;if(chipR&&r!==chipR)match=false;if(favOnly&&!fav)match=false;b.style.display=match?\'\':\'none\'})}
 function toggleFavFilter(btn){var on=btn.getAttribute('data-on')==='1';if(on){btn.removeAttribute('data-on');btn.style.background='';btn.style.color='';btn.textContent='Star Only'}else{btn.setAttribute('data-on','1');btn.style.background='var(--or)';btn.style.color='#fff';btn.textContent='Star Only ON'}filterRadio(document.getElementById('radioSearch')?document.getElementById('radioSearch').value:'')}
@@ -1660,12 +1695,14 @@ if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML=renderAnalytics()
 if(t==='gantt'){h.textContent='📅 Gantt Timeline';b.innerHTML=renderGantt()}
 if(t==='compare2'){h.textContent='⚖️ Run Comparison';b.innerHTML=renderCompare()}
 if(t==='mdexport'){h.textContent='📝 Markdown Report';b.innerHTML='<div class="md-export"><button class="btn" onclick="exportMarkdown()">📝 Export .md</button></div>'}
+if(t==='leaderboard'){h.textContent='🏆 Leaderboard';b.innerHTML=renderLeaderboard()}
+if(t==='exportreport'){h.textContent='📄 Export Report';b.innerHTML=renderExportReport()}
 
 
 if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
 
 
-if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'📍 Warna 91.6 FM Padang',u:'https://a5.siar.us/listen/warna91.6fmpadang/stream'},{n:'📍 Padang FM 102.6',u:'https://stream2.jejestreaming.com:8032/stream'},{n:'📍 Classy FM 103.4 Padang',u:'https://c4.siar.us:10340/stream.mp3'},{n:'📍 Sushi FM 99.1 Padang',u:'https://stream2.jejestreaming.com:9200/stream'},{n:'📍 Star Radio 94.3 Padang',u:'https://stream2.jejestreaming.com:8020/stream'},{n:'📍 Top FM 98.6 Bukittinggi',u:'https://a12.siar.us:8440/stream'},{n:'📍 SIPP FM 105.8 Padang',u:'https://i.klikhost.com/9138/stream'},{n:'📍 Kiara 4U FM Padang',u:'https://eu1.fastcast4u.com/proxy/kiarafm?mp=/1'},{n:'📍 Safasindo FM Padang',u:'https://radio.safasindo.com/listen/radio_safasindo/radio.mp3'},{n:'📍 Firza Radio Padang',u:'https://stream-029.zeno.fm/ptkeryrsu0ttv'},{n:'📍 Armi FM Bengkulu',u:'https://b.alhastream.com:5109/autodj'},{n:'📍 Diozz FM Bengkulu',u:'https://a3.siar.us:8010/stream'},{n:'📍 Flamboyan FM Bengkulu',u:'https://sc.habeproradionetindonesia.id:8012/flamboyan'},{n:'📍 Santana FM Bengkulu',u:'https://sc.habeproradionetindonesia.id:8012/santana'},{n:'📍 Semarak FM Bengkulu',u:'https://ssg.streamingmurah.com:8076/'},{n:'Elshinta FM Jakarta',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2 FM',u:'https://a8.siar.us/listen/campursari/stream'},{n:'Suara Soneta',u:'https://a2.siar.us//listen//suarasoneta//radio.mp3'},{n:'Beat Radio Dangdut',u:'https://stream.beatradioid.com:8000//dangdut'},{n:'Dengerin Musik Indonesia',u:'https://stream.denger.in/'},{n:'Sunda Radio',u:'https://sundaradio.com/live/sundaradio'},{n:'Classy NetRadio',u:'https://streaming.classynetradio.com:8000/classySD'},{n:'POP FM Semarang',u:'https://i.klikhost.com:9612/stream.aac'},{n:'Style 94.6 FM Tasikmalaya',u:'https://stream.stylefmtasik.com/listen/stylefmtasik/stream'},{n:'Suara Salira',u:'https://live.suarasalira.com/listen/suarasalira/stream'},{n:'Mettaswara Dangdut',u:'https://mettaswara.com:8700/d4d'},{n:'Alternatif Radio Jakarta',u:'https://void.idserverhost.com/8016/stream'},{n:'Volcano Radio',u:'https://volcano.out.airtime.pro/volcano_a'},{n:'The Beat Radio Bali',u:'https://c1.siar.us/radio/8030/stream'},{n:'Tebet Radio Jakarta',u:'https://stream-ssl.arenastreaming.com:8066/stream'},{n:'Spirit Online',u:'https://radio.spirittoc.com:8060/spirit_online'},{n:'Radio Wisata FM',u:'https://c2.siar.us:9889/live'},{n:'Radio VOSS',u:'https://live.voss.my.id/listen/voss/voss'},{n:'Hitz 91.2 FM Belitung',u:'https://play.bilitonesefm.com/listen/radiohitzfm/stream'},{n:'Loker Musik Indonesia',u:'https://stream.lokermusik.com/listen/lokermusik/lokermusik'},{n:'Radio Kita Tasikmalaya',u:'https://stream.radiokita.my.id/listen/radiokita/radiokita'},{n:'Bellasalam 87.6 FM Tasikmalaya',u:'https://listen.bellasalamfm.com/listen/radiobellasalam/live'},{n:'Radio Sehati',u:'https://c4.siar.us:8092/autodj'},{n:'106.1 Geronimo FM',u:'https://ig.idstreamer.com:8090//live'},{n:'Bimasakti FM Kebumen',u:'https://i.klikhost.com:9622/stream'},{n:'Classy Worship',u:'https://streaming.classynetradio.com/listen/classyworship/worshipLQ'},{n:'Ada Radio Online',u:'https://adaradio.kradionews.com/listen/adaradio/stream'},{n:'ELPAS 88.6 FM Bogor',u:'https://live.elpasradio.com/listen/elpasradio/stream'},{n:'Bens Radio',u:'https://streaming.bensradio.com:8522/stream'},{n:'Damu Lumajang',u:'https://stream.radiodakwahmustofa.com:8724/damu'},{n:'Delta FM Bandung',u:'https://stream-pd-bdg.dimasalfaridzi.my.id/delta'},{n:'Firza MPC Radio',u:'https://mpc1.mediacp.eu/stream/firzaradio'},{n:'Mettaswara Indo 2000',u:'https://mettaswara.com:8700//indo00'},{n:'Mettaswara SoftRock',u:'https://mettaswara.com:8700/slowrock'},{n:'Radio CMN Hits',u:'https://stream.coolkas.com/listen/radiocmn/radiocmn'},{n:'KLCBS Fusion',u:'https://streaming.klcbsofficial.com/listen/fusion/klcbs-fusion'},{n:'KLCBS New Age',u:'https://streaming.klcbsofficial.com/listen/newage/klcbs-newage'},{n:'Yasika FM Jogja',u:'https://i.klikhost.com:9610/stream'},{n:'Fajri FM',u:'https://ars.mitradio.com:8000/radio.mp3'},{n:'Radio Kasih',u:'https://onlineradiobox.com/json/id/kasih/play'},{n:'Radio Klik FM Surabaya',u:'https://c1.alhastream.com:3210/radio'},{n:'Telkom Radio',u:'https://sukmben.radiogentara.com/radio/8140/stream'},{n:'Utaindo Radio',u:'https://streaming.classynetradio.com/listen/utaindo_radio/utaindo-aac'},{n:'ARB FM Jakarta',u:'https://void.idserverhost.com/8018/stream'},{n:'Galuh Media FM Cianjur',u:'https://stream-sg1.galuhmedia.co.id/listen/galuhmedia/stream'},{n:'KR-Radio 107.2 FM Jogja',u:'https://s1.gntr.net/listen/kr_radio/radio'},{n:'Radio Bravo 96.1 FM Kebumen',u:'https://stream.swadesifm.com/radio/8090/radio.mp3'},{n:'B 104.6 FM',u:'https://play.bilitonesefm.com/listen/radiobfm/stream'},{n:'Free FM Jakarta',u:'https://rocafmadrid.radioca.st/stream'},{n:'Galau Jikan FM',u:'https://radio.gjfm.my.id/listen/gjfm/siaran'},{n:'GCD 98.6 FM Yogyakarta',u:'https://studio1.indostreamers.com:8014/stream/1/'},{n:'Gemini 101 FM',u:'https://relay.gemini101fm.com/listen/gemini_fm/radio.mp3'},{n:'Istara FM Surabaya',u:'https://live.radioistara.com/listen/radioistara/radioistara'},{n:'R-Lisa FM',u:'https://a4.siar.us/radio/8360/radio.mp3'},{n:'Radiks FM Semarang',u:'https://i.klikhost.com:9620/;'},{n:'Radio Airmen FM 107.9',u:'https://void.idserverhost.com:8024/stream'},{n:'Mettaswara Indonesia Gold',u:'https://mettaswara.com:8700//disco'},{n:'Mettaswara Java',u:'https://mettaswara.com:8700//java'},{n:'MSTRI 104.2 FM',u:'https://c2.siar.us:8120/live'},{n:'Insania FM Indonesia',u:'https://stream-sg1.galuhmedia.co.id/listen/insaniamataram/876mataram'},{n:'Bharata Radio',u:'https://c1.siar.us:8800/live'},{n:'Braya Radio',u:'https://live.brayaradio.com/listen/brayaradio/stream'},{n:'Comfy Radio',u:'https://station.comfyradio.id/listen/comfyradio/radio.mp3'},{n:'KLCBS',u:'https://streaming.klcbs.id/listen/klcbs/klcbsfm-hd'},{n:'KLCBS Tropical',u:'https://streaming.klcbsofficial.com/listen/tropical/klcbs-tropical'},{n:'PAS FM Jakarta',u:'https://i.klikhost.com/8266/stream'},{n:'Radio Rumah Oma',u:'https://radiorumahoma.com:30443/;'},{n:'PTPN FM Solo',u:'https://ssg.streamingmurah.com:8040/stream'},{n:'Radio Andika',u:'https://r5.siar.us:1057/andikafm'},{n:'Radio Elshinta Bandung',u:'https://stream-ssl.arenastreaming.com:8005/bandung'},{n:'Radio Imelda FM',u:'https://server.radioimeldafm.co.id/listen/imeldafm/imeldafm'}];b.innerHTML='<audio id="radioPlayer" controls style="width:100%;margin-bottom:8px"></audio><div id="radioNowPlaying"></div><div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap"><input id="radioSearch" class="si2" style="flex:1;min-width:120px" placeholder="Search stasiun..." oninput="filterRadio(this.value)"><button class="btn" onclick="toggleFavFilter(this)" id="favFilterBtn" style="padding:6px 10px">Star Only</button></div><div id="radioFilterChips" style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap"></div><div id="radioList"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){var reg=s.n.indexOf('Padang')>=0||s.n.indexOf('Bukittinggi')>=0?'Padang':s.n.indexOf('Bengkulu')>=0?'Bengkulu':s.n.indexOf('Mettaswara')>=0||s.n.indexOf('Dangdut')>=0||s.n.indexOf('Koplo')>=0?'Dangdut':s.n.indexOf('Worship')>=0||s.n.indexOf('Sehati')>=0?'Religi':'Nasional';var favs=[];try{favs=JSON.parse(localStorage.getItem('radioFavs')||'[]')}catch(e){}var fav=favs.indexOf(s.n)>=0;html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'" data-region="'+reg+'" data-fav="'+(fav?1:0)+'"><span style="float:right;cursor:pointer;font-size:13px;color:'+(fav?'var(--yl)':'var(--t3)')+'" onclick="event.stopPropagation();toggleFav(this,this.parentElement.getAttribute(\\'data-rname\\'))">'+(fav?'★':'☆')+'</span>📻 '+s.n+'</button>'});rl.innerHTML=html2;renderRadioChips()}}
+if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'📍 Warna 91.6 FM Padang',u:'https://a5.siar.us/listen/warna91.6fmpadang/stream'},{n:'📍 Padang FM 102.6',u:'https://stream2.jejestreaming.com:8032/stream'},{n:'📍 Classy FM 103.4 Padang',u:'https://c4.siar.us:10340/stream.mp3'},{n:'📍 Sushi FM 99.1 Padang',u:'https://stream2.jejestreaming.com:9200/stream'},{n:'📍 Star Radio 94.3 Padang',u:'https://stream2.jejestreaming.com:8020/stream'},{n:'📍 Top FM 98.6 Bukittinggi',u:'https://a12.siar.us:8440/stream'},{n:'📍 SIPP FM 105.8 Padang',u:'https://i.klikhost.com/9138/stream'},{n:'📍 Kiara 4U FM Padang',u:'https://eu1.fastcast4u.com/proxy/kiarafm?mp=/1'},{n:'📍 Safasindo FM Padang',u:'https://radio.safasindo.com/listen/radio_safasindo/radio.mp3'},{n:'📍 Firza Radio Padang',u:'https://stream-029.zeno.fm/ptkeryrsu0ttv'},{n:'📍 Armi FM Bengkulu',u:'https://b.alhastream.com:5109/autodj'},{n:'📍 Diozz FM Bengkulu',u:'https://a3.siar.us:8010/stream'},{n:'📍 Flamboyan FM Bengkulu',u:'https://sc.habeproradionetindonesia.id:8012/flamboyan'},{n:'📍 Santana FM Bengkulu',u:'https://sc.habeproradionetindonesia.id:8012/santana'},{n:'📍 Semarak FM Bengkulu',u:'https://ssg.streamingmurah.com:8076/'},{n:'Elshinta FM Jakarta',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2 FM',u:'https://a8.siar.us/listen/campursari/stream'},{n:'Suara Soneta',u:'https://a2.siar.us//listen//suarasoneta//radio.mp3'},{n:'Beat Radio Dangdut',u:'https://stream.beatradioid.com:8000//dangdut'},{n:'Dengerin Musik Indonesia',u:'https://stream.denger.in/'},{n:'Sunda Radio',u:'https://sundaradio.com/live/sundaradio'},{n:'Classy NetRadio',u:'https://streaming.classynetradio.com:8000/classySD'},{n:'POP FM Semarang',u:'https://i.klikhost.com:9612/stream.aac'},{n:'Style 94.6 FM Tasikmalaya',u:'https://stream.stylefmtasik.com/listen/stylefmtasik/stream'},{n:'Suara Salira',u:'https://live.suarasalira.com/listen/suarasalira/stream'},{n:'Mettaswara Dangdut',u:'https://mettaswara.com:8700/d4d'},{n:'Alternatif Radio Jakarta',u:'https://void.idserverhost.com/8016/stream'},{n:'Volcano Radio',u:'https://volcano.out.airtime.pro/volcano_a'},{n:'The Beat Radio Bali',u:'https://c1.siar.us/radio/8030/stream'},{n:'Tebet Radio Jakarta',u:'https://stream-ssl.arenastreaming.com:8066/stream'},{n:'Spirit Online',u:'https://radio.spirittoc.com:8060/spirit_online'},{n:'Radio Wisata FM',u:'https://c2.siar.us:9889/live'},{n:'Radio VOSS',u:'https://live.voss.my.id/listen/voss/voss'},{n:'Hitz 91.2 FM Belitung',u:'https://play.bilitonesefm.com/listen/radiohitzfm/stream'},{n:'Loker Musik Indonesia',u:'https://stream.lokermusik.com/listen/lokermusik/lokermusik'},{n:'Radio Kita Tasikmalaya',u:'https://stream.radiokita.my.id/listen/radiokita/radiokita'},{n:'Bellasalam 87.6 FM Tasikmalaya',u:'https://listen.bellasalamfm.com/listen/radiobellasalam/live'},{n:'Radio Sehati',u:'https://c4.siar.us:8092/autodj'},{n:'106.1 Geronimo FM',u:'https://ig.idstreamer.com:8090//live'},{n:'Bimasakti FM Kebumen',u:'https://i.klikhost.com:9622/stream'},{n:'Classy Worship',u:'https://streaming.classynetradio.com/listen/classyworship/worshipLQ'},{n:'Ada Radio Online',u:'https://adaradio.kradionews.com/listen/adaradio/stream'},{n:'ELPAS 88.6 FM Bogor',u:'https://live.elpasradio.com/listen/elpasradio/stream'},{n:'Bens Radio',u:'https://streaming.bensradio.com:8522/stream'},{n:'Damu Lumajang',u:'https://stream.radiodakwahmustofa.com:8724/damu'},{n:'Delta FM Bandung',u:'https://stream-pd-bdg.dimasalfaridzi.my.id/delta'},{n:'Firza MPC Radio',u:'https://mpc1.mediacp.eu/stream/firzaradio'},{n:'Mettaswara Indo 2000',u:'https://mettaswara.com:8700//indo00'},{n:'Mettaswara SoftRock',u:'https://mettaswara.com:8700/slowrock'},{n:'Radio CMN Hits',u:'https://stream.coolkas.com/listen/radiocmn/radiocmn'},{n:'KLCBS Fusion',u:'https://streaming.klcbsofficial.com/listen/fusion/klcbs-fusion'},{n:'KLCBS New Age',u:'https://streaming.klcbsofficial.com/listen/newage/klcbs-newage'},{n:'Yasika FM Jogja',u:'https://i.klikhost.com:9610/stream'},{n:'Fajri FM',u:'https://ars.mitradio.com:8000/radio.mp3'},{n:'Radio Kasih',u:'https://onlineradiobox.com/json/id/kasih/play'},{n:'Radio Klik FM Surabaya',u:'https://c1.alhastream.com:3210/radio'},{n:'Telkom Radio',u:'https://sukmben.radiogentara.com/radio/8140/stream'},{n:'Utaindo Radio',u:'https://streaming.classynetradio.com/listen/utaindo_radio/utaindo-aac'},{n:'ARB FM Jakarta',u:'https://void.idserverhost.com/8018/stream'},{n:'Galuh Media FM Cianjur',u:'https://stream-sg1.galuhmedia.co.id/listen/galuhmedia/stream'},{n:'KR-Radio 107.2 FM Jogja',u:'https://s1.gntr.net/listen/kr_radio/radio'},{n:'Radio Bravo 96.1 FM Kebumen',u:'https://stream.swadesifm.com/radio/8090/radio.mp3'},{n:'B 104.6 FM',u:'https://play.bilitonesefm.com/listen/radiobfm/stream'},{n:'Free FM Jakarta',u:'https://rocafmadrid.radioca.st/stream'},{n:'Galau Jikan FM',u:'https://radio.gjfm.my.id/listen/gjfm/siaran'},{n:'GCD 98.6 FM Yogyakarta',u:'https://studio1.indostreamers.com:8014/stream/1/'},{n:'Gemini 101 FM',u:'https://relay.gemini101fm.com/listen/gemini_fm/radio.mp3'},{n:'Istara FM Surabaya',u:'https://live.radioistara.com/listen/radioistara/radioistara'},{n:'R-Lisa FM',u:'https://a4.siar.us/radio/8360/radio.mp3'},{n:'Radiks FM Semarang',u:'https://i.klikhost.com:9620/;'},{n:'Radio Airmen FM 107.9',u:'https://void.idserverhost.com:8024/stream'},{n:'Mettaswara Indonesia Gold',u:'https://mettaswara.com:8700//disco'},{n:'Mettaswara Java',u:'https://mettaswara.com:8700//java'},{n:'MSTRI 104.2 FM',u:'https://c2.siar.us:8120/live'},{n:'Insania FM Indonesia',u:'https://stream-sg1.galuhmedia.co.id/listen/insaniamataram/876mataram'},{n:'Bharata Radio',u:'https://c1.siar.us:8800/live'},{n:'Braya Radio',u:'https://live.brayaradio.com/listen/brayaradio/stream'},{n:'Comfy Radio',u:'https://station.comfyradio.id/listen/comfyradio/radio.mp3'},{n:'KLCBS',u:'https://streaming.klcbs.id/listen/klcbs/klcbsfm-hd'},{n:'KLCBS Tropical',u:'https://streaming.klcbsofficial.com/listen/tropical/klcbs-tropical'},{n:'PAS FM Jakarta',u:'https://i.klikhost.com/8266/stream'},{n:'Radio Rumah Oma',u:'https://radiorumahoma.com:30443/;'},{n:'PTPN FM Solo',u:'https://ssg.streamingmurah.com:8040/stream'},{n:'Radio Andika',u:'https://r5.siar.us:1057/andikafm'},{n:'Radio Elshinta Bandung',u:'https://stream-ssl.arenastreaming.com:8005/bandung'},{n:'Radio Imelda FM',u:'https://server.radioimeldafm.co.id/listen/imeldafm/imeldafm'}];b.innerHTML='<audio id="radioPlayer" controls style="width:100%;margin-bottom:8px"></audio><div id="radioNowPlaying"></div><div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap"><input id="radioSearch" class="si2" style="flex:1;min-width:120px" placeholder="Search stasiun..." oninput="filterRadio(this.value)"><button class="btn" onclick="toggleFavFilter(this)" id="favFilterBtn" style="padding:6px 10px">Star Only</button></div><div id="radioFilterChips" style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap"></div><div id="radioList"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){var reg=s.n.indexOf('Padang')>=0||s.n.indexOf('Bukittinggi')>=0?'Padang':s.n.indexOf('Bengkulu')>=0?'Bengkulu':s.n.indexOf('Mettaswara')>=0||s.n.indexOf('Dangdut')>=0||s.n.indexOf('Koplo')>=0?'Dangdut':s.n.indexOf('Worship')>=0||s.n.indexOf('Sehati')>=0?'Religi':'Nasional';var emoji=reg==='Dangdut'?'🎤':reg==='Padang'?'🎻':reg==='Religi'?'🕌':reg==='Nasional'?'🎵':'📡';var favs=[];try{favs=JSON.parse(localStorage.getItem('radioFavs')||'[]')}catch(e){}var fav=favs.indexOf(s.n)>=0;html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'" data-region="'+reg+'" data-fav="'+(fav?1:0)+'"><span style="float:right;cursor:pointer;font-size:13px;color:'+(fav?'var(--yl)':'var(--t3)')+'" onclick="event.stopPropagation();toggleFav(this,this.parentElement.getAttribute(\\'data-rname\\'))">'+(fav?'★':'☆')+'</span>'+emoji+' '+s.n+'</button>'});rl.innerHTML=html2;renderRadioChips()}}
 }
 function toggleCust(btn){
   var k=btn.getAttribute('data-k');
@@ -2714,6 +2751,186 @@ function renderWorkflowReliability(){
   });
   html+='</div>';
   return html;
+}
+
+// ═══ Leaderboard ═══
+var LB_SORT={col:'reliability',dir:-1};
+var LB_DATA=null;
+function renderLeaderboard(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var n=r.name||'unknown';
+    if(!byWf[n])byWf[n]={name:n,total:0,success:0,fail:0,cancel:0,durations:[]};
+    byWf[n].total++;
+    if(r.conclusion==='success')byWf[n].success++;
+    if(r.conclusion==='failure')byWf[n].fail++;
+    if(r.conclusion==='cancelled')byWf[n].cancel++;
+    if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)byWf[n].durations.push(d)}
+  });
+  var rows=Object.keys(byWf).map(function(n){
+    var d=byWf[n];
+    var sr=d.total?Math.round(d.success/d.total*100):0;
+    var avgDur=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length):0;
+    var variance=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+Math.abs(b-avgDur)},0)/d.durations.length):0;
+    var consistency=variance<avgDur*0.3?100:variance<avgDur*0.5?75:variance<avgDur*0.8?50:25;
+    var cancelRate=d.total?Math.round(d.cancel/d.total*100):0;
+    var reliability=Math.round(sr*0.5+consistency*0.3+(100-cancelRate)*0.2);
+    return{name:n,total:d.total,success:d.success,fail:d.fail,cancel:d.cancel,sr:sr,avgDur:avgDur,reliability:reliability,cancelRate:cancelRate};
+  });
+  LB_DATA=rows;
+  return renderLeaderboardTable(rows);
+}
+function renderLeaderboardTable(rows){
+  var sorted=rows.slice().sort(function(a,b){
+    var col=LB_SORT.col;
+    var va=a[col],vb=b[col];
+    if(typeof va==='string')return va.localeCompare(vb)*LB_SORT.dir;
+    return (va-vb)*LB_SORT.dir;
+  });
+  var top=sorted.slice(0,10);
+  var badges=['🥇','🥈','🥉'];
+  function th(col,label){
+    var arrow=LB_SORT.col===col?(LB_SORT.dir<0?' ↓':' ↑'):'';
+    return '<th class="lb-th" data-lbcol=\"'+col+'\" onclick=\"lbSort(this.getAttribute(\"data-lbcol\"))\">'+label+'<span style="font-size:8px;color:var(--t2)">'+arrow+'</span></th>';
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">🏆 Workflow Leaderboard — Top 10 by '+LB_SORT.col.replace(/\b\w/g,function(c){return c.toUpperCase()})+'</div>';
+  html+='<table class="lb-table" style="width:100%;border-collapse:collapse;font-size:11px">';
+  html+='<thead><tr style="border-bottom:2px solid var(--brd)">';
+  html+='<th class="lb-th" style="width:30px">#</th>';
+  html+=th('name','Workflow');
+  html+=th('sr','Success %');
+  html+=th('avgDur','Avg Duration');
+  html+=th('total','Total Runs');
+  html+=th('reliability','Reliability');
+  html+='</tr></thead><tbody>';
+  if(!top.length){
+    html+='<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:16px">No workflow data available</td></tr>';
+  }
+  top.forEach(function(r,i){
+    var badge=badges[i]||(i+1);
+    var srCol=r.sr>=80?'var(--gn)':r.sr>=60?'var(--yl)':r.sr>=40?'var(--or)':'var(--rd)';
+    var relCol=r.reliability>=80?'var(--gn)':r.reliability>=60?'var(--yl)':r.reliability>=40?'var(--or)':'var(--rd)';
+    html+='<tr style="border-bottom:1px solid var(--brd)" >';
+    html+='<td style="text-align:center;font-size:14px">'+badge+'</td>';
+    html+='<td style="padding:6px 4px"><code>'+esc(r.name)+'</code></td>';
+    html+='<td style="text-align:center;color:'+srCol+';font-weight:700">'+r.sr+'%</td>';
+    html+='<td style="text-align:center">'+(r.avgDur?r.avgDur+'m':'—')+'</td>';
+    html+='<td style="text-align:center">'+r.total+'</td>';
+    html+='<td style="text-align:center;color:'+relCol+';font-weight:700">'+r.reliability+'</td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Click column headers to sort · Reliability = SR(50%) + Consistency(30%) + (100-CancelRate)(20%) · Top 10 shown</div>';
+  html+='</div>';
+  return html;
+}
+function lbSort(col){
+  if(LB_SORT.col===col){LB_SORT.dir*=-1}else{LB_SORT.col=col;LB_SORT.dir=-1}
+  if(LB_DATA){var mb=document.getElementById('mb');if(mb)mb.innerHTML=renderLeaderboardTable(LB_DATA)}
+}
+
+// ═══ Export Report (PDF) ═══
+function renderExportReport(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=(D.runs||[]).slice(0,20);
+  var gen=D.generated||'—';
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📄 Printable Report</div>';
+  html+='<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Generates a clean print-formatted report. Use your browser Save as PDF option in the print dialog.</div>';
+  html+='<button class="btn" style="margin-bottom:10px" onclick="doPrintReport()">🖨 Print / Save PDF</button>';
+  html+='<div id="reportPreview" class="report-preview" style="background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;line-height:1.6;max-height:400px;overflow:auto">';
+  html+='<h2 style="margin:0 0 4px;font-size:16px">Rusemeva Vault Dashboard Report</h2>';
+  html+='<div style="color:var(--t2);font-size:10px;margin-bottom:8px">Generated: '+esc(gen)+' WIB</div>';
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:10px">';
+  html+='<tr><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Total Runs</td><td style="padding:3px 8px;border:1px solid var(--brd)">'+(st.total||0)+'</td>';
+  html+='<td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Success</td><td style="padding:3px 8px;border:1px solid var(--brd);color:var(--gn)">'+(st.success||0)+'</td></tr>';
+  html+='<tr><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Failed</td><td style="padding:3px 8px;border:1px solid var(--brd);color:var(--rd)">'+(st.failed||0)+'</td>';
+  html+='<td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Success Rate</td><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:700">'+(st.rate||0)+'%</td></tr>';
+  html+='<tr><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Today</td><td style="padding:3px 8px;border:1px solid var(--brd)">'+(st.today||0)+'</td>';
+  html+='<td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Streak</td><td style="padding:3px 8px;border:1px solid var(--brd)">'+(st.streak||0)+'d (best '+(st.best||0)+')</td></tr>';
+  html+='</table>';
+  html+='<h3 style="font-size:12px;margin:8px 0 4px">Recent Runs</h3>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:10px">';
+  html+='<thead><tr><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">ID</th><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">Workflow</th><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">Status</th><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">Created</th></tr></thead><tbody>';
+  runs.forEach(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var s=r.conclusion||r.status||'';
+    var sCol=s==='success'?'var(--gn)':s==='failure'?'var(--rd)':'var(--t2)';
+    html+='<tr><td style="padding:3px 6px;border:1px solid var(--brd)"><code>'+esc(String(id))+'</code></td>';
+    html+='<td style="padding:3px 6px;border:1px solid var(--brd)">'+esc(r.name||'')+'</td>';
+    html+='<td style="padding:3px 6px;border:1px solid var(--brd);color:'+sCol+'">'+esc(s)+'</td>';
+    html+='<td style="padding:3px 6px;border:1px solid var(--brd)">'+esc(r.createdAt||'')+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  var ins=(D.insights||D.stats&&D.stats.insights||[]).slice(0,5);
+  if(ins.length){
+    html+='<h3 style="font-size:12px;margin:8px 0 4px">Insights</h3><ul style="margin:0;padding-left:16px;font-size:10px">';
+    ins.forEach(function(i){html+='<li style="margin-bottom:3px">'+esc(i)+'</li>'});
+    html+='</ul>';
+  }
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+function doPrintReport(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=(D.runs||[]).slice(0,20);
+  var gen=D.generated||'—';
+  var ins=(D.insights||D.stats&&D.stats.insights||[]).slice(0,5);
+  var reportEl=document.createElement('div');
+  reportEl.id='printReport';
+  reportEl.style.position='fixed';
+  reportEl.style.left='-9999px';
+  reportEl.style.top='0';
+  reportEl.style.width='800px';
+  reportEl.style.background='#fff';
+  reportEl.style.color='#000';
+  reportEl.style.padding='20px';
+  reportEl.style.fontFamily='Arial,sans-serif';
+  reportEl.style.fontSize='12px';
+  var html='<h1 style="font-size:20px;margin:0 0 4px">Rusemeva Vault Dashboard Report</h1>';
+  html+='<div style="color:#666;font-size:10px;margin-bottom:12px">Generated: '+esc(gen)+' WIB</div>';
+  html+='<h2 style="font-size:14px;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Key Statistics</h2>';
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:12px"><tbody>';
+  html+='<tr><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Total Runs</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.total||0)+'</td>';
+  html+='<td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Success</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.success||0)+'</td></tr>';
+  html+='<tr><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Failed</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.failed||0)+'</td>';
+  html+='<td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Success Rate</td><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">'+(st.rate||0)+'%</td></tr>';
+  html+='<tr><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Today</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.today||0)+'</td>';
+  html+='<td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Streak</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.streak||0)+'d (best '+(st.best||0)+')</td></tr>';
+  html+='</tbody></table>';
+  html+='<h2 style="font-size:14px;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Recent Runs</h2>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:12px"><thead><tr>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">ID</th>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">Workflow</th>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">Status</th>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">Created</th>';
+  html+='</tr></thead><tbody>';
+  runs.forEach(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var s=r.conclusion||r.status||'';
+    html+='<tr><td style="padding:3px 8px;border:1px solid #ccc">'+esc(String(id))+'</td>';
+    html+='<td style="padding:3px 8px;border:1px solid #ccc">'+esc(r.name||'')+'</td>';
+    html+='<td style="padding:3px 8px;border:1px solid #ccc">'+esc(s)+'</td>';
+    html+='<td style="padding:3px 8px;border:1px solid #ccc">'+esc(r.createdAt||'')+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  if(ins.length){
+    html+='<h2 style="font-size:14px;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Insights</h2>';
+    html+='<ul style="margin:0;padding-left:18px;font-size:11px">';
+    ins.forEach(function(i){html+='<li style="margin-bottom:4px">'+esc(i)+'</li>'});
+    html+='</ul>';
+  }
+  html+='<div style="margin-top:20px;font-size:9px;color:#999;border-top:1px solid #ccc;padding-top:8px">Rusemeva Dashboard · daudjoss/daudjoss-vault · GitHub Actions + Cloudflare Worker</div>';
+  reportEl.innerHTML=html;
+  document.body.appendChild(reportEl);
+  var prev=document.body.style.visibility;
+  document.querySelectorAll('body > *:not(#printReport)').forEach(function(el){el.style.visibility='hidden'});
+  window.print();
+  setTimeout(function(){
+    document.querySelectorAll('body > *:not(#printReport)').forEach(function(el){el.style.visibility=''});
+    if(reportEl.parentNode)reportEl.parentNode.removeChild(reportEl);
+  },500);
 }
 
 // ═══ 6. Peak Load Detector ═══
@@ -4410,9 +4627,127 @@ function renderHeatmap(){
   return html;
 }
 
-function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
+function renderPredictiveInsights(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var vaultRuns=runs.filter(function(r){return r.name===\'rusemeva-vault\'});
+  if(vaultRuns.length<3){var el=document.getElementById(\'hero-predins\');if(el)el.innerHTML=\'\';return}
+  var insights=[];
+  var days=7;var today=new Date();
+  var dailyTotals=[],dailyFails=[],dailySuccess=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    var k=d.toLocaleDateString(\'sv-SE\',{timeZone:\'Asia/Jakarta\'});
+    var dr=vaultRuns.filter(function(r){try{return new Date(r.createdAt).toLocaleDateString(\'sv-SE\',{timeZone:\'Asia/Jakarta\'})===k}catch(e){return false}});
+    dailyTotals.push(dr.length);
+    dailyFails.push(dr.filter(function(r){return r.conclusion===\'failure\'}).length);
+    dailySuccess.push(dr.filter(function(r){return r.conclusion===\'success\'}).length);
+  }
+  var weekTotal=dailyTotals.reduce(function(a,b){return a+b},0);
+  var weekFails=dailyFails.reduce(function(a,b){return a+b},0);
+  if(weekTotal>0){
+    var failRate=weekFails/weekTotal*100;
+    var recentFailRate=dailyFails.slice(-3).reduce(function(a,b){return a+b},0)/Math.max(dailyTotals.slice(-3).reduce(function(a,b){return a+b},0),1)*100;
+    var trendDir=recentFailRate>failRate+5?\'up\':recentFailRate<failRate-5?\'down\':\'stable\';
+    var prob=Math.round(Math.max(failRate,recentFailRate));
+    var sev=prob>=20?\'danger\':prob>=10?\'warn\':\'good\';
+    var msg=\'Failure probability tomorrow: ~\'+prob+\'% based on weekly trend\';
+    if(trendDir===\'up\')msg+=\' (trending up)\';
+    else if(trendDir===\'down\')msg+=\' (improving)\';
+    insights.push({text:msg,sev:sev});
+  }
+  var hourCounts={};
+  var hourDur={};
+  vaultRuns.forEach(function(r){
+    if(r.createdAt&&r.updatedAt&&r.conclusion===\'success\'){
+      try{
+        var ct=new Date(r.createdAt);var ut=new Date(r.updatedAt);var dur=(ut-ct)/1000;
+        if(dur>0&&dur<7200){
+          var h=parseInt(ct.toLocaleString(\'en-GB\',{hour:\'2-digit\',hour12:false,timeZone:\'Asia/Jakarta\'}).split(\':\')[0]);
+          hourCounts[h]=(hourCounts[h]||0)+1;hourDur[h]=(hourDur[h]||0)+dur;
+        }
+      }catch(e){}
+    }
+  });
+  var fastestHour=-1,fastestAvg=99999;
+  for(var h in hourDur){
+    var avg=hourDur[h]/hourCounts[h];
+    if(hourCounts[h]>=2&&avg<fastestAvg){fastestAvg=avg;fastestHour=parseInt(h)}
+  }
+  if(fastestHour>=0){
+    var mins=Math.floor(fastestAvg/60);var secs=Math.round(fastestAvg%60);
+    insights.push({text:\'Fastest runs tend to occur at \'+fastestHour+\':00 (avg \'+mins+\'m\'+secs+\'s)\',sev:\'good\'});
+  }
+  var wfCounts={};
+  vaultRuns.forEach(function(r){var nm=r.name||\'unknown\';if(!wfCounts[nm])wfCounts[nm]={total:0,fails:0};wfCounts[nm].total++;if(r.conclusion===\'failure\')wfCounts[nm].fails++});
+  var totalRuns=vaultRuns.length;var avgFailRate=totalRuns>0?vaultRuns.filter(function(r){return r.conclusion===\'failure\'}).length/totalRuns*100:0;
+  for(var nm in wfCounts){
+    var w=wfCounts[nm];if(w.total<5)continue;
+    var wfr=w.fails/w.total*100;
+    if(wfr>avgFailRate*2&&w.fails>=2){
+      var mult=Math.round(wfr/Math.max(avgFailRate,1)*10)/10;
+      insights.push({text:\'Workflow "\'+nm+\'" has \'+mult+\'x more failures than average (\'+Math.round(wfr)+\'% vs \'+Math.round(avgFailRate)+\'%)\',sev:\'danger\'});
+    }
+  }
+  var recentTotals=dailyTotals.slice(-3).reduce(function(a,b){return a+b},0);
+  var prevTotals=dailyTotals.slice(0,3).reduce(function(a,b){return a+b},0);
+  if(prevTotals>0&&recentTotals>0){
+    var change=Math.round((recentTotals-prevTotals)/prevTotals*100);
+    if(Math.abs(change)>=20){
+      insights.push({text:\'Activity \'+(change>0?\'up\':\'down\')+\' \'+Math.abs(change)+\'% in last 3 days vs prior 3 days\',sev:change>0?\'good\':\'warn\'});
+    }
+  }
+  var cancelCount=vaultRuns.filter(function(r){return r.conclusion===\'cancelled\'}).length;
+  if(cancelCount>=3&&totalRuns>0){
+    var cancelRate=Math.round(cancelCount/totalRuns*100);
+    if(cancelRate>=10)insights.push({text:\'High cancellation rate: \'+cancelRate+\'% (\'+cancelCount+\' runs) — possible manual aborts\',sev:\'warn\'});
+  }
+  if(insights.length===0){
+    insights.push({text:\'All systems nominal — no anomalies detected in recent patterns\',sev:\'good\'});
+  }
+  insights=insights.slice(0,5);
+  var html=\'<div class="predins-card"><div class="predins-title">💡 Predictive Insights AI</div><div class="predins-list">\';
+  insights.forEach(function(ins){
+    html+=\'<div class="predins-item \'+(ins.sev||\'\')+\'"><span class="predins-bullet">◆</span><span class="predins-text">\'+esc(ins.text)+\'</span></div>\';
+  });
+  html+=\'</div></div>\';
+  var el=document.getElementById(\'hero-predins\');if(el)el.innerHTML=html;
+}
+
+function renderStatSparklines(){
+  var D=window.DASH||{};var runs=D.runs||[];var daily=D.daily||D.stats&&D.stats.daily||{};
+  var days=7;var today=new Date();var keys=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    keys.push(d.toLocaleDateString(\'sv-SE\',{timeZone:\'Asia/Jakarta\'}));
+  }
+  var vaultRuns=runs.filter(function(r){return r.name===\'rusemeva-vault\'});
+  var totals=[],successes=[],failures=[];
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];var dayRuns=vaultRuns.filter(function(r){
+      try{var dt=new Date(r.createdAt);var rk=dt.toLocaleDateString(\'sv-SE\',{timeZone:\'Asia/Jakarta\'});return rk===k}catch(e){return false}
+    });
+    totals.push(dayRuns.length);
+    successes.push(dayRuns.filter(function(r){return r.conclusion===\'success\'}).length);
+    failures.push(dayRuns.filter(function(r){return r.conclusion===\'failure\'}).length);
+  }
+  function miniSpark(vals,col){
+    if(!vals||!vals.length)return \'\';
+    var w=40,h=16;var max=Math.max.apply(null,vals);var min=Math.min.apply(null,vals);
+    var range=(max-min)||1;var step=w/Math.max(vals.length-1,1);
+    var pts=vals.map(function(v,i){return (i*step)+\',\'+(h-((v-min)/range*(h-2))-1)}).join(\' \');
+    var lastX=(vals.length-1)*step;
+    var lastY=h-((vals[vals.length-1]-min)/range*(h-2))-1;
+    return \'<svg width="\'+w+\'" height="\'+h+\'" viewBox="0 0 \'+w+\' \'+h+\'"><polyline points="\'+pts+\'" fill="none" stroke="\'+col+\'" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="\'+lastX+\'" cy="\'+lastY+\'" r="1.5" fill="\'+col+\'"/></svg>\';
+  }
+  var el;
+  el=document.getElementById(\'spark-total\');if(el)el.innerHTML=miniSpark(totals,\'var(--bl)\');
+  el=document.getElementById(\'spark-success\');if(el)el.innerHTML=miniSpark(successes,\'var(--gn)\');
+  el=document.getElementById(\'spark-failed\');if(el)el.innerHTML=miniSpark(failures,\'var(--rd)\');
+}
+
+function renderHero(){var r=document.getElementById(\'hero-rsm\');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();renderStatSparklines();renderPredictiveInsights();}
 
 // ── honest client health ──
 function checkHealth(){
@@ -4600,6 +4935,8 @@ var CMD_ITEMS=[
   {cat:'Data',label:'Run Comparison',act:"showM('compare2')"},
   {cat:'Data',label:'Markdown Report',act:"showM('mdexport')"},
   {cat:'Tools',label:'Dashboard Clock',act:"showM('clock')"},
+  {cat:'Tools',label:'🏆 Leaderboard',act:"showM('leaderboard')"},
+  {cat:'Tools',label:'📄 Export Report',act:"showM('exportreport')"},
   {cat:'Help',label:'Updates',act:"showM('updates')"}
 ];
 var cmdSel=0;
