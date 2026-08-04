@@ -642,7 +642,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .sh{margin-bottom:4px;padding-bottom:3px}
   .st{font-size:11px}
   .swipe-section{scroll-snap-align:start}
-  .sec#sec-streakcal,.sec#sec-week,.sec#sec-rec{max-height:200px;overflow-y:auto}
+  .sec#sec-week,.sec#sec-rec{max-height:200px;overflow-y:auto}
   .sec#sec-ach{max-height:180px;overflow-y:auto}
   body{padding-bottom:84px}
   .hero{padding:12px}
@@ -1319,7 +1319,7 @@ body{background:
 <div class="sec" id="sec-freqclock"><div class="sh"><div class="st">🕐 Run Frequency</div></div><div id="freqClockWrap"></div></div>
 </div>
 <div class="g2">
-<div class="sec" id="sec-streakcal"><div class="sh"><div class="st">📅 Streak Calendar</div></div><div id="streakCalGrid"></div>
+
 <div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
 <div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:14px;height:14px"></div><div class="c c1" style="width:14px;height:14px"></div><div class="c c2" style="width:14px;height:14px"></div><div class="c c3" style="width:14px;height:14px"></div><div class="c c4" style="width:14px;height:14px"></div><div class="c c5" style="width:14px;height:14px"></div><span>More</span></div></div>
 <div class="sec" id="sec-week"><div class="sh"><div class="st">📅 This Week</div><span style="font-size:9px;color:var(--t2)">7 hari</span></div><div class="cd-grid">''' + cal_detail + '''</div></div>
@@ -1837,7 +1837,7 @@ function initSectionToggle(){
   });
 }
 
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements();checkFailurePatterns();renderRunDurationPrediction();initSectionToggle()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements();checkFailurePatterns();renderRunDurationPrediction();initSectionToggle()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -4239,23 +4239,7 @@ function renderBadges(){
     return '<div class="badge-item'+(on?'':' locked')+'"><div class="bi">'+a.icon+'</div><div class="bl">'+esc(a.name)+'</div></div>';
   }).join('')+'</div><div style="font-size:10px;color:var(--t2)">'+unlocked.length+'/'+ACHIEVEMENTS.length+' unlocked</div>';
 }
-function renderStreakCal(){
-  var D=window.DASH||{};var runs=D.runs||[];var daily=D.daily||D.stats&&D.stats.daily||{};
-  var now=new Date();var year=now.getFullYear();var month=now.getMonth();
-  var firstDay=new Date(year,month,1);var lastDay=new Date(year,month+1,0);
-  var startDow=firstDay.getDay();var days=lastDay.getDate();
-  var today=now.getDate();var html='<div class="streak-cal">';
-  for(var i=0;i<startDow;i++)html+='<div class="sc-day empty"></div>';
-  for(var d=1;d<=days;d++){
-    var dateStr=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    var count=daily[dateStr]||0;
-    var fails=runs.filter(function(r){return r.conclusion==='failure'&&new Date(r.createdAt||0).toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'})===dateStr}).length;
-    var cls=count>0?(fails>0?'fail':'ok'):'';
-    var isToday=d===today;
-    html+='<div class="sc-day '+cls+(isToday?' today':'')+'" title="'+dateStr+': '+count+' runs">'+d+'</div>';
-  }
-  html+='</div>';var el=document.getElementById('streakCalGrid');if(el)el.innerHTML=html;
-}
+
 function renderFreqClock(){
   var D=window.DASH||{};var runs=D.runs||[];var hours={};
   runs.forEach(function(r){var h=new Date(r.createdAt||0).getHours();hours[h]=(hours[h]||0)+1});
@@ -4777,7 +4761,7 @@ function renderStatSparklines(){
 
 function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
   var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
-  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderStreakCal();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();renderStatSparklines();renderPredictiveInsights();checkFailurePatterns();renderRunDurationPrediction();}
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();renderStatSparklines();renderPredictiveInsights();checkFailurePatterns();renderRunDurationPrediction();}
 
 // ── FEATURE 1: Run Duration Prediction ──
 function calcAvgDurationByWorkflow(wfName){
