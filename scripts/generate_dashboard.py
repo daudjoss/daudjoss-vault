@@ -284,6 +284,15 @@ def calc(runs, releases):
         predictions.append(f"Vault cancelled: {n_cancel} (tidak dihitung sebagai failed)")
     if rn:
         predictions.append(f"Ada {rn} vault run masih running/queued")
+    durations = []
+    for r in v[:30]:
+        try:
+            ct = datetime.fromisoformat(r.get("createdAt","").replace("Z","+00:00"))
+            ut = datetime.fromisoformat(r.get("updatedAt","").replace("Z","+00:00"))
+            if ut > ct:
+                durations.append((ut - ct).total_seconds())
+        except: pass
+    avg_duration = sum(durations) / len(durations) if durations else 0
     return {
         "total":t,"success":s,"failed":f,"cancelled":len([r for r in v if r.get("conclusion")=="cancelled"]),"running":rn,"rate":rate,
         "enc":et,"enc_ok":es,"enc_rate":erate,"today":len(tr),"today_ok":len([r for r in tr if r.get("conclusion")=="success"]),
@@ -293,6 +302,7 @@ def calc(runs, releases):
         "hours":dict(sorted(hours.items())),"days":dict(days),"night":night,
         "anomalies":anomalies,"quality":quality_scores,
         "insights":insights,"predictions":predictions,
+        "avg_duration":round(avg_duration,1),
     }
 
 def gen(S, runs, releases):
@@ -843,7 +853,25 @@ body{background:
 .radio-btn{display:inline-block !important;width:auto !important;max-width:220px;margin:2px !important;padding:7px 14px !important;border-radius:20px !important;font-size:11px !important;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;background:rgba(88,166,255,.12) !important;color:#e6edf3 !important;border:1px solid rgba(88,166,255,.3) !important;transition:all .25s}
 .radio-btn:hover{background:rgba(88,166,255,.25) !important;border-color:var(--bl) !important;color:#fff !important;box-shadow:0 0 8px rgba(88,166,255,.3)}
 .radio-btn:active{background:var(--bl) !important;color:#fff !important}
-#radioList{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px;max-height:350px;overflow-y:auto;padding:4px;box-sizing:border-box}
+/* Equalizer animation bars */
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:18px;margin-left:8px;vertical-align:middle}
+.eq-bar{width:3px;height:4px;background:var(--bl);border-radius:2px;transform-origin:bottom}
+.eq-playing .eq-bar{animation:eqBounce .8s ease-in-out infinite}
+.eq-playing .eq-bar:nth-child(1){animation-delay:0s}
+.eq-playing .eq-bar:nth-child(2){animation-delay:.15s}
+.eq-playing .eq-bar:nth-child(3){animation-delay:.3s}
+.eq-playing .eq-bar:nth-child(4){animation-delay:.1s}
+.eq-playing .eq-bar:nth-child(5){animation-delay:.25s}
+@keyframes eqBounce{0%,100%{height:4px}50%{height:16px}}
+/* Mini floating radio player */
+.mini-player{position:fixed;bottom:70px;right:16px;z-index:997;display:none;align-items:center;gap:8px;padding:8px 12px;border-radius:24px;background:rgba(22,27,34,.95);border:1px solid rgba(88,166,255,.4);box-shadow:0 4px 20px rgba(0,0,0,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer;max-width:280px;transition:opacity .3s,transform .3s}
+.mini-player.on{display:flex}
+.mini-player:hover{transform:translateY(-2px);border-color:var(--bl)}
+.mini-player .mp-name{font-size:11px;font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.mini-player .mp-eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
+.mini-player .mp-eq .eq-bar{width:2px;height:3px}
+.mini-player .mp-pause{font-size:16px;color:var(--bl);flex-shrink:0;line-height:1}
+#radioList{display:grid;
 .batch-sel{cursor:pointer;user-select:none}
 .batch-sel.on{background:rgba(88,166,255,.15);outline:1px solid var(--bl)}
 .batch-bar{position:sticky;bottom:0;background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:8px;margin:8px 0;display:none;align-items:center;gap:8px;flex-wrap:wrap}
@@ -871,6 +899,8 @@ body{background:
 .heatmap-cell.l3{background:rgba(63,185,80,.75)}
 .heatmap-cell.l4{background:var(--gn)}
 .heatmap-cell.lf{background:var(--rd);opacity:.7}
+.heatmap-cell.lmix{background:linear-gradient(135deg,var(--gn) 50%,var(--rd) 50%);opacity:.8}
+.heatmap-cell.empty{background:transparent}
 .heatmap-legend{display:flex;gap:4px;align-items:center;font-size:10px;color:var(--t2);margin-top:8px;justify-content:center}
 .heatmap-legend .heatmap-cell{width:14px;height:14px}
 .heatmap-months{display:flex;gap:2px;font-size:8px;color:var(--t2);margin-bottom:4px}
@@ -1159,11 +1189,13 @@ body{background:
 <div class="sc bl"><div class="si">📹</div><div class="sv" id="st-total">''' + str(S['total']) + '''</div><div class="sl">Vault total</div></div>
 <div class="sc gn"><div class="si">✅</div><div class="sv" id="st-success">''' + str(S['success']) + '''</div><div class="sl">Vault OK</div></div>
 <div class="sc rd"><div class="si">❌</div><div class="sv" id="st-failed">''' + str(S['failed']) + '''</div><div class="sl">Vault fail</div></div>
-<div class="sc yl"><div class="si">📊</div><div class="sv" id="st-rate">''' + str(S['rate']) + '''%</div><div class="sl">Vault rate</div></div>
+<div class="sc yl"><div class="si">📊</div><div class="sv" id="st-rate" style="font-size:18px;line-height:1;padding-top:4px;padding-bottom:4px">''' + str(S['rate']) + '''%</div><div class="sl">Vault rate</div></div>
+<div class="sc" id="sc-rate-ring" style="text-align:center"><div id="rate-ring-container"></div></div>
 <div class="sc pr"><div class="si">🎞</div><div class="sv" id="st-enc">''' + str(S['enc']) + '''</div><div class="sl">Encode</div></div>
 <div class="sc or"><div class="si">📅</div><div class="sv" id="st-today">''' + str(S['today']) + '''</div><div class="sl">Today</div></div>
 <div class="sc pn"><div class="si">🔥</div><div class="sv" id="st-streak">''' + str(S['streak']) + '''</div><div class="sl">Streak</div></div>
 </div>
+<div class="sec" id="sec-ci-weather" style="text-align:center;padding:10px"><div class="sh"><div class="st">🌤️ CI Health</div></div><div id="ci-weather-box"></div></div>
 <div class="sec" id="sec-health"><div class="sh"><div class="st">🏥 Health</div><span style="font-size:9px;color:var(--t2)" id="health-ts">checking…</span></div>
 <div id="health-rows"></div></div>
 <div class="sec"><div class="sh"><div class="st">📡 Monitor</div></div>
@@ -1298,6 +1330,8 @@ body{background:
 <a class="ab" onclick="showM('comments')">💬 Comments</a>
 <a class="ab" onclick="showM('player')">▶️ Player</a>
 <a class="ab" onclick="showM('analytics')">📊 Analytics</a>
+<a class="ab" onclick="showM('heatmap')">📅 Activity Heatmap</a>
+<a class="ab" onclick="showM('achievements')">🏅 Achievements</a>
 </div></div>
 <div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()">
 <div id="qchips" style="margin:4px 0"></div>
@@ -1324,6 +1358,7 @@ body{background:
 </div>
 <div class="ft"><p>Rusemeva · <a href="https://github.com/''' + REPO + '''">GitHub</a></p><p style="margin-top:3px"><span class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></span> v9.0 HM matrix + insights + stopwatch + quingo + Trigger Analysis + Run# Tracker + Commit Messages + Event Timeline + Gap Detection · Auto-refresh 30s</p></div>
 </div>
+<div class="mini-player" id="miniPlayer" onclick="scrollToRadio()"><span class="mp-eq" id="mpEq"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span><span class="mp-name" id="mpName">—</span><span class="mp-pause" id="mpPause" onclick="event.stopPropagation();pauseRadio()">⏸</span></div>
 <div class="mo" id="mo" onclick="if(event.target===this)clM()"><div class="md"><div class="mh"><h3 id="mt"></h3><button class="mc" onclick="clM()">&times;</button></div><div id="mb"></div></div></div>
 <div class="cheat-overlay" id="cheatOverlay" onclick="if(event.target===this)closeCheat()">
 <div class="cheat-box"><h3>⌨️ Shortcuts</h3>
@@ -1343,7 +1378,7 @@ body{background:
 window.DASH = ''' + json.dumps({
         "generated": datetime.now(WIB).isoformat(),
             "build": "v10.1-max",
-        "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night") if k in S},
+        "stats": {k: S[k] for k in ("total","success","failed","cancelled","running","rate","enc","enc_ok","enc_rate","today","today_ok","streak","best","top_hour","top_day","total_size","storage_est","lifetime_est_gb","gh_bytes","night","avg_duration") if k in S},
         "hours": S.get("hours") or {},
         "days": S.get("days") or {},
         "daily": S.get("daily") or {},
@@ -1369,8 +1404,10 @@ window.DASH = ''' + json.dumps({
             "created": r.get("created"), "size": r.get("size") or 0,
         } for r in releases[:20]],
     }, default=str) + ''';
-function playRadio(url,name,btn){var p=document.getElementById('radioPlayer');if(p){p.src=url;p.play();var np=document.getElementById('radioNowPlaying');if(np){np.innerHTML='<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.4);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎵</span><div><div style="font-size:14px;font-weight:600;color:#fff">Now Playing</div><div style="font-size:12px;color:var(--bl);margin-top:2px">'+name+'</div></div></div>'}var rl=document.getElementById('radioList');if(rl)rl.querySelectorAll('.radio-btn').forEach(function(b){b.style.background='';b.style.color='';b.style.borderColor='';b.removeAttribute('data-playing')});if(btn){btn.style.background='var(--bl)';btn.style.color='#fff';btn.style.borderColor='var(--bl)';btn.setAttribute('data-playing','1')}}}
-function filterRadio(q){q=(q||'').toLowerCase();var rl=document.getElementById('radioList');if(!rl)return;rl.querySelectorAll('.radio-btn').forEach(function(b){var n=b.getAttribute('data-rname')||'';var r=b.getAttribute('data-region')||'';var fav=b.getAttribute('data-fav')==='1';var favOnly=document.getElementById('favFilterBtn')&&document.getElementById('favFilterBtn').getAttribute('data-on')==='1';var chip=document.querySelector('.radio-chip.on');var chipR=chip?chip.getAttribute('data-region'):'';var match=n.toLowerCase().indexOf(q)>=0;if(chipR&&r!==chipR)match=false;if(favOnly&&!fav)match=false;b.style.display=match?'':'none'})}
+var radioCurrentName=\'\';
+function updateEqState(playing){var np=document.getElementById(\'radioNowPlaying\');var mp=document.getElementById(\'miniPlayer\');var mpEq=document.getElementById(\'mpEq\');var mpP=document.getElementById(\'mpPause\');if(np){if(playing){np.classList.add(\'eq-playing\')}else{np.classList.remove(\'eq-playing\')}}if(mpEq){if(playing){mpEq.classList.add(\'eq-playing\')}else{mpEq.classList.remove(\'eq-playing\')}}if(mpP){mpP.textContent=playing?\'⏸\':\'▶\'}}function pauseRadio(){var p=document.getElementById(\'radioPlayer\');if(p){if(p.paused){p.play()}else{p.pause()}}}function scrollToRadio(){var m=document.querySelector(\'a[onclick*="music"]\');if(m){m.click()}var np=document.getElementById(\'radioNowPlaying\');if(np){np.scrollIntoView({behavior:\'smooth\',block:\'center\'})}}
+function playRadio(url,name,btn){var p=document.getElementById(\'radioPlayer\');if(p){p.src=url;p.play();radioCurrentName=name;var np=document.getElementById(\'radioNowPlaying\');if(np){np.innerHTML=\'<div class="eq-playing" style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.4);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎵</span><div><div style="font-size:14px;font-weight:600;color:#fff">Now Playing</div><div style="font-size:12px;color:var(--bl);margin-top:2px">\'+name+\'</div></div><span class="eq"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span></div>\'}p.onplay=function(){updateEqState(true);var mp=document.getElementById(\'miniPlayer\');var mn=document.getElementById(\'mpName\');if(mp){mp.classList.add(\'on\')}if(mn){mn.textContent=radioCurrentName}};p.onpause=function(){updateEqState(false)};p.onerror=function(){updateEqState(false);var mp=document.getElementById(\'miniPlayer\');if(mp){mp.classList.remove(\'on\')}};var rl=document.getElementById(\'radioList\');if(rl)rl.querySelectorAll(\'.radio-btn\').forEach(function(b){b.style.background=\'\';b.style.color=\'\';b.style.borderColor=\'\';b.removeAttribute(\'data-playing\')});if(btn){btn.style.background=\'var(--bl)\';btn.style.color=\'#fff\';btn.style.borderColor=\'var(--bl)\';btn.setAttribute(\'data-playing\',\'1\')}}}
+function filterRadio(q){q=(q||\'\').toLowerCase();var rl=document.getElementById(\'radioList\');if(!rl)return;rl.querySelectorAll(\'.radio-btn\').forEach(function(b){var n=b.getAttribute(\'data-rname\')||\'\';var r=b.getAttribute(\'data-region\')||\'\';var fav=b.getAttribute(\'data-fav\')===\'1\';var favOnly=document.getElementById(\'favFilterBtn\')&&document.getElementById(\'favFilterBtn\').getAttribute(\'data-on\')===\'1\';var chip=document.querySelector(\'.radio-chip.on\');var chipR=chip?chip.getAttribute(\'data-region\'):\'\';var match=n.toLowerCase().indexOf(q)>=0;if(chipR&&r!==chipR)match=false;if(favOnly&&!fav)match=false;b.style.display=match?\'\':\'none\'})}
 function toggleFavFilter(btn){var on=btn.getAttribute('data-on')==='1';if(on){btn.removeAttribute('data-on');btn.style.background='';btn.style.color='';btn.textContent='Star Only'}else{btn.setAttribute('data-on','1');btn.style.background='var(--or)';btn.style.color='#fff';btn.textContent='Star Only ON'}filterRadio(document.getElementById('radioSearch')?document.getElementById('radioSearch').value:'')}
 function toggleFav(btn,name){var favs=[];try{favs=JSON.parse(localStorage.getItem('radioFavs')||'[]')}catch(e){}var idx=favs.indexOf(name);if(idx>=0){favs.splice(idx,1);btn.textContent='☆';btn.style.color='var(--t3)'}else{favs.push(name);btn.textContent='★';btn.style.color='var(--yl)'}localStorage.setItem('radioFavs',JSON.stringify(favs))}
 function chipSelect(btn){document.querySelectorAll('.radio-chip').forEach(function(c){c.classList.remove('on')});btn.classList.add('on');filterRadio(document.getElementById('radioSearch')?document.getElementById('radioSearch').value:'')}
@@ -1617,8 +1654,8 @@ if(t==='concurrency'){h.textContent='🔄 Concurrency';b.innerHTML=renderConcurr
 if(t==='commitimpact'){h.textContent='📦 Commit Impact';b.innerHTML=renderCommitImpact()}
 if(t==='deploymt'){h.textContent='📅 Deploy Timeline';b.innerHTML=renderDeployTimeline()}
 if(t==='retry'){h.textContent='🔁 Retry Tracker';b.innerHTML=renderRetryTracker()}
-if(t==='heatmap'){h.textContent='🔥 Heatmap';b.innerHTML=renderHeatmap()}
-if(t==='achievements'){h.textContent='🏆 Achievements';b.innerHTML=renderAchievements()}
+if(t==='heatmap'){h.textContent='📅 Activity Heatmap';b.innerHTML=renderHeatmap()}
+if(t==='achievements'){h.textContent='🏅 Achievements';b.innerHTML=renderAchievements()}
 if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML=renderAnalytics()}
 if(t==='gantt'){h.textContent='📅 Gantt Timeline';b.innerHTML=renderGantt()}
 if(t==='compare2'){h.textContent='⚖️ Run Comparison';b.innerHTML=renderCompare()}
@@ -1824,10 +1861,11 @@ function shareCard(){
 
 // ═══ v8.8 features ═══
 function animateCounter(el,target,suffix){
-  if(!el)return;var start=0,duration=800,startTime=null;
+  if(!el)return;var start=0,duration=1500,startTime=null;
   suffix=suffix||'';
   function step(ts){if(!startTime)startTime=ts;var prog=Math.min((ts-startTime)/duration,1);
-    var val=Math.floor(prog*target);el.textContent=val+suffix;
+    var eased=1-Math.pow(1-prog,3);
+    var val=Math.floor(eased*target);el.textContent=val+suffix;
     if(prog<1)requestAnimationFrame(step);else el.textContent=target+suffix}
   requestAnimationFrame(step);
 }
@@ -1835,6 +1873,54 @@ function renderCounters(){
   var st=(window.DASH||{}).stats||{};
   var map={'st-total':st.total,'st-success':st.success,'st-failed':st.failed,'st-enc':st.enc,'st-today':st.today,'st-streak':st.streak};
   for(var id in map){var el=document.getElementById(id);if(el&&!el.getAttribute('data-animated')){el.setAttribute('data-animated','1');var v=map[id];if(v!=null)animateCounter(el,v)}}
+  renderRateRing();
+  renderCIWeather();
+}
+// ── Progress Ring (Feature 2) ──
+function renderRateRing(){
+  var st=(window.DASH||{}).stats||{};
+  var rate=st.rate||0;
+  var c=document.getElementById('rate-ring-container');
+  if(!c)return;
+  var r=28,circumference=2*Math.PI*r;
+  var col=rate>80?'var(--gn)':(rate>60?'var(--yl)':'var(--rd)');
+  var ring='<svg width="76" height="76" style="transform:rotate(-90deg);margin:0 auto">'
+    +'<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="6"/>'
+    +'<circle id="rate-ring-fill" cx="38" cy="38" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+circumference+'" style="transition:stroke-dashoffset 1.5s ease"/>'
+    +'</svg>';
+  var label='<div style="position:relative;margin-top:-50px;text-align:center;pointer-events:none"><div style="font-size:16px;font-weight:700;color:'+col+'">'+rate+'%</div><div style="font-size:8px;color:var(--t2)">Success Rate</div></div>';
+  c.innerHTML='<div style="position:relative;width:76px;margin:0 auto">'+ring+'<div style="position:absolute;top:0;left:0;width:100%;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none"><div style="font-size:16px;font-weight:700;color:'+col+'">'+rate+'%</div><div style="font-size:8px;color:var(--t2)">Success Rate</div></div></div>';
+  var fill=document.getElementById('rate-ring-fill');
+  if(fill){
+    setTimeout(function(){
+      var offset=circumference-(rate/100)*circumference;
+      fill.setAttribute('stroke-dashoffset',offset);
+    },50);
+  }
+}
+// ── CI Health Weather (Feature 3) ──
+function renderCIWeather(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=Date.now();
+  var h24=now-24*3600*1000;
+  var h48=now-48*3600*1000;
+  var fail24=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='failure'&&new Date(r.createdAt||0).getTime()>=h24}).length;
+  var failPrev=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='failure'&&new Date(r.createdAt||0).getTime()>=h48&&new Date(r.createdAt||0).getTime()<h24}).length;
+  var icon,desc,col;
+  if(fail24===0){icon='☀️';desc='Sunny';col='var(--gn)'}
+  else if(fail24<=3){icon='☁️';desc='Cloudy';col='var(--yl)'}
+  else{icon='⛈️';desc='Stormy';col='var(--rd)'}
+  var trend;
+  if(fail24>failPrev){trend='↗️'}
+  else if(fail24<failPrev){trend='↘️'}
+  else{trend='→'}
+  var c=document.getElementById('ci-weather-box');
+  if(!c)return;
+  c.innerHTML='<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:6px">'
+    +'<span style="font-size:36px">'+icon+'</span>'
+    +'<div style="text-align:left"><div style="font-size:14px;font-weight:600;color:'+col+'">'+desc+'</div>'
+    +'<div style="font-size:11px;color:var(--t2)">'+fail24+' fail / 24h '+trend+'</div></div>'
+    +'</div>';
 }
 function renderFlow(){
   var D=window.DASH||{};var runs=D.runs||[];
@@ -3517,14 +3603,18 @@ function renderRetryTracker(){
 // ═══ v9.2 features ═══
 
 var _achvList=[
-  {id:'first_run',icon:'🎯',name:'First Run',desc:'Complete 1 run',check:function(s){return s.total>=1},max:1},
+  {id:'first_run',icon:'🎯',name:'First Success',desc:'Complete 1 successful run',check:function(s){return s.success>=1},max:1},
   {id:'ten_runs',icon:'🔟',name:'10 Runs',desc:'Complete 10 runs',check:function(s){return s.total>=10},max:10},
   {id:'fifty_runs',icon:'5️⃣0️⃣',name:'50 Runs',desc:'Complete 50 runs',check:function(s){return s.total>=50},max:50},
-  {id:'hundred_runs',icon:'💯',name:'100 Runs',desc:'Complete 100 runs',check:function(s){return s.total>=100},max:100},
-  {id:'streak3',icon:'🔥',name:'3-Day Streak',desc:'3 day success streak',check:function(s){return s.streak>=3},max:3},
-  {id:'streak7',icon:'📅',name:'7-Day Streak',desc:'7 day success streak',check:function(s){return s.streak>=7},max:7},
-  {id:'rate80',icon:'📈',name:'80% Rate',desc:'80%+ success rate',check:function(s){return s.rate>=80},max:80},
+  {id:'hundred_runs',icon:'🏆',name:'100 Runs',desc:'Complete 100 runs',check:function(s){return s.total>=100},max:100},
+  {id:'thousand_runs',icon:'📈',name:'1000 Runs',desc:'Complete 1000 runs',check:function(s){return s.total>=1000},max:1000},
+  {id:'streak3',icon:'🔥',name:'3-Day Streak',desc:'3 day streak',check:function(s){return s.streak>=3},max:3},
+  {id:'streak7',icon:'📅',name:'7-Day Streak',desc:'7 day streak',check:function(s){return s.streak>=7},max:7},
+  {id:'streak50',icon:'🔥',name:'50 Day Streak',desc:'50 day streak',check:function(s){return s.streak>=50},max:50},
+  {id:'rate80',icon:'📊',name:'80% Rate',desc:'80%+ success rate',check:function(s){return s.rate>=80},max:80},
   {id:'rate90',icon:'🏆',name:'90% Rate',desc:'90%+ success rate',check:function(s){return s.rate>=90},max:90},
+  {id:'speed_demon',icon:'⚡',name:'Speed Demon',desc:'Avg run duration <5min',check:function(s){return (s.avg_duration||0)>0&&(s.avg_duration||0)<300},max:300},
+  {id:'perfect_week',icon:'💯',name:'100% Week',desc:'100% success rate with 5+ runs',check:function(s){return s.rate>=100&&s.total>=5},max:100},
   {id:'nofails',icon:'🛡️',name:'No Fails',desc:'0 failed runs',check:function(s){return s.failed===0&&s.total>=5},max:1}
 ];
 var _achvUnlocked=JSON.parse(localStorage.getItem('dash_achv')||'{}');
@@ -3543,10 +3633,14 @@ function renderAchievements(){
       if(a.id==='ten_runs')prog=Math.min(st.total,10);
       else if(a.id==='fifty_runs')prog=Math.min(st.total,50);
       else if(a.id==='hundred_runs')prog=Math.min(st.total,100);
+      else if(a.id==='thousand_runs')prog=Math.min(st.total,1000);
       else if(a.id==='streak3')prog=Math.min(st.streak,3);
       else if(a.id==='streak7')prog=Math.min(st.streak,7);
+      else if(a.id==='streak50')prog=Math.min(st.streak,50);
       else if(a.id==='rate80')prog=Math.min(st.rate,80);
       else if(a.id==='rate90')prog=Math.min(st.rate,90);
+      else if(a.id==='speed_demon'){var ad=st.avg_duration||0;if(ad>0)prog=Math.round(300-ad)}
+      else if(a.id==='perfect_week')prog=Math.min(st.rate,100);
       if(prog>0)progress='<div class="achv-progress">'+prog+'/'+a.max+'</div>';
     }
     html+='<div class="achv-badge '+cls+'"><div class="achv-icon">'+a.icon+'</div><div class="achv-name">'+a.name+'</div><div class="achv-desc">'+a.desc+'</div>'+progress+'</div>';
@@ -4273,19 +4367,47 @@ function renderAlert(){
 }
 
 function renderHeatmap(){
-  var D=window.DASH||{};var daily=D.daily||D.stats&&D.stats.daily||{};
-  var days=30;var today=new Date();
-  var html='<div class="heatmap">';
-  for(var i=days-1;i>=0;i--){
-    var d=new Date(today.getTime()-i*86400000);
-    var key=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
-    var count=daily[key]||0;
-    var cls=count===0?'':(count<=1?'l1':(count<=2?'l2':(count<=4?'l3':'l4')));
-    html+='<div class="hm-cell '+cls+'" title="'+key+': '+count+' runs"></div>';
+  var D=window.DASH||{};var runs=D.runs||[];var daily=D.daily||D.stats&&D.stats.daily||{};
+  var dayMap={};
+  runs.forEach(function(r){
+    var rd=new Date(r.createdAt||0);
+    var key=rd.getFullYear()+'-'+('0'+(rd.getMonth()+1)).slice(-2)+'-'+('0'+rd.getDate()).slice(-2);
+    if(!dayMap[key])dayMap[key]={s:0,f:0,n:0};
+    if(r.conclusion==='success')dayMap[key].s++;
+    else if(r.conclusion==='failure')dayMap[key].f++;
+    else dayMap[key].n++;
+  });
+  var days=365;var today=new Date();
+  var start=new Date(today.getTime()-(days-1)*86400000);
+  var startDow=start.getDay();
+  var html='<div class="heatmap-wrap"><div class="heatmap-grid">';
+  for(var i=0;i<startDow;i++)html+='<div class="heatmap-cell empty"></div>';
+  var monthLabels='';var lastMonth=-1;var colCount=0;var monthCols=[];
+  for(var i=0;i<days;i++){
+    var d=new Date(start.getTime()+i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    var dm=dayMap[key];var total=dm?(dm.s+dm.f+dm.n):0;
+    var cls='';
+    if(total===0)cls='';
+    else if(dm.f>0&&dm.s===0)cls='lf';
+    else if(dm.f>0)cls='lmix';
+    else if(total<=1)cls='l1';
+    else if(total<=2)cls='l2';
+    else if(total<=4)cls='l3';
+    else cls='l4';
+    var title=key+': '+total+' run'+(total!==1?'s':'')+(dm?(' ('+dm.s+'ok/'+dm.f+'fail)'):'');
+    html+='<div class="heatmap-cell '+cls+'" title="'+title+'"></div>';
+    if(d.getMonth()!==lastMonth){monthCols.push({col:colCount,label:d.toLocaleString('en',{month:'short'})});lastMonth=d.getMonth()}
+    colCount++;
   }
   html+='</div>';
-  var el=null;
-  if(el)el.innerHTML=html;
+  var lblHtml='<div class="heatmap-months">';
+  monthCols.forEach(function(m){lblHtml+='<span style="position:absolute;left:'+(m.col*16)+'px">'+m.label+'</span>'});
+  lblHtml+='</div>';
+  html=lblHtml+html;
+  html+='<div class="heatmap-legend"><span>Less</span><div class="heatmap-cell"></div><div class="heatmap-cell l1"></div><div class="heatmap-cell l2"></div><div class="heatmap-cell l3"></div><div class="heatmap-cell l4"></div><div class="heatmap-cell lmix"></div><div class="heatmap-cell lf"></div><span>More</span></div>';
+  html+='<div style="text-align:center;margin-top:6px;font-size:10px;color:var(--t2)">Green=success · Red=fail · Gray=no runs · 365 days</div></div>';
+  return html;
 }
 
 function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
@@ -4471,7 +4593,7 @@ var CMD_ITEMS=[
   {cat:'CI/CD',label:'Commit Impact',act:"showM('commitimpact')"},
   {cat:'CI/CD',label:'Deploy Timeline',act:"showM('deploymt')"},
   {cat:'CI/CD',label:'Retry Tracker',act:"showM('retry')"},
-  {cat:'Data',label:'Heatmap',act:"showM('heatmap')"},
+  {cat:'Data',label:'Activity Heatmap',act:"showM('heatmap')"},
   {cat:'Data',label:'Achievements',act:"showM('achievements')"},
   {cat:'Data',label:'Analytics Charts',act:"showM('analytics')"},
   {cat:'Data',label:'Gantt Timeline',act:"showM('gantt')"},
