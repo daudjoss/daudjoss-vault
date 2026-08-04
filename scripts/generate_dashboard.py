@@ -333,33 +333,7 @@ def gen(S, runs, releases):
     ach_locked = "".join([mk_lock(n,d) for n,d in lock_data[:6-len(S["achs"])][:6]])
     err_html = "".join([mk_err(e) for e in S["errs"]]) if S["errs"] else '<div class="ne">✅ Tidak ada error</div>'
     mbi_html = "".join([mk_mbi(r) for r in vr[:20]])
-    cal = ""
-    today = datetime.now(WIB).date()
-    for i in range(34, -1, -1):
-        day = today - timedelta(days=i)
-        cnt = S["daily"].get(day.strftime("%Y-%m-%d"), 0)
-        it = min(cnt, 5)
-        cal += f'<div class="c c{it}" title="{day.strftime("%Y-%m-%d")}: {cnt}">{day.day}</div>'
-    # This Week: compact chips (oldest->newest) — short on mobile
-    cal_detail = ""
-    for i in range(6, -1, -1):
-        day = today - timedelta(days=i)
-        ds = day.strftime("%Y-%m-%d")
-        cnt = S["daily"].get(ds, 0)
-        is_today = day == today
-        lvl = min(cnt, 5)
-        on = " on" if is_today else ""
-        act = " act" if cnt > 0 else ""
-        dlet = day.strftime("%a")[:1]
-        dnum = day.strftime("%d")
-        title = f'{day.strftime("%a %d/%m")}: {cnt} record'
-        cal_detail += (
-            f'<div class="cd c{lvl}{on}{act}" title="{title}">'
-            f'<div class="cd-day">{dlet}</div>'
-            f'<div class="cd-num">{dnum}</div>'
-            f'<div class="cd-cnt">{cnt if cnt else "·"}</div>'
-            f'</div>'
-        )
+    # calendar removed — using activity heatmap instead
     rand_r = random.choice(vr) if vr else None
     rand_html = f'<code>{rand_r.get("databaseId","")}</code> | {ago(rand_r.get("createdAt",""))} | <a href="https://github.com/{REPO}/actions/runs/{rand_r.get("databaseId","")}" target="_blank">View ↗</a>' if rand_r else "No recordings"
     anom_html = ""
@@ -509,8 +483,8 @@ code{background:var(--bg3);padding:1px 4px;border-radius:3px;font-size:9px;font-
 a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .b{padding:1px 6px;border-radius:8px;font-size:9px;font-weight:500}
 .b-success{background:rgba(63,185,80,.15);color:var(--gn)}.b-failure{background:rgba(248,81,73,.15);color:var(--rd)}.b-cancelled{background:rgba(139,148,158,.15);color:var(--t2)}.b-running{background:rgba(88,166,255,.15);color:var(--bl)}
-.c{border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--t3);cursor:default;min-height:20px}
-.c0{background:var(--bg3)}.c1{background:rgba(63,185,80,.25)}.c2{background:rgba(63,185,80,.45)}.c3{background:rgba(63,185,80,.65)}.c4{background:rgba(63,185,80,.8)}.c5{background:var(--gn);color:#fff}
+
+
 .ch{position:relative;height:160px}.ch2{position:relative;height:120px}
 .er{display:flex;align-items:center;gap:6px;padding:6px;background:rgba(248,81,73,.04);border:1px solid rgba(248,81,73,.15);border-radius:6px;margin-bottom:4px}
 .ei{font-size:14px}.et{font-size:9px;color:var(--t2)}.ne{text-align:center;padding:10px;color:var(--t2);font-size:12px}
@@ -572,7 +546,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .cd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 2px;background:var(--bg3);border-radius:8px;border:1px solid var(--brd);min-height:52px;text-align:center;transition:transform .15s,border-color .15s}.cd:hover{transform:translateY(-1px);border-color:var(--bl)}.cd.on{border-color:var(--bl);box-shadow:0 0 0 1px rgba(88,166,255,.35)}.cd.act{background:rgba(63,185,80,.12)}.cd-day{font-size:9px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.3px;line-height:1}.cd-num{font-size:11px;font-weight:700;color:var(--t1);line-height:1.1}.cd-cnt{font-size:10px;color:var(--gn);font-weight:600;line-height:1}.cd.c0 .cd-cnt{color:var(--t3)}
 
 
-.cd-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:100%}
+
 .note-area{width:100%;min-height:60px;padding:6px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px;resize:vertical;font-family:inherit}
 .tag-input{display:flex;gap:4px;margin:6px 0}.tag-input input{flex:1;padding:5px;border-radius:5px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px}.tag-input button{padding:5px 10px;border-radius:5px;border:1px solid var(--brd);background:var(--bl);color:#fff;cursor:pointer;font-size:11px}
 .export-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin:8px 0}
@@ -631,18 +605,18 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
   .hg{grid-template-columns:1fr 1fr}
   .fl{width:100%}
   .fb{flex:1;text-align:center}
-  .cd-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+  
   .cd{min-height:36px;padding:2px 1px;border-radius:5px}
   .cd-day{font-size:7px}
   .cd-num{font-size:9px}
   .cd-cnt{font-size:8px}
   .streak-cal{max-width:100%;grid-template-columns:repeat(15,1fr)}
-  .cal-scroll{max-height:120px;overflow-y:auto}
+  
   .sec{font-size:10px}
   .sh{margin-bottom:4px;padding-bottom:3px}
   .st{font-size:11px}
   .swipe-section{scroll-snap-align:start}
-  .sec#sec-week,.sec#sec-rec{max-height:200px;overflow-y:auto}
+  .sec#sec-rec{max-height:200px;overflow-y:auto}
   .sec#sec-ach{max-height:180px;overflow-y:auto}
   body{padding-bottom:84px}
   .hero{padding:12px}
@@ -1152,7 +1126,7 @@ body{background:
 .curl-copy{position:absolute;top:4px;right:4px;font-size:9px;cursor:pointer;padding:2px 6px;border-radius:4px;background:var(--bg2);border:1px solid var(--brd)}
 
 
-@media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.sec-week,.offline-banner,.toast,#qchips,.fb-row,.modal{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}#printReport{position:static!important;left:0!important;top:0!important;width:100%!important;background:#fff!important;color:#000!important;padding:20px!important;font-family:Arial,sans-serif!important;font-size:12px!important;display:block!important}#printReport h1{font-size:20px}#printReport h2{font-size:14px;border-bottom:1px solid #ccc;padding-bottom:3px}#printReport table{border-collapse:collapse;width:100%}#printReport th,#printReport td{border:1px solid #ccc;padding:4px 8px}#printReport th{background:#f5f5f5;text-align:left}}
+@media print{.hero-actions,.bnav,.cmd-overlay,.cheat-overlay,.tools-panel,.sec-feed,.sec-health,.offline-banner,.toast,#qchips,.fb-row,.modal{display:none!important}.hero{box-shadow:none;border:none}body{background:#fff;color:#000}.stat-card{border:1px solid #ccc;box-shadow:none}#printReport{position:static!important;left:0!important;top:0!important;width:100%!important;background:#fff!important;color:#000!important;padding:20px!important;font-family:Arial,sans-serif!important;font-size:12px!important;display:block!important}#printReport h1{font-size:20px}#printReport h2{font-size:14px;border-bottom:1px solid #ccc;padding-bottom:3px}#printReport table{border-collapse:collapse;width:100%}#printReport th,#printReport td{border:1px solid #ccc;padding:4px 8px}#printReport th{background:#f5f5f5;text-align:left}}
 .lb-table{width:100%;border-collapse:collapse;font-size:11px}.lb-th{cursor:pointer;padding:6px 8px;text-align:left;border-bottom:2px solid var(--brd);user-select:none;white-space:nowrap}.lb-th:hover{color:var(--bl)}.lb-table td{padding:6px 4px;border-bottom:1px solid var(--brd)}.lb-table tr:hover{background:var(--bg3)}
 .report-preview{background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:12px}.report-preview table{border-collapse:collapse}.report-preview th,.report-preview td{border:1px solid var(--brd);padding:3px 6px}
 
@@ -1178,7 +1152,7 @@ body{background:
 .cmd-item .cmd-cat{font-size:9px;color:var(--t2);float:right}
 .cmp-bar{display:flex;gap:4px;align-items:center;margin:4px 0;font-size:11px}
 .cmp-bar button{font-size:10px;padding:3px 8px}
-.compact #sec-week,.compact #sec-ach,.compact .gal,.compact .cal-scroll,.compact #sec-act .g2,.compact #sec-tools .rand,.compact #sec-tools .sched{display:none!important}
+.compact ,.compact .gal,.compact #sec-act .g2,.compact #sec-tools .rand,.compact #sec-tools .sched{display:none!important}
 .compact .sg{display:grid!important;grid-template-columns:repeat(4,1fr)!important}
 .view-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--brd);background:var(--bg3);color:var(--t2);cursor:pointer}
 .view-btn:hover{color:var(--t1)}
@@ -1320,9 +1294,8 @@ body{background:
 </div>
 <div class="g2">
 
-<div class="cal-scroll"><div class="cal-grid">''' + cal + '''</div></div>
-<div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:9px;color:var(--t2)"><span>Less</span><div class="c c0" style="width:14px;height:14px"></div><div class="c c1" style="width:14px;height:14px"></div><div class="c c2" style="width:14px;height:14px"></div><div class="c c3" style="width:14px;height:14px"></div><div class="c c4" style="width:14px;height:14px"></div><div class="c c5" style="width:14px;height:14px"></div><span>More</span></div></div>
-<div class="sec" id="sec-week"><div class="sh"><div class="st">📅 This Week</div><span style="font-size:9px;color:var(--t2)">7 hari</span></div><div class="cd-grid">''' + cal_detail + '''</div></div>
+
+
 </div>
 <div class="g3">
 <div class="sec"><div class="sh"><div class="st">📈 Daily</div></div><div class="ch"><canvas id="c1"></canvas></div></div>
@@ -1604,7 +1577,7 @@ if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-fil
 if(t==='export'){h.textContent='📥 Export';var n=filteredRows().length;b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expPDF()"><div class="export-opt-icon">📑</div><div class="export-opt-label">PDF</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-icon">📝</div><div class="export-opt-label">TXT</div></div><div class="export-opt" onclick="expMD()"><div class="export-opt-icon">📋</div><div class="export-opt-label">Markdown</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">'+n+' rows akan di-export (hormati filter search aktif). Data dari window.DASH.runs.</div>'}
 if(t==='customize'){
   h.textContent='🎨 Customize';
-  var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts & activity','#sec-week'],['hideStreak','Streak bar','.streak']];
+  var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts & activity',''],['hideStreak','Streak bar','.streak']];
   var html='<div>';
   keys.forEach(function(k){
     var on=localStorage.getItem('dash_'+k[0])!=='1';
@@ -1735,7 +1708,7 @@ function toggleCust(btn){
   applyCustomize();
 }
 function applyCustomize(){
-  var map=[['hideStats','.sg'],['hideHealth','#sec-health'],['hideFeed','#sec-feed'],['hideCharts','#sec-week'],['hideStreak','.streak']];
+  var map=[['hideStats','.sg'],['hideHealth','#sec-health'],['hideFeed','#sec-feed'],['hideCharts',''],['hideStreak','.streak']];
   map.forEach(function(m){
     var el=document.querySelector(m[1]);
     if(!el)return;
@@ -2089,7 +2062,7 @@ function checkThresholdAlert(){
 function applyEmbedMode(){
   var p=new URLSearchParams(location.search);
   if(p.get('embed')==='1'){
-    var hides=['.bnav','.tools-panel','.sec-feed','.sec-health','.sec-week','#sec-flow','','.hero-actions','#qchips','.fb-row'];
+    var hides=['.bnav','.tools-panel','.sec-feed','.sec-health','#sec-flow','','.hero-actions','#qchips','.fb-row'];
     hides.forEach(function(s){var els=document.querySelectorAll(s);els.forEach(function(e){e.classList.add('embed-hide')})});
     document.body.classList.add('embed-mode');
   }
