@@ -839,8 +839,9 @@ body{background:
 .quick-panel-title{font-size:11px;font-weight:700;margin-bottom:8px;color:var(--bl)}
 .quick-btn{display:block;width:100%;padding:6px 10px;border-radius:6px;border:1px solid var(--brd);background:var(--bg3);font-size:11px;cursor:pointer;margin:3px 0;text-align:left;transition:all .2s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .quick-btn:hover{background:var(--bg2);border-color:var(--bl)}
-.radio-btn{display:inline-block !important;width:auto !important;max-width:220px;margin:2px !important;padding:6px 12px !important;border-radius:20px !important;font-size:10px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
-.radio-btn:hover{background:rgba(88,166,255,.1) !important;border-color:var(--bl) !important;color:var(--bl)}
+.radio-btn{display:inline-block !important;width:auto !important;max-width:220px;margin:2px !important;padding:7px 14px !important;border-radius:20px !important;font-size:11px !important;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;background:rgba(88,166,255,.12) !important;color:#e6edf3 !important;border:1px solid rgba(88,166,255,.3) !important;transition:all .25s}
+.radio-btn:hover{background:rgba(88,166,255,.25) !important;border-color:var(--bl) !important;color:#fff !important;box-shadow:0 0 8px rgba(88,166,255,.3)}
+.radio-btn:active{background:var(--bl) !important;color:#fff !important}
 #radioList{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px;max-height:400px;overflow-y:auto;padding:4px}
 .batch-sel{cursor:pointer;user-select:none}
 .batch-sel.on{background:rgba(88,166,255,.15);outline:1px solid var(--bl)}
