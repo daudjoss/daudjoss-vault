@@ -1974,6 +1974,10 @@ function renderFlakyDetector(){
       html+='<div class="flaky-row"><span class="flaky-sha">'+shaShort+'</span><span class="flaky-wf">'+f.name+'</span><span class="flaky-badge flaky">FLAKY</span><span>'+f.total+'</span></div>';
       html+='<div style="font-size:8px;color:var(--t3);padding:0 0 4px 64px">'+conclParts.join(' · ')+'</div>';
     });
+    var flakyByDay={};
+    flaky.forEach(function(f){f.runs.forEach(function(r){if(!r.createdAt)return;var d=new Date(r.createdAt);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);flakyByDay[key]=(flakyByDay[key]||0)+1})});
+    var now=new Date();var flakyVals=[];for(var i=13;i>=0;i--){var d=new Date(now.getTime()-i*86400000);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);flakyVals.push(flakyByDay[key]||0)}
+    if(flakyVals.some(function(v){return v>0}))html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Flaky Count Trend (14d)</div>'+svgSpark(flakyVals,260,40,'var(--rd)')+'</div>';
   }
   html+='</div>';
   return html;
@@ -2060,6 +2064,7 @@ function renderRunVelocity(){
     html+='<div class="velocity-bar" style="height:'+maH+'px;background:var(--or);opacity:.6" title="MA:'+ma+'m"></div>';
   });
   html+='</div><div style="font-size:8px;color:var(--t2)">🔵 actual · 🟠 3-run MA · last 20 runs</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">MA Trend</div>'+svgSpark(avg3.slice(-20),260,40,'var(--or)')+'</div>';
   html+='</div>';
   return html;
 }
@@ -2242,6 +2247,10 @@ function renderTriggerAnalysis(){
     var pct=Math.round(d.total/total*100);
     html+='<div style="margin:4px 0"><div style="font-size:10px;display:flex;justify-content:space-between"><span>'+(icons[ev]||'')+' '+ev+'</span><span>'+d.total+' ('+pct+'%)</span></div><div class="trigger-bar" style="width:'+pct+'%"></div></div>';
   });
+  var triggerCounts=sorted.map(function(ev){return triggers[ev].total});
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Trigger Counts</div>';
+  html+=svgBars(triggerCounts,260,50,function(v,i){var pct=triggers[sorted[i]].total?Math.round(triggers[sorted[i]].success/triggers[sorted[i]].total*100):0;return pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)'});
+  html+='</div>';
   html+='</div>';
   return html;
 }
@@ -2322,6 +2331,10 @@ function renderEventTimeline(){
     if(items.length>5)html+='<div style="font-size:8px;color:var(--t3);padding:2px">+'+(items.length-5)+' more...</div>';
     html+='</div>';
   });
+  var dayCounts={};
+  sorted.forEach(function(r){if(!r.createdAt)return;var d=new Date(r.createdAt);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);dayCounts[key]=(dayCounts[key]||0)+1});
+  var now=new Date();var evVals=[];for(var i=13;i>=0;i--){var d=new Date(now.getTime()-i*86400000);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);evVals.push(dayCounts[key]||0)}
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Events per Day (14d)</div>'+svgBars(evVals,260,50,function(v,i){return v===0?'var(--bg3)':'var(--bl)'})+'</div>';
   html+='</div>';
   return html;
 }
@@ -2437,6 +2450,15 @@ function renderSLABreach(){
     allBreaches.slice(0,15).forEach(function(b){
       html+='<div class="sla-row"><span class="wfd-name">'+b.wf+'</span><span style="color:var(--t3)">'+b.sla+'m</span><span class="sla-breach">'+b.dur+'m</span><span style="color:var(--rd)">+'+b.over+'%</span></div>';
     });
+    var breachByWf={};
+    allBreaches.forEach(function(b){breachByWf[b.wf]=(breachByWf[b.wf]||0)+1});
+    var breachKeys=Object.keys(breachByWf).sort(function(a,b){return breachByWf[b]-breachByWf[a]}).slice(0,10);
+    if(breachKeys.length){
+      var breachVals=breachKeys.map(function(k){return breachByWf[k]});
+      html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Breaches per Workflow</div>';
+      html+=svgBars(breachVals,260,50,function(v,i){return v>=3?'var(--rd)':v>=2?'var(--yl)':'var(--or)'});
+      html+='</div>';
+    }
   }
   html+='</div>';
   return html;
@@ -2867,6 +2889,10 @@ function renderWoWDelta(){
   html+='<div class="wow-card"><div class="wow-label">Avg Duration</div><div class="wow-val">'+w1Dur+'m</div><div class="wow-delta '+dd[1]+'">'+dd[0]+'</div><div class="wow-detail">vs '+w2Dur+'m last week</div></div>';
   html+='<div class="wow-card"><div class="wow-label">Failures</div><div class="wow-val" style="color:'+(w1Fail===0?'var(--gn)':w1Fail<3?'var(--yl)':'var(--rd)')+'">'+w1Fail+'</div><div class="wow-delta '+df[1]+'">'+df[0]+'</div><div class="wow-detail">vs '+w2Fail+' last week</div></div>';
   html+='</div>';
+  var wowVals=[week1.length,week2.length,w1Success,w2Success,w1Fail,w2Fail];
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Week-over-Week Comparison</div>';
+  html+=svgBars(wowVals,260,50,['var(--bl)','var(--bg3)','var(--gn)','var(--bg3)','var(--rd)','var(--bg3)']);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>W1 Runs</span><span>W2 Runs</span><span>W1 ✓</span><span>W2 ✓</span><span>W1 ✗</span><span>W2 ✗</span></div></div>';
   return html;
 }
 
@@ -2917,6 +2943,7 @@ function renderWFDuration(){
     html+='<div style="margin:6px 0">';
     html+='<div class="wfd-row"><span class="wfd-name">'+w+'</span><span class="wfd-dur" style="color:'+col+'">'+avg+'m</span><span style="font-size:9px;color:var(--t3)">'+d.durations.length+'x</span><span style="font-size:9px;color:var(--t3)">['+dMin+'-'+dMax+'m]</span></div>';
     html+='<div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:3px"></div></div>';
+    html+='<div style="margin-top:2px">'+svgSpark(d.durations.slice(-12),120,24,col)+'</div>';
     html+='</div>';
   });
   html+='</div>';
@@ -3116,7 +3143,10 @@ function renderCFR(){
   var cfr=Math.round(failed/total*100);
   var html='<div style="padding:10px">';
   html+='<div class="metric-grid">';
-  html+='<div class="metric-mini"><div class="metric-mini-val '+(cfr<10?'ok':cfr<25?'warn':'bad')+'">'+cfr+'%</div><div class="metric-mini-lbl">Change Fail Rate</div></div>';
+  var col=cfr<10?'var(--gn)':cfr<25?'var(--yl)':'var(--rd)';
+  html+='<div style="text-align:center;margin:8px">'+svgGauge(100-cfr,30,col,'Success')+'</div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+cfr+'%</div><div class="metric-mini-lbl">Change Fail Rate</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+failed+'</div><div class="metric-mini-lbl">Failed Runs</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+total+'</div><div class="metric-mini-lbl">Total Runs</div></div>';
   html+='</div>';
@@ -3137,6 +3167,7 @@ function renderCFR(){
     var pct=w.total?Math.round(w.fail/w.total*100):0;
     html+='<div style="margin:4px 0"><div style="font-size:10px;display:flex;justify-content:space-between"><span>'+k+'</span><span style="color:'+(pct<25?'var(--gn)':'var(--rd)')+'">'+pct+'% ('+w.fail+'/'+w.total+')</span></div><div style="height:6px;background:var(--bg3);border-radius:3px;margin-top:2px"><div style="height:100%;width:'+pct+'%;background:'+(pct<25?'var(--gn)':'var(--rd)')+';border-radius:3px"></div></div></div>';
   });
+  html+='<div style="text-align:center;margin-top:8px">'+svgGauge(cfr,30,(cfr<10?'var(--gn)':cfr<25?'var(--yl)':'var(--rd)'),'CFR')+'</div>';
   html+='</div>';
   return html;
 }
@@ -3152,7 +3183,9 @@ function renderLeadTime(){
   html+='<div class="metric-mini"><div class="metric-mini-val '+(avg<10?'ok':avg<30?'warn':'bad')+'">'+avg+'m</div><div class="metric-mini-lbl">Avg Lead Time</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+min+'m</div><div class="metric-mini-lbl">Fastest</div></div>';
   html+='<div class="metric-mini"><div class="metric-mini-val">'+max+'m</div><div class="metric-mini-lbl">Slowest</div></div>';
-  html+='</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Lead Time Trend</div>'+svgSpark(durations,260,40,'var(--bl)')+'</div>';
+  html+='</div>';
   return html;
 }
 
@@ -3214,6 +3247,8 @@ function renderDurationTrend(){
     html+='<div style="display:inline-block;width:6px;height:'+h+'px;background:'+(d>avg*1.5?'var(--rd)':'var(--bl)')+';margin-right:1px;border-radius:2px 2px 0 0" title="Run '+(i+1)+': '+d+'m"></div>';
   });
   html+='</div><div style="font-size:8px;color:var(--t2)">Last '+durations.length+' runs (oldest → newest)</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Duration Trend</div>'+svgSpark(durations,260,40,'var(--bl)')+'</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Recent 10 Durations</div>'+svgBars(durations.slice(-10),260,50,function(v,i){return v>avg*1.5?'var(--rd)':'var(--bl)'})+'</div>';
   html+='</div>';
   return html;
 }
@@ -3242,6 +3277,11 @@ function renderSuccessByDay(){
     html+='<span style="width:50px;font-size:10px;text-align:right;color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span>';
     html+='</div>';
   }
+  var dayPcts=[];
+  for(var i=0;i<7;i++){var dd=byDay[i]||{total:0,success:0};dayPcts.push(dd.total?Math.round(dd.success/dd.total*100):0)}
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Success Rate Bars</div>';
+  html+=svgBars(dayPcts,260,50,function(v,i){return v>=80?'var(--gn)':v>=50?'var(--yl)':'var(--rd)'});
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div></div>';
   html+='</div>';
   return html;
 }
@@ -3396,6 +3436,8 @@ function renderRetryTracker(){
   }else{
     html+='<div style="text-align:center;color:var(--gn);padding:10px">No retries needed! 🎉</div>';
   }
+  var retryTrend=retried.slice(-15).map(function(r,i){return i+1});
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Retry Count Trend</div>'+svgSpark(retryTrend,260,40,'var(--or)')+'</div>';
   html+='</div>';
   return html;
 }
