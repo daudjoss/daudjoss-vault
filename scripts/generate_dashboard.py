@@ -1852,7 +1852,7 @@ if(e.key==='j'){e.preventDefault();kbNav(1);return}
 if(e.key==='k'){e.preventDefault();kbNav(-1);return}
 if(e.key==='Enter'&&kbNavIdx>=0){e.preventDefault();kbNavOpen();return}switch(e.key){case'r':location.reload();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
 document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value=''}});
-document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput2'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value='';var o2=document.getElementById('terminalOut2');if(o2)o2.innerHTML='Executed: '+e.target.value}});
+document.addEventListener('keydown',function(e){});
 function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
 function icoJs(c){return c==='success'?'✅':c==='failure'?'❌':c==='cancelled'?'⚪':'🔄'}
 function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'running'}
@@ -4816,7 +4816,7 @@ function ariaAnnounce(msg){
   var el=document.getElementById('ariaLive');if(el)el.textContent=msg;
 }
 function hideSkeleton(){
-  var el=document.getElementById('skeletonWrap');if(el)el.style.display='none';
+  var el=document.getElementById('skeleton');if(el)el.style.display='none';
 }
 
 
