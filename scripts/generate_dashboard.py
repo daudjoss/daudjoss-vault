@@ -462,7 +462,7 @@ svg{display:block;margin:0 auto}
 ::-webkit-scrollbar-thumb:hover{background:var(--t3)}
 ::selection{background:rgba(88,166,255,.3);color:#fff}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);padding:10px;min-height:100vh;transition:all .3s;overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);padding:10px;min-height:100vh;transition:all .3s;overflow-x:hidden;-webkit-text-size-adjust:100%;letter-spacing:.01em;box-sizing:border-box;max-width:100vw}
 .ct{max-width:1480px;margin:0 auto}
 .hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--brd);flex-wrap:wrap;gap:6px}
 .hdr h1{font-size:18px;font-weight:700;display:flex;align-items:center;gap:6px}
@@ -515,7 +515,7 @@ a{color:var(--bl);text-decoration:none}a:hover{text-decoration:underline}
 .ab:hover{border-color:var(--bl);background:rgba(88,166,255,.08)}
 .mo{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;padding:10px}
 .mo.on{display:flex}
-.md{background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:14px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto}
+.md{background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:14px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;box-sizing:border-box}
 .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .mc{background:none;border:none;color:var(--t2);font-size:18px;cursor:pointer}
 .sh2{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:4px}
@@ -842,7 +842,7 @@ body{background:
 .radio-btn{display:inline-block !important;width:auto !important;max-width:220px;margin:2px !important;padding:7px 14px !important;border-radius:20px !important;font-size:11px !important;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;background:rgba(88,166,255,.12) !important;color:#e6edf3 !important;border:1px solid rgba(88,166,255,.3) !important;transition:all .25s}
 .radio-btn:hover{background:rgba(88,166,255,.25) !important;border-color:var(--bl) !important;color:#fff !important;box-shadow:0 0 8px rgba(88,166,255,.3)}
 .radio-btn:active{background:var(--bl) !important;color:#fff !important}
-#radioList{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px;max-height:400px;overflow-y:auto;padding:4px}
+#radioList{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px;max-height:350px;overflow-y:auto;padding:4px;box-sizing:border-box}
 .batch-sel{cursor:pointer;user-select:none}
 .batch-sel.on{background:rgba(88,166,255,.15);outline:1px solid var(--bl)}
 .batch-bar{position:sticky;bottom:0;background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:8px;margin:8px 0;display:none;align-items:center;gap:8px;flex-wrap:wrap}
