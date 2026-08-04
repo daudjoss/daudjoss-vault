@@ -353,11 +353,7 @@ def gen(S, runs, releases):
     for src, cnt in sorted(sources.items(), key=lambda x: -x[1]):
         pct = round(cnt/len(vr)*100) if vr else 0
         src_html += f'<div class="src"><div class="src-label">{src}</div><div class="src-bar"><div class="src-fill" style="width:{pct}%"></div></div><div class="src-pct">{pct}%</div></div>'
-    time_html = ""
-    for h in range(24):
-        cnt = S["hours"].get(h, 0)
-        pct = round(cnt/max(S["hours"].values(), default=1)*100) if S["hours"] else 0
-        time_html += f'<div class="time"><div class="time-label">{h:02d}</div><div class="time-bar"><div class="time-fill" style="width:{pct}%"></div></div><div class="time-cnt">{cnt}</div></div>'
+    # time_html removed — Hours chart deleted
     pct = min((S.get('lifetime_est_gb') or 0)/50*100, 100)
     streak_pct = min(S['streak']/max(S['best'],1)*100, 100)
     today_cls = "up" if S['today']>0 else "st"
@@ -1300,7 +1296,6 @@ body{background:
 <div class="g3">
 <div class="sec"><div class="sh"><div class="st">📈 Daily</div></div><div class="ch"><canvas id="c1"></canvas></div></div>
 <div class="sec"><div class="sh"><div class="st">📊 Weekly</div></div><div class="ch"><canvas id="c2"></canvas></div></div>
-<div class="sec"><div class="sh"><div class="st">⏰ Hours</div></div><div class="ch2"><canvas id="c3"></canvas></div></div>
 </div>
 <div class="g2">
 <div class="sec"><div class="sh"><div class="st">🖼 Gallery</div></div><div class="gal">''' + gallery_html + '''</div></div>
@@ -1334,7 +1329,8 @@ body{background:
 </div>
 <div class="g3">
 <div class="sec"><div class="sh"><div class="st">📊 Sources</div></div>''' + src_html + '''</div>
-<div class="sec"><div class="sh"><div class="st">⏰ Hours</div></div>''' + time_html + '''</div>
+
+
 <div class="sec" id="sec-ach"><div class="sh"><div class="st">🏆 Achievements (''' + str(len(S['achs'])) + ''')</div></div><div class="ach-grid">''' + ach_html + ach_locked + '''</div></div>
 </div>
 <div class="g2">
@@ -1478,7 +1474,6 @@ var randData=''' + "'" + rand_html.replace("'", "\\'") + "'" + ''';
 var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
 new Chart(document.getElementById('c1').getContext('2d'),{type:'bar',data:{labels:''' + dl + ''',datasets:[{data:''' + dd + ''',backgroundColor:cc.b,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',maxTicksLimit:6,font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
 new Chart(document.getElementById('c2').getContext('2d'),{type:'line',data:{labels:''' + wl + ''',datasets:[{label:'OK',data:''' + ws + ''',borderColor:cc.g,backgroundColor:'rgba(63,185,80,.08)',fill:true,tension:.4},{label:'Fail',data:''' + wf + ''',borderColor:cc.r,backgroundColor:'rgba(248,81,73,.08)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b949e',font:{size:9}}}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
-new Chart(document.getElementById('c3').getContext('2d'),{type:'bar',data:{labels:''' + hl + ''',datasets:[{data:''' + hv + ''',backgroundColor:'rgba(188,140,255,.5)',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:8}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:8}}}}}});
 function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));r.classList.toggle('hid',!match);});updateSavePresetBtn()}
 function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',!r.dataset.q.includes(q))});updateSavePresetBtn()}
 function getActiveFilterState(){var q=document.getElementById('q');var searchText=(q&&q.value)?q.value.trim():'';var onFb=document.querySelector('.fb.on');var filter=onFb?onFb.getAttribute('data-f')||'all':'all';return{search:searchText,filter:filter}}
