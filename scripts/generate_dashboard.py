@@ -1266,7 +1266,7 @@ body{background:
 <div class="hero-sub">Vault dashboard · live GHA · Telegram bot</div>
 </div>
 <div class="hero-actions">
-<span class="live-pill"><span class="pulse-dot"></span> LIVE <span id="tmr">30s</span></span>
+<span class="live-pill"><span class="pulse-dot"></span> LIVE <span id="tmr">30s</span><span id="tmrInterval" style="font-size:9px;color:var(--t3);margin-left:2px"></span></span>
 <span class="ecg-wrap" id="ecgWrap"><svg class="ecg-svg" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline class="ecg-line flat" id="ecgLine" points="0,10 8,10 12,10 14,10 18,10 22,10 24,7 26,13 28,3 30,17 32,10 38,10 42,10 46,10 50,10 54,10 60,10"/></svg><span class="ecg-label" id="ecgLabel">—</span></span>
 <span id="refreshTimer">Updated just now</span>
 <button class="sound-tog" id="soundTog" onclick="toggleSoundBtn(this)" title="Sound alert on new failures">🔇</button>
@@ -1745,6 +1745,7 @@ if(t==='successday'){h.textContent='📊 Success by Day';b.innerHTML=renderSucce
 if(t==='successhour'){h.textContent='🕐 Success by Hour';b.innerHTML=renderSuccessByHour()}
 if(t==='branchhealth'){h.textContent='🌿 Branch Health';b.innerHTML=renderBranchHealth()}
 if(t==='workflowcomp'){h.textContent='⚙️ Workflow Comparison';b.innerHTML=renderWorkflowComparison()}
+if(t==='wfhealth'){h.textContent='💊 Workflow Health';b.innerHTML=renderWorkflowHealth()}
 if(t==='concurrency'){h.textContent='🔄 Concurrency';b.innerHTML=renderConcurrency()}
 if(t==='commitimpact'){h.textContent='📦 Commit Impact';b.innerHTML=renderCommitImpact()}
 if(t==='heatmap'){h.textContent='📅 Activity Heatmap';b.innerHTML=renderHeatmap()}
@@ -1761,6 +1762,8 @@ if(t==='storageproj'){h.textContent='💾 Storage Projection';b.innerHTML=render
 if(t==='failheat'){h.textContent='🔥 Failure Heatmap';b.innerHTML=renderFailureHeatmap()}
 
 if(t==='workflowfreq'){h.textContent='📈 Workflow Frequency';b.innerHTML=renderWorkflowFrequency()}
+
+if(t==='correlation'){h.textContent='🔗 Correlation Analysis';b.innerHTML=renderCorrelation()}
 
 
 if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
@@ -1871,7 +1874,7 @@ function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
 
 
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();renderQueueStatus();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');showToast('Data refreshed','refresh');checkAchievements();checkFailurePatterns();renderRunDurationPrediction()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();renderQueueStatus();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');showToast('Data refreshed','refresh');checkAchievements();checkFailurePatterns();renderRunDurationPrediction();checkAndRescheduleRefresh()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -2479,7 +2482,135 @@ function renderWorkflowFrequency(){
     stats+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+colors[i]+'">'+byWf[wf].total+'</div><div class="metric-mini-lbl">'+esc(wf.length>18?wf.slice(0,16)+'..':wf)+'</div></div>';
   });
   stats+='</div>';
-  return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Workflow Frequency (Last 14 Days \u2014 Top 5)</div>'+svg+legend+stats+'<div style="margin-top:6px;font-size:9px;color:var(--t2)">Each day has grouped bars per workflow. Hover bars for details.</div></div>';
+  return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Workflow Frequency (Last 14 Days — Top 5)</div>'+svg+legend+stats+'<div style="margin-top:6px;font-size:9px;color:var(--t2)">Each day has grouped bars per workflow. Hover bars for details.</div></div>';
+}
+function renderCorrelation(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var vault=runs.filter(function(r){return r.name==='rusemeva-vault'});
+  var encode=runs.filter(function(r){return r.name==='rusemeva-encode'});
+  var deploy=runs.filter(function(r){return r.name==='Update Dashboard'});
+  function sortByTime(arr){return arr.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)})}
+  vault=sortByTime(vault);encode=sortByTime(encode);deploy=sortByTime(deploy);
+  function ts(r){return new Date(r.createdAt||0).getTime()}
+  function findNearestDownstream(upstreamRun,downstreamArr,windowMs){
+    var ut=ts(upstreamRun);var best=null;var bestDiff=Infinity;
+    for(var i=0;i<downstreamArr.length;i++){
+      var dt=ts(downstreamArr[i]);var diff=dt-ut;
+      if(diff<0)continue;
+      if(diff>windowMs)break;
+      if(diff<bestDiff){bestDiff=diff;best=downstreamArr[i]}
+    }
+    return best;
+  }
+  function analyzeCorrelation(upstreamArr,downstreamArr,label,label2){
+    var windowMs=6*3600*1000;
+    var upFail=upstreamArr.filter(function(r){return r.conclusion==='failure'});
+    var upSuccess=upstreamArr.filter(function(r){return r.conclusion==='success'});
+    var matchedFail=0,downFailOrMissingFail=0;
+    var matchedSuccess=0,downFailOrMissingSuccess=0;
+    upFail.forEach(function(ur){
+      var dr=findNearestDownstream(ur,downstreamArr,windowMs);
+      if(dr){
+        matchedFail++;
+        if(dr.conclusion==='failure'||dr.conclusion==='cancelled')downFailOrMissingFail++;
+      }else{
+        downFailOrMissingFail++;
+      }
+    });
+    upSuccess.forEach(function(ur){
+      var dr=findNearestDownstream(ur,downstreamArr,windowMs);
+      if(dr){
+        matchedSuccess++;
+        if(dr.conclusion==='failure'||dr.conclusion==='cancelled')downFailOrMissingSuccess++;
+      }
+    });
+    var failPct=upFail.length>0?Math.round(downFailOrMissingFail/upFail.length*100):0;
+    var successFailPct=upSuccess.length>0?Math.round(downFailOrMissingSuccess/upSuccess.length*100):0;
+    var correlationPct=Math.max(0,failPct-successFailPct);
+    var conclusion='';
+    if(upFail.length===0){
+      conclusion='No '+label+' failures detected in current dataset. Cannot compute correlation.';
+    }else if(correlationPct>=70){
+      conclusion=label+' failures strongly correlate with '+label2+' issues ('+correlationPct+'%) \— check '+label.toLowerCase()+' output before '+label2.toLowerCase();
+    }else if(correlationPct>=40){
+      conclusion='Moderate correlation: '+label+' failures sometimes lead to '+label2+' issues ('+correlationPct+'%). Monitor '+label.toLowerCase()+' outputs.';
+    }else if(correlationPct>=15){
+      conclusion='Weak correlation ('+correlationPct+'%): '+label+' failures have minor impact on '+label2+'.';
+    }else{
+      conclusion='No significant correlation found between '+label+' and '+label2+' failures ('+correlationPct+'%). Workflows appear independent.';
+    }
+    return{
+      label:label,label2:label2,upTotal:upstreamArr.length,upFail:upFail.length,upSuccess:upSuccess.length,
+      matchedFail:matchedFail,downFailOrMissingFail:downFailOrMissingFail,failPct:failPct,
+      matchedSuccess:matchedSuccess,downFailOrMissingSuccess:downFailOrMissingSuccess,successFailPct:successFailPct,
+      correlationPct:correlationPct,conclusion:conclusion
+    };
+  }
+  var pairs=[
+    analyzeCorrelation(vault,encode,'Vault','Encode'),
+    analyzeCorrelation(encode,deploy,'Encode','Deploy')
+  ];
+  function cellColor(pct){
+    if(pct>=70)return 'var(--rd)';
+    if(pct>=40)return 'var(--yl)';
+    return 'var(--gn)';
+  }
+  function cellBg(pct){
+    if(pct>=70)return 'rgba(248,81,73,.15)';
+    if(pct>=40)return 'rgba(210,153,34,.15)';
+    return 'rgba(63,185,80,.15)';
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Analyzes if failures in one workflow correlate with failures in dependent workflows. Uses a 6-hour window to match upstream runs to nearest downstream runs.</div>';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Correlation Matrix</div>';
+  html+='<div style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;margin-bottom:12px;border:1px solid var(--brd);border-radius:8px;overflow:hidden">';
+  html+='<div style="padding:8px;font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--brd);border-right:1px solid var(--brd);background:var(--bg3)">Upstream ↓ / Downstream →</div>';
+  html+='<div style="padding:8px;font-size:10px;font-weight:600;color:var(--or);border-bottom:1px solid var(--brd);border-right:1px solid var(--brd);background:var(--bg3)">Encode</div>';
+  html+='<div style="padding:8px;font-size:10px;font-weight:600;color:var(--pr);border-bottom:1px solid var(--brd);background:var(--bg3)">Deploy</div>';
+  html+='<div style="padding:8px;font-size:10px;font-weight:600;color:var(--bl);border-right:1px solid var(--brd);border-bottom:1px solid var(--brd)">Vault</div>';
+  var c0=pairs[0];
+  html+='<div style="padding:10px;border-right:1px solid var(--brd);border-bottom:1px solid var(--brd);background:'+cellBg(c0.correlationPct)+';text-align:center"><div style="font-size:18px;font-weight:700;color:'+cellColor(c0.correlationPct)+'">'+c0.correlationPct+'%</div><div style="font-size:8px;color:var(--t2);margin-top:2px">'+(c0.upFail>0?c0.upFail+' fail runs':'no fails')+'</div></div>';
+  html+='<div style="padding:10px;border-bottom:1px solid var(--brd);background:var(--bg3);text-align:center"><div style="font-size:9px;color:var(--t3)">N/A</div><div style="font-size:8px;color:var(--t3);margin-top:2px">no direct dep</div></div>';
+  html+='<div style="padding:8px;font-size:10px;font-weight:600;color:var(--or);border-right:1px solid var(--brd)">Encode</div>';
+  html+='<div style="padding:10px;border-right:1px solid var(--brd);background:var(--bg3);text-align:center"><div style="font-size:9px;color:var(--t3)">N/A</div><div style="font-size:8px;color:var(--t3);margin-top:2px">self</div></div>';
+  var c1=pairs[1];
+  html+='<div style="padding:10px;background:'+cellBg(c1.correlationPct)+';text-align:center"><div style="font-size:18px;font-weight:700;color:'+cellColor(c1.correlationPct)+'">'+c1.correlationPct+'%</div><div style="font-size:8px;color:var(--t2);margin-top:2px">'+(c1.upFail>0?c1.upFail+' fail runs':'no fails')+'</div></div>';
+  html+='</div>';
+  html+='<div style="display:flex;gap:12px;margin-bottom:10px;font-size:9px;color:var(--t2);flex-wrap:wrap">';
+  html+='<span><span style="display:inline-block;width:10px;height:10px;background:rgba(63,185,80,.3);border-radius:3px;margin-right:3px;vertical-align:middle"></span>Low (independent)</span>';
+  html+='<span><span style="display:inline-block;width:10px;height:10px;background:rgba(210,153,34,.3);border-radius:3px;margin-right:3px;vertical-align:middle"></span>Moderate</span>';
+  html+='<span><span style="display:inline-block;width:10px;height:10px;background:rgba(248,81,73,.3);border-radius:3px;margin-right:3px;vertical-align:middle"></span>High (dependency issue)</span>';
+  html+='</div>';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px;margin-top:10px">Detailed Breakdown</div>';
+  pairs.forEach(function(p){
+    var col=cellColor(p.correlationPct);
+    html+='<div style="background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:10px;margin-bottom:8px">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    html+='<div style="font-size:11px;font-weight:600">'+esc(p.label)+' → '+esc(p.label2)+'</div>';
+    html+='<div style="font-size:16px;font-weight:700;color:'+col+'">'+p.correlationPct+'%</div>';
+    html+='</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:4px;margin-bottom:6px">';
+    html+='<div style="font-size:9px;color:var(--t2)">Upstream total: <b style="color:var(--t1)">'+p.upTotal+'</b></div>';
+    html+='<div style="font-size:9px;color:var(--t2)">Upstream fails: <b style="color:var(--rd)">'+p.upFail+'</b></div>';
+    html+='<div style="font-size:9px;color:var(--t2)">Upstream success: <b style="color:var(--gn)">'+p.upSuccess+'</b></div>';
+    html+='<div style="font-size:9px;color:var(--t2)">Downstream matched (fail): <b style="color:var(--t1)">'+p.matchedFail+'</b></div>';
+    html+='<div style="font-size:9px;color:var(--t2)">Downstream fail/missing: <b style="color:var(--rd)">'+p.downFailOrMissingFail+'</b> ('+p.failPct+'%)</div>';
+    html+='<div style="font-size:9px;color:var(--t2)">Downstream fail after up success: <b style="color:var(--or)">'+p.downFailOrMissingSuccess+'</b> ('+p.successFailPct+'%)</div>';
+    html+='</div>';
+    html+='<div style="font-size:10px;color:'+col+';background:'+cellBg(p.correlationPct)+';padding:6px 8px;border-radius:6px;margin-top:4px">'+esc(p.conclusion)+'</div>';
+    html+='</div>';
+  });
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:6px;margin-top:10px">Conclusions</div>';
+  pairs.forEach(function(p){
+    var col=cellColor(p.correlationPct);
+    var icon=p.correlationPct>=70?'⚠\\ufe0f':p.correlationPct>=40?'⚠\\ufe0f':'\\u2705';
+    html+='<div style="display:flex;gap:6px;margin-bottom:6px;font-size:10px;line-height:1.5"><span style="font-size:12px">'+icon+'</span><span>'+esc(p.conclusion)+'</span></div>';
+  });
+  if(vault.length===0&&encode.length===0&&deploy.length===0){
+    html='<div style="padding:10px;color:var(--t2);text-align:center">No workflow runs available for correlation analysis.</div>';
+  }
+  html+='</div>';
+  return html;
 }
 function renderRings(){
   var D=window.DASH||{};var st=D.stats||{};var daily=D.daily||D.stats&&D.stats.daily||{};
@@ -5319,6 +5450,94 @@ function comparePeriods(){var D=window.DASH||{};var runs=D.runs||[];var aFrom=do
 function renderRegressionDetector(){var D=window.DASH||{};var runs=D.runs||[];var vault=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='success'&&r.updatedAt&&r.createdAt});var now=Date.now();var weekAgo=now-7*86400000;var baseline=vault.filter(function(r){return new Date(r.createdAt).getTime()<weekAgo});var recent=vault.filter(function(r){return new Date(r.createdAt).getTime()>=weekAgo});var calcDur=function(r){return(new Date(r.updatedAt)-new Date(r.createdAt))/60000};var baseDurs=baseline.map(calcDur);var baseAvg=baseDurs.length?baseDurs.reduce(function(a,b){return a+b},0)/baseDurs.length:0;var recentDurs=recent.map(calcDur);var recentAvg=recentDurs.length?recentDurs.reduce(function(a,b){return a+b},0)/recentDurs.length:0;var deltaPct=baseAvg?Math.round((recentAvg-baseAvg)/baseAvg*100):0;var flagged=recent.filter(function(r){var d=calcDur(r);return baseAvg>0&&d>baseAvg*1.5}).map(function(r){return{date:new Date(r.createdAt).toISOString().slice(0,10),dur:Math.round(calcDur(r)),slower:Math.round(calcDur(r)/baseAvg*100)}}).sort(function(a,b){return b.slower-a.slower});var html='<div style="padding:10px">';html+='<div style="font-size:14px;font-weight:700;margin-bottom:8px">📉 Regression Detector</div>';html+='<div style="background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:8px">';html+='<div style="font-size:11px;line-height:1.8">';html+='Baseline (older than 7d): <b>'+Math.round(baseAvg)+'m</b> ('+baseline.length+' runs)<br>';html+='Recent avg (last 7d): <b>'+Math.round(recentAvg)+'m</b> ('+recent.length+' runs)<br>';html+='Delta: <b style="'+(deltaPct>20?'color:var(--rd)':'color:var(--gn)')+'">'+(deltaPct>=0?'+':'')+deltaPct+'%</b>';html+='</div></div>';if(flagged.length===0){html+='<div style="text-align:center;padding:20px;color:var(--gn);font-size:13px">✅ No performance regressions detected</div>'}else{html+='<div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--rd)">⚠️ '+flagged.length+' regression(s) found</div>';html+='<table style="width:100%;font-size:11px;border-collapse:collapse">';html+='<tr style="border-bottom:1px solid var(--brd)"><th style="text-align:left;padding:4px">Date</th><th style="text-align:right;padding:4px">Duration</th><th style="text-align:right;padding:4px">vs Baseline</th></tr>';flagged.forEach(function(r){html+='<tr style="border-bottom:1px solid var(--brd);color:var(--rd)"><td style="padding:4px">'+r.date+'</td><td style="text-align:right">'+r.dur+'m</td><td style="text-align:right">'+r.slower+'%</td></tr>'});html+='</table>'}html+='</div>';return html}
 function renderCICDMaturity(){var D=window.DASH||{};var runs=D.runs||[];var stats=D.stats||{};var vault=runs.filter(function(r){return r.name==='rusemeva-vault'});var now=Date.now();var monthAgo=now-30*86400000;var monthRuns=vault.filter(function(r){return new Date(r.createdAt||0).getTime()>=monthAgo});var depFreq=monthRuns.length;var fails=vault.filter(function(r){return r.conclusion==='failure'});var successes=vault.filter(function(r){return r.conclusion==='success'});var cfr=vault.length?Math.round(fails.length/vault.length*100):0;var failTimes=fails.map(function(r){return new Date(r.createdAt||0).getTime()}).sort();var nextSuccess=successes.map(function(r){return new Date(r.createdAt||0).getTime()}).sort();var mttrMin=0;if(failTimes.length&&successes.length){for(var i=0;i<failTimes.length;i++){for(var j=0;j<nextSuccess.length;j++){if(nextSuccess[j]>failTimes[i]){mttrMin=(nextSuccess[j]-failTimes[i])/60000;break}}}}var leadTimeMin=0;if(vault.length>=2){var sorted=vault.sort(function(a,b){return new Date(a.createdAt)-new Date(b.createdAt)});var gaps=[];for(var i=1;i<sorted.length;i++){gaps.push(new Date(sorted[i].createdAt)-new Date(sorted[i-1].createdAt))}leadTimeMin=gaps.length?gaps.reduce(function(a,b){return a+b},0)/gaps.length/60000:0}var gradeFreq=depFreq>=30?'A':depFreq>=7?'B':depFreq>=1?'C':'D';var gradeMttr=mttrMin>0&&mttrMin<60?'A':mttrMin<1440?'B':mttrMin<10080?'C':'D';var gradeCfr=cfr<15?'A':cfr<30?'B':cfr<50?'C':'D';var gradeLead=leadTimeMin>0&&leadTimeMin<60?'A':leadTimeMin<1440?'B':leadTimeMin<10080?'C':'D';var grades=[gradeFreq,gradeMttr,gradeCfr,gradeLead];var gradeMap={A:4,B:3,C:2,D:1};var avgGrade=grades.reduce(function(a,b){return a+gradeMap[b]},0)/4;var overall=avgGrade>=3.5?'A':avgGrade>=2.5?'B':avgGrade>=1.5?'C':'D';var colorMap={A:'var(--gn)',B:'var(--bl)',C:'var(--yl)',D:'var(--rd)'};var html='<div style="padding:10px">';html+='<div style="text-align:center;margin-bottom:16px">';html+='<div style="font-size:48px;font-weight:900;color:'+(colorMap[overall]||'var(--t1)')+'">'+overall+'</div>';html+='<div style="font-size:11px;color:var(--t2)">Overall CI/CD Maturity Grade</div>';html+='</div>';var metrics=[['Deploy Frequency',gradeFreq,depFreq+' runs/month','A=daily+, B=weekly, C=monthly, D=rarely'],['MTTR',gradeMttr,mttrMin>0?Math.round(mttrMin)+'m':'N/A','A<1h, B<1d, C<1w, D>1w'],['Change Failure Rate',gradeCfr,cfr+'%','A<15%, B<30%, C<50%, D>50%'],['Lead Time',gradeLead,leadTimeMin>0?Math.round(leadTimeMin)+'m':'N/A','A<1h, B<1d, C<1w, D>1w']];metrics.forEach(function(m){html+='<div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg3);border-radius:8px;margin-bottom:6px">';html+='<div style="font-size:24px;font-weight:900;color:'+(colorMap[m[1]]||'var(--t1)')+';width:30px;text-align:center">'+m[1]+'</div>';html+='<div style="flex:1"><div style="font-size:12px;font-weight:600">'+m[0]+'</div><div style="font-size:10px;color:var(--t3)">'+m[3]+'</div></div>';html+='<div style="font-size:11px;color:var(--t2)">'+m[2]+'</div>';html+='</div>'});html+='<div style="margin-top:12px;font-size:10px;color:var(--t3);text-align:center">Based on DORA metrics from '+vault.length+' vault runs</div>';html+='</div>';return html}
 
+function renderWorkflowHealth(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var wfs={};
+  runs.forEach(function(r){
+    var w=r.name||'unknown';
+    if(!wfs[w])wfs[w]={name:w,total:0,success:0,fail:0,durations:[],createdTimes:[]};
+    wfs[w].total++;
+    if(r.conclusion==='success')wfs[w].success++;
+    if(r.conclusion==='failure')wfs[w].fail++;
+    if(r.createdAt)wfs[w].createdTimes.push(new Date(r.createdAt).getTime());
+    if(r.createdAt&&r.updatedAt){
+      var dur=new Date(r.updatedAt)-new Date(r.createdAt);
+      if(dur>0)wfs[w].durations.push(dur);
+    }
+  });
+  var results=[];
+  Object.keys(wfs).forEach(function(w){
+    var d=wfs[w];
+    var srRaw=d.total>0?d.success/d.total*100:0;
+    var srScore=srRaw*0.4;
+    var dcScore=0;
+    if(d.durations.length>=2){
+      var mean=d.durations.reduce(function(a,b){return a+b},0)/d.durations.length;
+      var variance=d.durations.reduce(function(a,b){return a+Math.pow(b-mean,2)},0)/d.durations.length;
+      var stddev=Math.sqrt(variance);
+      var cv=mean>0?stddev/mean:0;
+      dcScore=100-(cv*100);
+      dcScore=dcScore*0.3;
+      dcScore=Math.max(0,Math.min(100*0.3,dcScore));
+    }else{
+      dcScore=100*0.3;
+    }
+    var fsScore=0;
+    if(d.createdTimes.length>=3){
+      var sortedT=d.createdTimes.slice().sort(function(a,b){return a-b});
+      var gaps=[];
+      for(var i=1;i<sortedT.length;i++){gaps.push(sortedT[i]-sortedT[i-1])}
+      var gapMean=gaps.reduce(function(a,b){return a+b},0)/gaps.length;
+      var gapVar=gapMean>0?gaps.reduce(function(a,b){return a+Math.pow(b-gapMean,2)},0)/gaps.length:0;
+      var gapCV=gapMean>0?Math.sqrt(gapVar)/gapMean:0;
+      fsScore=100-(gapCV*100);
+      fsScore=fsScore*0.3;
+      fsScore=Math.max(0,Math.min(100*0.3,fsScore));
+    }else{
+      fsScore=100*0.3;
+    }
+    var score=Math.round(srScore+dcScore+fsScore);
+    results.push({name:d.name,score:score,srRaw:Math.round(srRaw),srWeighted:Math.round(srScore),dcWeighted:Math.round(dcScore),fsWeighted:Math.round(fsScore),total:d.total,success:d.success,fail:d.fail});
+  });
+  results.sort(function(a,b){return b.score-a.score});
+  function scoreCol(s){return s>=80?'var(--gn)':(s>=60?'var(--yl)':'var(--rd)')}
+  function scoreBg(s){return s>=80?'rgba(34,197,94,0.15)':(s>=60?'rgba(234,179,8,0.15)':'rgba(239,68,68,0.15)')}
+  function barHtml(pct,col){
+    var w=Math.max(0,Math.min(100,pct));
+    return '<div style="background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;margin-top:2px"><div style="width:'+w+'%;height:100%;background:'+col+';border-radius:4px"></div></div>';
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:14px;font-weight:700;margin-bottom:4px">Workflow Health Score</div>';
+  html+='<div style="font-size:10px;color:var(--t3);margin-bottom:10px">Composite: Success Rate (40%) + Duration Consistency (30%) + Frequency Stability (30%)</div>';
+  if(results.length===0){
+    html+='<div style="text-align:center;padding:20px;color:var(--t2);font-size:12px">No workflow data available</div>';
+    html+='</div>';
+    return html;
+  }
+  results.forEach(function(r){
+    var col=scoreCol(r.score);
+    var bg=scoreBg(r.score);
+    html+='<div style="background:'+bg+';border:1px solid var(--brd);border-radius:8px;padding:10px;margin-bottom:8px">';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">';
+    html+='<div style="font-size:28px;font-weight:900;color:'+col+';min-width:50px;text-align:center">'+r.score+'</div>';
+    html+='<div style="flex:1">';
+    html+='<div style="font-size:12px;font-weight:600;color:var(--t1)">'+esc(r.name)+'</div>';
+    html+='<div style="font-size:10px;color:var(--t3)">'+r.total+' runs · '+r.success+' success · '+r.fail+' fail</div>';
+    html+='</div>';
+    html+='</div>';
+    html+='<div style="font-size:10px;color:var(--t2);margin-top:6px">Success Rate ('+r.srRaw+'%) — '+Math.round(r.srWeighted/0.4)+' pts</div>';
+    html+=barHtml(r.srWeighted/0.4,'var(--gn)');
+    html+='<div style="font-size:10px;color:var(--t2);margin-top:4px">Duration Consistency — '+r.dcWeighted+' pts</div>';
+    html+=barHtml(r.dcWeighted/0.3,'var(--bl)');
+    html+='<div style="font-size:10px;color:var(--t2);margin-top:4px">Frequency Stability — '+r.fsWeighted+' pts</div>';
+    html+=barHtml(r.fsWeighted/0.3,'var(--or)');
+    html+='</div>';
+  });
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t3);text-align:center">Scores: <span style="color:var(--gn)">80+ healthy</span> · <span style="color:var(--yl)">60-79 warning</span> · <span style="color:var(--rd)">&lt;60 critical</span></div>';
+  html+='</div>';
+  return html;
+}
+
 function renderEcgPulse(){
   var D=window.DASH||{};var runs=D.runs||[];
   var line=document.getElementById('ecgLine');var label=document.getElementById('ecgLabel');
@@ -5647,6 +5866,8 @@ var CMD_ITEMS=[
   {cat:'CI/CD',label:'Success by Hour',act:"showM('successhour')"},
   {cat:'CI/CD',label:'Branch Health',act:"showM('branchhealth')"},
   {cat:'CI/CD',label:'Workflow Comparison',act:"showM('workflowcomp')"},
+  {cat:'Tools',label:'💊 Workflow Health',act:"showM('wfhealth')"},
+  {cat:'Tools',label:'🔗 Correlation Analysis',act:"showM('correlation')"},
   {cat:'CI/CD',label:'Concurrency',act:"showM('concurrency')"},
   {cat:'CI/CD',label:'Commit Impact',act:"showM('commitimpact')"},
   {cat:'Data',label:'Activity Heatmap',act:"showM('heatmap')"},
@@ -5703,7 +5924,7 @@ function filteredRows(){
 // ── keyboard shortcut: P for palette ──
 
 async function softRefresh(){var sp=document.getElementById('dashSpinner');if(sp)sp.classList.add('on');try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}finally{if(sp)sp.classList.remove('on')}}
-var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
+var cd=30;var _refreshTimer=null;var _currentInterval=30;function computeRefreshInterval(){var D=window.DASH||{};var runs=D.runs||[];var running=runs.filter(function(r){return statusKeyJs(r)==='in_progress'}).length;return running>0?15:60}function updateRefreshIntervalLabel(){var el=document.getElementById('tmrInterval');if(el)el.textContent='('+_currentInterval+'s)'}function scheduleRefresh(){var newInt=computeRefreshInterval();if(newInt!==_currentInterval){_currentInterval=newInt;cd=newInt;updateRefreshIntervalLabel();if(_refreshTimer)clearInterval(_refreshTimer);_refreshTimer=setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=_currentInterval}else{cd=_currentInterval}}},1000)}}function checkAndRescheduleRefresh(){var newInt=computeRefreshInterval();if(newInt!==_currentInterval){scheduleRefresh()}}scheduleRefresh();updateRefreshIntervalLabel();
 // initial soft patch shortly after load (pick up fresher data.json / orv-map)
 applyCustomize();if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var b=document.getElementById('compactBtn');if(b)b.textContent='📐 Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();initFreshnessBannerDismiss();document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd()}});if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var cb=document.getElementById('compactBtn');if(cb)cb.textContent='Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();setTimeout(function(){softRefresh()},2500);
 renderPresets();updateSavePresetBtn();applyGroupingState();initGroupHeaderClicks();initPresetClicks();restoreDateFilter();
