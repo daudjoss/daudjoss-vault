@@ -143,7 +143,13 @@ def mk_row(r):
     orv = (r.get("orv_id") or "").strip()
     idcell = f'<code title="{rid}">{orv or rid}</code>' if orv else f'<code>{rid}</code>'
     q = f"{rid} {orv} {s}".lower()
-    return f'<tr class="r-{c}" data-s="{sk}" data-q="{q}" data-rid="{rid}" data-orv="{orv}"><td>{ico(r.get("conclusion","") if sk!="in_progress" else "")}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
+    created_raw = r.get("createdAt","") or ""
+    created_iso = ""
+    try:
+        created_iso = datetime.fromisoformat(created_raw.replace("Z","+00:00")).strftime("%Y-%m-%d")
+    except Exception:
+        created_iso = created_raw[:10] if created_raw else ""
+    return f'<tr class="r-{c}" data-s="{sk}" data-q="{q}" data-rid="{rid}" data-orv="{orv}" data-created="{created_iso}"><td>{ico(r.get("conclusion","") if sk!="in_progress" else "")}</td><td>{idcell}</td><td>{ago(r.get("createdAt",""))}</td><td><span class="b b-{c}">{s}</span></td><td><a href="https://github.com/{REPO}/actions/runs/{rid}" target="_blank">↗</a></td></tr>'
 
 def mk_erow(r):
     sk = status_key(r)
@@ -1405,10 +1411,11 @@ body{background:
 <a class="ab" onclick="showM('achievements')">🏅 Achievements</a>
 <a class="ab" onclick="showM('depgraph')">🔗 Dependencies</a>
 <a class="ab" onclick="showM('durbell')">📊 Duration Distribution</a>
+<a class="ab" onclick="showM('notifprefs')">🔔 Notification Settings</a>
 </div></div>
 <div class="sec" id="sec-rec"><div class="sh"><div class="st">🎬 Recordings</div><div class="fl"><input class="si2" id="q" placeholder="🔍 Search..." oninput="srch()">
 <div id="qchips" style="margin:4px 0"></div>
-<div class="terminal" id="terminalBox" style="display:none"><div class="terminal-out" id="terminalOut"></div><div><span class="terminal-prompt">rusemeva@dash:~$</span> <input class="terminal-input" id="terminalInput" placeholder="type help..."></div></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button><button class="save-preset-btn hid" id="savePresetBtn" data-action="savePreset">⭐ Save Preset</button></div><div class="preset-row" id="presetRow"></div></div>
+<div class="terminal" id="terminalBox" style="display:none"><div class="terminal-out" id="terminalOut"></div><div><span class="terminal-prompt">rusemeva@dash:~$</span> <input class="terminal-input" id="terminalInput" placeholder="type help..."></div></div><button class="fb on" onclick="filt('all',this)" data-f="all">All</button><button class="fb" onclick="filt('success',this)" data-f="success">✅</button><button class="fb" onclick="filt('failure',this)" data-f="failure">❌</button><button class="fb" onclick="filt('in_progress',this)" data-f="in_progress">🔄</button><span class="date-range-wrap" style="display:inline-flex;align-items:center;gap:4px;margin-left:6px"><input type="date" id="dateFrom" style="font-size:10px;padding:2px 4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1)" onchange="applyDateFilter()"><span style="font-size:9px;color:var(--t3)">→</span><input type="date" id="dateTo" style="font-size:10px;padding:2px 4px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1)" onchange="applyDateFilter()"><button class="btn" id="clearDatesBtn" style="font-size:10px;padding:2px 6px;display:none" onclick="clearDateFilter()">Clear dates</button></span><button class="save-preset-btn hid" id="savePresetBtn" data-action="savePreset">⭐ Save Preset</button></div><div class="preset-row" id="presetRow"></div></div>
 <div style="overflow-x:auto"><table id="rt"><thead><tr><th data-col="icon"></th><th data-col="id">ID</th><th data-col="time">Time</th><th data-col="status">Status</th><th data-col="link"></th></tr><tr><td colspan="5" style="padding:2px 0"><div class="col-toggle" id="colToggle"></div>
 <div class="batch-bar" id="batchBar"><span style="font-size:11px"><b id="batchCount">0</b> selected</span><button class="btn" data-batch="tag">🏷 Tag all</button><button class="btn" data-batch="note">📝 Note all</button><button class="btn" data-batch="clear">✕ Clear</button></div></td></tr></thead><tbody>''' + rh + '''</tbody></table></div></div>
 <div class="g2">
@@ -1495,8 +1502,14 @@ var randData=''' + "'" + rand_html.replace("'", "\\'") + "'" + ''';
 var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
 new Chart(document.getElementById('c1').getContext('2d'),{type:'bar',data:{labels:''' + dl + ''',datasets:[{data:''' + dd + ''',backgroundColor:cc.b,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',maxTicksLimit:6,font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
 new Chart(document.getElementById('c2').getContext('2d'),{type:'line',data:{labels:''' + wl + ''',datasets:[{label:'OK',data:''' + ws + ''',borderColor:cc.g,backgroundColor:'rgba(63,185,80,.08)',fill:true,tension:.4},{label:'Fail',data:''' + wf + ''',borderColor:cc.r,backgroundColor:'rgba(248,81,73,.08)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b949e',font:{size:9}}}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
-function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));r.classList.toggle('hid',!match);});updateSavePresetBtn()}
-function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){r.classList.toggle('hid',!r.dataset.q.includes(q))});updateSavePresetBtn()}
+function getDateFilter(){var df=document.getElementById('dateFrom');var dt=document.getElementById('dateTo');var from=df?df.value:'';var to=dt?dt.value:'';return{from:from,to:to,active:!!(from&&to)}}
+function dateMatchRow(r){var df=getDateFilter();if(!df.active)return true;var cd=r.getAttribute('data-created')||'';if(!cd)return false;return cd>=df.from&&cd<=df.to}
+function applyDateFilter(){var df=getDateFilter();var btn=document.getElementById('clearDatesBtn');if(btn)btn.style.display=df.active?'':'none';localStorage.setItem('dash_dateFrom',df.from||'');localStorage.setItem('dash_dateTo',df.to||'');reapplyFilters()}
+function clearDateFilter(){var df=document.getElementById('dateFrom');var dt=document.getElementById('dateTo');if(df)df.value='';if(dt)dt.value='';localStorage.setItem('dash_dateFrom','');localStorage.setItem('dash_dateTo','');var btn=document.getElementById('clearDatesBtn');if(btn)btn.style.display='none';reapplyFilters()}
+function reapplyFilters(){var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}else{filt('all',null)}}
+function restoreDateFilter(){var df=localStorage.getItem('dash_dateFrom')||'';var dt=localStorage.getItem('dash_dateTo')||'';var elF=document.getElementById('dateFrom');var elT=document.getElementById('dateTo');if(elF&&df)elF.value=df;if(elT&&dt)elT.value=dt;var btn=document.getElementById('clearDatesBtn');if(btn)btn.style.display=(df&&dt)?'':'none'}
+function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));var dm=dateMatchRow(r);var q=document.getElementById('q');var sv=q?q.value.toLowerCase():'';var sm=!sv||r.dataset.q.includes(sv);r.classList.toggle('hid',!(match&&dm&&sm));});updateSavePresetBtn()}
+function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){var sv=r.dataset.q.includes(q);var onFb=document.querySelector('.fb.on');var fk=onFb?onFb.getAttribute('data-f')||'all':'all';var ds=r.dataset.s||'';var fm=(fk==='all')||(ds===fk)||(fk==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));var dm=dateMatchRow(r);r.classList.toggle('hid',!(sv&&fm&&dm));});updateSavePresetBtn()}
 function getActiveFilterState(){var q=document.getElementById('q');var searchText=(q&&q.value)?q.value.trim():'';var onFb=document.querySelector('.fb.on');var filter=onFb?onFb.getAttribute('data-f')||'all':'all';return{search:searchText,filter:filter}}
 function hasActiveFilters(){var st=getActiveFilterState();return st.search!==''||st.filter!=='all'}
 function updateSavePresetBtn(){var btn=document.getElementById('savePresetBtn');if(!btn)return;btn.classList.toggle('hid',!hasActiveFilters())}
@@ -1557,6 +1570,7 @@ if(t==='updates'){h.textContent='❓ Help';var helpTabs='<div style="display:fle
 if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Catatan lokal (auto-save 2s setelah berhenti ketik)..." style="width:100%;min-height:120px"></textarea><div style="margin-top:6px;display:flex;gap:6px;align-items:center"><button class="btn" onclick="saveNote()">💾 Save</button> <button class="btn" onclick="clearNote()">🗑 Clear</button> <span id="noteStatus" style="font-size:10px;color:var(--t2)"></span> <span id="noteCount" style="font-size:10px;color:var(--t2);margin-left:auto">0 chars</span></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Auto-save 2s · localStorage: rusemeva-note · last saved: <span id="noteSaved">—</span></div></div>';loadNote();var na=document.getElementById('noteArea');var ns=document.getElementById('noteStatus');var nc=document.getElementById('noteCount');var nsv=document.getElementById('noteSaved');if(na){na.addEventListener('input',function(){if(nc)nc.textContent=na.value.length+' chars';if(ns)ns.textContent='typing...';clearTimeout(window._noteTimer);window._noteTimer=setTimeout(function(){saveNote();if(ns)ns.textContent='saved';if(nsv){var d=localStorage.getItem('rusemeva-note-saved');if(d)nsv.textContent=d}},2000)})}}
 if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag name..." style="flex:1;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:12px" onkeydown="if(event.keyCode===13)addTag()"><button class="btn" onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div><div id="tagCount" style="margin-top:6px;font-size:10px;color:var(--t2)">0 tags</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-tags · Enter untuk add · klik tag untuk hapus</div>';loadTags()}
 if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div id="bookmarkList" style="margin-bottom:8px"></div><div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"><input type="text" id="bmTime" placeholder="mm:ss" style="width:60px;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note / RSM-ID / timestamp..." style="flex:1;min-width:140px;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px" onkeydown="if(event.keyCode===13)addBookmark()"> <button class="btn" onclick="addBookmark()">Add</button></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-bookmarks · Enter untuk add · × untuk hapus</div>';loadBookmarks()}
+if(t==='notifprefs'){h.textContent='🔔 Notification Settings';var prefs=getNotifPrefs();var items=[['runComplete','Run Complete'],['failDetected','Failure Detected'],['dataRefreshed','Data Refreshed'],['newRunStarted','New Run Started']];var html='<div style="font-size:11px;line-height:1.7"><div style="margin-bottom:8px;color:var(--t2)">Toggle which events trigger toast notifications. Saved to localStorage <code>notifPrefs</code>.</div>';items.forEach(function(it){var key=it[0];var label=it[1];var on=prefs[key]!==false;html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;margin-bottom:4px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px"><span>'+label+'</span><label class="notif-toggle" style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer"><input type="checkbox" data-notif-key="'+key+'" '+(on?'checked':'')+' style="opacity:0;width:0;height:0;position:absolute"><span class="notif-slider" style="position:absolute;inset:0;background:'+(on?'var(--gn)':'var(--bg2)')+';border:1px solid var(--brd);border-radius:20px;transition:0.2s"><span style="position:absolute;top:1px;left:'+(on?'17px':'1px')+';width:16px;height:16px;background:#fff;border-radius:50%;transition:0.2s"></span></span></label></div>'});html+='<div style="margin-top:8px"><button class="btn" onclick="resetNotifPrefs()">Reset all to ON</button></div>';html+='</div>';b.innerHTML=html;b.querySelectorAll('[data-notif-key]').forEach(function(cb){cb.addEventListener('change',function(){saveNotifPref(this.getAttribute('data-notif-key'),this.checked);var slider=this.nextElementSibling;if(slider){slider.style.background=this.checked?'var(--gn)':'var(--bg2)';var knob=slider.querySelector('span');if(knob)knob.style.left=this.checked?'17px':'1px'}})})}
 if(t==='compare'){h.textContent='🔄 Compare';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Compare 2 runs</b><br>Klik tombol ⚖ di tiap baris Feed untuk pilih 2 run.<br>Setelah 2 terpilih, modal perbandingan muncul otomatis.</div><div style="margin-top:8px"><button class="btn" id="cmpClear">Clear picks</button></div>';var b2=document.getElementById('cmpClear');if(b2)b2.onclick=function(){cmpPick=[];clM();document.querySelectorAll('.fi').forEach(function(e){e.style.outline=''})}
 }
 if(t==='timeline'||t==='history'){
@@ -1712,6 +1726,11 @@ if(t==='timeline24'){h.textContent='📅 24h Timeline';b.innerHTML=renderTimelin
 if(t==='depgraph'){h.textContent='🔗 Dependencies';b.innerHTML=renderDependencyGraph()}
 
 if(t==='durbell'){h.textContent='📊 Duration Distribution';b.innerHTML=renderDurationBellCurve()}
+if(t==='storageproj'){h.textContent='💾 Storage Projection';b.innerHTML=renderStorageProjection()}
+
+if(t==='failheat'){h.textContent='🔥 Failure Heatmap';b.innerHTML=renderFailureHeatmap()}
+
+if(t==='workflowfreq'){h.textContent='📈 Workflow Frequency';b.innerHTML=renderWorkflowFrequency()}
 
 
 if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
@@ -1813,12 +1832,12 @@ function renderFeed(){var feed=document.getElementById('feedList');if(!feed)retu
 function renderQueueStatus(){var el=document.getElementById('queueStatus');if(!el)return;var D=window.DASH||{};var runs=D.runs||[];var qStatus=['queued','waiting','pending','requested'];var queued=runs.filter(function(r){return qStatus.indexOf((r.status||'').trim())>=0});if(!queued.length){el.innerHTML='<div style="padding:8px 12px;font-size:11px;color:var(--t3)">No runs in queue</div>';return}var doneRuns=runs.filter(function(r){return r.conclusion&&(r.conclusion==='success'||r.conclusion==='failure')&&r.createdAt&&r.updatedAt});var avgDur=0;if(doneRuns.length){var total=0;doneRuns.forEach(function(r){total+=new Date(r.updatedAt)-new Date(r.createdAt)});avgDur=total/doneRuns.length}var html='<div style="display:flex;flex-direction:column;gap:4px">';queued.forEach(function(r,idx){var pos=idx+1;var eta=avgDur>0?'~'+Math.round(avgDur*pos/60000)+'m':'estimating...';html+='<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px"><span style="font-size:14px">⏳</span><span style="flex:1;font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.name||'Unknown')+'</span><span style="font-size:10px;color:var(--or);font-weight:600">#'+pos+'</span><span style="font-size:10px;color:var(--t3)">'+eta+'</span></div>'});html+='</div>';el.innerHTML=html}
 function attachFeedCmpHandlers(feed){if(!feed)return;feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})}
 function initGroupHeaderClicks(){var feed=document.getElementById('feedList');if(!feed)return;feed.addEventListener('click',function(e){var hdr=e.target.closest('.grp-header');if(hdr){var gid=hdr.getAttribute('data-grp');var body=feed.querySelector('[data-grp-body="'+gid+'"]');if(body){var isCollapsed=hdr.classList.toggle('collapsed');body.classList.toggle('collapsed',isCollapsed)}}})}
-function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
+function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();var cr=r.createdAt||'';var cd='';try{cd=new Date(cr).toISOString().slice(0,10)}catch(e){cd=cr?String(cr).slice(0,10):''}return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'" data-created="'+esc(cd)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
 function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
 
 
-function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();renderQueueStatus();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');checkAchievements();checkFailurePatterns();renderRunDurationPrediction()}
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();renderQueueStatus();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');showToast('Data refreshed','refresh');checkAchievements();checkFailurePatterns();renderRunDurationPrediction()}
 
 // ═══ v8.5 features ═══
 function lastRsmHtml(){
@@ -1865,6 +1884,7 @@ function checkNewRuns(data){
   if(rid>lastRunId){
     var id=latest.orv_id||rid;
     var s=displayStatusJs(latest);
+    showToast('New run started: '+id,'newrun');
     try{new Notification('Rusemeva: '+id,{body:latest.name+' → '+s})}catch(e){}
     lastRunId=rid;
   }
@@ -2145,6 +2165,287 @@ function renderDurationBellCurve(){
   stats+='<div class="metric-mini"><div class="metric-mini-val">'+n+'</div><div class="metric-mini-lbl">Samples</div></div>';
   stats+='</div>';
   return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Run Duration Distribution (rusemeva-vault, success only)</div>'+svg+stats+'<div style="margin-top:6px;font-size:9px;color:var(--t2)">Purple line = normal distribution fit \u00b7 Red bars = outliers beyond 2 standard deviations \u00b7 Duration = updatedAt - createdAt</div></div>';
+}
+
+// ═══ Storage Projection ═══
+function renderStorageProjection(){
+  var D=window.DASH||{};var st=D.stats||{};var rels=D.releases||[];
+  var ghB=st.gh_bytes!=null?Number(st.gh_bytes):0;
+  if(ghB===0&&st.total_size){ghB=Number(st.total_size)*1024*1024*1024}
+  var lifeGb=st.lifetime_est_gb!=null?Number(st.lifetime_est_gb):0;
+  var GB=1024*1024*1024;
+  var WEEK_MS=7*24*60*60*1000;
+  var now=Date.now();
+  // Filter out encode-temp and metadata-only releases
+  var mediaRels=(rels||[]).filter(function(r){
+    var tag=(r.tag||'').toLowerCase();
+    var nm=(r.name||'').toLowerCase();
+    if(tag.indexOf('encode-')>=0||nm.indexOf('encode temp')>=0)return false;
+    var sz=Number(r.size||0);
+    if(sz>0&&sz<1048576)return false;
+    return true;
+  });
+  // Growth rate: average bytes added per week from releases created in last 4 weeks
+  var fourWeeksAgo=now-4*WEEK_MS;
+  var recentReleases=mediaRels.filter(function(r){
+    var ct=new Date(r.created||0).getTime();
+    return ct>=fourWeeksAgo&&ct<=now;
+  });
+  var totalRecentBytes=recentReleases.reduce(function(a,r){return a+Number(r.size||0)},0);
+  var growthRatePerWeek=recentReleases.length>0?totalRecentBytes/4:0;
+  // Build weekly cumulative growth over last 8 weeks
+  var weeklyData=[];
+  for(var w=7;w>=0;w--){
+    var weekStart=now-(w+1)*WEEK_MS;
+    var weekEnd=now-w*WEEK_MS;
+    var weekBytes=mediaRels.filter(function(r){
+      var ct=new Date(r.created||0).getTime();
+      return ct>=weekStart&&ct<weekEnd;
+    }).reduce(function(a,r){return a+Number(r.size||0)},0);
+    weeklyData.push({label:'W-'+w,bytes:weekBytes,cumulative:0});
+  }
+  // Cumulative: start from total GH bytes and subtract backwards
+  var cumulative=ghB;
+  for(var i=weeklyData.length-1;i>=0;i--){
+    cumulative-=weeklyData[i].bytes;
+  }
+  for(var i=0;i<weeklyData.length;i++){
+    cumulative+=weeklyData[i].bytes;
+    weeklyData[i].cumulative=cumulative;
+  }
+  // Projection: when will 1GB be reached
+  var remainingBytes=GB-ghB;
+  var weeksTo1GB=0;
+  var projectionText='';
+  if(ghB>=GB){
+    projectionText='1GB limit already reached or exceeded';
+  }else if(growthRatePerWeek>0){
+    weeksTo1GB=Math.ceil(remainingBytes/growthRatePerWeek);
+    if(weeksTo1GB<=0)weeksTo1GB=1;
+    projectionText='At current rate, 1GB will be reached in ~'+weeksTo1GB+' weeks';
+  }else{
+    projectionText='No growth detected in last 4 weeks - storage is stable';
+  }
+  // Recommendation
+  var growthMB=growthRatePerWeek/(1024*1024);
+  var recommendation='';
+  var recColor='var(--gn)';
+  var recIcon='✅';
+  if(growthRatePerWeek>50*1024*1024){
+    recommendation='High growth rate - consider cleanup ('+growthMB.toFixed(1)+' MB/week)';
+    recColor='var(--rd)';
+    recIcon='⚠️';
+  }else if(growthRatePerWeek>0){
+    recommendation='Growth rate is moderate ('+growthMB.toFixed(1)+' MB/week)';
+    recColor='var(--yl)';
+    recIcon='ℹ️';
+  }else{
+    recommendation='No recent storage growth - all clear';
+    recColor='var(--gn)';
+    recIcon='✅';
+  }
+  // Sparkline SVG for weekly cumulative growth
+  var sparkW=280,sparkH=60,padL=30,padR=10,padT=10,padB=20;
+  var cw=sparkW-padL-padR,ch=sparkH-padT-padB;
+  var cumVals=weeklyData.map(function(d){return d.cumulative});
+  var minCum=Math.min.apply(null,cumVals.concat([0]));
+  var maxCum=Math.max.apply(null,cumVals.concat([GB]));
+  var rangeCum=maxCum-minCum||1;
+  var xStep=cw/(weeklyData.length-1||1);
+  var sparkPts=[];
+  weeklyData.forEach(function(d,i){
+    var px=padL+i*xStep;
+    var py=padT+ch-((d.cumulative-minCum)/rangeCum)*ch;
+    sparkPts.push(px.toFixed(1)+','+py.toFixed(1));
+  });
+  var linePath='M '+sparkPts.join(' L ');
+  var areaPath=linePath+' L '+(padL+(weeklyData.length-1)*xStep).toFixed(1)+' '+(padT+ch)+' L '+padL+' '+(padT+ch)+' Z';
+  var yMid=padT+ch-((GB-minCum)/rangeCum)*ch;
+  var sparkSvg='<svg width="'+sparkW+'" height="'+sparkH+'" style="margin:8px auto">';
+  sparkSvg+='<defs><linearGradient id="spGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--bl)" stop-opacity="0.3"/><stop offset="100%" stop-color="var(--bl)" stop-opacity="0"/></linearGradient></defs>';
+  sparkSvg+='<path d="'+areaPath+'" fill="url(#spGrad)"/>';
+  sparkSvg+='<polyline points="'+sparkPts.join(' ')+'" fill="none" stroke="var(--bl)" stroke-width="2"/>';
+  // 1GB limit line
+  if(yMid>=padT&&yMid<=padT+ch){
+    sparkSvg+='<line x1="'+padL+'" y1="'+yMid.toFixed(1)+'" x2="'+(padL+cw)+'" y2="'+yMid.toFixed(1)+'" stroke="var(--rd)" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>';
+    sparkSvg+='<text x="'+(padL+cw-2)+'" y="'+(yMid-2).toFixed(1)+'" text-anchor="end" fill="var(--rd)" font-size="7">1GB</text>';
+  }
+  // Dots
+  weeklyData.forEach(function(d,i){
+    var px=padL+i*xStep;
+    var py=padT+ch-((d.cumulative-minCum)/rangeCum)*ch;
+    sparkSvg+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="2.5" fill="var(--bl)"/>';
+  });
+  // X labels (first and last only)
+  sparkSvg+='<text x="'+padL+'" y="'+(sparkH-4)+'" text-anchor="middle" fill="var(--t2)" font-size="7">8wk ago</text>';
+  sparkSvg+='<text x="'+(padL+cw)+'" y="'+(sparkH-4)+'" text-anchor="end" fill="var(--t2)" font-size="7">now</text>';
+  sparkSvg+='</svg>';
+  // Stats grid
+  var pctUsed=ghB>0?(ghB/GB*100):0;
+  var stats='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin:8px 0">';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--bl);font-size:16px">'+fmtBytes(ghB)+'</div><div class="metric-mini-lbl">Current Usage</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--or);font-size:16px">'+(growthMB.toFixed(1))+' MB</div><div class="metric-mini-lbl">Growth / Week</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--pr);font-size:16px">'+pctUsed.toFixed(1)+'%</div><div class="metric-mini-lbl">of 1GB Limit</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:'+(weeksTo1GB>0&&weeksTo1GB<=8?'var(--rd)':weeksTo1GB>0?'var(--yl)':'var(--gn)')+';font-size:16px">'+(weeksTo1GB>0?'~'+weeksTo1GB+'w':'—')+'</div><div class="metric-mini-lbl">To 1GB</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--gn);font-size:16px">'+recentReleases.length+'</div><div class="metric-mini-lbl">Releases (4wk)</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--t2);font-size:16px">'+(lifeGb>0?lifeGb.toFixed(1)+' GB':'—')+'</div><div class="metric-mini-lbl">Lifetime Est</div></div>';
+  stats+='</div>';
+  // Progress bar
+  var bar='<div style="background:var(--bg3);border-radius:4px;height:14px;overflow:hidden;margin:6px 0;border:1px solid var(--brd)"><div style="height:100%;width:'+Math.min(pctUsed,100).toFixed(1)+'%;background:linear-gradient(90deg,var(--bl),var(--rd));border-radius:3px;transition:width .3s"></div></div>';
+  // Build full card
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:4px">GitHub Release Storage Projection</div>';
+  html+='<div style="font-size:10px;color:var(--t2);margin-bottom:8px">GitHub free tier: 1GB for release assets (not Git LFS)</div>';
+  html+=stats;
+  html+=bar;
+  html+='<div style="font-size:11px;font-weight:600;margin:10px 0 4px">Cumulative Growth (last 8 weeks)</div>';
+  html+=sparkSvg;
+  html+='<div style="background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:8px;margin:10px 0;font-size:11px"><b>Projection:</b> '+esc(projectionText)+'</div>';
+  html+='<div style="background:rgba(0,0,0,.2);border:1px solid '+recColor+';border-radius:8px;padding:8px;margin:6px 0;font-size:11px;display:flex;align-items:center;gap:6px"><span style="font-size:14px">'+recIcon+'</span><span style="color:'+recColor+'">'+esc(recommendation)+'</span></div>';
+  html+='<div style="font-size:9px;color:var(--t2);margin-top:6px">Growth rate = total bytes added in last 4 weeks / 4. Lifetime estimate is total recorded volume (video on Telegram, not GH). Releases under 1MB (metadata) and encode-temp excluded.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ Failure Rate Heatmap by Hour (7x24 grid) ═══
+function renderFailureHeatmap(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var grid={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var day=d.getDay();var hour=d.getHours();
+    var key=day+'_'+hour;
+    if(!grid[key])grid[key]={total:0,fail:0};
+    grid[key].total++;
+    if(r.conclusion==='failure')grid[key].fail++;
+  });
+  var dayShort=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function cellCol(d){
+    if(!d||d.total===0)return 'var(--bg3)';
+    var rate=d.fail/d.total;
+    if(rate===0)return 'var(--gn)';
+    if(rate<=0.30)return 'var(--yl)';
+    if(rate<=0.60)return 'var(--or)';
+    return 'var(--rd)';
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Failure Rate Heatmap (Day \u00d7 Hour)</div>';
+  html+='<div style="overflow-x:auto">';
+  html+='<div style="display:grid;grid-template-columns:28px repeat(24,1fr);gap:1px;min-width:520px">';
+  html+='<div></div>';
+  for(var h=0;h<24;h++){
+    html+='<div style="text-align:center;font-size:7px;color:var(--t2);padding:2px 0">'+('0'+h).slice(-2)+'</div>';
+  }
+  for(var day=0;day<7;day++){
+    html+='<div style="font-size:8px;color:var(--t2);display:flex;align-items:center;justify-content:center">'+dayShort[day]+'</div>';
+    for(var hour=0;hour<24;hour++){
+      var key=day+'_'+hour;
+      var d=grid[key];
+      var col=cellCol(d);
+      var tip='';
+      if(d){
+        var pct=Math.round(d.fail/d.total*100);
+        tip=dayShort[day]+' '+('0'+hour).slice(-2)+':00 \u2014 '+d.total+' runs, '+d.fail+' fail ('+pct+'%)';
+      }else{
+        tip=dayShort[day]+' '+('0'+hour).slice(-2)+':00 \u2014 no runs';
+      }
+      html+='<div style="background:'+col+';height:16px;border-radius:2px;cursor:default" title="'+tip+'"></div>';
+    }
+  }
+  html+='</div>';
+  html+='</div>';
+  html+='<div style="display:flex;gap:10px;margin-top:8px;font-size:9px;color:var(--t2);flex-wrap:wrap;align-items:center">';
+  html+='<span>Legend:</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--gn);border-radius:2px"></span>0% fail</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--yl);border-radius:2px"></span>1-30%</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--or);border-radius:2px"></span>31-60%</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--rd);border-radius:2px"></span>61-100%</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--bg3);border-radius:2px"></span>no runs</span>';
+  html+='</div>';
+  html+='<div style="margin-top:6px;font-size:9px;color:var(--t3)">Hover any cell for details. Based on '+(runs.length)+' runs in current data.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ Workflow Frequency Chart (last 14 days, top 5 workflows, inline SVG) ═══
+function renderWorkflowFrequency(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=new Date();
+  var days=[];var dayKeys=[];
+  for(var i=13;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    days.push(d);
+    dayKeys.push(key);
+  }
+  var byWf={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    if(dayKeys.indexOf(key)<0)return;
+    var nm=r.name||'unknown';
+    if(!byWf[nm])byWf[nm]={total:0,byDay:{}};
+    byWf[nm].total++;
+    byWf[nm].byDay[key]=(byWf[nm].byDay[key]||0)+1;
+  });
+  var sortedWf=Object.keys(byWf).sort(function(a,b){return byWf[b].total-byWf[a].total});
+  var top5=sortedWf.slice(0,5);
+  if(top5.length===0){
+    return '<div style="padding:10px;color:var(--t2)">No workflow runs in the last 14 days.</div>';
+  }
+  var colors=['var(--bl)','var(--gn)','var(--or)','var(--pr)','var(--pn)'];
+  var padL=30,padR=10,padT=20,padB=30;
+  var W=540,H=280;
+  var cw=W-padL-padR,ch=H-padT-padB;
+  var nDays=dayKeys.length;
+  var groupW=cw/nDays;
+  var barW=Math.max(2,groupW/top5.length-1);
+  var maxVal=1;
+  top5.forEach(function(wf){
+    dayKeys.forEach(function(dk){
+      var v=byWf[wf].byDay[dk]||0;
+      if(v>maxVal)maxVal=v;
+    });
+  });
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="max-width:100%;height:auto">';
+  svg+='<rect x="'+padL+'" y="'+padT+'" width="'+cw+'" height="'+ch+'" fill="var(--bg3)" opacity="0.3"/>';
+  for(var i=0;i<=4;i++){
+    var yy=padT+ch-(i/4)*ch;
+    svg+='<line x1="'+padL+'" y1="'+yy+'" x2="'+(padL+cw)+'" y2="'+yy+'" stroke="var(--brd)" stroke-width="1" opacity="0.5"/>';
+    svg+='<text x="'+(padL-4)+'" y="'+(yy+3)+'" text-anchor="end" fill="var(--t2)" font-size="8">'+Math.round((i/4)*maxVal)+'</text>';
+  }
+  for(var di=0;di<nDays;di++){
+    var dx=padL+di*groupW;
+    var label=dayKeys[di].slice(5);
+    if(di%2===0){
+      svg+='<text x="'+(dx+groupW/2)+'" y="'+(padT+ch+14)+'" text-anchor="middle" fill="var(--t2)" font-size="7">'+label+'</text>';
+    }
+    for(var wi=0;wi<top5.length;wi++){
+      var wf=top5[wi];
+      var v=byWf[wf].byDay[dayKeys[di]]||0;
+      if(v===0)continue;
+      var bh=(v/maxVal)*ch;
+      var bx=dx+wi*(barW+1);
+      var by=padT+ch-bh;
+      svg+='<rect x="'+bx+'" y="'+by+'" width="'+barW+'" height="'+bh+'" fill="'+colors[wi]+'" rx="1" opacity="0.85"><title>'+esc(wf)+': '+v+' runs on '+dayKeys[di]+'</title></rect>';
+    }
+  }
+  svg+='<text x="'+(padL+cw/2)+'" y="'+(H-5)+'" text-anchor="middle" fill="var(--t2)" font-size="9">Date (last 14 days)</text>';
+  svg+='<text x="12" y="'+(padT+ch/2)+'" text-anchor="middle" fill="var(--t2)" font-size="9" transform="rotate(-90 12 '+(padT+ch/2)+')">Runs</text>';
+  svg+='</svg>';
+  var legend='<div style="display:flex;gap:12px;margin-top:8px;font-size:9px;color:var(--t2);flex-wrap:wrap">';
+  top5.forEach(function(wf,i){
+    legend+='<span><span style="display:inline-block;width:8px;height:8px;background:'+colors[i]+';border-radius:50%;margin-right:3px"></span>'+esc(wf)+' ('+byWf[wf].total+')</span>';
+  });
+  legend+='</div>';
+  var stats='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-top:10px">';
+  top5.forEach(function(wf,i){
+    stats+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+colors[i]+'">'+byWf[wf].total+'</div><div class="metric-mini-lbl">'+esc(wf.length>18?wf.slice(0,16)+'..':wf)+'</div></div>';
+  });
+  stats+='</div>';
+  return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Workflow Frequency (Last 14 Days \u2014 Top 5)</div>'+svg+legend+stats+'<div style="margin-top:6px;font-size:9px;color:var(--t2)">Each day has grouped bars per workflow. Hover bars for details.</div></div>';
 }
 function renderRings(){
   var D=window.DASH||{};var st=D.stats||{};var daily=D.daily||D.stats&&D.stats.daily||{};
@@ -4040,7 +4341,7 @@ function renderAchievements(){
 function checkAchievements(){
   var st=(window.DASH||{}).stats||{};
   _achvList.forEach(function(a){
-    if(!_achvUnlocked[a.id]&&a.check(st)){_achvUnlocked[a.id]=true;showToast('🏆 Achievement: '+a.name+'!')}
+    if(!_achvUnlocked[a.id]&&a.check(st)){_achvUnlocked[a.id]=true;showToast('🏆 Achievement: '+a.name+'!','complete')}
   });
   localStorage.setItem('dash_achv',JSON.stringify(_achvUnlocked));
 }
@@ -4549,11 +4850,15 @@ function rateZoneHtml(rate){
 }
 function updateTabTitle(){
   var D=window.DASH||{};var st=D.stats||{};var runs=D.runs||[];
-  var rn=st.running||0;var fl=st.failed||0;var t='';
-  if(rn>0)t+='🔄'+rn+' running · ';
-  if(fl>0)t+='❌'+fl+' fail · ';
-  t+='Rusemeva';
-  document.title=t;
+  var rn=st.running||0;
+  if(rn>0){document.title='🔄 '+rn+' Running | Rusemeva';return}
+  var vaultRuns=(runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});
+  var sorted=vaultRuns.slice().sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)});
+  var last=sorted[0];
+  if(!last){document.title='Rusemeva';return}
+  var sk=statusKeyJs(last);
+  if(sk==='failure'){var failCount=vaultRuns.filter(function(r){return statusKeyJs(r)==='failure'}).length;document.title='❌ '+failCount+' Failed | Rusemeva'}
+  else{document.title='✅ All Clear | Rusemeva'}
 }
 function updateFavicon(){
   var D=window.DASH||{};var st=D.stats||{};var fl=st.failed||0;
@@ -4579,11 +4884,12 @@ function checkSoundAlert(data){
   }
   lastFailCount=fl;
 }
-function showToast(msg){
-  var t=document.getElementById('toast');if(!t)return;
-  t.textContent=msg;t.classList.add('on');
-  clearTimeout(window._toastTimer);window._toastTimer=setTimeout(function(){t.classList.remove('on')},1500);
-}
+function getNotifPrefs(){var d={runComplete:true,failDetected:true,dataRefreshed:true,newRunStarted:true};try{var s=JSON.parse(localStorage.getItem('notifPrefs')||'{}');if(s&&typeof s==='object'){d.runComplete=s.runComplete!==false;d.failDetected=s.failDetected!==false;d.dataRefreshed=s.dataRefreshed!==false;d.newRunStarted=s.newRunStarted!==false}}catch(e){}return d}
+function saveNotifPref(key,val){var p=getNotifPrefs();p[key]=val;localStorage.setItem('notifPrefs',JSON.stringify(p))}
+function resetNotifPrefs(){localStorage.setItem('notifPrefs',JSON.stringify({runComplete:true,failDetected:true,dataRefreshed:true,newRunStarted:true}));showM('notifprefs')}
+function shouldShowNotif(key){var p=getNotifPrefs();return p[key]!==false}
+function showToast(msg,type){showToastTyped(msg,type||'info')}
+function showToastTyped(msg,type){var p=getNotifPrefs();if(type==='fail'&&!p.failDetected)return;if(type==='complete'&&!p.runComplete)return;if(type==='refresh'&&!p.dataRefreshed)return;if(type==='newrun'&&!p.newRunStarted)return;var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('on');clearTimeout(window._toastTimer);window._toastTimer=setTimeout(function(){t.classList.remove('on')},1500)}
 function copyRSM(id){
   if(!id)return;
   navigator.clipboard.writeText(id).then(function(){showToast('Copied: '+id)}).catch(function(){})
@@ -5276,7 +5582,11 @@ var CMD_ITEMS=[
   {cat:'Tools',label:'Leaderboard',act:"showM('leaderboard')"},
   {cat:'Tools',label:'24h Timeline',act:"showM('timeline24')"},
   {cat:'Tools',label:'Dependencies',act:"showM('depgraph')"},
-  {cat:'Tools',label:'Duration Distribution',act:"showM('durbell')"}
+  {cat:'Tools',label:'Duration Distribution',act:"showM('durbell')"},
+  {cat:'Tools',label:'💾 Storage Projection',act:"showM('storageproj')"},
+  {cat:'Tools',label:'Failure Heatmap',act:"showM('failheat')"},
+  {cat:'Tools',label:'Workflow Frequency',act:"showM('workflowfreq')"},
+  {cat:'Tools',label:'Notification Settings',act:"showM('notifprefs')"}
 ];
 var cmdSel=0;
 function openCmd(){document.getElementById('cmdOverlay').classList.add('on');var i=document.getElementById('cmdInput');i.value='';i.focus();cmdSel=0;filterCmd()}
@@ -5316,7 +5626,7 @@ async function softRefresh(){var sp=document.getElementById('dashSpinner');if(sp
 var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
 // initial soft patch shortly after load (pick up fresher data.json / orv-map)
 applyCustomize();if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var b=document.getElementById('compactBtn');if(b)b.textContent='📐 Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();initFreshnessBannerDismiss();document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd()}});if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var cb=document.getElementById('compactBtn');if(cb)cb.textContent='Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();setTimeout(function(){softRefresh()},2500);
-renderPresets();updateSavePresetBtn();applyGroupingState();initGroupHeaderClicks();initPresetClicks();
+renderPresets();updateSavePresetBtn();applyGroupingState();initGroupHeaderClicks();initPresetClicks();restoreDateFilter();
 if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
 // ── auto-refresh timer ("Updated Xs ago") + freshness banner ──
 setInterval(function(){var D=window.DASH||{};var gen=D.generated;if(!gen)return;var el=document.getElementById('refreshTimer');if(!el)return;var sec=Math.round((Date.now()-new Date(gen).getTime())/1000);if(sec<1){el.textContent='Updated just now';el.className='';return}el.textContent='Updated '+sec+'s ago';el.className=sec>120?'stale':(sec>60?'warn':'');renderFreshnessBanner()},1000);
