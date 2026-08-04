@@ -411,6 +411,56 @@ def gen(S, runs, releases):
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--brd:#30363d;--t1:#e6edf3;--t2:#8b949e;--t3:#484f58;--bl:#58a6ff;--gn:#3fb950;--rd:#f85149;--yl:#d29922;--pr:#bc8cff;--or:#f0883e;--pn:#f778ba}
+
+/* === v10.4 Professional Visual Upgrade === */
+:root{--glass-bg:rgba(22,27,34,.75);--glass-brd:rgba(48,54,61,.5);--glow-bl:0 0 12px rgba(88,166,255,.3);--glow-gn:0 0 12px rgba(63,185,80,.3);--glow-rd:0 0 12px rgba(248,81,73,.3);--gradient-hero:linear-gradient(135deg,rgba(88,166,255,.08) 0%,rgba(188,140,255,.06) 50%,rgba(63,185,80,.04) 100%)}
+body{letter-spacing:.01em}
+.sec{background:var(--glass-bg);border:1px solid var(--glass-brd);border-radius:12px;padding:12px;margin-bottom:10px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 3px rgba(0,0,0,.2),0 0 0 1px rgba(255,255,255,.02) inset}
+.sec:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3),0 0 0 1px rgba(88,166,255,.1) inset;border-color:rgba(88,166,255,.2)}
+.sh{border-bottom:1px solid var(--glass-brd);position:relative}
+.sh::after{content:'';position:absolute;bottom:-1px;left:0;width:30%;height:1px;background:linear-gradient(90deg,var(--bl),transparent);border-radius:1px}
+.st{letter-spacing:.02em}
+.sc{background:var(--glass-bg);border:1px solid var(--glass-brd);border-radius:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all .3s cubic-bezier(.4,0,.2,1)}
+.sc:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.sv{letter-spacing:-.02em}
+.sl{text-transform:uppercase;letter-spacing:.08em}
+.b-success{box-shadow:var(--glow-gn);border:1px solid rgba(63,185,80,.3)}
+.b-failure{box-shadow:var(--glow-rd);border:1px solid rgba(248,81,73,.3)}
+.b-running{box-shadow:var(--glow-bl);border:1px solid rgba(88,166,255,.3)}
+.btn{padding:6px 12px;border-radius:8px;border:1px solid var(--glass-brd);background:var(--glass-bg);transition:all .25s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);letter-spacing:.02em}
+.btn:hover{border-color:var(--bl);box-shadow:var(--glow-bl);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.hero{background:var(--gradient-hero);border:1px solid var(--glass-brd);border-radius:16px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 24px rgba(0,0,0,.2);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 50%,rgba(88,166,255,.06),transparent 40%),radial-gradient(circle at 70% 50%,rgba(188,140,255,.04),transparent 40%);animation:heroShift 15s ease-in-out infinite alternate;pointer-events:none}
+@keyframes heroShift{0%{transform:translate(0,0)}100%{transform:translate(-10%,5%)}}
+.hdr{border-bottom:1px solid var(--glass-brd);position:relative;margin-bottom:14px;padding-bottom:12px}
+.hdr::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--bl) 30%,var(--pr) 50%,var(--bl) 70%,transparent);opacity:.3}
+.hdr h1{letter-spacing:-.01em}
+th{letter-spacing:.08em}
+.metric-mini{background:var(--bg3);border-radius:8px;border:1px solid var(--glass-brd);transition:all .25s}
+.metric-mini:hover{border-color:rgba(88,166,255,.2);transform:scale(1.03)}
+.metric-mini-val{letter-spacing:-.02em}
+.metric-mini-lbl{text-transform:uppercase;letter-spacing:.06em}
+.fb{border-radius:12px;border:1px solid var(--glass-brd);transition:all .25s;backdrop-filter:blur(4px)}
+.fb:hover{border-color:var(--bl);color:var(--bl)}
+.fb.on{box-shadow:var(--glow-bl)}
+.si2{border:1px solid var(--glass-brd);background:var(--glass-bg);transition:all .25s;backdrop-filter:blur(4px)}
+.si2:focus{box-shadow:var(--glow-bl)}
+.skeleton{border-radius:6px}
+.skeleton-stat{border-radius:8px}
+.md{background:var(--glass-bg);border:1px solid var(--glass-brd);border-radius:14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset}
+svg{display:block;margin:0 auto}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{border-radius:8px;transition:all .2s}
+.fi:hover{background:rgba(88,166,255,.04)}
+.mo.on{background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.nav-btn{border-radius:8px;border:1px solid var(--glass-brd);background:var(--glass-bg);transition:all .25s;backdrop-filter:blur(8px)}
+.nav-btn:hover{box-shadow:var(--glow-bl)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--t3)}
+::selection{background:rgba(88,166,255,.3);color:#fff}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);padding:10px;min-height:100vh;transition:all .3s;overflow-x:hidden;-webkit-text-size-adjust:100%}
 .ct{max-width:1480px;margin:0 auto}
