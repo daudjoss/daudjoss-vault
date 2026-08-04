@@ -1357,7 +1357,7 @@ window.DASH = ''' + json.dumps({
             "created": r.get("created"), "size": r.get("size") or 0,
         } for r in releases[:20]],
     }, default=str) + ''';
-function playRadio(url,name,btn){var p=document.getElementById('radioPlayer');if(p){p.src=url;p.play();var np=document.getElementById('radioNowPlaying');if(np)np.textContent='Now playing: '+name;var rl=document.getElementById('radioList');if(rl)rl.querySelectorAll('.radio-btn').forEach(function(b){b.style.background='';b.style.color=''});if(btn){btn.style.background='var(--bl)';btn.style.color='#fff'}}}
+function playRadio(url,name,btn){var p=document.getElementById('radioPlayer');if(p){p.src=url;p.play();var np=document.getElementById('radioNowPlaying');if(np){np.innerHTML='<div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.4);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎵</span><div><div style="font-size:14px;font-weight:600;color:#fff">Now Playing</div><div style="font-size:12px;color:var(--bl);margin-top:2px">'+name+'</div></div></div>'}var rl=document.getElementById('radioList');if(rl)rl.querySelectorAll('.radio-btn').forEach(function(b){b.style.background='';b.style.color='';b.style.borderColor='';b.removeAttribute('data-playing')});if(btn){btn.style.background='var(--bl)';btn.style.color='#fff';btn.style.borderColor='var(--bl)';btn.setAttribute('data-playing','1')}}}
 
 
 var randData=''' + "'" + rand_html.replace("'", "\\'") + "'" + ''';
