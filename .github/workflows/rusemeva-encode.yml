@@ -521,7 +521,6 @@ jobs:
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
           HEVC_SPLIT: ${{ env.HEVC_SPLIT || '0' }}
           FAIL_REASON: ${{ env.FAIL_REASON || 'unknown' }}
-          CHAPTERS_TEXT: ${{ env.CHAPTERS_TEXT || '' }}
           PHASE: hevc
         run: python3 scripts/notify.py
 
