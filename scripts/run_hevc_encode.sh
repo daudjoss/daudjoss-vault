@@ -33,6 +33,21 @@ MAXRATE_K=$(video_maxrate_k "$AUDIO_BPS")
 BUFSIZE_K=$(( MAXRATE_K * 2 ))
 echo "dur=${SRC_DUR_INT}s audio=${AUDIO_BPS} maxrate=${MAXRATE_K}k"
 
+# === SKIP ENCODE if original already efficient ===
+ORIG_TOTAL_BPS=$(probe_bitrate "$FILE" || echo 0)
+HEVC_SKIP=0
+if [ "${ORIG_TOTAL_BPS:-0}" -gt 0 ] 2>/dev/null && [ "${ORIG_TOTAL_BPS:-0}" -le 1500000 ] 2>/dev/null; then
+  HEVC_SKIP=1
+  HEVC_FILE="$FILE"
+  ORIG_MB=$(( ORIG_TOTAL_BPS / 125000 ))
+  ORIG_TENTH=$(( (ORIG_TOTAL_BPS / 125000) % 10 ))
+  echo "⏭️ Original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps) — skip HEVC encode"
+  CHAT_ID="$CHAT_ID" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" python3 scripts/send_message.py \
+    "⏭️ <b>HEVC skip</b> — original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps). Kirim original langsung." || true
+fi
+echo "HEVC_SKIP=$HEVC_SKIP" >> $GITHUB_ENV
+
+if [ "$HEVC_SKIP" = "0" ]; then
 # === SCENE-AWARE CRF ===
 # Probe 5 cuplikan @8s: encode mini ultrafast di CRF basis, ukur bytes/s.
 # Konten ramai/gelap (bytes/s tinggi) → CRF turun (lebih bagus).
@@ -208,13 +223,17 @@ fi
 echo "🔄 HEVC encode 100%"
 CHAT_ID="$CHAT_ID" FILENAME="$FILE" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" PROGRESS_MSG_FILE=/tmp/rusemeva_progress_msg_id python3 scripts/progress.py done || true
 
+fi  # end HEVC_SKIP=0 (scene-aware + live-detect + encode loop)
+
 if [ -s "$HEVC_FILE" ]; then
   echo "✅ HEVC selesai: $(ls -lh "$HEVC_FILE" | awk '{print $5}')"
 
-  # === AUTO BITRATE/SIZE GUARD (strict via encode_policy.sh) ===
-  # Accept only if bitrate known AND in band (~1.2-1.5 Mbps) AND size vs target.
-  # NEED_BETTER (blur) re-enters same loop with CRF-2; no separate pass with || true.
+  # === AUTO BITRATE/SIZE GUARD (skip if HEVC_SKIP — original already good) ===
   ORIG_BYTES=$(stat -c%s "$FILE" 2>/dev/null || wc -c < "$FILE")
+  if [ "$HEVC_SKIP" = "1" ]; then
+    echo "⏭️ Skip auto-size guard (HEVC_SKIP — original dipakai apa adanya)"
+    echo "HEVC_CRF_FINAL=skip" >> $GITHUB_ENV
+  else
   TARGET_BYTES=$(target_bytes "$SRC_DUR_INT" "$ORIG_BYTES" || echo 0)
   if [ "${TARGET_BYTES:-0}" -le 0 ]; then
     echo "target_bytes invalid dur=$SRC_DUR_INT orig=$ORIG_BYTES"
@@ -301,6 +320,7 @@ if [ -s "$HEVC_FILE" ]; then
     fi
   done
   echo "HEVC_CRF_FINAL=$CUR_CRF" >> $GITHUB_ENV
+  fi  # end else (auto-size guard only when not HEVC_SKIP)
   echo "ACT_DURATION_SEC=$SRC_DUR_INT" >> $GITHUB_ENV
   echo "REQ_DURATION_SEC=${REQ_DUR:-}" >> $GITHUB_ENV
 

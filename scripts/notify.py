@@ -371,8 +371,10 @@ if job_status == "success":
         if hevc_file and os.path.isfile(hevc_file) and os.path.getsize(hevc_file) > 0:
             print("📤 Mengirim video HEVC 10-bit...", flush=True)
             hevc_thumb_path = hevc_thumb_file if (has_hevc_thumb and os.path.isfile(hevc_thumb_file)) else ""
+            hevc_skip = os.environ.get("HEVC_SKIP", "0") == "1"
+            title = "📦 Original (HEVC skip — sudah efisien)" if hevc_skip else "🎞 HEVC 10-bit"
             caption_hevc = (
-                f"🎞 <b>HEVC 10-bit</b>\n\n"
+                f"{title}\n\n"
                 f"{id_line()}"
                 f"📦 File: <code>{hevc_file}</code>\n"
                 f"📏 Size: {hevc_size}\n"
