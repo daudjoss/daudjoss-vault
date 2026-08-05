@@ -639,6 +639,119 @@ PYEOF
   echo "EFFICIENCY_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
   echo "$EFFICIENCY_TEXT" >> $GITHUB_ENV
   echo "RUSEMEVA_EOF" >> $GITHUB_ENV
+  # === SOURCE QUALITY RATING (A-F grade) ===
+  SOURCE_QUALITY=""
+  SRC_ACODEC=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+  SRC_ABR=$(ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+  SRC_SR=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+  # Bandwidth detection (max audio frequency, 2-min sample)
+  SRC_BW=""
+  if [ "${SRC_DUR_INT:-0}" -ge 30 ] 2>/dev/null; then
+    SRC_BW=$(timeout 30 "$FFMPEG_STATIC" -hide_banner -nostats -t 60 -i "$FILE" -af "astats=metadata=1:reset=0,ametadata=print:key=lavfi.astats.Overall.Peak_level:file=-:csv=p=0" -f null - 2>/dev/null | grep -oP '[-\d.]+' | head -1 || true)
+    # Use spectrastats for max frequency instead
+    SRC_BW=$(timeout 30 "$FFMPEG_STATIC" -hide_banner -nostats -t 60 -i "$FILE" -af "aspectralstats=win_size=2048:overlap=0.75:measure=max_frequency,ametadata=print:key=lavfi.aspectralstats.max_frequency.mean:file=-:csv=p=0" -f null - 2>/dev/null | grep -oP '[\d.]+' | head -1 || true)
+  fi
+  SOURCE_QUALITY=$(python3 - "$SRC_ACODEC" "$SRC_ABR" "$SRC_SR" "$SRC_BW" <<'PYEOF'
+import sys
+acodec = sys.argv[1] if len(sys.argv) > 1 else "?"
+abr = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else 0
+sr = int(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3].isdigit() else 0
+bw = float(sys.argv[4]) if len(sys.argv) > 4 else 0
+
+out = []
+
+# Codec score
+codec_scores = {
+    "aac": 10, "mp3": 8, "opus": 10, "vorbis": 9,
+    "flac": 10, "pcm": 10, "pcm_s16le": 10, "pcm_s24le": 10,
+    "ac3": 7, "eac3": 8, "dts": 8, "mp2": 5,
+    "wma": 6, "wmav2": 6, "real_audio": 3,
+    "": 0, "unknown": 0, "?": 0
+}
+codec_score = codec_scores.get(acodec.lower(), 5)
+
+# Bitrate score (kbps)
+abr_kbps = abr // 1000 if abr > 0 else 0
+if abr_kbps >= 256: br_score = 10
+elif abr_kbps >= 192: br_score = 9
+elif abr_kbps >= 128: br_score = 8
+elif abr_kbps >= 96: br_score = 6
+elif abr_kbps >= 64: br_score = 4
+elif abr_kbps > 0: br_score = 2
+else: br_score = 5  # unknown
+
+# Sample rate score
+if sr >= 48000: sr_score = 10
+elif sr >= 44100: sr_score = 9
+elif sr >= 32000: sr_score = 7
+elif sr >= 22050: sr_score = 5
+elif sr > 0: sr_score = 2
+else: sr_score = 5  # unknown
+
+# Bandwidth score (max audio freq in Hz)
+if bw >= 18000: bw_score = 10
+elif bw >= 15000: bw_score = 9
+elif bw >= 12000: bw_score = 7
+elif bw >= 8000: bw_score = 4
+elif bw > 0: bw_score = 2
+else: bw_score = 5  # unknown
+
+# Weighted total
+total = (codec_score * 0.25 + br_score * 0.25 + sr_score * 0.2 + bw_score * 0.3)
+
+# Grade
+if total >= 9.5: grade = "A+"
+elif total >= 9.0: grade = "A"
+elif total >= 8.5: grade = "A-"
+elif total >= 8.0: grade = "B+"
+elif total >= 7.5: grade = "B"
+elif total >= 7.0: grade = "B-"
+elif total >= 6.5: grade = "C+"
+elif total >= 6.0: grade = "C"
+elif total >= 5.5: grade = "C-"
+elif total >= 5.0: grade = "D"
+else: grade = "F"
+
+# Description
+if total >= 8.5:
+    desc = "excellent"
+elif total >= 7.5:
+    desc = "good"
+elif total >= 6.5:
+    desc = "acceptable"
+elif total >= 5.0:
+    desc = "low quality"
+else:
+    desc = "poor"
+
+# Bandwidth label
+if bw > 0:
+    if bw >= 18000: bw_label = f"{bw/1000:.0f}kHz (hi-fi)"
+    elif bw >= 15000: bw_label = f"{bw/1000:.0f}kHz (good)"
+    elif bw >= 12000: bw_label = f"{bw/1000:.0f}kHz (FM radio)"
+    elif bw >= 8000: bw_label = f"{bw/1000:.0f}kHz (AM radio)"
+    else: bw_label = f"{bw/1000:.0f}kHz (phone quality)"
+else:
+    bw_label = "unknown"
+
+# Bitrate label
+if abr_kbps > 0:
+    br_label = f"{abr_kbps}kbps"
+else:
+    br_label = "unknown"
+
+# Build output
+out.append(f"🎵 Source: {grade} ({desc})")
+out.append(f"   Codec: {acodec.upper()} | Bitrate: {br_label} | SR: {sr}Hz | Bandwidth: {bw_label}")
+if bw > 0 and bw < 10000:
+    out.append(f"   ⚠️ Audio bandwidth rendah — kualitas terbatas")
+
+print("\n".join(out))
+PYEOF
+    )
+  echo "SOURCE_QUALITY<<RUSEMEVA_EOF" >> $GITHUB_ENV
+  echo "$SOURCE_QUALITY" >> $GITHUB_ENV
+  echo "RUSEMEVA_EOF" >> $GITHUB_ENV
   # === BITRATE VARIANCE SPARKLINE (packet metadata, no decode) ===
   BITRATE_SPARK=""
   if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then

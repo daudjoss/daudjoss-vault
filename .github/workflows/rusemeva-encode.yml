@@ -522,6 +522,7 @@ jobs:
           EFFICIENCY_TEXT: ${{ env.EFFICIENCY_TEXT || '' }}
           BITRATE_SPARK: ${{ env.BITRATE_SPARK || '' }}
           HEVC_SKIP: ${{ env.HEVC_SKIP || '0' }}
+          SOURCE_QUALITY: ${{ env.SOURCE_QUALITY || '' }}
           TG_API_URL: 'http://localhost:8081'
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
           HEVC_SPLIT: ${{ env.HEVC_SPLIT || '0' }}

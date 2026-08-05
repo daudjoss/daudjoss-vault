@@ -140,8 +140,20 @@ def bitrate_spark_block():
         block += f"  {lines[1]}\n"
     return block
 
+# === SOURCE QUALITY RATING ===
+source_quality = os.environ.get("SOURCE_QUALITY", "").strip()
 
-release_url = f"https://github.com/{repo}/releases/tag/{tag}" if tag else ""
+def source_quality_block():
+    """Format source quality rating untuk caption Telegram."""
+    if not source_quality:
+        return ""
+    lines = [l.strip() for l in source_quality.split("\n") if l.strip()]
+    if not lines:
+        return ""
+    block = "\n\n" + "\n".join(f"  {l}" for l in lines) + "\n"
+    return block
+
+release_url
 run_url = f"{server_url}/{repo}/actions/runs/{run_id}" if run_id else ""
 
 # Default ke local Bot API Server (allow 2GB). Token disisipkan di path /bot<TOKEN>.
@@ -389,6 +401,7 @@ if job_status == "success":
                 f"{loudness_block()}"
                 f"{efficiency_block()}"
                 f"{bitrate_spark_block()}"
+                f"{source_quality_block()}"
             )
             send_video_with_fallback(hevc_file, caption_hevc, hevc_thumb_path)
         elif os.environ.get("HEVC_SPLIT", "0") == "1" and hevc_file:
