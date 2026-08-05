@@ -74,10 +74,10 @@ PYEOF
     )
     rm -f "$LOUDNORM_PROBE" 2>/dev/null || true
     if [ -n "$LOUDNORM_MEASURED" ]; then
-      echo "🔊 Turbo audio normalize pass 2 (compressor + loudnorm + limiter)..."
+      echo "🔊 Turbo audio normalize pass 2 (lowshelf + compressor + loudnorm + limiter)..."
       "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
         -c:v copy \
-        -af "highpass=f=50,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50" \
+        -af "highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50" \
         -c:a aac -b:a 128k \
         "$HEVC_FILE" 2>/dev/null || true
     fi
@@ -244,8 +244,9 @@ if [ -n "${VF_LIVE:-}" ]; then
   LIVE_VF_ARGS=(-vf "$VF_LIVE")
 fi
 # === AUDIO NORMALIZATION + DYNAMIC COMPRESSION (film-quality) ===
-# Chain: highpass(50Hz) → acompressor → loudnorm(two-pass) → alimiter
+# Chain: highpass(50Hz) → lowshelf(+3dB bass) → acompressor → loudnorm(two-pass) → alimiter
 # - highpass: buang mains hum 50Hz
+# - lowshelf: boost bass 100-200Hz +3dB biar suara warm/full kayak film
 # - acompressor: kompres dynamic range, dialog lebih jelas, iklan tidak ledak
 # - loudnorm: EBU R128 target -16 LUFS
 # - alimiter: hard cap true peak, anti-clipping
@@ -280,10 +281,10 @@ except:
 PYEOF
     )
   if [ -n "$LOUDNORM_MEASURED" ]; then
-    # Full chain: highpass → compressor → loudnorm(pass2) → limiter
-    AUDIO_AF="-af highpass=f=50,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
+    # Full chain: highpass → lowshelf → compressor → loudnorm(pass2) → limiter
+    AUDIO_AF="-af highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
     AUDIO_ENC="-c:a aac -b:a 128k"
-    echo "🔊 Audio chain: highpass(50Hz) → compressor(3:1) → loudnorm(-16 LUFS) → limiter(0.85)"
+    echo "🔊 Audio chain: highpass(50Hz) → lowshelf(+3dB) → compressor(3:1) → loudnorm(-16 LUFS) → limiter(0.85)"
   else
     echo "⚠️ Loudnorm probe gagal — copy audio as-is"
   fi
