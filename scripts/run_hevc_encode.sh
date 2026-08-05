@@ -346,6 +346,60 @@ if [ -s "$HEVC_FILE" ]; then
   "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$HSEEK" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
   [ ! -s "$HEVC_THUMB" ] && "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss 1 -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
   if [ -s "$HEVC_THUMB" ]; then echo "HEVC_THUMB_FILE=$HEVC_THUMB" >> $GITHUB_ENV; echo "HAS_HEVC_THUMB=1" >> $GITHUB_ENV; else echo "HAS_HEVC_THUMB=0" >> $GITHUB_ENV; fi
+  # === ANOMALY REPORT (freeze + silence detection, decode-only) ===
+  ANOMALY_LOG="/tmp/rusemeva_anomaly.log"
+  : > "$ANOMALY_LOG"
+  ANOMALY_TEXT=""
+  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then
+    echo "🔍 Anomaly detection (freeze + silence)..."
+    timeout 180 "$FFMPEG_STATIC" -hide_banner -nostats -i "$HEVC_FILE" \
+      -vf "freezedetect=d=2:noise=0.003" \
+      -af "silencedetect=n=-30dB:d=3" \
+      -f null - 2>>"$ANOMALY_LOG" || true
+    ANOMALY_TEXT=$(python3 - "$ANOMALY_LOG" "$HDUR_INT" <<'PYEOF'
+import re, sys
+log_path, dur_s = sys.argv[1], int(sys.argv[2]) if len(sys.argv)>2 else 0
+freezes, silences = [], []
+sil_start = None
+try:
+    with open(log_path) as f:
+        for line in f:
+            m = re.search(r'freeze_start:\s*([\d.]+)', line)
+            if m:
+                fs = float(m.group(1))
+                md = re.search(r'freeze_duration:\s*([\d.]+)', line)
+                freezes.append((fs, float(md.group(1)) if md else 0))
+            m = re.search(r'silence_start:\s*([\d.]+)', line)
+            if m: sil_start = float(m.group(1))
+            m = re.search(r'silence_end:\s*([\d.]+)', line)
+            if m and sil_start is not None:
+                silences.append((sil_start, float(m.group(1)) - sil_start))
+                sil_start = None
+except: pass
+def ts(s):
+    s=int(s); h,r=divmod(s,3600); m,s=divmod(r,60)
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
+out = []
+if freezes:
+    tot = sum(d for _,d in freezes)
+    entries = ", ".join(f"{ts(t)} ({int(d)}s)" for t,d in freezes[:8])
+    extra = f" +{len(freezes)-8} more" if len(freezes)>8 else ""
+    out.append(f"⚠️ Freeze: {entries}{extra} (total {int(tot)}s)")
+else:
+    out.append("✅ No freeze")
+if silences:
+    entries = ", ".join(f"{ts(t)} ({int(d)}s)" for t,d in silences[:8])
+    extra = f" +{len(silences)-8} more" if len(silences)>8 else ""
+    out.append(f"🔇 Silence: {entries}{extra}")
+else:
+    out.append("✅ Audio present (no silence)")
+print("\n".join(out))
+PYEOF
+    )
+  fi
+  echo "ANOMALY_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
+  echo "$ANOMALY_TEXT" >> $GITHUB_ENV
+  echo "RUSEMEVA_EOF" >> $GITHUB_ENV
   # === #7 KALIBRASI: hitung realtime_x aktual & kirim ke worker (KV) ===
   ENC_ELAPSED=$(( SECONDS - ENC_START ))
   echo "ENC_ELAPSED=$ENC_ELAPSED" >> $GITHUB_ENV
