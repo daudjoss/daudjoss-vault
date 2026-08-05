@@ -545,12 +545,19 @@ PYEOF
     )
     rm -f "$VERIFY_LOG" 2>/dev/null || true
     if [ -n "$VERIFY_LUFS" ]; then
-      VERIFY_INT=$(awk "BEGIN{printf \"%d\", $VERIFY_LUFS}")
+      DIFF_INFO=$(python3 - "$VERIFY_LUFS" <<'PYEOF'
+import sys
+v = float(sys.argv[1])
+target = -16
+diff = v - target
+diff_abs = abs(diff)
+print(f"{diff_abs:.1f}")
+PYEOF
+      )
       DIFF=$(awk "BEGIN{printf \"%.1f\", $VERIFY_LUFS - (-16)}")
-      DIFF_ABS=$(awk "BEGIN{printf \"%.1f\", $VERIFY_LUFS - (-16)}; if ($VERIFY_LUFS < -16) print (-16) - $VERIFY_LUFS; else print $VERIFY_LUFS - (-16)")
       echo "🔊 Post-encode loudness: ${VERIFY_LUFS} LUFS (target -16, diff ${DIFF})"
       # If meleset >0.5 LUFS, re-normalize
-      if awk "BEGIN{exit !($DIFF_ABS > 0.5)}"; then
+      if awk "BEGIN{exit !($DIFF_INFO > 0.5)}"; then
         echo "⚠️ Loudness meleset ${DIFF} LUFS — re-normalizing..."
         RENORM_SCRIPT="/tmp/rusemeva_renorm_filter.txt"
         cat > "$RENORM_SCRIPT" << RENORM_EOF
@@ -563,8 +570,8 @@ RENORM_EOF
         if [ -s "$RENORM_FILE" ]; then
           mv -f "$RENORM_FILE" "$HEVC_FILE"
           echo "✅ Re-normalized to -16 LUFS"
-          # Update loudness report with verified value
-          LOUDNESS_TEXT=$(echo "$LOUDNESS_TEXT" | sed "s/-[0-9.]* LUFS/${VERIFY_LUFS} LUFS (verified)/")
+          # Update loudness report with verified value (only first occurrence)
+          LOUDNESS_TEXT=$(echo "$LOUDNESS_TEXT" | sed "1s/-[0-9.]* LUFS/${VERIFY_LUFS} LUFS (verified)/")
         else
           echo "⚠️ Re-normalization failed, keeping original"
         fi
