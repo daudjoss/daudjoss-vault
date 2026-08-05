@@ -723,15 +723,40 @@ PYEOF
   SRC_ACODEC=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
   SRC_ABR=$(ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
   SRC_SR=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
-  # Bandwidth detection (spectral centroid ×2 from 60s sample)
+  # Bandwidth detection via sample_rate/2 (Nyquist) — accurate for digital audio
   SRC_BW=""
   if [ "${SRC_DUR_INT:-0}" -ge 30 ] 2>/dev/null; then
-    SRC_BW=$(timeout 30 "$FFMPEG_STATIC" -hide_banner -nostats -t 60 -i "$FILE" \
-      -af "aspectralstats=win_size=2048,ametadata=print:key=lavfi.aspectralstats.1.centroid:file=-" \
-      -f null - 2>/dev/null | grep "lavfi.aspectralstats.1.centroid" | sed 's/.*=//' | head -1 || true)
-    if [ -n "$SRC_BW" ]; then
-      SRC_BW=$(awk "BEGIN{printf \"%.0f\", $SRC_BW * 2}")
-    fi
+    # Effective bandwidth = min(sample_rate/2, codec cutoff)
+    # AAC: ~15kHz @128k, ~18kHz @192k+; AC3: ~20kHz; MP2: ~12kHz
+    SRC_BW=$(python3 - "$SRC_ACODEC" "$SRC_ABR" "$SRC_SR" <<'PYEOF'
+import sys
+acodec = (sys.argv[1] or "").lower()
+abr = int(sys.argv[2]) if sys.argv[2].isdigit() else 0
+sr = int(sys.argv[3]) if sys.argv[3].isdigit() else 0
+nyquist = sr / 2 if sr > 0 else 0
+# Codec-specific max bandwidth (empirical, conservative)
+if acodec in ("flac", "pcm_s16le", "pcm_s24le", "pcm", "wav"):
+    bw = nyquist  # lossless = full Nyquist
+elif acodec == "aac":
+    if abr >= 192000: bw = min(18000, nyquist)
+    elif abr >= 128000: bw = min(15000, nyquist)
+    elif abr >= 96000: bw = min(12000, nyquist)
+    else: bw = min(8000, nyquist)
+elif acodec == "mp3":
+    if abr >= 192000: bw = min(16000, nyquist)
+    elif abr >= 128000: bw = min(14000, nyquist)
+    else: bw = min(10000, nyquist)
+elif acodec in ("ac3", "eac3"):
+    bw = min(20000, nyquist)
+elif acodec == "mp2":
+    bw = min(12000, nyquist)
+elif acodec == "opus":
+    bw = min(20000, nyquist)
+else:
+    bw = nyquist  # unknown → assume full
+print(f"{bw:.0f}" if bw > 0 else "0")
+PYEOF
+    )
   fi
   SOURCE_QUALITY=$(python3 - "$SRC_ACODEC" "$SRC_ABR" "$SRC_SR" "$SRC_BW" <<'PYEOF'
 import sys
