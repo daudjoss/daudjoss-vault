@@ -39,8 +39,8 @@ ORIG_TOTAL_BPS=$(probe_bitrate "$FILE" || echo 0)
 HEVC_SKIP=0
 if [ "${ORIG_TOTAL_BPS:-0}" -gt 0 ] 2>/dev/null && [ "${ORIG_TOTAL_BPS:-0}" -le 1500000 ] 2>/dev/null; then
   HEVC_SKIP=1
-  ORIG_MB=$(( ORIG_TOTAL_BPS / 125000 ))
-  ORIG_TENTH=$(( (ORIG_TOTAL_BPS / 125000) % 10 ))
+  ORIG_MB=$(( ORIG_TOTAL_BPS / 1000000 ))
+  ORIG_TENTH=$(( (ORIG_TOTAL_BPS / 100000) % 10 ))
   echo "⏭️ Original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps) — skip HEVC video encode"
   CHAT_ID="$CHAT_ID" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" python3 scripts/send_message.py \
     "⏭️ <b>HEVC skip</b> — original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps). Audio tetap di-normalize." || true
