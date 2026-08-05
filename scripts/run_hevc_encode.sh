@@ -148,8 +148,8 @@ if [ "$SRC_DUR_INT" -ge 60 ] 2>/dev/null; then
       SCENE_LABEL="normal"
     fi
     HEVC_CRF=$(( BASE_CRF + SCENE_DELTA ))
-    [ "$HEVC_CRF" -lt 22 ] && HEVC_CRF=22
-    [ "$HEVC_CRF" -gt 28 ] && HEVC_CRF=28
+    [ "$HEVC_CRF" -lt "${MIN_CRF:-22}" ] && HEVC_CRF=${MIN_CRF:-22}
+    [ "$HEVC_CRF" -gt "${MAX_CRF:-28}" ] && HEVC_CRF=${MAX_CRF:-28}
     echo "🧠 Scene-aware: ${SCENE_LABEL} → CRF ${BASE_CRF} + (${SCENE_DELTA}) = ${HEVC_CRF}"
     if [ "$HEVC_CRF" != "$BASE_CRF" ]; then
       CHAT_ID="$CHAT_ID" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" python3 scripts/send_message.py \
@@ -309,6 +309,7 @@ fi
       ms=${v%.*}
       [ "$ms" -gt 0 ] 2>/dev/null || continue
       cur=$(( ms / 1000000 ))
+      [ "${SRC_DUR_INT:-0}" -gt 0 ] 2>/dev/null || continue
       pct=$(( (cur * 100) / SRC_DUR_INT )); [ "$pct" -gt 100 ] && pct=100
       if [ "$pct" != "$LAST_PCT" ]; then
         LAST_PCT=$pct
@@ -318,6 +319,12 @@ fi
     fi
   done) \
   > "$HEVC_LOG" 2>&1
+  ENC_RC=$?
+  if [ "${ENC_RC:-0}" -ne 0 ] && [ ! -s "$HEVC_FILE" ]; then
+    echo "❌ First encode failed (rc=$ENC_RC)"
+    tail -n 30 "$HEVC_LOG" 2>/dev/null || true
+    exit 1
+  fi
 echo "🔄 HEVC encode 100%"
 CHAT_ID="$CHAT_ID" FILENAME="$FILE" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" PROGRESS_MSG_FILE=/tmp/rusemeva_progress_msg_id python3 scripts/progress.py done || true
 
@@ -374,7 +381,11 @@ if [ -s "$HEVC_FILE" ]; then
         break
       fi
       PHASE_NOTE="auto-size"
-      try=$((try + 1))
+        try=$((try + 1))
+        if [ "$try" -gt 5 ]; then
+          echo "⚠️ Max auto-size retries (5) reached at CRF $CUR_CRF — accept current"
+          break
+        fi
     fi
     CUR_CRF=$NEXT_CRF
     HEVC_CRF=$CUR_CRF
@@ -397,6 +408,7 @@ if [ -s "$HEVC_FILE" ]; then
           ms=${v%.*}
           [ "$ms" -gt 0 ] 2>/dev/null || continue
           cur=$(( ms / 1000000 ))
+          [ "${SRC_DUR_INT:-0}" -gt 0 ] 2>/dev/null || continue
           pct=$(( (cur * 100) / SRC_DUR_INT )); [ "$pct" -gt 100 ] && pct=100
           if [ "$pct" != "$LAST_PCT" ]; then
             LAST_PCT=$pct
