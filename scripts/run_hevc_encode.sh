@@ -445,9 +445,9 @@ try:
     tp = float(d.get("input_tp", "0") or "0")
     lra = float(d.get("input_lra", "0") or "0")
     out = []
-    if lufs < -30:
-        out.append(f"⚠️ {lufs:.1f} LUFS — terlalu pelan")
-    elif lufs > -13:
+    if lufs < -20:
+        out.append(f"⚠️ {lufs:.1f} LUFS — terlalu pelan (target -16)")
+    elif lufs > -12:
         out.append(f"⚠️ {lufs:.1f} LUFS — terlalu keras (target -16)")
     else:
         out.append(f"✅ {lufs:.1f} LUFS (target -16)")
