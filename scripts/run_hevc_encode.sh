@@ -427,8 +427,8 @@ try:
     out = []
     if lufs < -30:
         out.append(f"⚠️ {lufs:.1f} LUFS — terlalu pelan")
-    elif lufs > -8:
-        out.append(f"⚠️ {lufs:.1f} LUFS — terlalu keras")
+    elif lufs > -13:
+        out.append(f"⚠️ {lufs:.1f} LUFS — terlalu keras (target -16)")
     else:
         out.append(f"✅ {lufs:.1f} LUFS (target -16)")
     if tp > 0:
@@ -456,7 +456,12 @@ dur = int(sys.argv[3]) if len(sys.argv) > 3 else 0
 bps = sys.argv[4]
 out = []
 ratio = (1 - hevc / orig) * 100 if orig > 0 else 0
-out.append(f"📊 Compression: {ratio:.0f}% smaller ({orig/1048576:.0f}MB → {hevc/1048576:.0f}MB)")
+if ratio < 0:
+    out.append(f"⚠️ HEVC {abs(ratio):.0f}% LARGER ({orig/1048576:.0f}MB → {hevc/1048576:.0f}MB)")
+elif ratio < 10:
+    out.append(f"📉 Compression: {ratio:.0f}% smaller ({orig/1048576:.0f}MB → {hevc/1048576:.0f}MB) — minimal")
+else:
+    out.append(f"📊 Compression: {ratio:.0f}% smaller ({orig/1048576:.0f}MB → {hevc/1048576:.0f}MB)")
 try:
     br = float(bps) / 1000000
 except:
