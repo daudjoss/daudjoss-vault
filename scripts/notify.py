@@ -153,7 +153,7 @@ def source_quality_block():
     block = "\n\n" + "\n".join(f"  {l}" for l in lines) + "\n"
     return block
 
-release_url
+release_url = f"{server_url}/{repo}/releases/tag/{tag}" if tag and repo else ""
 run_url = f"{server_url}/{repo}/actions/runs/{run_id}" if run_id else ""
 
 # Default ke local Bot API Server (allow 2GB). Token disisipkan di path /bot<TOKEN>.
@@ -336,7 +336,7 @@ if job_status == "success":
     # --- Phase original: kirim video ORIGINAL (asli, tidak diubah) ---
     # Kalau original > 2GB (limit Bot API 2GB), dilewati — HEVC di-encode terpisah & dikirim JIKA sukses.
     if phase in ("original", "both"):
-        req_h = os.environ.get("HUMAN_DUR") or os.environ.get("REQUESTED_HUMAN") or human_dur
+        human_dur = os.environ.get("HUMAN_DUR") or human_dur
         stop_r = os.environ.get("STOP_REASON") or ""
         stop_line = f"\n📌 Stop: <code>{stop_r}</code>" if stop_r else ""
         caption_orig = (
