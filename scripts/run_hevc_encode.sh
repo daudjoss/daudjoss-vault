@@ -200,12 +200,59 @@ LIVE_VF_ARGS=()
 if [ -n "${VF_LIVE:-}" ]; then
   LIVE_VF_ARGS=(-vf "$VF_LIVE")
 fi
+# === AUDIO NORMALIZATION (two-pass loudnorm, film-quality) ===
+# Pass 1: probe loudness → get measured values
+# Pass 2: apply dynamic loudnorm with measured values for film-grade audio
+AUDIO_AF=""
+AUDIO_ENC="-c:a copy"
+if [ "${SRC_DUR_INT:-0}" -ge 30 ] 2>/dev/null; then
+  echo "🔊 Audio normalization probe (loudnorm pass 1)..."
+  LOUDNORM_PROBE="/tmp/rusemeva_loudnorm_probe.log"
+  timeout 120 "$FFMPEG_STATIC" -hide_banner -nostats -i "$FILE" \
+    -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \
+    -f null - 2>"$LOUDNORM_PROBE" || true
+  # Parse measured values → build pass-2 filter string
+  LOUDNORM_MEASURED=$(python3 - "$LOUDNORM_PROBE" <<'PYEOF'
+import json, re, sys
+try:
+    with open(sys.argv[1]) as f:
+        log = f.read()
+    m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', log, re.DOTALL)
+    if not m:
+        sys.exit(0)
+    d = json.loads(m.group(0))
+    i = d.get("input_i", "").strip()
+    tp = d.get("input_tp", "").strip()
+    lra = d.get("input_lra", "").strip()
+    thresh = d.get("input_thresh", "").strip()
+    o = d.get("output_i", "").strip()
+    otp = d.get("output_tp", "").strip()
+    olra = d.get("output_lra", "").strip()
+    othresh = d.get("output_thresh", "").strip()
+    ot = d.get("offset", "0").strip() or "0"
+    if i and tp and lra:
+        # Build measured_* params for pass-2 (linear normalization)
+        print(f"measured_I={i}:measured_TP={tp}:measured_LRA={lra}:measured_thresh={thresh}:offset={ot}:linear=true:I=-16:TP=-1.5:LRA=11")
+except:
+    pass
+PYEOF
+    )
+  if [ -n "$LOUDNORM_MEASURED" ]; then
+    AUDIO_AF="-af loudnorm=$LOUDNORM_MEASURED"
+    AUDIO_ENC="-c:a aac -b:a 128k"
+    echo "🔊 Audio normalization enabled (target -16 LUFS, TP -1.5 dBTP)"
+  else
+    echo "⚠️ Loudnorm probe gagal — copy audio as-is"
+  fi
+  rm -f "$LOUDNORM_PROBE" 2>/dev/null || true
+fi
 "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
   "${LIVE_VF_ARGS[@]}" \
+  $AUDIO_AF \
   -c:v libx265 -profile:v main10 -pix_fmt yuv420p10le \
   -crf ${HEVC_CRF} -preset ${HEVC_PRESET} -maxrate ${MAXRATE_K:-1450}k -bufsize ${BUFSIZE_K:-2900}k \
   -x265-params "${X265_PARAMS}" -tag:v hvc1 \
-  -c:a copy -progress pipe:3 "$HEVC_FILE" \
+  $AUDIO_ENC -progress pipe:3 "$HEVC_FILE" \
   3> >(while IFS='=' read -r k v; do
     if [ "$k" = "out_time_ms" ]; then
       ms=${v%.*}
@@ -289,10 +336,11 @@ if [ -s "$HEVC_FILE" ]; then
     LAST_PCT=-1
     "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
       ${LIVE_VF_ARGS[@]+"${LIVE_VF_ARGS[@]}"} \
+      $AUDIO_AF \
       -c:v libx265 -profile:v main10 -pix_fmt yuv420p10le \
       -crf ${CUR_CRF} -preset ${HEVC_PRESET} -maxrate ${MAXRATE_K:-1450}k -bufsize ${BUFSIZE_K:-2900}k \
       -x265-params "${X265_PARAMS:-aq-mode=3:aq-strength=1.0}" -tag:v hvc1 \
-      -c:a copy -progress pipe:3 "$HEVC_FILE" \
+      $AUDIO_ENC -progress pipe:3 "$HEVC_FILE" \
       3> >(while IFS='=' read -r k v; do
         if [ "$k" = "out_time_ms" ]; then
           ms=${v%.*}
