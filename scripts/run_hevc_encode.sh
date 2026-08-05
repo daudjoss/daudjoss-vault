@@ -547,11 +547,12 @@ PYEOF
     if [ -n "$VERIFY_LUFS" ]; then
       DIFF_INFO=$(python3 - "$VERIFY_LUFS" <<'PYEOF'
 import sys
-v = float(sys.argv[1])
-target = -16
-diff = v - target
-diff_abs = abs(diff)
-print(f"{diff_abs:.1f}")
+try:
+    v = float(sys.argv[1])
+    diff_abs = abs(v - (-16))
+    print(f"{diff_abs:.1f}")
+except (ValueError, IndexError):
+    print("0.0")
 PYEOF
       )
       DIFF=$(awk "BEGIN{printf \"%.1f\", $VERIFY_LUFS - (-16)}")
@@ -572,6 +573,7 @@ RENORM_EOF
           echo "✅ Re-normalized to -16 LUFS"
           # Update loudness report with verified value (only first occurrence)
           LOUDNESS_TEXT=$(echo "$LOUDNESS_TEXT" | sed "1s/-[0-9.]* LUFS/${VERIFY_LUFS} LUFS (verified)/")
+          RENORM_DONE=1
         else
           echo "⚠️ Re-normalization failed, keeping original"
         fi
@@ -634,6 +636,8 @@ PYEOF
   echo "$ANOMALY_TEXT" >> $GITHUB_ENV
   echo "RUSEMEVA_EOF" >> $GITHUB_ENV
   # === LOUDNESS REPORT (LUFS, 2-min sample dari tengah video) ===
+  # If post-encode verification already re-normalized, skip probe — already verified
+  if [ "${RENORM_DONE:-0}" != "1" ]; then
   LOUDNESS_LOG="/tmp/rusemeva_loudness.log"
   : > "$LOUDNESS_LOG"
   LOUDNESS_TEXT=""
@@ -677,6 +681,7 @@ PYEOF
   echo "LOUDNESS_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
   echo "$LOUDNESS_TEXT" >> $GITHUB_ENV
   echo "RUSEMEVA_EOF" >> $GITHUB_ENV
+  fi  # RENORM_DONE guard
   # === ENCODE EFFICIENCY SCORE ===
   EFFICIENCY_TEXT=""
   HEVC_BYTES_F=$(stat -c%s "$HEVC_FILE" 2>/dev/null || wc -c < "$HEVC_FILE")
@@ -718,12 +723,15 @@ PYEOF
   SRC_ACODEC=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
   SRC_ABR=$(ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
   SRC_SR=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
-  # Bandwidth detection (max audio frequency, 2-min sample)
+  # Bandwidth detection (spectral centroid ×2 from 60s sample)
   SRC_BW=""
   if [ "${SRC_DUR_INT:-0}" -ge 30 ] 2>/dev/null; then
-    SRC_BW=$(timeout 30 "$FFMPEG_STATIC" -hide_banner -nostats -t 60 -i "$FILE" -af "astats=metadata=1:reset=0,ametadata=print:key=lavfi.astats.Overall.Peak_level:file=-:csv=p=0" -f null - 2>/dev/null | grep -oP '[-\d.]+' | head -1 || true)
-    # Use spectrastats for max frequency instead
-    SRC_BW=$(timeout 30 "$FFMPEG_STATIC" -hide_banner -nostats -t 60 -i "$FILE" -af "aspectralstats=win_size=2048:overlap=0.75:measure=max_frequency,ametadata=print:key=lavfi.aspectralstats.max_frequency.mean:file=-:csv=p=0" -f null - 2>/dev/null | grep -oP '[\d.]+' | head -1 || true)
+    SRC_BW=$(timeout 30 "$FFMPEG_STATIC" -hide_banner -nostats -t 60 -i "$FILE" \
+      -af "aspectralstats=win_size=2048,ametadata=print:key=lavfi.aspectralstats.1.centroid:file=-" \
+      -f null - 2>/dev/null | grep "lavfi.aspectralstats.1.centroid" | sed 's/.*=//' | head -1 || true)
+    if [ -n "$SRC_BW" ]; then
+      SRC_BW=$(awk "BEGIN{printf \"%.0f\", $SRC_BW * 2}")
+    fi
   fi
   SOURCE_QUALITY=$(python3 - "$SRC_ACODEC" "$SRC_ABR" "$SRC_SR" "$SRC_BW" <<'PYEOF'
 import sys
