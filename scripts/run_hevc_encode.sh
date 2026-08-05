@@ -400,6 +400,131 @@ PYEOF
   echo "ANOMALY_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
   echo "$ANOMALY_TEXT" >> $GITHUB_ENV
   echo "RUSEMEVA_EOF" >> $GITHUB_ENV
+  # === LOUDNESS REPORT (LUFS, 2-min sample dari tengah video) ===
+  LOUDNESS_LOG="/tmp/rusemeva_loudness.log"
+  : > "$LOUDNESS_LOG"
+  LOUDNESS_TEXT=""
+  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then
+    echo "🔊 Loudness probe (2-min sample)..."
+    MID=$(( HDUR_INT / 2 ))
+    [ "$MID" -ge "$HDUR_INT" ] && MID=0
+    timeout 90 "$FFMPEG_STATIC" -hide_banner -nostats -ss "$MID" -t 120 -i "$HEVC_FILE" \
+      -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \
+      -f null - 2>>"$LOUDNESS_LOG" || true
+    LOUDNESS_TEXT=$(python3 - "$LOUDNESS_LOG" <<'PYEOF'
+import json, re, sys
+log_path = sys.argv[1]
+try:
+    with open(log_path) as f:
+        log = f.read()
+    m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', log, re.DOTALL)
+    if not m:
+        sys.exit(0)
+    d = json.loads(m.group(0))
+    lufs = float(d.get("input_i", "0") or "0")
+    tp = float(d.get("input_tp", "0") or "0")
+    lra = float(d.get("input_lra", "0") or "0")
+    out = []
+    if lufs < -30:
+        out.append(f"⚠️ {lufs:.1f} LUFS — terlalu pelan")
+    elif lufs > -8:
+        out.append(f"⚠️ {lufs:.1f} LUFS — terlalu keras")
+    else:
+        out.append(f"✅ {lufs:.1f} LUFS (target -16)")
+    if tp > 0:
+        out.append(f"⚠️ True peak {tp:.1f} dBTP — clipping")
+    if lra > 15:
+        out.append(f"⚠️ LRA {lra:.1f} dB — dynamic range tinggi")
+    print("\n".join(out))
+except:
+    pass
+PYEOF
+    )
+  fi
+  echo "LOUDNESS_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
+  echo "$LOUDNESS_TEXT" >> $GITHUB_ENV
+  echo "RUSEMEVA_EOF" >> $GITHUB_ENV
+  # === ENCODE EFFICIENCY SCORE ===
+  EFFICIENCY_TEXT=""
+  HEVC_BYTES_F=$(stat -c%s "$HEVC_FILE" 2>/dev/null || wc -c < "$HEVC_FILE")
+  if [ "${ORIG_BYTES:-0}" -gt 0 ] && [ "${HEVC_BYTES_F:-0}" -gt 0 ]; then
+    EFFICIENCY_TEXT=$(python3 - "$ORIG_BYTES" "$HEVC_BYTES_F" "$HDUR_INT" "$HBR" <<'PYEOF'
+import sys
+orig = int(sys.argv[1])
+hevc = int(sys.argv[2])
+dur = int(sys.argv[3]) if len(sys.argv) > 3 else 0
+bps = sys.argv[4]
+out = []
+ratio = (1 - hevc / orig) * 100 if orig > 0 else 0
+out.append(f"📊 Compression: {ratio:.0f}% smaller ({orig/1048576:.0f}MB → {hevc/1048576:.0f}MB)")
+try:
+    br = float(bps) / 1000000
+except:
+    br = 0
+if dur > 0 and br > 0:
+    if br < 0.8:
+        out.append(f"📉 {br:.1f} Mbps — low (blur risk)")
+    elif br > 2.5:
+        out.append(f"📈 {br:.1f} Mbps — high (overkill)")
+    else:
+        out.append(f"✅ {br:.1f} Mbps — optimal for 720p10bit")
+print("\n".join(out))
+PYEOF
+    )
+  fi
+  echo "EFFICIENCY_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
+  echo "$EFFICIENCY_TEXT" >> $GITHUB_ENV
+  echo "RUSEMEVA_EOF" >> $GITHUB_ENV
+  # === BITRATE VARIANCE SPARKLINE (packet metadata, no decode) ===
+  BITRATE_SPARK=""
+  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then
+    echo "📈 Bitrate variance probe..."
+    timeout 60 ffprobe -v error -select_streams v:0 \
+      -show_entries packet=pts_time,size -of json "$HEVC_FILE" \
+      > /tmp/rusemeva_packets.json 2>/dev/null || true
+    BITRATE_SPARK=$(python3 - /tmp/rusemeva_packets.json "$HDUR_INT" <<'PYEOF'
+import json, sys
+pkt_path = sys.argv[1]
+dur = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+try:
+    with open(pkt_path) as f:
+        data = json.load(f)
+    packets = data.get("packets", [])
+    if not packets or dur <= 0:
+        sys.exit(0)
+    bucket_sec = max(30, dur // 40)
+    n_buckets = max(1, dur // bucket_sec)
+    buckets = [0.0] * n_buckets
+    for p in packets:
+        try:
+            t = float(p.get("pts_time", 0))
+            sz = int(p.get("size", 0))
+        except:
+            continue
+        idx = int(t // bucket_sec)
+        if 0 <= idx < n_buckets:
+            buckets[idx] += sz
+    kbuckets = [(b * 8 / bucket_sec / 1000) for b in buckets]
+    if not kbuckets or max(kbuckets) == 0:
+        sys.exit(0)
+    blocks = "▁▂▃▄▅▆▇█"
+    mn, mx = min(kbuckets), max(kbuckets)
+    if mx > mn:
+        spark = "".join(blocks[min(7, int((v - mn) / (mx - mn) * 7))] for v in kbuckets)
+    else:
+        spark = blocks[4] * len(kbuckets)
+    avg = sum(kbuckets) / len(kbuckets)
+    print(spark)
+    print(f"min {mn:.0f}k / max {mx:.0f}k / avg {avg:.0f}k kbps")
+except:
+    pass
+PYEOF
+    )
+    rm -f /tmp/rusemeva_packets.json 2>/dev/null || true
+  fi
+  echo "BITRATE_SPARK<<RUSEMEVA_EOF" >> $GITHUB_ENV
+  echo "$BITRATE_SPARK" >> $GITHUB_ENV
+  echo "RUSEMEVA_EOF" >> $GITHUB_ENV
   # === #7 KALIBRASI: hitung realtime_x aktual & kirim ke worker (KV) ===
   ENC_ELAPSED=$(( SECONDS - ENC_START ))
   echo "ENC_ELAPSED=$ENC_ELAPSED" >> $GITHUB_ENV

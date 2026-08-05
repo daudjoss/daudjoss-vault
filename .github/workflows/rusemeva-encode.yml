@@ -518,6 +518,9 @@ jobs:
           HEVC_THUMB_FILE: ${{ env.HEVC_THUMB_FILE }}
           HAS_HEVC_THUMB: ${{ env.HAS_HEVC_THUMB }}
           ANOMALY_TEXT: ${{ env.ANOMALY_TEXT || '' }}
+          LOUDNESS_TEXT: ${{ env.LOUDNESS_TEXT || '' }}
+          EFFICIENCY_TEXT: ${{ env.EFFICIENCY_TEXT || '' }}
+          BITRATE_SPARK: ${{ env.BITRATE_SPARK || '' }}
           TG_API_URL: 'http://localhost:8081'
           ORV_ID: ${{ steps.inputs.outputs.orv_id || '' }}
           HEVC_SPLIT: ${{ env.HEVC_SPLIT || '0' }}

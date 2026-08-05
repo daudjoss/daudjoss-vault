@@ -92,6 +92,51 @@ def anomaly_block():
         block += f"  {l}\n"
     return block
 
+# === LOUDNESS REPORT (LUFS) ===
+loudness_text = os.environ.get("LOUDNESS_TEXT", "").strip()
+
+def loudness_block():
+    """Format loudness report untuk caption Telegram."""
+    if not loudness_text:
+        return ""
+    lines = [l.strip() for l in loudness_text.split("\n") if l.strip()]
+    if not lines:
+        return ""
+    block = "\n\n🔊 <b>Loudness:</b>\n"
+    for l in lines:
+        block += f"  {l}\n"
+    return block
+
+# === ENCODE EFFICIENCY SCORE ===
+efficiency_text = os.environ.get("EFFICIENCY_TEXT", "").strip()
+
+def efficiency_block():
+    """Format efficiency score untuk caption Telegram."""
+    if not efficiency_text:
+        return ""
+    lines = [l.strip() for l in efficiency_text.split("\n") if l.strip()]
+    if not lines:
+        return ""
+    block = "\n\n📊 <b>Efficiency:</b>\n"
+    for l in lines:
+        block += f"  {l}\n"
+    return block
+
+# === BITRATE VARIANCE SPARKLINE ===
+bitrate_spark = os.environ.get("BITRATE_SPARK", "").strip()
+
+def bitrate_spark_block():
+    """Format bitrate sparkline untuk caption Telegram."""
+    if not bitrate_spark:
+        return ""
+    lines = [l.strip() for l in bitrate_spark.split("\n") if l.strip()]
+    if not lines:
+        return ""
+    block = "\n\n📈 <b>Bitrate variance:</b>\n  " + lines[0] + "\n"
+    if len(lines) > 1:
+        block += f"  {lines[1]}\n"
+    return block
+
 
 release_url = f"https://github.com/{repo}/releases/tag/{tag}" if tag else ""
 
@@ -336,6 +381,9 @@ if job_status == "success":
                 f"🎞 Codec: {hevc_codec}\n"
                 f"📶 Bitrate: {hevc_br}"
                 f"{anomaly_block()}"
+                f"{loudness_block()}"
+                f"{efficiency_block()}"
+                f"{bitrate_spark_block()}"
             )
             send_video_with_fallback(hevc_file, caption_hevc, hevc_thumb_path)
         elif os.environ.get("HEVC_SPLIT", "0") == "1" and hevc_file:
