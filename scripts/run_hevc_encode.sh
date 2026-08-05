@@ -107,8 +107,8 @@ if [ "$HEVC_SKIP" = "1" ]; then
   HEVC_LOG="/tmp/rusemeva_hevc_encode.log"
   SCENE_LABEL="${SCENE_LABEL:-skip}"
   LIVE_MODE="${LIVE_MODE:-0}"
-fi
 
+fi
 if [ "$HEVC_SKIP" = "0" ]; then
 # === SCENE-AWARE CRF ===
 # Probe 5 cuplikan @8s: encode mini ultrafast di CRF basis, ukur bytes/s.
@@ -730,7 +730,9 @@ import sys
 acodec = sys.argv[1] if len(sys.argv) > 1 else "?"
 abr = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else 0
 sr = int(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3].isdigit() else 0
-bw = float(sys.argv[4]) if len(sys.argv) > 4 else 0
+bw_str = sys.argv[4] if len(sys.argv) > 4 else "0"
+try: bw = float(bw_str) if bw_str.strip() else 0
+except ValueError: bw = 0
 
 out = []
 
