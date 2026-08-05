@@ -246,7 +246,7 @@ if [ "$LIVE_MODE" = "1" ]; then
     "📺 <b>Live-friendly ON</b> — ${LIVE_REASON}.\\nJaga tengah frame, hemat logo/ticker, denoise ringan. Target tetap ~1.3 Mbps." || true
 else
   echo "📺 Live mode OFF (konten general)"
-  X265_PARAMS="aq-mode=3:aq-strength=1.0:rd=3:psy-rd=1.5:psy-rdoq=1.0:rc-lookahead=40:scenecut=40"
+  X265_PARAMS="aq-mode=3:aq-strength=1.0:rd=3:psy-rd=1.5:psy-rdoq=1.0:rc-lookahead=40:scenecut=40:colorprim=bt709:transfer=bt709:colormatrix=bt709"
 fi
 
 
@@ -444,7 +444,7 @@ if [ -s "$HEVC_FILE" ]; then
       $AUDIO_AF \
       -c:v libx265 -profile:v main10 -pix_fmt yuv420p10le \
       -crf ${CUR_CRF} -preset ${HEVC_PRESET} -maxrate ${MAXRATE_K:-1450}k -bufsize ${BUFSIZE_K:-2900}k \
-      -x265-params "${X265_PARAMS:-aq-mode=3:aq-strength=1.0}" -tag:v hvc1 \
+      -x265-params "${X265_PARAMS:-aq-mode=3:aq-strength=1.0:colorprim=bt709:transfer=bt709:colormatrix=bt709}" -tag:v hvc1 \
       $AUDIO_ENC -progress pipe:3 "$HEVC_FILE" \
       3> >(while IFS='=' read -r k v; do
         if [ "$k" = "out_time_ms" ]; then
@@ -515,11 +515,44 @@ if [ -s "$HEVC_FILE" ]; then
   else
     echo "🔊 HEVC punya audio stream (#$AUD) — OK."
   fi
+  # === SMART THUMBNAIL (auto-pick best frame from 5 candidates by JPEG size) ===
   HEVC_THUMB="${HEVC_FILE%.mp4}.jpg"
-  HSEEK=1; [ "$HDUR_INT" -gt 6 ] && HSEEK=$((HDUR_INT/2))
-  "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$HSEEK" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
+  THUMB_SCORE=""
+  if [ "${HDUR_INT:-0}" -gt 12 ] 2>/dev/null; then
+    echo "🖼 Smart thumbnail probe (5 candidates)..."
+    BEST_SS=0; BEST_SIZE=0
+    for pct in 15 35 50 70 90; do
+      SS=$(( HDUR_INT * pct / 100 ))
+      [ "$SS" -ge "$HDUR_INT" ] && SS=$(( HDUR_INT - 2 ))
+      [ "$SS" -lt 1 ] && SS=1
+      CANDIDATE="/tmp/rusemeva_thumb_${pct}.jpg"
+      "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$SS" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$CANDIDATE" 2>/dev/null || true
+      CAND_SIZE=$(stat -c%s "$CANDIDATE" 2>/dev/null || echo 0)
+      if [ "${CAND_SIZE:-0}" -gt "${BEST_SIZE:-0}" ] 2>/dev/null; then
+        BEST_SIZE=$CAND_SIZE
+        BEST_SS=$SS
+        mv -f "$CANDIDATE" "$HEVC_THUMB" 2>/dev/null || cp "$CANDIDATE" "$HEVC_THUMB" 2>/dev/null || true
+      else
+        rm -f "$CANDIDATE" 2>/dev/null || true
+      fi
+      echo "   • t=${SS}s size=${CAND_SIZE}B"
+    done
+    if [ "$BEST_SS" -gt 0 ] 2>/dev/null; then
+      # Score: normalize JPEG size (typical: 15-80KB for 640px, q:v 2)
+      THUMB_SCORE=$(awk "BEGIN{t=($BEST_SIZE-15000)*0.0015; if(t<0)t=0; if(t>100)t=100; printf \"%.0f\", t}" 2>/dev/null || echo "0")
+      echo "🖼 Best frame: t=${BEST_SS}s size=${BEST_SIZE}B score=${THUMB_SCORE}/100"
+    fi
+    rm -f /tmp/rusemeva_thumb_*.jpg 2>/dev/null || true
+  elif [ "${HDUR_INT:-0}" -gt 0 ] 2>/dev/null; then
+    # Video pendek: langsung ambil tengah
+    HSEEK=$(( HDUR_INT / 2 ))
+    [ "$HSEEK" -lt 1 ] && HSEEK=1
+    "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$HSEEK" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
+  fi
+  # Fallback
   [ ! -s "$HEVC_THUMB" ] && "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss 1 -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
   if [ -s "$HEVC_THUMB" ]; then echo "HEVC_THUMB_FILE=$HEVC_THUMB" >> $GITHUB_ENV; echo "HAS_HEVC_THUMB=1" >> $GITHUB_ENV; else echo "HAS_HEVC_THUMB=0" >> $GITHUB_ENV; fi
+  if [ -n "$THUMB_SCORE" ]; then echo "THUMB_SCORE=$THUMB_SCORE" >> $GITHUB_ENV; fi
   # === POST-ENCODE LOUDNESS VERIFICATION (auto-correct if meleset) ===
   if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null && [ -z "${AUDIO_FCS:-}" ]; then
     # Skip verification for turbo path (already verified via -af)

@@ -76,6 +76,7 @@ hevc_dur = os.environ.get("HEVC_DUR", "") or real_duration
 # HEVC thumbnail (diperlukan agar sendVideo tidak crash & muncul preview)
 hevc_thumb_file = os.environ.get("HEVC_THUMB_FILE", "")
 has_hevc_thumb = os.environ.get("HAS_HEVC_THUMB", "0") == "1"
+thumb_score = os.environ.get("THUMB_SCORE", "").strip()
 
 # === ANOMALY REPORT (freeze + silence detection) ===
 anomaly_text = os.environ.get("ANOMALY_TEXT", "").strip()
@@ -397,6 +398,7 @@ if job_status == "success":
                 f"🖥 Resolusi: {hevc_res}\n"
                 f"🎞 Codec: {hevc_codec}\n"
                 f"📶 Bitrate: {hevc_br}"
+                f"{'🖼 Thumbnail: ' + thumb_score + '/100' if thumb_score else ''}"
                 f"{anomaly_block()}"
                 f"{loudness_block()}"
                 f"{efficiency_block()}"

@@ -517,6 +517,7 @@ jobs:
           HEVC_DUR: ${{ env.HEVC_DUR }}
           HEVC_THUMB_FILE: ${{ env.HEVC_THUMB_FILE }}
           HAS_HEVC_THUMB: ${{ env.HAS_HEVC_THUMB }}
+          THUMB_SCORE: ${{ env.THUMB_SCORE || '' }}
           ANOMALY_TEXT: ${{ env.ANOMALY_TEXT || '' }}
           LOUDNESS_TEXT: ${{ env.LOUDNESS_TEXT || '' }}
           EFFICIENCY_TEXT: ${{ env.EFFICIENCY_TEXT || '' }}
@@ -528,6 +529,7 @@ jobs:
           HEVC_SPLIT: ${{ env.HEVC_SPLIT || '0' }}
           FAIL_REASON: ${{ env.FAIL_REASON || 'unknown' }}
           PHASE: hevc
+          GH_TOKEN: ${{ github.token }}
         run: python3 scripts/notify.py
 
       - name: Auto-retry encode 1 level lebih cepat (kalau gagal)
