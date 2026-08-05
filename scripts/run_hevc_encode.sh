@@ -74,10 +74,22 @@ PYEOF
     )
     rm -f "$LOUDNORM_PROBE" 2>/dev/null || true
     if [ -n "$LOUDNORM_MEASURED" ]; then
-      echo "🔊 Turbo audio normalize pass 2 (lowshelf + compressor + loudnorm + limiter)..."
+      # Detect channel count for rematrixing
+      CH_COUNT=$(ffprobe -v error -select_streams a:0 -show_entries stream=channels -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+      CH_LAYOUT=$(ffprobe -v error -select_streams a:0 -show_entries stream=channel_layout -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+      echo "🔊 Audio channels: ${CH_COUNT:-?} (${CH_LAYOUT:-unknown})"
+      CH_PREFIX=""
+      if [ "${CH_COUNT:-0}" = "1" ]; then
+        CH_PREFIX="pan=stereo|FL=FC|FR=FC,"
+        echo "🔊 Mono detected → upmix to stereo (center extraction)"
+      elif [ "${CH_COUNT:-0}" -gt 2 ] 2>/dev/null; then
+        CH_PREFIX="pan=stereo|FL=FL+0.5*FC+0.5*SL|FR=FR+0.5*FC+0.5*SR,"
+        echo "🔊 Surround detected → downmix to stereo (center extraction)"
+      fi
+      echo "🔊 Turbo audio normalize pass 2 (full chain)..."
       "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
         -c:v copy \
-        -af "highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50" \
+        -af "${CH_PREFIX}highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,highshelf=f=8000:width_type=h:w=2000:g=2,equalizer=f=6000:width_type=h:w=1000:g=-4,equalizer=f=2000:width_type=h:w=500:g=2,adeclip,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50" \
         -c:a aac -b:a 128k \
         "$HEVC_FILE" 2>/dev/null || true
     fi
@@ -251,9 +263,13 @@ if [ -n "${VF_LIVE:-}" ]; then
   LIVE_VF_ARGS=(-vf "$VF_LIVE")
 fi
 # === AUDIO NORMALIZATION + DYNAMIC COMPRESSION (film-quality) ===
-# Chain: highpass(50Hz) → lowshelf(+3dB bass) → acompressor → loudnorm(two-pass) → alimiter
+# Chain: highpass(50Hz) → lowshelf(+3dB bass) → highshelf(+2dB treble) → de-ess → dialogue boost → adeclip → acompressor → loudnorm(two-pass) → alimiter
 # - highpass: buang mains hum 50Hz
 # - lowshelf: boost bass 100-200Hz +3dB biar suara warm/full kayak film
+# - highshelf: boost treble 8kHz +2dB, konsonan crisp, suara tidak muffled
+# - equalizer(6kHz): de-essing, buang sibilance "sss" berlebih di 5-7kHz
+# - equalizer(2kHz): dialogue boost, suara manusia lebih menonjol
+# - adeclip: repair audio yang sudah clipped (distorsi digital >0dBFS)
 # - acompressor: kompres dynamic range, dialog lebih jelas, iklan tidak ledak
 # - loudnorm: EBU R128 target -16 LUFS
 # - alimiter: hard cap true peak, anti-clipping
@@ -281,17 +297,29 @@ try:
     thresh = d.get("input_thresh", "").strip()
     ot = d.get("offset", "0").strip() or "0"
     if i and tp and lra:
-        # Build measured_* params for pass-2 (linear normalization)
         print(f"measured_I={i}:measured_TP={tp}:measured_LRA={lra}:measured_thresh={thresh}:offset={ot}:linear=true:I=-16:TP=-1.5:LRA=11")
 except:
     pass
 PYEOF
     )
   if [ -n "$LOUDNORM_MEASURED" ]; then
-    # Full chain: highpass → lowshelf → compressor → loudnorm(pass2) → limiter
-    AUDIO_AF="-af highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
+    # Detect channel count for rematrixing
+    CH_COUNT=$(ffprobe -v error -select_streams a:0 -show_entries stream=channels -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+    CH_LAYOUT=$(ffprobe -v error -select_streams a:0 -show_entries stream=channel_layout -of default=noprint_wrappers=1:nokey=1 "$FILE" 2>/dev/null | head -1)
+    echo "🔊 Audio channels: ${CH_COUNT:-?} (${CH_LAYOUT:-unknown})"
+    # Build channel-aware prefix filter
+    CH_PREFIX=""
+    if [ "${CH_COUNT:-0}" = "1" ]; then
+      CH_PREFIX="pan=stereo|FL=FC|FR=FC,"
+      echo "🔊 Mono detected → upmix to stereo (center extraction)"
+    elif [ "${CH_COUNT:-0}" -gt 2 ] 2>/dev/null; then
+      CH_PREFIX="pan=stereo|FL=FL+0.5*FC+0.5*SL|FR=FR+0.5*FC+0.5*SR,"
+      echo "🔊 Surround detected → downmix to stereo (center extraction)"
+    fi
+    # Full chain: highpass → lowshelf → highshelf → de-ess → dialogue → adeclip → compressor → loudnorm(pass2) → limiter
+    AUDIO_AF="-af ${CH_PREFIX}highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,highshelf=f=8000:width_type=h:w=2000:g=2,equalizer=f=6000:width_type=h:w=1000:g=-4,equalizer=f=2000:width_type=h:w=500:g=2,adeclip,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
     AUDIO_ENC="-c:a aac -b:a 128k"
-    echo "🔊 Audio chain: highpass(50Hz) → lowshelf(+3dB) → compressor(3:1) → loudnorm(-16 LUFS) → limiter(0.85)"
+    echo "🔊 Audio chain: highpass(50Hz) → lowshelf(+3dB) → highshelf(+2dB) → de-ess(6kHz) → dialogue(2kHz) → adeclip → compressor(3:1) → loudnorm(-16 LUFS) → limiter(0.85)"
   else
     echo "⚠️ Loudnorm probe gagal — copy audio as-is"
   fi
