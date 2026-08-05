@@ -554,8 +554,9 @@ if [ -s "$HEVC_FILE" ]; then
   if [ -s "$HEVC_THUMB" ]; then echo "HEVC_THUMB_FILE=$HEVC_THUMB" >> $GITHUB_ENV; echo "HAS_HEVC_THUMB=1" >> $GITHUB_ENV; else echo "HAS_HEVC_THUMB=0" >> $GITHUB_ENV; fi
   if [ -n "$THUMB_SCORE" ]; then echo "THUMB_SCORE=$THUMB_SCORE" >> $GITHUB_ENV; fi
   # === POST-ENCODE LOUDNESS VERIFICATION (auto-correct if meleset) ===
-  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null && [ -z "${AUDIO_FCS:-}" ]; then
-    # Skip verification for turbo path (already verified via -af)
+  # Always verify for HEVC_SKIP=1 (turbo path) — no AUDIO_FCS flag available
+  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null && [ "${HEVC_SKIP:-0}" = "0" ] && [ -z "${AUDIO_FCS:-}" ]; then
+    # Skip verification for non-turbo path without complex filter
     true
   elif [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then
     echo "🔊 Post-encode loudness verification..."
