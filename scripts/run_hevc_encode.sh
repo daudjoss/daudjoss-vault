@@ -34,16 +34,59 @@ BUFSIZE_K=$(( MAXRATE_K * 2 ))
 echo "dur=${SRC_DUR_INT}s audio=${AUDIO_BPS} maxrate=${MAXRATE_K}k"
 
 # === SKIP ENCODE if original already efficient ===
+# Video stream copy, but audio gets turbo-normalized (loudnorm two-pass)
 ORIG_TOTAL_BPS=$(probe_bitrate "$FILE" || echo 0)
 HEVC_SKIP=0
 if [ "${ORIG_TOTAL_BPS:-0}" -gt 0 ] 2>/dev/null && [ "${ORIG_TOTAL_BPS:-0}" -le 1500000 ] 2>/dev/null; then
   HEVC_SKIP=1
-  HEVC_FILE="$FILE"
   ORIG_MB=$(( ORIG_TOTAL_BPS / 125000 ))
   ORIG_TENTH=$(( (ORIG_TOTAL_BPS / 125000) % 10 ))
-  echo "⏭️ Original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps) — skip HEVC encode"
+  echo "⏭️ Original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps) — skip HEVC video encode"
   CHAT_ID="$CHAT_ID" TG_API_URL="$TG_API_URL" BOT_TOKEN="$BOT_TOKEN" python3 scripts/send_message.py \
-    "⏭️ <b>HEVC skip</b> — original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps). Kirim original langsung." || true
+    "⏭️ <b>HEVC skip</b> — original sudah efisien (~${ORIG_MB}.${ORIG_TENTH} Mbps). Audio tetap di-normalize." || true
+  # === TURBO AUDIO NORMALIZE (stream copy video, loudnorm audio only) ===
+  HEVC_FILE="${FILE%.mp4}-normalized.mp4"
+  if [ "${SRC_DUR_INT:-0}" -ge 30 ] 2>/dev/null; then
+    echo "🔊 Turbo audio normalize (loudnorm pass 1)..."
+    LOUDNORM_PROBE="/tmp/rusemeva_loudnorm_probe.log"
+    timeout 120 "$FFMPEG_STATIC" -hide_banner -nostats -i "$FILE" \
+      -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \
+      -f null - 2>"$LOUDNORM_PROBE" || true
+    LOUDNORM_MEASURED=$(python3 - "$LOUDNORM_PROBE" <<'PYEOF'
+import json, re, sys
+try:
+    with open(sys.argv[1]) as f:
+        log = f.read()
+    m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', log, re.DOTALL)
+    if not m:
+        sys.exit(0)
+    d = json.loads(m.group(0))
+    i = d.get("input_i", "").strip()
+    tp = d.get("input_tp", "").strip()
+    lra = d.get("input_lra", "").strip()
+    thresh = d.get("input_thresh", "").strip()
+    ot = d.get("offset", "0").strip() or "0"
+    if i and tp and lra:
+        print(f"measured_I={i}:measured_TP={tp}:measured_LRA={lra}:measured_thresh={thresh}:offset={ot}:linear=true:I=-16:TP=-1.5:LRA=11")
+except:
+    pass
+PYEOF
+    )
+    rm -f "$LOUDNORM_PROBE" 2>/dev/null || true
+    if [ -n "$LOUDNORM_MEASURED" ]; then
+      echo "🔊 Turbo audio normalize pass 2 (linear, target -16 LUFS)..."
+      "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
+        -c:v copy \
+        -af "loudnorm=$LOUDNORM_MEASURED" \
+        -c:a aac -b:a 128k \
+        "$HEVC_FILE" 2>/dev/null || true
+    fi
+  fi
+  # Fallback: kalau normalize gagal/hasil 0 byte, pakai original apa adanya
+  if [ ! -s "$HEVC_FILE" ]; then
+    echo "⚠️ Turbo normalize gagal — pakai original apa adanya"
+    HEVC_FILE="$FILE"
+  fi
 fi
 echo "HEVC_SKIP=$HEVC_SKIP" >> $GITHUB_ENV
 
