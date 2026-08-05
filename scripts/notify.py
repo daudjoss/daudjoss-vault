@@ -109,9 +109,12 @@ def loudness_block():
 
 # === ENCODE EFFICIENCY SCORE ===
 efficiency_text = os.environ.get("EFFICIENCY_TEXT", "").strip()
+hevc_skip = os.environ.get("HEVC_SKIP", "0") == "1"
 
 def efficiency_block():
     """Format efficiency score untuk caption Telegram."""
+    if hevc_skip:
+        return "\n\n📊 <b>Efficiency:</b>\n  ⏭️ No re-encode — original already efficient\n"
     if not efficiency_text:
         return ""
     lines = [l.strip() for l in efficiency_text.split("\n") if l.strip()]
@@ -371,7 +374,6 @@ if job_status == "success":
         if hevc_file and os.path.isfile(hevc_file) and os.path.getsize(hevc_file) > 0:
             print("📤 Mengirim video HEVC 10-bit...", flush=True)
             hevc_thumb_path = hevc_thumb_file if (has_hevc_thumb and os.path.isfile(hevc_thumb_file)) else ""
-            hevc_skip = os.environ.get("HEVC_SKIP", "0") == "1"
             title = "📦 Original (HEVC skip — sudah efisien)" if hevc_skip else "🎞 HEVC 10-bit"
             caption_hevc = (
                 f"{title}\n\n"
