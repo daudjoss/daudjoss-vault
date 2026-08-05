@@ -142,6 +142,7 @@ def bitrate_spark_block():
 
 
 release_url = f"https://github.com/{repo}/releases/tag/{tag}" if tag else ""
+run_url = f"{server_url}/{repo}/actions/runs/{run_id}" if run_id else ""
 
 # Default ke local Bot API Server (allow 2GB). Token disisipkan di path /bot<TOKEN>.
 TG_URL = os.environ.get('TG_API_URL', 'https://api.telegram.org').rstrip('/')
@@ -281,8 +282,8 @@ def send_photo_fallback(photo_path, caption):
         resp = urllib.request.urlopen(req, timeout=600)
         try:
             js = json.loads(resp.read().decode())
-            if js.get("ok") and js.get("result", {}).get("video", {}).get("file_id"):
-                return js["result"]["video"]["file_id"]
+            if js.get("ok") and js.get("result", {}).get("photo", [{}])[0].get("file_id"):
+                return js["result"]["photo"][0]["file_id"]
         except Exception:
             pass
         return True
@@ -374,7 +375,7 @@ if job_status == "success":
         if hevc_file and os.path.isfile(hevc_file) and os.path.getsize(hevc_file) > 0:
             print("📤 Mengirim video HEVC 10-bit...", flush=True)
             hevc_thumb_path = hevc_thumb_file if (has_hevc_thumb and os.path.isfile(hevc_thumb_file)) else ""
-            title = "📦 Original (HEVC skip — sudah efisien)" if hevc_skip else "🎞 HEVC 10-bit"
+            title = "📦 <b>Original (HEVC skip — sudah efisien)</b>" if hevc_skip else "🎞 <b>HEVC 10-bit</b>"
             caption_hevc = (
                 f"{title}\n\n"
                 f"{id_line()}"

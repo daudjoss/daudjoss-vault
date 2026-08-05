@@ -89,6 +89,13 @@ PYEOF
   fi
 fi
 echo "HEVC_SKIP=$HEVC_SKIP" >> $GITHUB_ENV
+# Set defaults untuk HEVC_SKIP path (supaya post-encode block tidak crash)
+if [ "$HEVC_SKIP" = "1" ]; then
+  ORIG_BYTES=$(stat -c%s "$FILE" 2>/dev/null || wc -c < "$FILE")
+  HEVC_LOG="/tmp/rusemeva_hevc_encode.log"
+  SCENE_LABEL="${SCENE_LABEL:-skip}"
+  LIVE_MODE="${LIVE_MODE:-0}"
+fi
 
 if [ "$HEVC_SKIP" = "0" ]; then
 # === SCENE-AWARE CRF ===
