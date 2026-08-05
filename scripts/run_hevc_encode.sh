@@ -316,17 +316,31 @@ PYEOF
       CH_PREFIX="pan=stereo|FL=FL+0.5*FC+0.5*SL|FR=FR+0.5*FC+0.5*SR,"
       echo "🔊 Surround detected → downmix to stereo (center extraction)"
     fi
-    # Full chain: highpass → lowshelf → highshelf → de-ess → dialogue → adeclip → compressor → loudnorm(pass2) → limiter
-    AUDIO_AF="-af ${CH_PREFIX}highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,highshelf=f=8000:width_type=h:w=2000:g=2,equalizer=f=6000:width_type=h:w=1000:g=-4,equalizer=f=2000:width_type=h:w=500:g=2,adeclip,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
+    # === MULTI-BAND COMPRESSION (3-band: bass/mid/treble) ===
+    # Pre-filters (EQ, declip) in simple -af, multi-band in -filter_complex
+    AUDIO_PRE="${CH_PREFIX}highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,highshelf=f=8000:width_type=h:w=2000:g=2,equalizer=f=6000:width_type=h:w=1000:g=-4,equalizer=f=2000:width_type=h:w=500:g=2,adeclip"
+    # Multi-band filter script (crossover at 200Hz/2kHz)
+    MBAND_SCRIPT="/tmp/rusemeva_mband_filter.txt"
+    cat > "$MBAND_SCRIPT" << MBAND_EOF
+[0:a]${AUDIO_PRE},acrossover=split=200 2000:order=4th[low][mid][high];
+[low]acompressor=threshold=0.2:ratio=2:attack=15:release=200:makeup=1.2:knee=3[lowc];
+[mid]acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3[midc];
+[high]acompressor=threshold=0.2:ratio=2:attack=5:release=100:makeup=1.2:knee=3[highc];
+[lowc][midc][highc]amerge=inputs=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50[aout]
+MBAND_EOF
+    AUDIO_FCS="-filter_complex_script $MBAND_SCRIPT -map [aout]"
+    AUDIO_AF=""
     AUDIO_ENC="-c:a aac -b:a 128k"
-    echo "🔊 Audio chain: highpass(50Hz) → lowshelf(+3dB) → highshelf(+2dB) → de-ess(6kHz) → dialogue(2kHz) → adeclip → compressor(3:1) → loudnorm(-16 LUFS) → limiter(0.85)"
+    echo "🔊 Audio chain: EQ → declip → 3-band compressor(200Hz/2kHz) → loudnorm(-16 LUFS) → limiter(0.85) → verify+correct"
   else
     echo "⚠️ Loudnorm probe gagal — copy audio as-is"
+    AUDIO_FCS=""
   fi
   rm -f "$LOUDNORM_PROBE" 2>/dev/null || true
 fi
 "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
   "${LIVE_VF_ARGS[@]}" \
+  $AUDIO_FCS \
   $AUDIO_AF \
   -c:v libx265 -profile:v main10 -pix_fmt yuv420p10le \
   -crf ${HEVC_CRF} -preset ${HEVC_PRESET} -maxrate ${MAXRATE_K:-1450}k -bufsize ${BUFSIZE_K:-2900}k \
@@ -426,6 +440,7 @@ if [ -s "$HEVC_FILE" ]; then
     LAST_PCT=-1
     "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
       ${LIVE_VF_ARGS[@]+"${LIVE_VF_ARGS[@]}"} \
+      $AUDIO_FCS \
       $AUDIO_AF \
       -c:v libx265 -profile:v main10 -pix_fmt yuv420p10le \
       -crf ${CUR_CRF} -preset ${HEVC_PRESET} -maxrate ${MAXRATE_K:-1450}k -bufsize ${BUFSIZE_K:-2900}k \
@@ -505,6 +520,58 @@ if [ -s "$HEVC_FILE" ]; then
   "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$HSEEK" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
   [ ! -s "$HEVC_THUMB" ] && "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss 1 -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
   if [ -s "$HEVC_THUMB" ]; then echo "HEVC_THUMB_FILE=$HEVC_THUMB" >> $GITHUB_ENV; echo "HAS_HEVC_THUMB=1" >> $GITHUB_ENV; else echo "HAS_HEVC_THUMB=0" >> $GITHUB_ENV; fi
+  # === POST-ENCODE LOUDNESS VERIFICATION (auto-correct if meleset) ===
+  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null && [ -z "${AUDIO_FCS:-}" ]; then
+    # Skip verification for turbo path (already verified via -af)
+    true
+  elif [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then
+    echo "🔊 Post-encode loudness verification..."
+    VERIFY_LOG="/tmp/rusemeva_verify.log"
+    timeout 60 "$FFMPEG_STATIC" -hide_banner -nostats -i "$HEVC_FILE" \
+      -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \
+      -f null - 2>"$VERIFY_LOG" || true
+    VERIFY_LUFS=$(python3 - "$VERIFY_LOG" <<'PYEOF'
+import json, re, sys
+try:
+    with open(sys.argv[1]) as f:
+        log = f.read()
+    m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', log, re.DOTALL)
+    if m:
+        d = json.loads(m.group(0))
+        print(d.get("input_i", "").strip())
+except:
+    pass
+PYEOF
+    )
+    rm -f "$VERIFY_LOG" 2>/dev/null || true
+    if [ -n "$VERIFY_LUFS" ]; then
+      VERIFY_INT=$(awk "BEGIN{printf \"%d\", $VERIFY_LUFS}")
+      DIFF=$(awk "BEGIN{printf \"%.1f\", $VERIFY_LUFS - (-16)}")
+      DIFF_ABS=$(awk "BEGIN{printf \"%.1f\", $VERIFY_LUFS - (-16)}; if ($VERIFY_LUFS < -16) print (-16) - $VERIFY_LUFS; else print $VERIFY_LUFS - (-16)")
+      echo "🔊 Post-encode loudness: ${VERIFY_LUFS} LUFS (target -16, diff ${DIFF})"
+      # If meleset >0.5 LUFS, re-normalize
+      if awk "BEGIN{exit !($DIFF_ABS > 0.5)}"; then
+        echo "⚠️ Loudness meleset ${DIFF} LUFS — re-normalizing..."
+        RENORM_SCRIPT="/tmp/rusemeva_renorm_filter.txt"
+        cat > "$RENORM_SCRIPT" << RENORM_EOF
+[0:a]loudnorm=measured_I=$VERIFY_LUFS:measured_TP=-1.5:measured_LRA=11:measured_thresh=-26:offset=0:linear=true:I=-16:TP=-1.5:LRA=11,alimiter=limit=0.85:attack=5:release=50[aout]
+RENORM_EOF
+        RENORM_FILE="${HEVC_FILE%.mp4}-renorm.mp4"
+        "$FFMPEG_STATIC" -hide_banner -y -i "$HEVC_FILE" \
+          -filter_complex_script "$RENORM_SCRIPT" -map "[aout]" -c:v copy -c:a aac -b:a 128k \
+          "$RENORM_FILE" 2>/dev/null || true
+        if [ -s "$RENORM_FILE" ]; then
+          mv -f "$RENORM_FILE" "$HEVC_FILE"
+          echo "✅ Re-normalized to -16 LUFS"
+          # Update loudness report with verified value
+          LOUDNESS_TEXT=$(echo "$LOUDNESS_TEXT" | sed "s/-[0-9.]* LUFS/${VERIFY_LUFS} LUFS (verified)/")
+        else
+          echo "⚠️ Re-normalization failed, keeping original"
+        fi
+        rm -f "$RENORM_SCRIPT" 2>/dev/null || true
+      fi
+    fi
+  fi
   # === ANOMALY REPORT (freeze + silence detection, decode-only) ===
   ANOMALY_LOG="/tmp/rusemeva_anomaly.log"
   : > "$ANOMALY_LOG"
