@@ -74,10 +74,10 @@ PYEOF
     )
     rm -f "$LOUDNORM_PROBE" 2>/dev/null || true
     if [ -n "$LOUDNORM_MEASURED" ]; then
-      echo "🔊 Turbo audio normalize pass 2 (linear, target -16 LUFS)..."
+      echo "🔊 Turbo audio normalize pass 2 (compressor + loudnorm + limiter)..."
       "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
         -c:v copy \
-        -af "loudnorm=$LOUDNORM_MEASURED" \
+        -af "highpass=f=50,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50" \
         -c:a aac -b:a 128k \
         "$HEVC_FILE" 2>/dev/null || true
     fi
@@ -243,9 +243,12 @@ LIVE_VF_ARGS=()
 if [ -n "${VF_LIVE:-}" ]; then
   LIVE_VF_ARGS=(-vf "$VF_LIVE")
 fi
-# === AUDIO NORMALIZATION (two-pass loudnorm, film-quality) ===
-# Pass 1: probe loudness → get measured values
-# Pass 2: apply dynamic loudnorm with measured values for film-grade audio
+# === AUDIO NORMALIZATION + DYNAMIC COMPRESSION (film-quality) ===
+# Chain: highpass(50Hz) → acompressor → loudnorm(two-pass) → alimiter
+# - highpass: buang mains hum 50Hz
+# - acompressor: kompres dynamic range, dialog lebih jelas, iklan tidak ledak
+# - loudnorm: EBU R128 target -16 LUFS
+# - alimiter: hard cap true peak, anti-clipping
 AUDIO_AF=""
 AUDIO_ENC="-c:a copy"
 if [ "${SRC_DUR_INT:-0}" -ge 30 ] 2>/dev/null; then
@@ -268,10 +271,6 @@ try:
     tp = d.get("input_tp", "").strip()
     lra = d.get("input_lra", "").strip()
     thresh = d.get("input_thresh", "").strip()
-    o = d.get("output_i", "").strip()
-    otp = d.get("output_tp", "").strip()
-    olra = d.get("output_lra", "").strip()
-    othresh = d.get("output_thresh", "").strip()
     ot = d.get("offset", "0").strip() or "0"
     if i and tp and lra:
         # Build measured_* params for pass-2 (linear normalization)
@@ -281,9 +280,10 @@ except:
 PYEOF
     )
   if [ -n "$LOUDNORM_MEASURED" ]; then
-    AUDIO_AF="-af loudnorm=$LOUDNORM_MEASURED"
+    # Full chain: highpass → compressor → loudnorm(pass2) → limiter
+    AUDIO_AF="-af highpass=f=50,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
     AUDIO_ENC="-c:a aac -b:a 128k"
-    echo "🔊 Audio normalization enabled (target -16 LUFS, TP -1.5 dBTP)"
+    echo "🔊 Audio chain: highpass(50Hz) → compressor(3:1) → loudnorm(-16 LUFS) → limiter(0.85)"
   else
     echo "⚠️ Loudnorm probe gagal — copy audio as-is"
   fi
