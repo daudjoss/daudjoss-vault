@@ -345,7 +345,7 @@ if job_status == "success":
             f"{id_line()}"
             f"📦 File: <code>{filename}</code>\n"
             f"📏 Size: {file_size}\n"
-            f"⏱ Diminta: {req_h}\n"
+            f"⏱ Diminta: {human_dur}\n"
             f"⏱ Didapat: {real_duration}{stop_line}\n"
             f"🖥 Resolusi: {resolution}\n"
             f"🎞 Codec: {vcodec}\n"
