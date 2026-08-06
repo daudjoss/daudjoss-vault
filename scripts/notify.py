@@ -165,7 +165,7 @@ print(f"ℹ️  Notify start | phase={phase} | API={API[:40]}... | chat={chat_id
 
 
 def send_message(text):
-    """Kirim pesan teks biasa (fallback)."""
+    """Kirim pesan teks biasa (fallback). Return message_id (int) kalau sukses, False kalau gagal."""
     data = json.dumps({
         "chat_id": chat_id,
         "text": text,
@@ -177,10 +177,38 @@ def send_message(text):
             req = urllib.request.Request(
                 f"{api_url}/sendMessage",
                 data=data, headers={"Content-Type": "application/json"})
+            resp = urllib.request.urlopen(req, timeout=30)
+            result = json.loads(resp.read())
+            if result.get("ok"):
+                msg_id = result.get("result", {}).get("message_id")
+                if msg_id:
+                    return msg_id
+                return True
+        except Exception as e:
+            print(f"⚠️ sendMessage gagal ({api_url[:30]}): {e}")
+    return False
+
+
+def edit_message(msg_id, text):
+    """Edit pesan Telegram yang sudah dikirim. Return True kalau sukses."""
+    if not msg_id:
+        return False
+    data = json.dumps({
+        "chat_id": chat_id,
+        "message_id": int(msg_id),
+        "text": text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+    }).encode()
+    for api_url in [API, FALLBACK_API]:
+        try:
+            req = urllib.request.Request(
+                f"{api_url}/editMessageText",
+                data=data, headers={"Content-Type": "application/json"})
             urllib.request.urlopen(req, timeout=30)
             return True
         except Exception as e:
-            print(f"⚠️ sendMessage gagal ({api_url[:30]}): {e}")
+            print(f"⚠️ editMessage gagal ({api_url[:30]}): {e}")
     return False
 
 
