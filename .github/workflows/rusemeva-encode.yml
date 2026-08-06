@@ -87,6 +87,19 @@ jobs:
             echo "orv_id=${{ github.event.client_payload.orv_id || '' }}" >> $GITHUB_OUTPUT
           fi
 
+      # Parse HEVC progress message_id dari orv_id (format: RSM-XXX::msg=12345)
+      - name: Parse HEVC progress msg_id
+        id: prg
+        run: |
+          ORV_ID="${{ steps.inputs.outputs.orv_id || '' }}"
+          HEVC_MSG_ID=""
+          case "$ORV_ID" in
+            *::msg=*) HEVC_MSG_ID="${ORV_ID##*::msg=}" ;;
+          esac
+          echo "hevc_msg_id=$HEVC_MSG_ID" >> $GITHUB_OUTPUT
+          echo "HEVC_MSG_ID=$HEVC_MSG_ID"
+          echo "HEVC_MSG_ID=$HEVC_MSG_ID" >> $GITHUB_ENV
+
       # === Link run_id -> orv_id ke KV (biar /status bisa baca % encode) ===
       - name: Link run ke RSM-ID (KV)
         if: always()
@@ -177,6 +190,18 @@ jobs:
             exit 1
           fi
 
+      # === Progress: download selesai ===
+      - name: "📊 Progress: download done"
+        if: success() && env.HEVC_MSG_ID != ''
+        continue-on-error: true
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ steps.inputs.outputs.chat_id }}
+        run: |
+          bash scripts/progress_edit.sh "$HEVC_MSG_ID" \
+            "⬇️ <b>Download selesai</b> — mulai encode..." \
+            "$CHAT_ID" "$BOT_TOKEN"
+
       - name: Start local Bot API Server (allow >2GB uploads)
         if: success()
         continue-on-error: true
@@ -202,7 +227,12 @@ jobs:
             sleep 2
           done
 
+      # Kirim notifikasi "encode mulai" + link ke run GHA biar user bisa pantau progress
       - name: Auto-downgrade preset (real-measure 60s sample)
+        if: success()
+        continue-on-error: true
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         id: autodg
         run: |
           # --- STRATEGI: ukur kecepatan RIIL lewat sample 60s encode,

@@ -562,6 +562,11 @@ jobs:
           fi
           # duration = actual (authoritative). requested_duration kept for diminta/didapat.
           # stop_reason stays in GITHUB_ENV/vault only (not needed by encode).
+          # Baca HEVC estimate message_id (untuk progress update di encode workflow)
+          HEVC_MSG_ID=""
+          [ -f /tmp/rusemeva_hevc_msg_id.txt ] && HEVC_MSG_ID=$(cat /tmp/rusemeva_hevc_msg_id.txt)
+          ORV_ID_FULL="${ORV_ID}"
+          [ -n "$HEVC_MSG_ID" ] && ORV_ID_FULL="${ORV_ID}::msg=${HEVC_MSG_ID}"
           gh api repos/${{ github.repository }}/dispatches \
             -f event_type=encode-request \
             -f "client_payload[filename]=${FILE}" \
@@ -573,7 +578,7 @@ jobs:
             -f "client_payload[hevc_preset]=${HEVC_PRESET}" \
             -f "client_payload[hevc_crf]=${HEVC_CRF}" \
             -f "client_payload[encode_profile]=${ENCODE_PROFILE}" \
-            -f "client_payload[orv_id]=${ORV_ID}" \
+            -f "client_payload[orv_id]=${ORV_ID_FULL}" \
             && echo "✅ rusemeva-encode di-trigger" \
             || { echo "⚠️ Gagal trigger rusemeva-encode"; exit 1; }
 

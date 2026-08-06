@@ -1,0 +1,4157 @@
+
+;
+
+window.DASH = {"generated": "2026-08-05T00:04:52.072648+07:00", "build": "v10.1-max", "stats": {"total": 1, "success": 1, "failed": 0, "cancelled": 0, "running": 0, "rate": 100.0, "enc": 1, "enc_ok": 0, "enc_rate": 0.0, "today": 0, "today_ok": 0, "streak": 0, "best": 0, "top_hour": 20, "top_day": "Tuesday", "total_size": 0.0007, "storage_est": false, "lifetime_est_gb": 18.76, "gh_bytes": 705033, "night": 0, "avg_duration": 5605.0}, "hours": {"20": 1}, "days": {"Tuesday": 1}, "daily": {"2026-08-04": 1}, "insights": ["Kamu paling sering rekam jam 20:00", "Hari paling aktif: Tuesday", "Success rate 100.0% \u2014 excellent!"], "predictions": ["Volume rekaman lifetime ~18.8 GB (est) \u2014 di Telegram, bukan di GitHub", "GitHub storage aktual: 688.5 KB (manifest .txt; encode-temp dibersihkan)"], "runs": [{"databaseId": 30930855289, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T16:47:49Z", "updatedAt": "2026-08-04T16:48:37Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "779a0d26f877683ed02aad665b7f97010238bd01", "runNumber": 144, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30930840614, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T16:47:37Z", "updatedAt": "2026-08-04T16:47:46Z", "event": "push", "headBranch": "master", "headSha": "2a846e15d687c23bde6be682c689be8685474145", "runNumber": 112, "displayTitle": "feat: 6 new features \u2014 failure heatmap, workflow frequency, date rang\u2026", "orv_id": "", "source": ""}, {"databaseId": 30930838464, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T16:47:35Z", "updatedAt": "2026-08-04T16:47:51Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "2a846e15d687c23bde6be682c689be8685474145", "runNumber": 143, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30928976204, "name": "cleanup-temp", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T16:24:31Z", "updatedAt": "2026-08-04T16:24:55Z", "event": "schedule", "headBranch": "master", "headSha": "59ef1626340b8dacea49b85bf04dee0b0f1c5e5c", "runNumber": 32, "displayTitle": "cleanup-temp", "orv_id": "", "source": ""}, {"databaseId": 30928722200, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T16:21:23Z", "updatedAt": "2026-08-04T16:22:10Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "ea58994306ad4bc291ac398d7cee2b7c01586a4b", "runNumber": 143, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30928701046, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T16:21:07Z", "updatedAt": "2026-08-04T16:21:25Z", "event": "schedule", "headBranch": "master", "headSha": "59ef1626340b8dacea49b85bf04dee0b0f1c5e5c", "runNumber": 142, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30926546925, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T15:54:51Z", "updatedAt": "2026-08-04T15:55:40Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "f04ce8e665248c934380e323fcb1464737bf498d", "runNumber": 142, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30926521252, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T15:54:33Z", "updatedAt": "2026-08-04T15:54:49Z", "event": "push", "headBranch": "master", "headSha": "59ef1626340b8dacea49b85bf04dee0b0f1c5e5c", "runNumber": 111, "displayTitle": "feat: 7 new features \u2014 actions minutes, freshness banner, quick stats\u2026", "orv_id": "", "source": ""}, {"databaseId": 30926518441, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T15:54:31Z", "updatedAt": "2026-08-04T15:54:53Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "59ef1626340b8dacea49b85bf04dee0b0f1c5e5c", "runNumber": 141, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30922387086, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T15:06:00Z", "updatedAt": "2026-08-04T15:07:39Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "d6790f54879895b33fcc7cb1ea2b44f3c9334e91", "runNumber": 141, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30922345425, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T15:05:32Z", "updatedAt": "2026-08-04T15:06:02Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "76bd4d2a55dd07048a09ff2a94b431ab9464af60", "runNumber": 140, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30922345080, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T15:05:32Z", "updatedAt": "2026-08-04T15:05:49Z", "event": "push", "headBranch": "master", "headSha": "76bd4d2a55dd07048a09ff2a94b431ab9464af60", "runNumber": 110, "displayTitle": "refactor: remove \u23f0 Hours chart + time_html section", "orv_id": "", "source": ""}, {"databaseId": 30919855545, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T14:36:49Z", "updatedAt": "2026-08-04T14:37:33Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "59f36f97f0bd6676415981d47e6867719bd686df", "runNumber": 140, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30919832638, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T14:36:33Z", "updatedAt": "2026-08-04T14:36:51Z", "event": "workflow_run", "headBranch": "master", "headSha": "3d07bcd57265c8030c494ace4b909cfb317c50b8", "runNumber": 139, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30919665177, "name": "rusemeva-encode", "status": "in_progress", "conclusion": "", "createdAt": "2026-08-04T14:34:38Z", "updatedAt": "2026-08-04T14:34:48Z", "event": "repository_dispatch", "headBranch": "master", "headSha": "3d07bcd57265c8030c494ace4b909cfb317c50b8", "runNumber": 34, "displayTitle": "encode-request", "orv_id": "RSM-MSEO4WP5-35U1", "source": "encode"}, {"databaseId": 30915132987, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:42:14Z", "updatedAt": "2026-08-04T13:44:09Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "b980992488c60ccce56825603f6cc4f1b889ae0c", "runNumber": 139, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30915096680, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:41:47Z", "updatedAt": "2026-08-04T13:41:57Z", "event": "push", "headBranch": "master", "headSha": "3d07bcd57265c8030c494ace4b909cfb317c50b8", "runNumber": 109, "displayTitle": "refactor: remove mobile section toggle (data-toggle/initSectionToggle)", "orv_id": "", "source": ""}, {"databaseId": 30915093457, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:41:44Z", "updatedAt": "2026-08-04T13:42:16Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "3d07bcd57265c8030c494ace4b909cfb317c50b8", "runNumber": 138, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30914186958, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:30:47Z", "updatedAt": "2026-08-04T13:31:45Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "bc0fb7fae39d8b5269821090bc27dd12aa257e08", "runNumber": 138, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30914156091, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:30:27Z", "updatedAt": "2026-08-04T13:30:36Z", "event": "push", "headBranch": "master", "headSha": "25876a6d98db00c60138624557bf206a91dc99d2", "runNumber": 108, "displayTitle": "refactor: remove 35-day calendar + This Week section \u2014 too many calen\u2026", "orv_id": "", "source": ""}, {"databaseId": 30914155820, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:30:27Z", "updatedAt": "2026-08-04T13:30:50Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "25876a6d98db00c60138624557bf206a91dc99d2", "runNumber": 137, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30913278577, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:19:53Z", "updatedAt": "2026-08-04T13:20:43Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "091a0e7576932350bdb821f3035897c6fa7e8aed", "runNumber": 137, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30913240769, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:19:25Z", "updatedAt": "2026-08-04T13:19:34Z", "event": "push", "headBranch": "master", "headSha": "76b61ea0d6287af84b97edf2f8237d05ce5badbc", "runNumber": 107, "displayTitle": "refactor: remove streak calendar section \u2014 too many calendars", "orv_id": "", "source": ""}, {"databaseId": 30913240388, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:19:25Z", "updatedAt": "2026-08-04T13:19:56Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "76b61ea0d6287af84b97edf2f8237d05ce5badbc", "runNumber": 136, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30911918847, "name": "rusemeva-vault", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:03:05Z", "updatedAt": "2026-08-04T14:36:30Z", "event": "repository_dispatch", "headBranch": "master", "headSha": "7a18c8b06daf8b6ee0c8d403617fcc3a8dcda221", "runNumber": 39, "displayTitle": "record-request", "orv_id": "RSM-MSEO4WP5-35U1", "source": "trans7"}, {"databaseId": 30911772247, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:01:17Z", "updatedAt": "2026-08-04T13:02:13Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "e456ca012b9f868ad12838270022f9f930f22798", "runNumber": 136, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30911744670, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:00:57Z", "updatedAt": "2026-08-04T13:01:07Z", "event": "push", "headBranch": "master", "headSha": "7a18c8b06daf8b6ee0c8d403617fcc3a8dcda221", "runNumber": 106, "displayTitle": "refactor: consolidate dashboard \u2014 67\u219253 CMD_ITEMS, 74\u219251 handlers", "orv_id": "", "source": ""}, {"databaseId": 30911743784, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T13:00:56Z", "updatedAt": "2026-08-04T13:01:19Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "7a18c8b06daf8b6ee0c8d403617fcc3a8dcda221", "runNumber": 135, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30908904902, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T12:23:45Z", "updatedAt": "2026-08-04T12:24:34Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "8893a56fe92a5ecba79eabf5619cf09fd7796f67", "runNumber": 135, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30908879797, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T12:23:25Z", "updatedAt": "2026-08-04T12:23:47Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "53269d93ef5f97deec81effdb47724dc0eaf6269", "runNumber": 134, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30908879427, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T12:23:25Z", "updatedAt": "2026-08-04T12:23:39Z", "event": "push", "headBranch": "master", "headSha": "53269d93ef5f97deec81effdb47724dc0eaf6269", "runNumber": 105, "displayTitle": "fix(radio): persistent background playback \u2014 audio survives menu/page\u2026", "orv_id": "", "source": ""}, {"databaseId": 30908527081, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T12:18:37Z", "updatedAt": "2026-08-04T12:19:30Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "126acce6e2bfe71a3f2c1983d16626b240aae62b", "runNumber": 134, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30908507993, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T12:18:22Z", "updatedAt": "2026-08-04T12:18:29Z", "event": "push", "headBranch": "master", "headSha": "47e6b03fd95388cc37fbeb0509f0dbe0d7d6e95a", "runNumber": 104, "displayTitle": "feat: 5 CI/CD features \u2014 duration prediction, failure patterns, 24h t\u2026", "orv_id": "", "source": ""}, {"databaseId": 30908504732, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T12:18:19Z", "updatedAt": "2026-08-04T12:18:41Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "47e6b03fd95388cc37fbeb0509f0dbe0d7d6e95a", "runNumber": 133, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30905929809, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T11:42:34Z", "updatedAt": "2026-08-04T11:43:24Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "ca82989b3be5284cf445efdf3439c643cd6dfbdc", "runNumber": 133, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30905902701, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T11:42:11Z", "updatedAt": "2026-08-04T11:42:37Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "84cedec040074266bbb8287ccc7c8a87ff7fade6", "runNumber": 132, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30905902407, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T11:42:10Z", "updatedAt": "2026-08-04T11:42:22Z", "event": "push", "headBranch": "master", "headSha": "84cedec040074266bbb8287ccc7c8a87ff7fade6", "runNumber": 103, "displayTitle": "feat: 7 more features \u2014 volume slider, emoji badges, aurora, sparklin\u2026", "orv_id": "", "source": ""}, {"databaseId": 30904090304, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T11:15:51Z", "updatedAt": "2026-08-04T11:16:42Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "e5a42f115d8bb60ebe46a30a15f3759266139611", "runNumber": 132, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30904073266, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T11:15:36Z", "updatedAt": "2026-08-04T11:15:52Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "6c1c40b185347eb2b595707a05c4f2eabd514dd0", "runNumber": 131, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30904073046, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T11:15:36Z", "updatedAt": "2026-08-04T11:15:54Z", "event": "push", "headBranch": "master", "headSha": "6c1c40b185347eb2b595707a05c4f2eabd514dd0", "runNumber": 102, "displayTitle": "feat: 9 new features \u2014 equalizer, floating player, animated counters,\u2026", "orv_id": "", "source": ""}, {"databaseId": 30902190811, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T10:48:48Z", "updatedAt": "2026-08-04T10:49:36Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "162353aed918d8318aaf65b75f93f60b663748af", "runNumber": 131, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30902174133, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T10:48:32Z", "updatedAt": "2026-08-04T10:48:49Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "4adee196eaf093d8e1aa1c8b40c1dabd41483c85", "runNumber": 130, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30902173686, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T10:48:32Z", "updatedAt": "2026-08-04T10:48:45Z", "event": "push", "headBranch": "master", "headSha": "4adee196eaf093d8e1aa1c8b40c1dabd41483c85", "runNumber": 101, "displayTitle": "feat: radio search/favorites/regions + 5 dashboard features", "orv_id": "", "source": ""}, {"databaseId": 30898146435, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:51:31Z", "updatedAt": "2026-08-04T09:52:18Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "965a28dee4dcb8f87c7ed0c7fdef5e06683786b0", "runNumber": 130, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30898120053, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:51:10Z", "updatedAt": "2026-08-04T09:51:33Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "615156142ba7d4e8053c5efb318ebbbe4bd08843", "runNumber": 129, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30898119588, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:51:09Z", "updatedAt": "2026-08-04T09:51:19Z", "event": "push", "headBranch": "master", "headSha": "615156142ba7d4e8053c5efb318ebbbe4bd08843", "runNumber": 100, "displayTitle": "fix(ui): radio + modal visible at 100% zoom without scrolling", "orv_id": "", "source": ""}, {"databaseId": 30897896075, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:48:02Z", "updatedAt": "2026-08-04T09:48:53Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "14de9db61dca964620fa05210bb878409dc5d492", "runNumber": 129, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30897872992, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:47:43Z", "updatedAt": "2026-08-04T09:47:52Z", "event": "push", "headBranch": "master", "headSha": "90143f5c8f4cd70fb5c664304d46563f0a6728b7", "runNumber": 99, "displayTitle": "fix(radio): Now Playing banner \u2014 prominent select-style display", "orv_id": "", "source": ""}, {"databaseId": 30897872882, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:47:43Z", "updatedAt": "2026-08-04T09:48:03Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "90143f5c8f4cd70fb5c664304d46563f0a6728b7", "runNumber": 128, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30897549768, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:43:18Z", "updatedAt": "2026-08-04T09:44:05Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "2d7c4861f16c8da1f3de1b6ddf352d626e3f5dd1", "runNumber": 128, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30897528200, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:43:00Z", "updatedAt": "2026-08-04T09:43:20Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "1a15ceb9e35fd5ecab8fccfd65a303bca806739d", "runNumber": 127, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30897527875, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:43:00Z", "updatedAt": "2026-08-04T09:43:17Z", "event": "push", "headBranch": "master", "headSha": "1a15ceb9e35fd5ecab8fccfd65a303bca806739d", "runNumber": 98, "displayTitle": "fix(radio): remove Semar FM \u2014 stream is actually Jaya Radio, not Semar", "orv_id": "", "source": ""}, {"databaseId": 30897178432, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:38:09Z", "updatedAt": "2026-08-04T09:39:01Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "3457b9666d12d109beb3bcb5988420cf4635c0b0", "runNumber": 127, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30897155924, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:37:50Z", "updatedAt": "2026-08-04T09:38:11Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "8df1f35d7bf134c726072122af2727ac9198f973", "runNumber": 126, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30897154429, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:37:49Z", "updatedAt": "2026-08-04T09:37:58Z", "event": "push", "headBranch": "master", "headSha": "8df1f35d7bf134c726072122af2727ac9198f973", "runNumber": 97, "displayTitle": "feat(radio): 4 more Bengkulu stations found via deep search", "orv_id": "", "source": ""}, {"databaseId": 30896464461, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:28:23Z", "updatedAt": "2026-08-04T09:29:15Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "6544a7b9de1978fa3d8257bbdf8cd86eb910dcc9", "runNumber": 126, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30896434081, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:27:58Z", "updatedAt": "2026-08-04T09:28:26Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "0f3a5f3efcd866a748029185801d7d84d80a19bf", "runNumber": 125, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30896433760, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T09:27:58Z", "updatedAt": "2026-08-04T09:28:11Z", "event": "push", "headBranch": "master", "headSha": "0f3a5f3efcd866a748029185801d7d84d80a19bf", "runNumber": 96, "displayTitle": "fix(radio): remove RRI Padang (berita) + add 2 Bengkulu stations", "orv_id": "", "source": ""}, {"databaseId": 30890795558, "name": "cleanup-temp", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T08:09:53Z", "updatedAt": "2026-08-04T08:10:02Z", "event": "schedule", "headBranch": "master", "headSha": "12ed8f3779a9cb4064c5a1aa9be62aa2a8d9145b", "runNumber": 31, "displayTitle": "cleanup-temp", "orv_id": "", "source": ""}, {"databaseId": 30889535136, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:52:05Z", "updatedAt": "2026-08-04T07:52:48Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "f0958cdbf06b443b3835ffbc58e7dcc3fa0f3f15", "runNumber": 125, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30889510039, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:51:43Z", "updatedAt": "2026-08-04T07:51:53Z", "event": "push", "headBranch": "master", "headSha": "12ed8f3779a9cb4064c5a1aa9be62aa2a8d9145b", "runNumber": 95, "displayTitle": "feat(radio): deep search \u2014 13 Padang radio stations", "orv_id": "", "source": ""}, {"databaseId": 30889509892, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:51:43Z", "updatedAt": "2026-08-04T07:52:07Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "12ed8f3779a9cb4064c5a1aa9be62aa2a8d9145b", "runNumber": 124, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30889287251, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:48:25Z", "updatedAt": "2026-08-04T07:49:14Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "69ee42be716a0787460a4c2f6e5d7499b0792093", "runNumber": 124, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30889265264, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:48:05Z", "updatedAt": "2026-08-04T07:48:28Z", "event": "schedule", "headBranch": "master", "headSha": "d4f40472462b87bdab9c7fcb4fc764bbbf694340", "runNumber": 123, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30887729511, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:25:09Z", "updatedAt": "2026-08-04T07:26:02Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "720fcaadca65b09da9cc0309ce4e719570154f3e", "runNumber": 123, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30887711051, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:24:53Z", "updatedAt": "2026-08-04T07:25:11Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "d4f40472462b87bdab9c7fcb4fc764bbbf694340", "runNumber": 122, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30887710840, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:24:53Z", "updatedAt": "2026-08-04T07:25:00Z", "event": "push", "headBranch": "master", "headSha": "d4f40472462b87bdab9c7fcb4fc764bbbf694340", "runNumber": 94, "displayTitle": "feat(radio): add 4 Padang radio stations", "orv_id": "", "source": ""}, {"databaseId": 30886848525, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:11:53Z", "updatedAt": "2026-08-04T07:12:36Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "6f74078f363159a6a6e11c89616890a8ad47d9fd", "runNumber": 122, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30886832034, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:11:38Z", "updatedAt": "2026-08-04T07:11:53Z", "event": "push", "headBranch": "master", "headSha": "8a986a335cb33a6eca322ae5133679e06cb1f40b", "runNumber": 93, "displayTitle": "fix(radio): brighter colors for station names", "orv_id": "", "source": ""}, {"databaseId": 30886831444, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T07:11:38Z", "updatedAt": "2026-08-04T07:11:55Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "8a986a335cb33a6eca322ae5133679e06cb1f40b", "runNumber": 121, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30885824343, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T06:56:32Z", "updatedAt": "2026-08-04T06:57:13Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "c6696346b25e97353f4e334d1fc5946fdc964f99", "runNumber": 121, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30885803177, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T06:56:12Z", "updatedAt": "2026-08-04T06:56:33Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "0739d82cd2fc0ac1d17c65b4d63f8b833cedcaea", "runNumber": 120, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30885802833, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T06:56:11Z", "updatedAt": "2026-08-04T06:56:24Z", "event": "push", "headBranch": "master", "headSha": "0739d82cd2fc0ac1d17c65b4d63f8b833cedcaea", "runNumber": 92, "displayTitle": "fix(radio): station names visible on desktop + grid layout", "orv_id": "", "source": ""}, {"databaseId": 30885366302, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T06:49:20Z", "updatedAt": "2026-08-04T06:50:11Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "045eea144458bf1ea595014db0224b61da40f991", "runNumber": 120, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30885349660, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T06:49:04Z", "updatedAt": "2026-08-04T06:49:23Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "ca62d339cdfc454aa8feef0dd173d23a68aaec2f", "runNumber": 119, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30885349464, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T06:49:04Z", "updatedAt": "2026-08-04T06:49:17Z", "event": "push", "headBranch": "master", "headSha": "ca62d339cdfc454aa8feef0dd173d23a68aaec2f", "runNumber": 91, "displayTitle": "feat(dashboard): v10.4 \u2014 professional visual upgrade", "orv_id": "", "source": ""}, {"databaseId": 30881786903, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T05:47:22Z", "updatedAt": "2026-08-04T05:48:10Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "97664cc7818910db39e83d28b5468cbd171a1e9a", "runNumber": 119, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}, {"databaseId": 30881775410, "name": "Update Dashboard", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T05:47:08Z", "updatedAt": "2026-08-04T05:47:24Z", "event": "workflow_dispatch", "headBranch": "master", "headSha": "c672dfb86545166799811876fed8108282d03bc1", "runNumber": 118, "displayTitle": "Update Dashboard", "orv_id": "", "source": ""}, {"databaseId": 30881774495, "name": "ci-policy", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T05:47:07Z", "updatedAt": "2026-08-04T05:47:17Z", "event": "push", "headBranch": "master", "headSha": "c672dfb86545166799811876fed8108282d03bc1", "runNumber": 90, "displayTitle": "feat(dashboard): v10.3 \u2014 SVG upgrade for 12 features + bug audit", "orv_id": "", "source": ""}, {"databaseId": 30880624579, "name": "pages build and deployment", "status": "completed", "conclusion": "success", "createdAt": "2026-08-04T05:25:11Z", "updatedAt": "2026-08-04T05:26:01Z", "event": "dynamic", "headBranch": "gh-pages", "headSha": "24771332e5abd93242fcbf0ff4de28d4414b244f", "runNumber": 118, "displayTitle": "pages build and deployment", "orv_id": "", "source": ""}], "releases": [{"tag": "rusemeva-1785854073", "name": "Rusemeva Vault \u2014 2026-08-04 21:34:33 WIB (1h30m)", "created": "2026-08-04T13:41:38Z", "size": 1468}, {"tag": "rusemeva-1785772455", "name": "Rusemeva Vault \u2014 2026-08-03 22:54:15 WIB (1h15m)", "created": "2026-08-03T15:53:52Z", "size": 1479}, {"tag": "rusemeva-1785767518", "name": "Rusemeva Vault \u2014 2026-08-03 21:31:58 WIB (1h30m)", "created": "2026-08-03T14:12:36Z", "size": 1490}, {"tag": "rusemeva-1785681169", "name": "Rusemeva Vault \u2014 2026-08-02 21:32:49 WIB (1h30m)", "created": "2026-08-02T12:48:42Z", "size": 1490}, {"tag": "rusemeva-1785654484", "name": "Rusemeva Vault \u2014 2026-08-02 14:08:04 WIB (5h38m)", "created": "2026-08-01T16:10:53Z", "size": 201009}, {"tag": "rusemeva-1785646622", "name": "Rusemeva Vault \u2014 2026-08-02 11:57:02 WIB (5h38m)", "created": "2026-08-01T16:10:53Z", "size": 201009}, {"tag": "rusemeva-1785595145", "name": "Rusemeva Vault \u2014 2026-08-01 21:39:05 WIB (1h35m)", "created": "2026-07-30T13:39:34Z", "size": 1479}, {"tag": "rusemeva-1785508609", "name": "Rusemeva Vault \u2014 2026-07-31 21:36:49 WIB (1h35m)", "created": "2026-07-30T13:39:34Z", "size": 1479}, {"tag": "rusemeva-1785446654", "name": "Rusemeva Vault \u2014 2026-07-31 04:24:14 WIB (2h40m)", "created": "2026-07-30T13:39:34Z", "size": 96235}, {"tag": "rusemeva-1785434749", "name": "Rusemeva Vault \u2014 2026-07-31 01:05:49 WIB (2h)", "created": "2026-07-30T13:39:34Z", "size": 73894}, {"tag": "rusemeva-1785426684", "name": "Rusemeva Vault \u2014 2026-07-30 22:51:24 WIB (1h20m)", "created": "2026-07-30T13:39:34Z", "size": 1490}, {"tag": "rusemeva-1785421887", "name": "Rusemeva Vault \u2014 2026-07-30 21:31:27 WIB (43m)", "created": "2026-07-30T13:39:34Z", "size": 1466}, {"tag": "rusemeva-1785418541", "name": "Rusemeva Vault \u2014 2026-07-30 20:35:41 WIB (5m)", "created": "2026-07-30T13:29:08Z", "size": 1520}, {"tag": "rusemeva-1785418529", "name": "Rusemeva Vault \u2014 2026-07-30 20:35:29 WIB (5m)", "created": "2026-07-30T13:29:08Z", "size": 1520}, {"tag": "rusemeva-1785398045", "name": "Rusemeva Vault \u2014 2026-07-30 14:54:05 WIB (2h)", "created": "2026-07-28T06:00:14Z", "size": 74493}, {"tag": "rusemeva-1785335546", "name": "Rusemeva Vault \u2014 2026-07-29 21:32:26 WIB (1h30m)", "created": "2026-07-28T06:00:14Z", "size": 3348}, {"tag": "rusemeva-1785254094", "name": "Rusemeva Vault \u2014 2026-07-28 22:54:54 WIB (1h20m)", "created": "2026-07-28T06:00:14Z", "size": 3359}, {"tag": "rusemeva-1785186490", "name": "Rusemeva Vault \u2014 2026-07-28 04:08:10 WIB (15m)", "created": "2026-07-27T20:57:28Z", "size": 3355}, {"tag": "rusemeva-1785181446", "name": "Rusemeva Vault \u2014 2026-07-28 02:44:06 WIB (10m)", "created": "2026-07-27T18:55:27Z", "size": 3355}, {"tag": "rusemeva-1785174479", "name": "Rusemeva Vault \u2014 2026-07-28 00:47:59 WIB (10m)", "created": "2026-07-27T17:15:44Z", "size": 3354}]};
+var radioCurrentName='';var radioWasAutoPaused=false;var radioUserPaused=false;
+function updateEqState(playing){var np=document.getElementById('radioNowPlaying');var mp=document.getElementById('miniPlayer');var mpEq=document.getElementById('mpEq');var mpP=document.getElementById('mpPause');if(np){if(playing){np.classList.add('eq-playing')}else{np.classList.remove('eq-playing')}}if(mpEq){if(playing){mpEq.classList.add('eq-playing')}else{mpEq.classList.remove('eq-playing')}}if(mpP){mpP.textContent=playing?'⏸':'▶'}}function pauseRadio(){var p=document.getElementById('radioPlayer');if(p){if(p.paused){p.play();radioUserPaused=false;radioWasAutoPaused=false}else{p.pause();radioUserPaused=true;radioWasAutoPaused=false}}}function scrollToRadio(){var m=document.querySelector('a[onclick*="music"]');if(m){m.click()}var np=document.getElementById('radioNowPlaying');if(np){np.scrollIntoView({behavior:'smooth',block:'center'})}}
+function setRadioVol(v){v=Math.max(0,Math.min(100,parseInt(v)||0));var p=document.getElementById('radioPlayer');if(p){p.volume=v/100}var s=document.getElementById('mpVol');if(s){s.value=v}var l=document.getElementById('mpVolLabel');if(l){l.textContent=v+'%'}}
+document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;var p=document.getElementById('radioPlayer');if(!p||!p.src)return;if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();var s=document.getElementById('mpVol');var cur=s?parseInt(s.value):80;var nv=e.key==='ArrowUp'?Math.min(100,cur+5):Math.max(0,cur-5);setRadioVol(nv)}});
+document.addEventListener('visibilitychange',function(){var p=document.getElementById('radioPlayer');if(!p||!p.src)return;if(document.hidden){if(!p.paused&&!radioUserPaused){p.pause();radioWasAutoPaused=true}}else{if(radioWasAutoPaused&&!radioUserPaused){radioWasAutoPaused=false;p.play()}}});
+function playRadio(url,name,btn){var p=document.getElementById('radioPlayer');if(p){p.src=url;p.play();radioCurrentName=name;var np=document.getElementById('radioNowPlaying');if(np){np.innerHTML='<div class="eq-playing" style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.4);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎵</span><div><div style="font-size:14px;font-weight:600;color:#fff">Now Playing</div><div style="font-size:12px;color:var(--bl);margin-top:2px">'+name+'</div></div><span class="eq"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span></div>'}var rcn=document.getElementById('radioCtrlName');if(rcn)rcn.textContent=name;var rcb=document.getElementById('radioCtrlBtn');if(rcb)rcb.textContent='⏸';p.onplay=function(){updateEqState(true);var mp=document.getElementById('miniPlayer');var mn=document.getElementById('mpName');if(mp){mp.classList.add('on')}if(mn){mn.textContent=radioCurrentName}var rcb2=document.getElementById('radioCtrlBtn');if(rcb2)rcb2.textContent='⏸'};p.onpause=function(){updateEqState(false);var rcb3=document.getElementById('radioCtrlBtn');if(rcb3)rcb3.textContent='▶'};p.onerror=function(){updateEqState(false);var mp=document.getElementById('miniPlayer');if(mp){mp.classList.remove('on')}var rcb4=document.getElementById('radioCtrlBtn');if(rcb4)rcb4.textContent='⚠'};var rl=document.getElementById('radioList');if(rl)rl.querySelectorAll('.radio-btn').forEach(function(b){b.style.background='';b.style.color='';b.style.borderColor='';b.removeAttribute('data-playing')});if(btn){btn.style.background='var(--bl)';btn.style.color='#fff';btn.style.borderColor='var(--bl)';btn.setAttribute('data-playing','1')}}}
+function filterRadio(q){q=(q||'').toLowerCase();var rl=document.getElementById('radioList');if(!rl)return;rl.querySelectorAll('.radio-btn').forEach(function(b){var n=b.getAttribute('data-rname')||'';var r=b.getAttribute('data-region')||'';var fav=b.getAttribute('data-fav')==='1';var favOnly=document.getElementById('favFilterBtn')&&document.getElementById('favFilterBtn').getAttribute('data-on')==='1';var chip=document.querySelector('.radio-chip.on');var chipR=chip?chip.getAttribute('data-region'):'';var match=n.toLowerCase().indexOf(q)>=0;if(chipR&&r!==chipR)match=false;if(favOnly&&!fav)match=false;b.style.display=match?'':'none'})}
+function toggleFavFilter(btn){var on=btn.getAttribute('data-on')==='1';if(on){btn.removeAttribute('data-on');btn.style.background='';btn.style.color='';btn.textContent='Star Only'}else{btn.setAttribute('data-on','1');btn.style.background='var(--or)';btn.style.color='#fff';btn.textContent='Star Only ON'}filterRadio(document.getElementById('radioSearch')?document.getElementById('radioSearch').value:'')}
+function toggleFav(btn,name){var favs=[];try{favs=JSON.parse(localStorage.getItem('radioFavs')||'[]')}catch(e){}var idx=favs.indexOf(name);if(idx>=0){favs.splice(idx,1);btn.textContent='☆';btn.style.color='var(--t3)'}else{favs.push(name);btn.textContent='★';btn.style.color='var(--yl)'}localStorage.setItem('radioFavs',JSON.stringify(favs))}
+function chipSelect(btn){document.querySelectorAll('.radio-chip').forEach(function(c){c.classList.remove('on')});btn.classList.add('on');filterRadio(document.getElementById('radioSearch')?document.getElementById('radioSearch').value:'')}
+function renderRadioChips(){var chips=document.getElementById('radioFilterChips');if(!chips)return;var regions=[['All',''],['Padang','Padang'],['Bengkulu','Bengkulu'],['Nasional','Nasional'],['Dangdut','Dangdut'],['Religi','Religi']];var html='';regions.forEach(function(r){var isAll=r[0]==='All';html+='<button class="fb radio-chip'+(isAll?' on':'')+'" data-region="'+r[1]+'" onclick="chipSelect(this)">'+r[0]+'</button>'});chips.innerHTML=html}
+
+
+var randData='<code>30911918847</code> | 4j | <a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/30911918847" target="_blank">View ↗</a>';
+var cc={b:'rgba(88,166,255,.5)',g:'#3fb950',r:'#f85149'};
+new Chart(document.getElementById('c1').getContext('2d'),{type:'bar',data:{labels:["2026-08-04"],datasets:[{data:[1],backgroundColor:cc.b,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',maxTicksLimit:6,font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
+new Chart(document.getElementById('c2').getContext('2d'),{type:'line',data:{labels:["2026-W31"],datasets:[{label:'OK',data:[1],borderColor:cc.g,backgroundColor:'rgba(63,185,80,.08)',fill:true,tension:.4},{label:'Fail',data:[0],borderColor:cc.r,backgroundColor:'rgba(248,81,73,.08)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b949e',font:{size:9}}}},scales:{x:{grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',font:{size:9}}},y:{beginAtZero:true,grid:{color:'rgba(48,54,61,.4)'},ticks:{color:'#8b949e',stepSize:1,font:{size:9}}}}}});
+function getDateFilter(){var df=document.getElementById('dateFrom');var dt=document.getElementById('dateTo');var from=df?df.value:'';var to=dt?dt.value:'';return{from:from,to:to,active:!!(from&&to)}}
+function dateMatchRow(r){var df=getDateFilter();if(!df.active)return true;var cd=r.getAttribute('data-created')||'';if(!cd)return false;return cd>=df.from&&cd<=df.to}
+function applyDateFilter(){var df=getDateFilter();var btn=document.getElementById('clearDatesBtn');if(btn)btn.style.display=df.active?'':'none';localStorage.setItem('dash_dateFrom',df.from||'');localStorage.setItem('dash_dateTo',df.to||'');reapplyFilters()}
+function clearDateFilter(){var df=document.getElementById('dateFrom');var dt=document.getElementById('dateTo');if(df)df.value='';if(dt)dt.value='';localStorage.setItem('dash_dateFrom','');localStorage.setItem('dash_dateTo','');var btn=document.getElementById('clearDatesBtn');if(btn)btn.style.display='none';reapplyFilters()}
+function reapplyFilters(){var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}else{filt('all',null)}}
+function restoreDateFilter(){var df=localStorage.getItem('dash_dateFrom')||'';var dt=localStorage.getItem('dash_dateTo')||'';var elF=document.getElementById('dateFrom');var elT=document.getElementById('dateTo');if(elF&&df)elF.value=df;if(elT&&dt)elT.value=dt;var btn=document.getElementById('clearDatesBtn');if(btn)btn.style.display=(df&&dt)?'':'none'}
+function filt(s,b){document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on')});if(b)b.classList.add('on');document.querySelectorAll('#rt tbody tr').forEach(function(r){var ds=r.dataset.s||'';var match=(s==='all')||(ds===s)||(s==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));var dm=dateMatchRow(r);var q=document.getElementById('q');var sv=q?q.value.toLowerCase():'';var sm=!sv||r.dataset.q.includes(sv);r.classList.toggle('hid',!(match&&dm&&sm));});updateSavePresetBtn()}
+function srch(){var q=document.getElementById('q').value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(function(r){var sv=r.dataset.q.includes(q);var onFb=document.querySelector('.fb.on');var fk=onFb?onFb.getAttribute('data-f')||'all':'all';var ds=r.dataset.s||'';var fm=(fk==='all')||(ds===fk)||(fk==='in_progress'&&(ds===''||ds==='in_progress'||ds==='queued'));var dm=dateMatchRow(r);r.classList.toggle('hid',!(sv&&fm&&dm));});updateSavePresetBtn()}
+function getActiveFilterState(){var q=document.getElementById('q');var searchText=(q&&q.value)?q.value.trim():'';var onFb=document.querySelector('.fb.on');var filter=onFb?onFb.getAttribute('data-f')||'all':'all';return{search:searchText,filter:filter}}
+function hasActiveFilters(){var st=getActiveFilterState();return st.search!==''||st.filter!=='all'}
+function updateSavePresetBtn(){var btn=document.getElementById('savePresetBtn');if(!btn)return;btn.classList.toggle('hid',!hasActiveFilters())}
+function getPresets(){try{return JSON.parse(localStorage.getItem('dashPresets')||'[]')}catch(e){return[]}}
+function savePresets(arr){localStorage.setItem('dashPresets',JSON.stringify(arr))}
+function savePreset(){var st=getActiveFilterState();if(!hasActiveFilters())return;var name=prompt('Preset name:','');if(!name||!name.trim())return;name=name.trim();var presets=getPresets();var existing=-1;for(var i=0;i<presets.length;i++){if(presets[i].name===name){existing=i;break}}var entry={name:name,search:st.search,filter:st.filter};if(existing>=0){presets[existing]=entry}else{presets.push(entry)}savePresets(presets);renderPresets()}
+function renderPresets(){var el=document.getElementById('presetRow');if(!el)return;var presets=getPresets();var html='';presets.forEach(function(p,i){html+='<span class="preset-btn" data-preset-idx="'+i+'"><span data-preset-apply="'+i+'">'+esc(p.name)+'</span><button class="preset-del" data-preset-del="'+i+'" title="Delete preset">x</button></span>'});el.innerHTML=html}
+function applyPreset(i){var presets=getPresets();if(!presets[i])return;var p=presets[i];var q=document.getElementById('q');if(q){q.value=p.search||'';srch()}var fb=document.querySelector('.fb[data-f="'+(p.filter||'all')+'"]');if(fb){filt(p.filter||'all',fb)}}
+function deletePreset(i,ev){if(ev)ev.stopPropagation();var presets=getPresets();if(i<0||i>=presets.length)return;presets.splice(i,1);savePresets(presets);renderPresets()}
+function initPresetClicks(){var row=document.getElementById('presetRow');if(row){row.addEventListener('click',function(e){var delBtn=e.target.closest('[data-preset-del]');if(delBtn){e.stopPropagation();deletePreset(parseInt(delBtn.getAttribute('data-preset-del'),10),e);return}var applyEl=e.target.closest('[data-preset-apply]');if(applyEl){applyPreset(parseInt(applyEl.getAttribute('data-preset-apply'),10))}})}var saveBtn=document.getElementById('savePresetBtn');if(saveBtn){saveBtn.addEventListener('click',function(){savePreset()})}var grpBtn=document.getElementById('groupToggle');if(grpBtn){grpBtn.addEventListener('click',function(){toggleGrouping()})}}
+function dashRows(){var D=window.DASH||{runs:[]};return (D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'})}
+function expCSV(){var rows=filteredRows();var nl=String.fromCharCode(10);var lines=['id,orv_id,name,status,conclusion,createdAt,source'];rows.forEach(function(r){lines.push([r.databaseId||'',r.orv_id||'',r.name||'',r.status||'',r.conclusion||'',r.createdAt||'',r.source||''].map(function(x){return '"'+String(x).replace(/"/g,'""')+'"'}).join(','))});downloadBlob(lines.join(nl),'rusemeva-runs.csv','text/csv')}
+function expJSON(){var D=window.DASH||{};downloadBlob(JSON.stringify({generated:D.generated,stats:D.stats,runs:filteredRows()},null,2),'rusemeva-runs.json','application/json')}
+function expTXT(){var rows=filteredRows();var nl=String.fromCharCode(10);var lines=rows.map(function(r){return [r.createdAt||'',r.orv_id||r.databaseId||'',r.name||'',r.conclusion||r.status||'',r.source||''].join(String.fromCharCode(9))});downloadBlob(lines.join(nl),'rusemeva-runs.txt','text/plain')}
+function expPDF(){var rows=filteredRows();var w=window.open('','_blank');if(!w)return;var html='<html><head><title>Rusemeva Runs Report</title><style>body{font-family:monospace;font-size:11px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:3px 6px;text-align:left}th{background:#f0f0f0}h1{font-size:14px}</style></head><body><h1>Rusemeva Runs Report</h1><p>Generated: '+new Date().toISOString()+' | Rows: '+rows.length+'</p><table><thead><tr><th>ID</th><th>RSM-ID</th><th>Name</th><th>Status</th><th>Created</th><th>Source</th></tr></thead><tbody>';rows.forEach(function(r){html+='<tr><td>'+esc(r.databaseId||'')+'</td><td>'+esc(r.orv_id||'')+'</td><td>'+esc(r.name||'')+'</td><td>'+esc(r.conclusion||r.status||'')+'</td><td>'+esc(r.createdAt||'')+'</td><td>'+esc(r.source||'')+'</td></tr>'});html+='</tbody></table></body></html>';w.document.write(html);w.document.close();w.print()}
+function downloadBlob(text,name,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}
+function showM(t){
+document.getElementById('mo').classList.add('on');
+var h=document.getElementById('mt'),b=document.getElementById('mb');
+var D=window.DASH||{stats:{},runs:[],releases:[]};
+var st=D.stats||{};
+function vaultRuns(){return (D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'});}
+function encRuns(){return (D.runs||[]).filter(function(r){return r.name==='rusemeva-encode'});}
+function sk(r){return statusKeyJs(r);}
+function rowRun(r){
+  var id=r.orv_id||r.databaseId||'';
+  var s=displayStatusJs(r);
+  var link='https://github.com/daudjoss/daudjoss-vault/actions/runs/'+(r.databaseId||'');
+  var dur='';
+  var sw='';if(sk(r)==='in_progress'&&r.createdAt){sw='<span class="stopwatch live" id="sw-'+(r.databaseId||'')+'">0m 0s</span>'}
+  if(r.createdAt&&r.updatedAt){var ms=new Date(r.updatedAt)-new Date(r.createdAt);if(ms>0){var mins=Math.round(ms/60000);var pct=Math.min(mins/120*100,100);var col=r.conclusion==='success'?'var(--gn)':(r.conclusion==='failure'?'var(--rd)':'var(--bl)');dur='<div class="dur-bar"><div class="dur-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'}}
+  return '<div class="fi" data-s="'+esc(sk(r))+'" data-rid="'+esc(r.databaseId||'')+'" data-orv="'+esc(r.orv_id||'')+'"><span class="fi-icon">'+icoJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code title="'+esc(r.databaseId||'')+'">'+esc(id)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+clsJs(sk(r)==='in_progress'?'':(r.conclusion||''))+'">'+esc(s)+'</span> <a href="'+link+'" target="_blank" style="font-size:10px">↗</a>'+dur+'</div>';
+}
+function storageLabel(){
+  var ghB=st.gh_bytes!=null?Number(st.gh_bytes):(Number(st.total_size||0)*1024*1024*1024);
+  var ghStr = ghB>=1024*1024 ? (ghB/1024/1024).toFixed(1)+' MB' : (ghB/1024).toFixed(0)+' KB';
+  var life=st.lifetime_est_gb!=null?Number(st.lifetime_est_gb):0;
+  return ghStr+' on GH'+(life>0?' · lifetime rec ~'+life.toFixed(1)+' GB <span style="color:var(--t2)">(est, not stored)</span>':'');
+}
+function statBlock(){
+  return '<div style="font-size:11px;line-height:1.7">'
+    +'<b>Recordings (vault)</b><br>'
+    +'• Total: <b>'+(st.total||0)+'</b><br>'
+    +'• Success: <b>'+(st.success||0)+'</b> ('+(st.rate||0)+'%)<br>'
+    +'• Failed: <b>'+(st.failed||0)+'</b> · Running: <b>'+(st.running||0)+'</b><br>'
+    +'• Today: <b>'+(st.today||0)+'</b> (ok '+(st.today_ok||0)+') · Streak: <b>'+(st.streak||0)+'</b>d (best '+(st.best||0)+')<br>'
+    +'• Storage: <b>'+storageLabel()+'</b><br>'
+    +'• Peak hour: <b>'+(st.top_hour!=null?st.top_hour+':00':'—')+'</b> · Top day: <b>'+(st.top_day||'—')+'</b><br>'
+    +'• Night owl runs: <b>'+(st.night||0)+'</b><br><br>'
+    +'<b>Encode</b><br>'
+    +'• Jobs: <b>'+(st.enc||0)+'</b> · OK: <b>'+(st.enc_ok||0)+'</b> ('+(st.enc_rate||0)+'%)<br>'
+    +'</div>';
+}
+if(t==='keys'){h.textContent='❓ Help';var helpTabs='<div style="display:flex;gap:4px;margin-bottom:8px;border-bottom:1px solid var(--brd);padding-bottom:4px"><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'help\')">Help</button><button class="btn" style="font-size:11px;padding:2px 8px;background:var(--bg3)" onclick="showM(\'keys\')">Keys</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'about\')">About</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'updates\')">Updates</button></div>';b.innerHTML=helpTabs+'<div class="sh2"><div class="sk"><span class="ky">?</span> Cheat sheet overlay</div><div class="sk"><span class="ky">P</span> Command palette (navigate + search)</div><div class="sk"><span class="ky">R</span> Soft-refresh (reload data)</div><div class="sk"><span class="ky">D</span> Toggle dark/light theme</div><div class="sk"><span class="ky">S</span> Focus search box</div><div class="sk"><span class="ky">E</span> Export CSV (filtered)</div><div class="sk"><span class="ky">Esc</span> Close modal / palette</div></div><div style="margin-top:8px;font-size:11px;color:var(--t2)">Fokus input/textarea = shortcut nonaktif. Enter di search = langsung cari.</div>'}
+if(t==='api'){h.textContent='📚 API';b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Worker</b> <code>rusemeva.rusemeva-vault.workers.dev</code><br><br><b>Endpoints</b><br><div class="curl-box">GET /api/status → {status, uptime, version}<span class="curl-copy" >📋</span></div><code>POST /api/record</code> → trigger vault GHA<br><code>GET /api/runs</code> → recent run list<br><div class="curl-box">GET /api/orv-map → {map:[{run_id,orv_id,source}]}<span class="curl-copy" >📋</span></div><code>GET /rtcal?preset=slow</code> → RT encode calibration<br><br><b>Dashboard (static)</b><br><code>GET data.json</code> → {build,generated,stats,runs,releases,orv_map}<br><code>GET index.html</code> → full dashboard<br><code>GET manifest.json</code> → PWA manifest<br><br><b>Contoh curl</b><br><code style="display:block;white-space:pre-wrap;padding:6px;background:var(--bg3);border-radius:4px;margin:4px 0">curl rusemeva.rusemeva-vault.workers.dev/api/orv-map</code><br><code style="display:block;white-space:pre-wrap;padding:6px;background:var(--bg3);border-radius:4px;margin:4px 0">curl daudjoss.github.io/daudjoss-vault/data.json | jq .stats</code><br><br><b>Auth</b><br>• Worker endpoints: no auth (public read)<br>• POST /api/record: requires bot token<br>• GHA API: uses github.token in Actions<br><br><b>Rate limits</b><br>• Worker: 100k req/day (CF free)<br>• GHA API: 5000 req/hr (authenticated)<br>• Pages: unlimited (CDN cached)</div>'}
+if(t==='about'){h.textContent='❓ Help';var helpTabs='<div style="display:flex;gap:4px;margin-bottom:8px;border-bottom:1px solid var(--brd);padding-bottom:4px"><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'help\')">Help</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'keys\')">Keys</button><button class="btn" style="font-size:11px;padding:2px 8px;background:var(--bg3)" onclick="showM(\'about\')">About</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'updates\')">Updates</button></div>';var gen=D.generated||'—';var build=D.build||'—';var st=D.stats||{};var vaultC=vaultRuns().length;var encC=encRuns().length;var orvC=(D.runs||[]).filter(function(r){return r.orv_id}).length;b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Rusemeva Dashboard</b> v8.5.2<br>Live GHA + Worker RSM map + Telegram delivery<br><br><b>Tech stack</b><br>• Frontend: static HTML/CSS/JS (no framework)<br>• Charts: Chart.js (CDN)<br>• Data: GitHub Actions API → data.json<br>• Worker: Cloudflare (orv-map, status, notify)<br>• Hosting: GitHub Pages (free)<br>• Bot: Telegram @daudtrans_bot<br><br><b>Data sources</b><br>• GHA runs (get_runs 150) → lean 80 in data.json<br>• GH releases (get_releases 30) → storage + lifetime est<br>• Worker /api/orv-map → RSM-ID linking<br>• Soft-refresh: data.json + ORV map every 30s<br><br><b>Current snapshot</b><br>• Vault runs in payload: '+vaultC+'<br>• Encode runs in payload: '+encC+'<br>• RSM linked: '+orvC+'/'+(D.runs||[]).length+'<br>• GH storage: '+storageLabel()+'<br>• Build: <code>'+esc(build)+'</code><br>• Generated: <code>'+esc(gen)+'</code><br><br><b>Cost</b><br>• GitHub Actions: free tier (2000 min/mo)<br>• Cloudflare Worker: free tier (100k req/day)<br>• GitHub Pages: free<br>• Total: ~$0/mo<br><br><b>Links</b><br>• Repo: <a href="https://github.com/daudjoss/daudjoss-vault" target="_blank">daudjoss/daudjoss-vault</a><br>• Site: <a href="https://daudjoss.github.io/daudjoss-vault/" target="_blank">gh-pages</a><br>• Worker: <a href="https://rusemeva.rusemeva-vault.workers.dev/api/orv-map" target="_blank">orv-map</a></div>'}
+if(t==='updates'){h.textContent='❓ Help';var helpTabs='<div style="display:flex;gap:4px;margin-bottom:8px;border-bottom:1px solid var(--brd);padding-bottom:4px"><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'help\')">Help</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'keys\')">Keys</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'about\')">About</button><button class="btn" style="font-size:11px;padding:2px 8px;background:var(--bg3)" onclick="showM(\'updates\')">Updates</button></div>';b.innerHTML=helpTabs+'<div style="font-size:11px;line-height:1.6"><b>v10.3</b>: Failure Prediction, SLA Breach, Cancel Rate, Run Streak, Workflow Reliability, Peak Load, Failure Clusters, Run Waste, Performance Percentile, Workflow Lifecycle, Run Density Map, Duplicate Run Detector<br><br><b>v10.2</b>: CI/CD Health Score, Week-over-Week Delta, Workflow Duration Breakdown, SVG charts<br><br><b>v10.1</b>: Flaky Run Detector, Workflow Network Graph, Run Velocity, Quiet Periods, Release Tracker, DORA Scorecard, Trigger Analysis, Run Number Tracker, Commit Messages, Event Timeline<br><br><b>v10.0</b>: Deploy Frequency, MTTR, Change Failure Rate, Lead Time, Failure Pattern Analysis, Duration Trends, Success Rate by Day/Hour, Branch Health, Actions Minutes, Workflow Comparison, Concurrency, Commit Impact, Deploy Timeline, Retry Tracker<br><br><b>v10</b>: Heatmap Calendar, Achievement System, Analytics Charts, Gantt Timeline, Run Comparison, Markdown Report Export, Dashboard Clock, ASCII Art Header, Custom Theme Builder, Settings Import/Export, PWA Support<br><br><b>v9.0</b>: Best/worst day, Time-to-recovery, Productivity score, Live run stopwatch, Quick actions panel, Batch tag/note, QR code, OG image, Embed widget, High contrast, Font size control, ARIA live, Loading skeleton<br><br><b>v8.9</b>: Achievement badges, Streak calendar, Run frequency clock, Recurring failure detection, Run duration prediction, Run clustering, Mini terminal, Dashboard snapshot URL, Custom layout drag-drop, Mobile swipe, Mini sparkline, Status donut, Pipeline particles, Glass morphism<br><br><b>v8.8</b>: Animated counters, Pipeline flow diagram, Activity rings, Gantt timeline, Fail replay, Run notes, Weekly auto-report, Custom alert, Embed mode, Theme accent picker, Table column toggle, j/k navigation, Copy as cURL, Print-friendly<br><br><b>v8.7</b>: Gauge/donut success rate, Rate history, Animated feed, Tab title counter, Favicon badge, Sound alert, Data freshness dot, Copy RSM, Search history, Quick filter chips, Offline indicator, Confetti, Markdown export, Success rate color zone<br><br><b>v8.6</b>: Activity heatmap, Sparkline trend, Duration bars, Browser notification, Failure pattern alert, ETA estimate, PWA install, System theme, Cheat sheet, Share as stats card<br><br><b>v8.5.2</b>: About, API, Help, Keys, Notes, Tags, Bookmarks, Comments, Share, Clock<br><br><b>v8.5</b>: Last RSM card, Deep link, Honest client health, Command palette, Compact mode, Compare 2 runs, Export filtered<br><br><b>v8.4.2</b>: window.DASH, Storage est, Customize, Search/Export/Player/Compare, Soft-refresh<br><br><b>v8.0-v8.3</b>: Hero, glass, mobile nav, feed audit</div>'}
+if(t==='notes'){h.textContent='📝 Notes';b.innerHTML='<div><textarea class="note-area" id="noteArea" placeholder="Catatan lokal (auto-save 2s setelah berhenti ketik)..." style="width:100%;min-height:120px"></textarea><div style="margin-top:6px;display:flex;gap:6px;align-items:center"><button class="btn" onclick="saveNote()">💾 Save</button> <button class="btn" onclick="clearNote()">🗑 Clear</button> <span id="noteStatus" style="font-size:10px;color:var(--t2)"></span> <span id="noteCount" style="font-size:10px;color:var(--t2);margin-left:auto">0 chars</span></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Auto-save 2s · localStorage: rusemeva-note · last saved: <span id="noteSaved">—</span></div></div>';loadNote();var na=document.getElementById('noteArea');var ns=document.getElementById('noteStatus');var nc=document.getElementById('noteCount');var nsv=document.getElementById('noteSaved');if(na){na.addEventListener('input',function(){if(nc)nc.textContent=na.value.length+' chars';if(ns)ns.textContent='typing...';clearTimeout(window._noteTimer);window._noteTimer=setTimeout(function(){saveNote();if(ns)ns.textContent='saved';if(nsv){var d=localStorage.getItem('rusemeva-note-saved');if(d)nsv.textContent=d}},2000)})}}
+if(t==='tags'){h.textContent='🏷 Tags';b.innerHTML='<div class="tag-input"><input type="text" id="tagInput" placeholder="Tag name..." style="flex:1;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:12px" onkeydown="if(event.keyCode===13)addTag()"><button class="btn" onclick="addTag()">Add</button></div><div id="tagList" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div><div id="tagCount" style="margin-top:6px;font-size:10px;color:var(--t2)">0 tags</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-tags · Enter untuk add · klik tag untuk hapus</div>';loadTags()}
+if(t==='bookmarks'){h.textContent='🔖 Bookmarks';b.innerHTML='<div id="bookmarkList" style="margin-bottom:8px"></div><div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"><input type="text" id="bmTime" placeholder="mm:ss" style="width:60px;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px"> <input type="text" id="bmNote" placeholder="Note / RSM-ID / timestamp..." style="flex:1;min-width:140px;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px" onkeydown="if(event.keyCode===13)addBookmark()"> <button class="btn" onclick="addBookmark()">Add</button></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-bookmarks · Enter untuk add · × untuk hapus</div>';loadBookmarks()}
+if(t==='notifprefs'){h.textContent='🔔 Notification Settings';var prefs=getNotifPrefs();var items=[['runComplete','Run Complete'],['failDetected','Failure Detected'],['dataRefreshed','Data Refreshed'],['newRunStarted','New Run Started']];var html='<div style="font-size:11px;line-height:1.7"><div style="margin-bottom:8px;color:var(--t2)">Toggle which events trigger toast notifications. Saved to localStorage <code>notifPrefs</code>.</div>';items.forEach(function(it){var key=it[0];var label=it[1];var on=prefs[key]!==false;html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;margin-bottom:4px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px"><span>'+label+'</span><label class="notif-toggle" style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer"><input type="checkbox" data-notif-key="'+key+'" '+(on?'checked':'')+' style="opacity:0;width:0;height:0;position:absolute"><span class="notif-slider" style="position:absolute;inset:0;background:'+(on?'var(--gn)':'var(--bg2)')+';border:1px solid var(--brd);border-radius:20px;transition:0.2s"><span style="position:absolute;top:1px;left:'+(on?'17px':'1px')+';width:16px;height:16px;background:#fff;border-radius:50%;transition:0.2s"></span></span></label></div>'});html+='<div style="margin-top:8px"><button class="btn" onclick="resetNotifPrefs()">Reset all to ON</button></div>';html+='</div>';b.innerHTML=html;b.querySelectorAll('[data-notif-key]').forEach(function(cb){cb.addEventListener('change',function(){saveNotifPref(this.getAttribute('data-notif-key'),this.checked);var slider=this.nextElementSibling;if(slider){slider.style.background=this.checked?'var(--gn)':'var(--bg2)';var knob=slider.querySelector('span');if(knob)knob.style.left=this.checked?'17px':'1px'}})})}
+if(t==='compare'){h.textContent='🔄 Compare';b.innerHTML='<div style="font-size:11px;line-height:1.6"><b>Compare 2 runs</b><br>Klik tombol ⚖ di tiap baris Feed untuk pilih 2 run.<br>Setelah 2 terpilih, modal perbandingan muncul otomatis.</div><div style="margin-top:8px"><button class="btn" id="cmpClear">Clear picks</button></div>';var b2=document.getElementById('cmpClear');if(b2)b2.onclick=function(){cmpPick=[];clM();document.querySelectorAll('.fi').forEach(function(e){e.style.outline=''})}
+}
+if(t==='timeline'||t==='history'){
+  h.textContent=t==='timeline'?'⏱ Timeline':'📜 History';
+  var list=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});
+  // group by date
+  var groups={};
+  list.forEach(function(r){
+    var d=agoJs(r.createdAt||'');
+    var date=d.replace(/[0-9]+[mjh]/,'').trim()||'baru';
+    if(!groups[date])groups[date]={items:[],ok:0,fail:0,run:0,cancel:0};
+    groups[date].items.push(r);
+    var s=statusKeyJs(r);
+    if(s==='success')groups[date].ok++;
+    else if(s==='failure')groups[date].fail++;
+    else if(s==='cancelled')groups[date].cancel++;
+    else groups[date].run++;
+  });
+  var dates=Object.keys(groups).slice(0,10);
+  var html='<div class="hist" style="max-height:380px;overflow:auto">';
+  dates.forEach(function(dt){
+    var g=groups[dt];
+    html+='<div style="padding:6px 0;border-bottom:1px solid var(--brd)"><div style="font-size:11px;font-weight:600;margin-bottom:4px">'+esc(dt)+' <span style="color:var(--t2);font-weight:400">('+g.items.length+' runs: ✅'+g.ok+' ❌'+g.fail+' 🔄'+g.run+' ⚪'+g.cancel+')</span></div>';
+    html+=g.items.slice(0,8).map(rowRun).join('');
+    html+='</div>';
+  });
+  html+='</div>';
+  b.innerHTML=html;
+if(t==='timeline'||t==='history'){var cl=document.createElement('div');cl.style.marginTop='8px';cl.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">🗂 Sessions</div>'+renderClusters();var mb3=document.getElementById('mb');if(mb3)mb3.appendChild(cl);var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
+if(t==='timeline'||t==='history'){var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
+}
+if(t==='timeline'||t==='history'){var gb=document.createElement('div');gb.style.marginTop='8px';gb.innerHTML='<div style="font-size:11px;font-weight:600;margin-bottom:4px">📊 Gantt View</div>'+renderGantt();var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(gb)}
+if(t==='search'){h.textContent='🔍 Search';b.innerHTML='<div class="search-filters"><div class="search-filter"><label>Source</label><select id="srcFilter"><option value="All">All</option><option value="rusemeva-vault">Vault</option><option value="rusemeva-encode">Encode</option><option value="Trans7">Trans7</option><option value="SevenHub">SevenHub</option></select></div><div class="search-filter"><label>Status</label><select id="statFilter"><option value="All">All</option><option value="success">Success</option><option value="failure">Failed</option><option value="in_progress">Running</option><option value="cancelled">Cancelled</option></select></div><div class="search-filter"><label>Sort</label><select id="sortFilter"><option value="new">Newest</option><option value="old">Oldest</option></select></div></div><div style="margin-top:6px"><input class="si2" id="qAdv" placeholder="RSM-ID / run id / text..." style="width:100%;margin-bottom:6px" onkeydown="if(event.keyCode===13)advSearch()"><button class="btn" onclick="advSearch()">Search</button> <button class="btn" onclick="clearSearch()">Clear</button> <span id="searchCount" style="font-size:10px;color:var(--t2);margin-left:4px"></span></div><div id="searchResults" style="margin-top:8px;max-height:320px;overflow:auto"></div>'}
+if(t==='export'){h.textContent='📥 Export';var n=filteredRows().length;b.innerHTML='<div class="export-opts"><div class="export-opt sel" onclick="expCSV()"><div class="export-opt-icon">📊</div><div class="export-opt-label">CSV</div></div><div class="export-opt" onclick="expJSON()"><div class="export-opt-icon">📄</div><div class="export-opt-label">JSON</div></div><div class="export-opt" onclick="expPDF()"><div class="export-opt-icon">📑</div><div class="export-opt-label">PDF</div></div><div class="export-opt" onclick="expTXT()"><div class="export-opt-icon">📝</div><div class="export-opt-label">TXT</div></div><div class="export-opt" onclick="expMD()"><div class="export-opt-icon">📋</div><div class="export-opt-label">Markdown</div></div></div><div style="margin-top:8px;font-size:10px;color:var(--t2)">'+n+' rows akan di-export (hormati filter search aktif). Data dari window.DASH.runs.</div>'}
+if(t==='customize'){
+  h.textContent='🎨 Customize';
+  var keys=[['hideStats','Stats cards','.sg'],['hideHealth','Health','#sec-health'],['hideFeed','Live feed','#sec-feed'],['hideCharts','Charts & activity',''],['hideStreak','Streak bar','.streak']];
+  var html='<div>';
+  keys.forEach(function(k){
+    var on=localStorage.getItem('dash_'+k[0])!=='1';
+    html+='<div class="opt"><div class="opt-label">'+k[1]+'</div><button class="opt-btn" data-k="'+k[0]+'" data-sel="'+k[2]+'" onclick="toggleCust(this)">'+(on?'ON':'OFF')+'</button></div>';
+  });
+  var soundOn=localStorage.getItem('soundAlert')==='1';var compactOn=document.body.classList.contains('compact');
+  html+='<div class="opt"><div class="opt-label">Accent color</div><div>'+Object.keys(ACCENTS).map(function(k){return '<span class="accent-swatch'+(localStorage.getItem('dash_accent')===k?' sel':'')+'" data-accent="'+k+'" style="background:'+ACCENTS[k]+'" ></span>'}).join('')+'</div></div>';html+='<div class="opt"><div class="opt-label">Compact mode (hide charts/gallery)</div><button class="opt-btn" onclick="toggleCompact()">'+(compactOn?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Alert threshold (fails)</div><input class="threshold-input" id="thresholdInput" type="number" min="1" max="20" value="'+getAlertThreshold()+'" onchange="setThreshold(this.value)"></div>';;html+='<div class="opt"><div class="opt-label">High contrast</div><button class="opt-btn" onclick="toggleHC()">'+(document.body.classList.contains('hc-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Font size: '+(parseInt(localStorage.getItem('dash_fontsize')||'14',10))+'px</div><div class="font-ctrl"><span class="font-btn" onclick="adjustFont(-1)">A-</span><span class="font-btn" onclick="adjustFont(1)">A+</span></div></div>';html+='<div class="opt"><div class="opt-label">Glass morphism</div><button class="opt-btn" onclick="toggleGlass()">'+(document.body.classList.contains('glass-mode')?'ON':'OFF')+'</button></div>';html+='<div class="opt"><div class="opt-label">Sound alert on fail</div><button class="opt-btn" onclick="toggleSound()">'+(soundOn?'ON':'OFF')+'</button></div>';
+  html+='</div><div style="margin-top:8px;font-size:10px;color:var(--t2)">Disimpan di localStorage · berlaku langsung. Theme: tekan D atau 🌓 di hero.</div>';
+  b.innerHTML=html;
+}
+if(t==='help'){h.textContent='❓ Help';var helpTabs='<div style="display:flex;gap:4px;margin-bottom:8px;border-bottom:1px solid var(--brd);padding-bottom:4px"><button class="btn" style="font-size:11px;padding:2px 8px;background:var(--bg3)" onclick="showM(\'help\')">Help</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'keys\')">Keys</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'about\')">About</button><button class="btn" style="font-size:11px;padding:2px 8px" onclick="showM(\'updates\')">Updates</button></div>';b.innerHTML=helpTabs+'<div style="font-size:11px;line-height:1.7"><b>Mulai cepat</b><br>1. Lihat hero → Last RSM + storage story + 24h diff<br>2. Recordings table → filter ✅❌🔄 atau search<br>3. Tools menu → Stats, Search, Export, Player, Compare<br>4. Tekan <b>P</b> → command palette (navigate + search run)<br>5. Soft-refresh 30s otomatis (data.json + ORV map)<br><br><b>Deep link</b><br>• <code>?rsm=RSM-XXXX</code> → filter + highlight run by RSM-ID<br>• <code>?run=123456</code> → filter + highlight by GHA run ID<br>• Share dari Share menu atau copy URL<br><br><b>Saved views</b><br>• Klik view button (All/Fail/Today/RSM/Running)<br>• Save → beri nama → tersimpan di localStorage<br><br><b>Compare 2 runs</b><br>• Klik ⚖ di Feed atau Search results<br>• Pilih 2 runs → modal perbandingan otomatis<br><br><b>Compact mode</b><br>• Customize → Compact ON<br>• Sembunyikan charts/gallery, fokus tabel + feed<br><br><b>FAQ</b><br><b>Q: Kenapa Storage kecil?</b><br>A: GitHub hanya simpan manifest .txt. Video di Telegram.<br><br><b>Q: Kenapa RSM-ID tidak muncul?</b><br>A: Worker orv-map hanya terisi setelah record/encode selesai dan link terbuat.<br><br><b>Q: Kenapa angka berubah?</b><br>A: Soft-refresh 30s ambil data.json + ORV map terbaru.<br><br><b>Q: Data tidak update?</b><br>A: Hard refresh (Ctrl+Shift+R) atau cek data.json age di Status menu.<br><br><b>Shortcuts:</b> P palette · R refresh · D theme · S search · E export · Esc close</div>'}
+if(t==='stats'||t==='analytics'||t==='status'){
+  h.textContent=t==='stats'?'📊 Stats':(t==='analytics'?'📊 Analytics':'📡 Status');
+  var extra='';
+  if(t==='stats'){
+    var encList=encRuns();
+    var encCanc=encList.filter(function(r){return r.conclusion==='cancelled'}).length;
+    var encFail=encList.filter(function(r){return r.conclusion==='failure'}).length;
+    var vaultCanc=(st.cancelled||0);
+    extra='<br><br><b>Encode detail</b><br>• OK: '+(st.enc_ok||0)+' · Fail: '+encFail+' · Cancel: '+encCanc+'<br>• Rate: '+(st.enc_rate||0)+'%<br><br><b>Cancelled (excluded from fail)</b><br>• Vault: '+vaultCanc+' · Encode: '+encCanc+'<br><br><b>Storage</b><br>• '+storageLabel()+'<br><br><b>RSM map</b><br>• Linked: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+' / '+(D.runs||[]).length+' runs';
+  }
+  if(t==='analytics'){
+    var hours=D.hours||{};
+    var top=Object.keys(hours).sort(function(a,b){return (hours[b]||0)-(hours[a]||0)}).slice(0,8);
+    extra='<br><b>Top jam:</b><br>'+(top.map(function(hh){return '• '+hh+':00 → '+(hours[hh]||0)+' runs'}).join('<br>')||'• —');
+    var days=D.days||{};
+    var topDays=Object.keys(days).sort(function(a,b){return (days[b]||0)-(days[a]||0)}).slice(0,7);
+    extra+='<br><br><b>Hari:</b><br>'+(topDays.map(function(dd){return '• '+dd+': '+(days[dd]||0)+' runs'}).join('<br>')||'• —');
+    var ins=(D.insights||[]).slice(0,5);
+    var pred=(D.predictions||[]).slice(0,5);
+    extra+='<br><br><b>Insights</b><br>'+(ins.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
+    extra+='<br><br><b>Predictions</b><br>'+(pred.map(function(i){return '• '+esc(i)}).join('<br>')||'• —');
+  }
+  if(t==='status'){
+    var gen=D.generated||'—';
+    var ageMin=0;
+    if(gen&&gen!=='—'){ageMin=Math.round((Date.now()-new Date(gen).getTime())/60000);}
+    extra='<br><b>System</b><br>• Dashboard: gh-pages (static)<br>• Soft-refresh: 30s (data.json + ORV map)<br>• Data age: '+ageMin+'m<br>• ORV linked: '+((D.runs||[]).filter(function(r){return r.orv_id}).length)+'/'+(D.runs||[]).length+'<br><br><b>Worker</b><br>• rusemeva.rusemeva-vault.workers.dev<br>• /api/orv-map, /api/status<br><br><b>Build</b><br>• '+(D.build||'—');
+  }
+  b.innerHTML=statBlock()+extra;var dp=predictDuration();if(t==='stats'||t==='analytics'){var el=document.createElement('div');el.innerHTML=renderInsights()+renderRecovery()+renderProductivity();var mb0=document.getElementById('mb');if(mb0)mb0.appendChild(el);el.innerHTML=renderRateHistory();if(dp){var dpEl=document.createElement('div');dpEl.style.marginTop='8px';dpEl.innerHTML='<div style="font-size:11px;font-weight:600">⏱ Duration Prediction</div><div style="font-size:11px">Avg: '+dp.avg+'m · Median: '+dp.median+'m · Samples: '+dp.samples+'</div>'}var mb=document.getElementById('mb');if(mb)mb.appendChild(el);var rb=document.createElement('button');rb.className='btn';rb.textContent='📋 Weekly Report';rb.onclick=function(){var txt=generateReport();var box=document.createElement('div');box.className='report-box';box.textContent=txt;mb.appendChild(box);var cb=document.createElement('button');cb.className='btn';cb.textContent='Copy';cb.onclick=function(){navigator.clipboard.writeText(txt).then(function(){showToast('Report copied!')})};mb.appendChild(cb)};mb.appendChild(rb)}
+if(t==='stats'||t==='analytics'){var mb3=document.getElementById('mb');if(mb3){var rb=document.createElement('button');rb.className='btn';rb.textContent='📋 Weekly Report';rb.style.margin='8px 0';rb.onclick=function(){var txt=generateReport();var box=document.createElement('div');box.className='report-box';box.textContent=txt;mb3.appendChild(box);var cb=document.createElement('button');cb.className='btn';cb.textContent='Copy';cb.onclick=function(){navigator.clipboard.writeText(txt).then(function(){showToast('Report copied!')})};mb3.appendChild(cb)};mb3.appendChild(rb)}}
+}
+if(t==='share'){
+  h.textContent='🔗 Share';
+  var base='https://daudjoss.github.io/daudjoss-vault/';
+  var latest=vaultRuns()[0];var latestEnc=encRuns()[0];
+  var rid=latest?(latest.orv_id||latest.databaseId||''):'';
+  var runId=latest?latest.databaseId:'';
+  b.innerHTML='<div style="font-size:11px;line-height:1.7"><b>Dashboard link</b><br><code id="shareDash">'+base+'</code><br><button class="btn" style="margin-top:4px" id="copyDash">📋 Copy</button><br><br><b>Deep link (latest vault)</b><br>'+(rid?'<code>?rsm='+esc(rid)+'</code><br><button class="btn" style="margin-top:4px" id="copyRsm">📋 Copy RSM link</button>':'No RSM-ID available')+'<br><br><b>Latest vault run</b><br><code>'+esc(String(rid||'—'))+'</code><br>'+(runId?'<a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+runId+'" target="_blank">GHA ↗</a>':'')+'<br><br><b>Latest encode run</b><br>'+(latestEnc?'<code>'+esc(latestEnc.orv_id||latestEnc.databaseId||'')+'</code> <a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+latestEnc.databaseId+'" target="_blank">GHA ↗</a>':'No encode runs')+'<br><br><b>Custom deep link</b><br><input type="text" id="customRsm" placeholder="RSM-XXXX atau run ID" style="width:100%;padding:4px 8px;border-radius:4px;border:1px solid var(--brd);background:var(--bg3);color:var(--t1);font-size:11px;margin-bottom:4px"><button class="btn" id="buildLink">Build link</button> <span id="customLink" style="font-size:10px;color:var(--t2)"></span></div>';
+  var cd=document.getElementById('copyDash');if(cd)cd.onclick=function(){navigator.clipboard.writeText(base).then(function(){cd.textContent='✅ Copied';setTimeout(function(){cd.textContent='📋 Copy'},1500)})}
+  var cr=document.getElementById('copyRsm');if(cr)cr.onclick=function(){var l=base+'?rsm='+rid;navigator.clipboard.writeText(l).then(function(){cr.textContent='✅ Copied';setTimeout(function(){cr.textContent='📋 Copy RSM link'},1500)})}
+  var bl=document.getElementById('buildLink');if(bl)bl.onclick=function(){var v=document.getElementById('customRsm');if(!v||!v.value.trim())return;var isRsm=v.value.indexOf('RSM')>=0;var link=base+'?'+(isRsm?'rsm':'run')+'='+encodeURIComponent(v.value.trim());var cl=document.getElementById('customLink');if(cl){cl.innerHTML='<code>'+esc(link)+'</code> <button class="btn" style="font-size:9px" <button class="btn" style="font-size:9px" id="copyCustomLink">📋</button>'}};var ccl=document.getElementById('copyCustomLink');if(ccl)ccl.onclick=function(){var cv=document.getElementById('customRsm');if(!cv||!cv.value.trim())return;var isRsm=cv.value.indexOf('RSM')>=0;var l=base+'?'+(isRsm?'rsm':'run')+'='+encodeURIComponent(cv.value.trim());navigator.clipboard.writeText(l).then(function(){ccl.textContent='✅';setTimeout(function(){ccl.textContent='📋'},1500)})}
+
+  var sc=document.createElement('button');sc.className='btn';sc.textContent='📊 Save stats card';
+  var ss=document.createElement('button');ss.className='btn';ss.textContent='🔗 Snapshot URL';ss.onclick=saveSnapshot;
+  var qrEl=document.createElement('div');qrEl.innerHTML=renderQR();
+  var ogBtn=document.createElement('button');ogBtn.className='btn';ogBtn.textContent='🖼 OG Image';ogBtn.onclick=genOGImage;
+  var embedEl=document.createElement('div');embedEl.innerHTML=renderEmbedSnippet();
+  var mbS=document.getElementById('mb');if(mbS){mbS.appendChild(ss);mbS.appendChild(qrEl);mbS.appendChild(ogBtn);mbS.appendChild(embedEl)}var mb2=document.getElementById('mb');if(mb2)mb2.appendChild(ss);sc.onclick=shareCard;var mb=document.getElementById('mb');if(mb)mb.appendChild(sc)
+}
+if(t==='comments'){h.textContent='💬 Comments';b.innerHTML='<div id="commentList" style="margin-bottom:8px"></div><div><textarea class="note-area" id="commentArea" placeholder="Komentar lokal (tersimpan di browser)..." style="width:100%;min-height:80px"></textarea><div style="margin-top:4px;display:flex;gap:6px;align-items:center"><button class="btn" onclick="addComment()">💬 Add</button> <span id="commentCount" style="font-size:10px;color:var(--t2)"></span></div></div><div style="margin-top:6px;font-size:10px;color:var(--t2)">localStorage: rusemeva-comments · klik × untuk hapus</div>';loadComments()}
+if(t==='player'){
+  h.textContent='▶️ Player';
+  var vList=vaultRuns();
+  var eList=encRuns();
+  var html='<div style="font-size:11px;color:var(--t2);margin-bottom:8px">Video/HEVC dikirim ke Telegram. GitHub hanya manifest .txt. Buka run GHA untuk detail log.</div>';
+  html+='<div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap"><a class="btn" href="https://github.com/daudjoss/daudjoss-vault/releases" target="_blank" style="text-decoration:none">📦 Releases</a> <a class="btn" href="https://github.com/daudjoss/daudjoss-vault/actions" target="_blank" style="text-decoration:none">🔧 All Actions</a></div>';
+  html+='<div style="font-size:11px;font-weight:600;margin:8px 0 4px">📹 Vault recordings ('+vList.length+')</div>';
+  html+='<div class="hist" style="max-height:200px;overflow:auto">'+vList.slice(0,15).map(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var c=clsJs(r.conclusion);
+    return '<div class="fi"><span class="fi-icon">'+icoJs(r.conclusion||'')+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-status '+c+'">'+esc(displayStatusJs(r))+'</span><a class="btn" style="margin-left:auto;font-size:10px;text-decoration:none" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">Open</a></div>';
+  }).join('')+'</div>';
+  html+='<div style="font-size:11px;font-weight:600;margin:8px 0 4px">🎞 Encode jobs ('+eList.length+')</div>';
+  html+='<div class="hist" style="max-height:180px;overflow:auto">'+eList.slice(0,10).map(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var c=clsJs(r.conclusion);
+    return '<div class="fi"><span class="fi-icon">'+icoJs(r.conclusion||'')+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-status '+c+'">'+esc(displayStatusJs(r))+'</span><a class="btn" style="margin-left:auto;font-size:10px;text-decoration:none" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">Open</a></div>';
+  }).join('')+'</div>';
+  b.innerHTML=html;
+}
+if(t==='clock'){h.textContent='🕐 Clock';b.innerHTML='<div style="text-align:center;padding:16px"><div id="liveClock" style="font-size:42px;font-weight:700;letter-spacing:2px">--:--:--</div><div id="liveDate" style="font-size:13px;color:var(--t2);margin-top:6px">—</div><div style="font-size:11px;color:var(--t2);margin-top:8px">WIB · Asia/Jakarta · GMT+7</div><div id="liveUptime" style="font-size:10px;color:var(--t2);margin-top:4px"></div></div>';if(window._clk)clearInterval(window._clk);function tickClock(){var el=document.getElementById('liveClock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});var dl=document.getElementById('liveDate');if(dl)dl.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Jakarta'})}tickClock();window._clk=setInterval(tickClock,500)}
+if(t==='weather'){h.textContent='🌤 Weather';b.innerHTML='<div style="text-align:center;padding:18px"><div style="font-size:42px;margin-bottom:8px">🌤</div><div id="wxBox" style="font-size:12px;color:var(--t2)">Memuat BMKG/Open-Meteo…</div></div>';fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.2&longitude=106.8&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FJakarta').then(function(r){return r.json()}).then(function(j){var c=j.current||{};var box=document.getElementById('wxBox');if(!box)return;box.innerHTML='<div style="font-size:28px;font-weight:700;color:var(--t1)">'+(c.temperature_2m!=null?c.temperature_2m+'°C':'—')+'</div><div style="margin-top:4px">Jakarta · RH '+(c.relative_humidity_2m!=null?c.relative_humidity_2m+'%':'—')+' · Wind '+(c.wind_speed_10m!=null?c.wind_speed_10m+' km/h':'—')+'</div><div style="margin-top:6px;font-size:10px;color:var(--t2)">Open-Meteo · code '+(c.weather_code!=null?c.weather_code:'—')+'</div>'}).catch(function(){var box=document.getElementById('wxBox');if(box)box.textContent='Gagal fetch cuaca (network).';})}
+if(t==='fpred'){h.textContent='🔮 Failure Prediction';b.innerHTML=renderFailurePrediction()}
+if(t==='cancel'){h.textContent='🚫 Cancel Rate Analysis';b.innerHTML=renderCancelRate()}
+if(t==='streaka'){h.textContent='🔥 Run Streak Analysis';b.innerHTML=renderStreakAnalysis()}
+if(t==='cluster'){h.textContent='💥 Failure Clusters';b.innerHTML=renderFailureClusters()}
+if(t==='pctile'){h.textContent='📐 Performance Percentile';b.innerHTML=renderPercentile()}
+if(t==='lifecycle'){h.textContent='📋 Workflow Lifecycle';b.innerHTML=renderLifecycle()}
+if(t==='density'){h.textContent='🌊 Run Density Map';b.innerHTML=renderDensityMap()}
+if(t==='wow'){h.textContent='📈 Week-over-Week';b.innerHTML=renderWoWDelta()}
+if(t==='wfduration'){h.textContent='⏱ Workflow Duration';b.innerHTML=renderWFDuration()}
+if(t==='netgraph'){h.textContent='🕸 Workflow Network Graph';b.innerHTML=renderNetworkGraph()}
+if(t==='releases'){h.textContent='📦 Release Tracker';b.innerHTML=renderReleaseTracker()}
+if(t==='dora'){h.textContent='🏆 DORA Scorecard';b.innerHTML=renderDoraScorecard()}
+if(t==='trigger'){h.textContent='🎯 Trigger Analysis';b.innerHTML=renderTriggerAnalysis()}
+if(t==='runnum'){h.textContent='🔢 Run Number Tracker';b.innerHTML=renderRunNumberTracker()}
+if(t==='commitmsg'){h.textContent='💬 Commit Messages';b.innerHTML=renderCommitMessages()}
+if(t==='mttr'){h.textContent='🔧 MTTR';b.innerHTML=renderMTTR()}
+if(t==='cfr'){h.textContent='📉 Change Failure Rate';b.innerHTML=renderCFR()}
+if(t==='leadtime'){h.textContent='⏱️ Lead Time';b.innerHTML=renderLeadTime()}
+if(t==='failpattern'){h.textContent='🔍 Failure Patterns';b.innerHTML=renderFailurePattern()}
+if(t==='durtrend'){h.textContent='📈 Duration Trends';b.innerHTML=renderDurationTrend()}
+if(t==='successday'){h.textContent='📊 Success by Day';b.innerHTML=renderSuccessByDay()}
+if(t==='successhour'){h.textContent='🕐 Success by Hour';b.innerHTML=renderSuccessByHour()}
+if(t==='branchhealth'){h.textContent='🌿 Branch Health';b.innerHTML=renderBranchHealth()}
+if(t==='workflowcomp'){h.textContent='⚙️ Workflow Comparison';b.innerHTML=renderWorkflowComparison()}
+if(t==='concurrency'){h.textContent='🔄 Concurrency';b.innerHTML=renderConcurrency()}
+if(t==='commitimpact'){h.textContent='📦 Commit Impact';b.innerHTML=renderCommitImpact()}
+if(t==='heatmap'){h.textContent='📅 Activity Heatmap';b.innerHTML=renderHeatmap()}
+if(t==='achievements'){h.textContent='🏅 Achievements';b.innerHTML=renderAchievements()}
+if(t==='analytics'){h.textContent='📊 Analytics';b.innerHTML=renderAnalytics()}
+if(t==='leaderboard'){h.textContent='🏆 Leaderboard';b.innerHTML=renderLeaderboard()}
+if(t==='timeline24'){h.textContent='📅 24h Timeline';b.innerHTML=renderTimelineView()}
+
+if(t==='depgraph'){h.textContent='🔗 Dependencies';b.innerHTML=renderDependencyGraph()}
+
+if(t==='durbell'){h.textContent='📊 Duration Distribution';b.innerHTML=renderDurationBellCurve()}
+if(t==='storageproj'){h.textContent='💾 Storage Projection';b.innerHTML=renderStorageProjection()}
+
+if(t==='failheat'){h.textContent='🔥 Failure Heatmap';b.innerHTML=renderFailureHeatmap()}
+
+if(t==='workflowfreq'){h.textContent='📈 Workflow Frequency';b.innerHTML=renderWorkflowFrequency()}
+
+
+if(t==='clock'){h.textContent='🕐 Dashboard Clock';b.innerHTML=renderClock()}
+
+
+if(t==='music'){h.textContent='🎵 Radio Indonesia';var radioStations=[{n:'📍 Warna 91.6 FM Padang',u:'https://a5.siar.us/listen/warna91.6fmpadang/stream'},{n:'📍 Padang FM 102.6',u:'https://stream2.jejestreaming.com:8032/stream'},{n:'📍 Classy FM 103.4 Padang',u:'https://c4.siar.us:10340/stream.mp3'},{n:'📍 Sushi FM 99.1 Padang',u:'https://stream2.jejestreaming.com:9200/stream'},{n:'📍 Star Radio 94.3 Padang',u:'https://stream2.jejestreaming.com:8020/stream'},{n:'📍 Top FM 98.6 Bukittinggi',u:'https://a12.siar.us:8440/stream'},{n:'📍 SIPP FM 105.8 Padang',u:'https://i.klikhost.com/9138/stream'},{n:'📍 Kiara 4U FM Padang',u:'https://eu1.fastcast4u.com/proxy/kiarafm?mp=/1'},{n:'📍 Safasindo FM Padang',u:'https://radio.safasindo.com/listen/radio_safasindo/radio.mp3'},{n:'📍 Firza Radio Padang',u:'https://stream-029.zeno.fm/ptkeryrsu0ttv'},{n:'📍 Armi FM Bengkulu',u:'https://b.alhastream.com:5109/autodj'},{n:'📍 Diozz FM Bengkulu',u:'https://a3.siar.us:8010/stream'},{n:'📍 Flamboyan FM Bengkulu',u:'https://sc.habeproradionetindonesia.id:8012/flamboyan'},{n:'📍 Santana FM Bengkulu',u:'https://sc.habeproradionetindonesia.id:8012/santana'},{n:'📍 Semarak FM Bengkulu',u:'https://ssg.streamingmurah.com:8076/'},{n:'Elshinta FM Jakarta',u:'https://stream-ssl.arenastreaming.com:8000/jakarta'},{n:'Mettaswara Koplo',u:'https://mettaswara.com:8700//koplo'},{n:'Campur Sari 89.2 FM',u:'https://a8.siar.us/listen/campursari/stream'},{n:'Suara Soneta',u:'https://a2.siar.us//listen//suarasoneta//radio.mp3'},{n:'Beat Radio Dangdut',u:'https://stream.beatradioid.com:8000//dangdut'},{n:'Dengerin Musik Indonesia',u:'https://stream.denger.in/'},{n:'Sunda Radio',u:'https://sundaradio.com/live/sundaradio'},{n:'Classy NetRadio',u:'https://streaming.classynetradio.com:8000/classySD'},{n:'POP FM Semarang',u:'https://i.klikhost.com:9612/stream.aac'},{n:'Style 94.6 FM Tasikmalaya',u:'https://stream.stylefmtasik.com/listen/stylefmtasik/stream'},{n:'Suara Salira',u:'https://live.suarasalira.com/listen/suarasalira/stream'},{n:'Mettaswara Dangdut',u:'https://mettaswara.com:8700/d4d'},{n:'Alternatif Radio Jakarta',u:'https://void.idserverhost.com/8016/stream'},{n:'Volcano Radio',u:'https://volcano.out.airtime.pro/volcano_a'},{n:'The Beat Radio Bali',u:'https://c1.siar.us/radio/8030/stream'},{n:'Tebet Radio Jakarta',u:'https://stream-ssl.arenastreaming.com:8066/stream'},{n:'Spirit Online',u:'https://radio.spirittoc.com:8060/spirit_online'},{n:'Radio Wisata FM',u:'https://c2.siar.us:9889/live'},{n:'Radio VOSS',u:'https://live.voss.my.id/listen/voss/voss'},{n:'Hitz 91.2 FM Belitung',u:'https://play.bilitonesefm.com/listen/radiohitzfm/stream'},{n:'Loker Musik Indonesia',u:'https://stream.lokermusik.com/listen/lokermusik/lokermusik'},{n:'Radio Kita Tasikmalaya',u:'https://stream.radiokita.my.id/listen/radiokita/radiokita'},{n:'Bellasalam 87.6 FM Tasikmalaya',u:'https://listen.bellasalamfm.com/listen/radiobellasalam/live'},{n:'Radio Sehati',u:'https://c4.siar.us:8092/autodj'},{n:'106.1 Geronimo FM',u:'https://ig.idstreamer.com:8090//live'},{n:'Bimasakti FM Kebumen',u:'https://i.klikhost.com:9622/stream'},{n:'Classy Worship',u:'https://streaming.classynetradio.com/listen/classyworship/worshipLQ'},{n:'Ada Radio Online',u:'https://adaradio.kradionews.com/listen/adaradio/stream'},{n:'ELPAS 88.6 FM Bogor',u:'https://live.elpasradio.com/listen/elpasradio/stream'},{n:'Bens Radio',u:'https://streaming.bensradio.com:8522/stream'},{n:'Damu Lumajang',u:'https://stream.radiodakwahmustofa.com:8724/damu'},{n:'Delta FM Bandung',u:'https://stream-pd-bdg.dimasalfaridzi.my.id/delta'},{n:'Firza MPC Radio',u:'https://mpc1.mediacp.eu/stream/firzaradio'},{n:'Mettaswara Indo 2000',u:'https://mettaswara.com:8700//indo00'},{n:'Mettaswara SoftRock',u:'https://mettaswara.com:8700/slowrock'},{n:'Radio CMN Hits',u:'https://stream.coolkas.com/listen/radiocmn/radiocmn'},{n:'KLCBS Fusion',u:'https://streaming.klcbsofficial.com/listen/fusion/klcbs-fusion'},{n:'KLCBS New Age',u:'https://streaming.klcbsofficial.com/listen/newage/klcbs-newage'},{n:'Yasika FM Jogja',u:'https://i.klikhost.com:9610/stream'},{n:'Fajri FM',u:'https://ars.mitradio.com:8000/radio.mp3'},{n:'Radio Kasih',u:'https://onlineradiobox.com/json/id/kasih/play'},{n:'Radio Klik FM Surabaya',u:'https://c1.alhastream.com:3210/radio'},{n:'Telkom Radio',u:'https://sukmben.radiogentara.com/radio/8140/stream'},{n:'Utaindo Radio',u:'https://streaming.classynetradio.com/listen/utaindo_radio/utaindo-aac'},{n:'ARB FM Jakarta',u:'https://void.idserverhost.com/8018/stream'},{n:'Galuh Media FM Cianjur',u:'https://stream-sg1.galuhmedia.co.id/listen/galuhmedia/stream'},{n:'KR-Radio 107.2 FM Jogja',u:'https://s1.gntr.net/listen/kr_radio/radio'},{n:'Radio Bravo 96.1 FM Kebumen',u:'https://stream.swadesifm.com/radio/8090/radio.mp3'},{n:'B 104.6 FM',u:'https://play.bilitonesefm.com/listen/radiobfm/stream'},{n:'Free FM Jakarta',u:'https://rocafmadrid.radioca.st/stream'},{n:'Galau Jikan FM',u:'https://radio.gjfm.my.id/listen/gjfm/siaran'},{n:'GCD 98.6 FM Yogyakarta',u:'https://studio1.indostreamers.com:8014/stream/1/'},{n:'Gemini 101 FM',u:'https://relay.gemini101fm.com/listen/gemini_fm/radio.mp3'},{n:'Istara FM Surabaya',u:'https://live.radioistara.com/listen/radioistara/radioistara'},{n:'R-Lisa FM',u:'https://a4.siar.us/radio/8360/radio.mp3'},{n:'Radiks FM Semarang',u:'https://i.klikhost.com:9620/;'},{n:'Radio Airmen FM 107.9',u:'https://void.idserverhost.com:8024/stream'},{n:'Mettaswara Indonesia Gold',u:'https://mettaswara.com:8700//disco'},{n:'Mettaswara Java',u:'https://mettaswara.com:8700//java'},{n:'MSTRI 104.2 FM',u:'https://c2.siar.us:8120/live'},{n:'Insania FM Indonesia',u:'https://stream-sg1.galuhmedia.co.id/listen/insaniamataram/876mataram'},{n:'Bharata Radio',u:'https://c1.siar.us:8800/live'},{n:'Braya Radio',u:'https://live.brayaradio.com/listen/brayaradio/stream'},{n:'Comfy Radio',u:'https://station.comfyradio.id/listen/comfyradio/radio.mp3'},{n:'KLCBS',u:'https://streaming.klcbs.id/listen/klcbs/klcbsfm-hd'},{n:'KLCBS Tropical',u:'https://streaming.klcbsofficial.com/listen/tropical/klcbs-tropical'},{n:'PAS FM Jakarta',u:'https://i.klikhost.com/8266/stream'},{n:'Radio Rumah Oma',u:'https://radiorumahoma.com:30443/;'},{n:'PTPN FM Solo',u:'https://ssg.streamingmurah.com:8040/stream'},{n:'Radio Andika',u:'https://r5.siar.us:1057/andikafm'},{n:'Radio Elshinta Bandung',u:'https://stream-ssl.arenastreaming.com:8005/bandung'},{n:'Radio Imelda FM',u:'https://server.radioimeldafm.co.id/listen/imeldafm/imeldafm'}];b.innerHTML='<div id="radioNowPlaying"></div><div style="background:var(--bg3);border-radius:8px;padding:8px;margin-bottom:8px;display:flex;align-items:center;gap:8px"><button class="btn" id="radioCtrlBtn" onclick="pauseRadio()" style="padding:4px 8px;font-size:14px">⏸</button><span id="radioCtrlName" style="font-size:11px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">No station selected</span></div><div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap"><input id="radioSearch" class="si2" style="flex:1;min-width:120px" placeholder="Search stasiun..." oninput="filterRadio(this.value)"><button class="btn" onclick="toggleFavFilter(this)" id="favFilterBtn" style="padding:6px 10px">Star Only</button></div><div id="radioFilterChips" style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap"></div><div id="radioList"></div>';var rl=document.getElementById('radioList');if(rl){var html2='';radioStations.forEach(function(s,idx){var reg=s.n.indexOf('Padang')>=0||s.n.indexOf('Bukittinggi')>=0?'Padang':s.n.indexOf('Bengkulu')>=0?'Bengkulu':s.n.indexOf('Mettaswara')>=0||s.n.indexOf('Dangdut')>=0||s.n.indexOf('Koplo')>=0?'Dangdut':s.n.indexOf('Worship')>=0||s.n.indexOf('Sehati')>=0?'Religi':'Nasional';var emoji=reg==='Dangdut'?'🎤':reg==='Padang'?'🎻':reg==='Religi'?'🕌':reg==='Nasional'?'🎵':'📡';var favs=[];try{favs=JSON.parse(localStorage.getItem('radioFavs')||'[]')}catch(e){}var fav=favs.indexOf(s.n)>=0;html2+='<button class="quick-btn radio-btn" data-rurl="'+s.u+'" data-rname="'+s.n+'" data-region="'+reg+'" data-fav="'+(fav?1:0)+'"><span style="float:right;cursor:pointer;font-size:13px;color:'+(fav?'var(--yl)':'var(--t3)')+'" onclick="event.stopPropagation();toggleFav(this,this.parentElement.getAttribute(\'data-rname\'))">'+(fav?'★':'☆')+'</span>'+emoji+' '+s.n+'</button>'});rl.innerHTML=html2;renderRadioChips()}}
+}
+function toggleCust(btn){
+  var k=btn.getAttribute('data-k');
+  var sel=btn.getAttribute('data-sel');
+  var off=localStorage.getItem('dash_'+k)==='1';
+  if(off){localStorage.removeItem('dash_'+k);btn.textContent='ON';}
+  else{localStorage.setItem('dash_'+k,'1');btn.textContent='OFF';}
+  applyCustomize();
+}
+function applyCustomize(){
+  var map=[['hideStats','.sg'],['hideHealth','#sec-health'],['hideFeed','#sec-feed'],['hideCharts',''],['hideStreak','.streak']];
+  map.forEach(function(m){
+    var el=document.querySelector(m[1]);
+    if(!el)return;
+    el.style.display=localStorage.getItem('dash_'+m[0])==='1'?'none':'';
+  });
+}
+
+function advSearch(){
+var src=(document.getElementById('srcFilter')||{}).value||'All';
+var stv=(document.getElementById('statFilter')||{}).value||'All';
+var sortV=(document.getElementById('sortFilter')||{}).value||'new';
+var q=((document.getElementById('qAdv')||{}).value||'').toLowerCase().trim();
+var D=window.DASH||{runs:[]};
+var rows=(D.runs||[]).filter(function(r){
+  if(src!=='All'){var hay=((r.name||'')+' '+(r.source||'')).toLowerCase();if(hay.indexOf(src.toLowerCase())<0) return false;}
+  var s=statusKeyJs(r);
+  if(stv!=='All' && s!==stv && (r.conclusion||'')!==stv) return false;
+  if(q){var blob=((r.orv_id||'')+' '+(r.databaseId||'')+' '+(r.name||'')+' '+(r.source||'')+' '+(r.conclusion||'')).toLowerCase();if(blob.indexOf(q)<0) return false;}
+  return true;
+});
+rows.sort(function(a,b){
+  var da=new Date(a.createdAt||0).getTime();
+  var db=new Date(b.createdAt||0).getTime();
+  return sortV==='old'?da-db:db-da;
+});
+var total=rows.length;
+rows=rows.slice(0,50);
+var cnt=document.getElementById('searchCount');
+if(cnt)cnt.textContent=total+' result(s)';
+var box=document.getElementById('searchResults');
+if(!box)return;
+if(!rows.length){box.innerHTML='<div class="ne">Tidak ada hasil</div>';return;}
+box.innerHTML=rows.map(function(r){
+  var id=r.orv_id||r.databaseId||'';
+  var c=clsJs(r.conclusion);
+  return '<div class="fi" data-rid="'+esc(r.databaseId)+'"><span class="fi-icon">'+icoJs(statusKeyJs(r)==='in_progress'?'':(r.conclusion||''))+'</span><span class="fi-time">'+agoJs(r.createdAt||'')+'</span><span class="fi-id"><code>'+esc(id)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(displayStatusJs(r))+'</span><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">↗</a><button data-cmp="'+r.databaseId+'" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>';
+}).join('');
+box.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(b.getAttribute('data-cmp'))}});
+}
+function clearSearch(){var s=document.getElementById('srcFilter');if(s)s.value='All';var st=document.getElementById('statFilter');if(st)st.value='All';var r=document.getElementById('searchResults');if(r)r.innerHTML=''}
+function clM(){document.getElementById('mo').classList.remove('on')}
+function saveNote(){var v=document.getElementById('noteArea');if(!v)return;localStorage.setItem('rusemeva-note',v.value);var ts=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false});localStorage.setItem('rusemeva-note-saved',ts);var sv=document.getElementById('noteSaved');if(sv)sv.textContent=ts;var st=document.getElementById('noteStatus');if(st)st.textContent='saved'}
+function loadNote(){var n=localStorage.getItem('rusemeva-note')||'';var na=document.getElementById('noteArea');if(na)na.value=n;var nc=document.getElementById('noteCount');if(nc&&na)nc.textContent=na.value.length+' chars';var sv=document.getElementById('noteSaved');if(sv)sv.textContent=localStorage.getItem('rusemeva-note-saved')||'—'}
+function clearNote(){if(document.getElementById('noteArea'))document.getElementById('noteArea').value='';localStorage.removeItem('rusemeva-note')}
+function addTag(){var input=document.getElementById('tagInput');if(input.value){var tags=JSON.parse(localStorage.getItem('rusemeva-tags')||'[]');tags.push(input.value);localStorage.setItem('rusemeva-tags',JSON.stringify(tags));input.value='';loadTags()}}
+function loadTags(){var tags=JSON.parse(localStorage.getItem('rusemeva-tags')||'[]');var colors=['#58a6ff','#3fb950','#f0883e','#bc8cff','#f778ba','#79c0ff'];var html='';tags.forEach(function(tg,i){var c=colors[i%colors.length];html+='<span class="tg" style="border-color:'+c+';color:'+c+'" onclick="removeTag('+i+')">'+esc(tg)+' ×</span> '});var tl=document.getElementById('tagList');if(tl)tl.innerHTML=html||'<div style="color:var(--t2);font-size:11px">No tags yet. Add one above.</div>';var tc=document.getElementById('tagCount');if(tc)tc.textContent=tags.length+' tag(s)'}
+function removeTag(i){var tags=JSON.parse(localStorage.getItem('rusemeva-tags')||'[]');tags.splice(i,1);localStorage.setItem('rusemeva-tags',JSON.stringify(tags));loadTags()}
+function addBookmark(){var time=document.getElementById('bmTime').value;var note=document.getElementById('bmNote').value;if(time&&note){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');bms.push({time:time,note:note});localStorage.setItem('rusemeva-bookmarks',JSON.stringify(bms));document.getElementById('bmTime').value='';document.getElementById('bmNote').value='';loadBookmarks()}}
+function loadBookmarks(){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');var html='';if(!bms.length){html='<div style="color:var(--t2);font-size:11px;padding:8px 0">No bookmarks yet. Add timestamp + note above.</div>'}else{html='<div style="font-size:10px;color:var(--t2);margin-bottom:4px">'+bms.length+' bookmark(s)</div>'}bms.forEach(function(b,i){var isRsm=(b.note||'').indexOf('RSM')>=0;html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 4px;border-bottom:1px solid var(--brd);font-size:11px"><span style="flex:1"><code style="color:var(--bl)">'+esc(b.time)+'</code> '+esc(b.note)+(isRsm?' <a href="?rsm='+esc(b.note)+'" style="font-size:9px">open ↗</a>':'')+'</span><button class="btn" style="font-size:9px;padding:2px 6px" onclick="removeBookmark('+i+')">×</button></div>'});var bl=document.getElementById('bookmarkList');if(bl)bl.innerHTML=html}
+function removeBookmark(i){var bms=JSON.parse(localStorage.getItem('rusemeva-bookmarks')||'[]');bms.splice(i,1);localStorage.setItem('rusemeva-bookmarks',JSON.stringify(bms));loadBookmarks()}
+function addComment(){var area=document.getElementById('commentArea');if(area&&area.value.trim()){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');comments.push({text:area.value.trim(),time:new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false})+' WIB'});localStorage.setItem('rusemeva-comments',JSON.stringify(comments));area.value='';loadComments()}}
+function removeComment(i){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');comments.splice(i,1);localStorage.setItem('rusemeva-comments',JSON.stringify(comments));loadComments()}
+function loadComments(){var comments=JSON.parse(localStorage.getItem('rusemeva-comments')||'[]');var html='';if(!comments.length){html='<div style="color:var(--t2);font-size:11px;padding:8px 0">No comments yet.</div>'}comments.forEach(function(c,i){html+='<div style="padding:6px 4px;border-bottom:1px solid var(--brd);font-size:11px"><div style="display:flex;justify-content:space-between;align-items:start"><span style="flex:1">'+esc(c.text)+'</span><button class="btn" style="font-size:9px;padding:2px 6px;flex-shrink:0" onclick="removeComment('+i+')">×</button></div><div style="font-size:9px;color:var(--t2);margin-top:2px">'+esc(c.time)+'</div></div>'});var cl=document.getElementById('commentList');if(cl)cl.innerHTML=html;var cc=document.getElementById('commentCount');if(cc)cc.textContent=comments.length+' comment(s)'}
+
+
+document.addEventListener('click',function(e){var c=e.target.closest('.fi-id code');if(c){var id=c.textContent.trim();if(id)copyRSM(id)}var row=e.target.closest('#rt tbody tr');if(row&&!e.target.closest('a')){var rid=row.getAttribute('data-rid');if(rid&&e.shiftKey)saveRunNote(rid)}var rb=e.target.closest('.radio-btn');if(rb){playRadio(rb.getAttribute('data-rurl'),rb.getAttribute('data-rname'),rb);return}var br=e.target.closest('.batch-sel-off');if(br&&e.ctrlKey){toggleBatchSel(br.getAttribute('data-rid')||'');return}var as=e.target.closest('.accent-swatch');if(as){setAccent(as.getAttribute('data-accent'));return}var ds=e.target.closest('.donut-slice');if(ds){var lbl=ds.getAttribute('data-label');if(lbl)donutFilter(lbl);return}var cu=e.target.closest('.curl-copy');if(cu){var box=cu.closest('.curl-box');if(box){var txt=box.textContent.replace('📋','').trim();var url=txt.split(' ')[1]||txt;copyCurl(url)}}});
+document.addEventListener('change',function(e){});
+document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd();return}
+if(e.key==='?'||e.key==='/'){e.preventDefault();openCheat();return}
+if(e.key==='t'||e.key==='T'){e.preventDefault();toggleTerminal();return}
+if(e.key==='a'||e.key==='A'){e.preventDefault();toggleQuickPanel();return}
+if(e.key==='h'||e.key==='H'){e.preventDefault();toggleHC();return}
+if(e.key==='m'||e.key==='M'){e.preventDefault();expMD();return}
+if(e.key==='j'){e.preventDefault();kbNav(1);return}
+if(e.key==='k'){e.preventDefault();kbNav(-1);return}
+if(e.key==='Enter'&&kbNavIdx>=0){e.preventDefault();kbNavOpen();return}switch(e.key){case'r':location.reload();break;case's':e.preventDefault();document.getElementById('q').focus();break;case'e':expCSV();break;case'Escape':clM();break}});
+document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value=''}});
+document.addEventListener('keydown',function(e){if(e.target&&e.target.id==='terminalInput2'&&e.key==='Enter'){execTerminal(e.target.value);e.target.value='';var o2=document.getElementById('terminalOut2');if(o2)o2.innerHTML='Executed: '+e.target.value}});
+function agoJs(s){try{var d=Math.floor((Date.now()-new Date(s).getTime())/1000);if(d<60)return'baru';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h'}catch(e){return (s||'').slice(0,10)}}
+function icoJs(c){return c==='success'?'✅':c==='failure'?'❌':c==='cancelled'?'⚪':'🔄'}
+function clsJs(c){return c==='success'||c==='failure'||c==='cancelled'?c:'running'}
+function statusKeyJs(r){var c=(r.conclusion||'').trim();if(c==='success'||c==='failure'||c==='cancelled')return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return c||st||'?';}
+function displayStatusJs(r){var c=(r.conclusion||'').trim();if(c)return c;var st=(r.status||'').trim();if(st==='in_progress'||st==='queued'||st==='waiting'||st==='pending'||st==='requested')return'in_progress';return st||'?';}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])})}
+function buildFeedHtml(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15).map(function(r){var sk=statusKeyJs(r);var newCls=r._isNew?' fi-new':'';var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;return '<div class="fi'+newCls+' batch-sel-off" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'" ><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span><button data-cmp="rid" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>';}).join('')}
+function getFeedRuns(runs){var list=(runs||[]).slice();var pref=list.filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});var skip={'Update Dashboard':1,'pages build and deployment':1,'ci-policy':1,'cleanup-temp':1};if(pref.length<8){list.forEach(function(r){if(pref.length>=15)return;if(skip[r.name])return;if(pref.indexOf(r)>=0)return;pref.push(r)})}return pref.slice(0,15)}
+function isGroupingOn(){return localStorage.getItem('dashGrouping')==='1'}
+function toggleGrouping(){var on=isGroupingOn();localStorage.setItem('dashGrouping',on?'0':'1');applyGroupingState();renderFeed()}
+function applyGroupingState(){var btn=document.getElementById('groupToggle');if(!btn)return;btn.classList.toggle('on',isGroupingOn())}
+function buildGroupedFeedHtml(runs){var items=getFeedRuns(runs);var groups={};var order=[];items.forEach(function(r){var name=r.name||'Unknown';if(!groups[name]){groups[name]={runs:[],success:0,total:0};order.push(name)}groups[name].runs.push(r);groups[name].total++;if(r.conclusion==='success')groups[name].success++});var html='';order.forEach(function(name){var g=groups[name];var rate=g.total>0?Math.round(g.success/g.total*100):0;var rateClass=rate>=80?'good':(rate>=50?'mid':'bad');var gid='grp_'+name.replace(/[^a-zA-Z0-9]/g,'_');html+='<div class="grp-header" data-grp="'+esc(gid)+'"><span class="grp-toggle-icon">▼</span><span class="grp-name">'+esc(name)+'</span><span class="grp-count">'+g.total+'</span><span class="grp-rate '+rateClass+'">'+rate+'%</span></div>';html+='<div class="grp-body" data-grp-body="'+esc(gid)+'">';g.runs.forEach(function(r){var sk=statusKeyJs(r);var newCls=r._isNew?' fi-new':'';var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idshow=orv||rid;html+='<div class="fi'+newCls+' batch-sel-off" data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'" ><span class="fi-icon">'+icoJs(sk==='in_progress'?'':r.conclusion)+'</span><span class="fi-time">'+agoJs(r.createdAt)+'</span><span class="fi-id"><code title="'+esc(rid)+'">'+esc(idshow)+'</code></span><span class="fi-name">'+esc(r.name||'')+'</span><span class="fi-status '+c+'">'+esc(s)+'</span><button data-cmp="rid" style="font-size:9px;padding:1px 4px;border:1px solid var(--brd);border-radius:4px;background:var(--bg3);color:var(--t2);cursor:pointer;margin-left:4px">⚖</button></div>'});html+='</div>'});return html}
+function renderFeed(){var feed=document.getElementById('feedList');if(!feed)return;var D=window.DASH||{};var runs=D.runs||[];if(isGroupingOn()){feed.innerHTML=buildGroupedFeedHtml(runs)}else{feed.innerHTML=buildFeedHtml(runs)}attachFeedCmpHandlers(feed)}
+function renderQueueStatus(){var el=document.getElementById('queueStatus');if(!el)return;var D=window.DASH||{};var runs=D.runs||[];var qStatus=['queued','waiting','pending','requested'];var queued=runs.filter(function(r){return qStatus.indexOf((r.status||'').trim())>=0});if(!queued.length){el.innerHTML='<div style="padding:8px 12px;font-size:11px;color:var(--t3)">No runs in queue</div>';return}var doneRuns=runs.filter(function(r){return r.conclusion&&(r.conclusion==='success'||r.conclusion==='failure')&&r.createdAt&&r.updatedAt});var avgDur=0;if(doneRuns.length){var total=0;doneRuns.forEach(function(r){total+=new Date(r.updatedAt)-new Date(r.createdAt)});avgDur=total/doneRuns.length}var html='<div style="display:flex;flex-direction:column;gap:4px">';queued.forEach(function(r,idx){var pos=idx+1;var eta=avgDur>0?'~'+Math.round(avgDur*pos/60000)+'m':'estimating...';html+='<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border:1px solid var(--brd);border-radius:8px"><span style="font-size:14px">⏳</span><span style="flex:1;font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.name||'Unknown')+'</span><span style="font-size:10px;color:var(--or);font-weight:600">#'+pos+'</span><span style="font-size:10px;color:var(--t3)">'+eta+'</span></div>'});html+='</div>';el.innerHTML=html}
+function attachFeedCmpHandlers(feed){if(!feed)return;feed.querySelectorAll('[data-cmp]').forEach(function(b){b.onclick=function(){toggleCmpPick(this.getAttribute('data-cmp'))}})}
+function initGroupHeaderClicks(){var feed=document.getElementById('feedList');if(!feed)return;feed.addEventListener('click',function(e){var hdr=e.target.closest('.grp-header');if(hdr){var gid=hdr.getAttribute('data-grp');var body=feed.querySelector('[data-grp-body="'+gid+'"]');if(body){var isCollapsed=hdr.classList.toggle('collapsed');body.classList.toggle('collapsed',isCollapsed)}}})}
+function buildRecRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).slice(0,25).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';var q=(rid+' '+orv+' '+s).toLowerCase();var cr=r.createdAt||'';var cd='';try{cd=new Date(cr).toISOString().slice(0,10)}catch(e){cd=cr?String(cr).slice(0,10):''}return '<tr class="r-'+c+'" data-s="'+esc(sk)+'" data-q="'+esc(q)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'" data-created="'+esc(cd)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
+function buildEncRows(runs){return (runs||[]).filter(function(r){return r.name==='rusemeva-encode'}).slice(0,20).map(function(r){var sk=statusKeyJs(r);var c=sk==='in_progress'?'running':clsJs(r.conclusion);var s=displayStatusJs(r);var rid=String(r.databaseId||'');var orv=(r.orv_id||'').trim();var idcell=orv?'<code title="'+esc(rid)+'">'+esc(orv)+'</code>':'<code>'+esc(rid)+'</code>';return '<tr data-s="'+esc(sk)+'" data-rid="'+esc(rid)+'" data-orv="'+esc(orv)+'"><td>'+icoJs(sk==='in_progress'?'':r.conclusion)+'</td><td>'+idcell+'</td><td>'+agoJs(r.createdAt)+'</td><td><span class="b b-'+c+'">'+esc(s)+'</span></td><td><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+esc(rid)+'" target="_blank">↗</a></td></tr>';}).join('')}
+function applyOrvMap(data){var map=data.orv_map||[];if(!map.length)return data;var by={};map.forEach(function(x){if(x&&x.run_id&&x.orv_id)by[String(x.run_id)]={orv_id:x.orv_id,source:x.source||''}}); (data.runs||[]).forEach(function(r){var m=by[String(r.databaseId)];if(m){r.orv_id=m.orv_id;if(m.source)r.source=m.source}});return data}
+
+
+function updateLiveUI(data){if(!data||!data.runs)return;data=applyOrvMap(data);window.DASH=window.DASH||{};window.DASH.generated=data.generated||window.DASH.generated;if(data.stats){window.DASH.stats=Object.assign({},window.DASH.stats||{},data.stats);if(data.stats.hours)window.DASH.hours=data.stats.hours;if(data.stats.days)window.DASH.days=data.stats.days;if(data.stats.daily)window.DASH.daily=data.stats.daily;if(data.stats.insights)window.DASH.insights=data.stats.insights;if(data.stats.predictions)window.DASH.predictions=data.stats.predictions;}window.DASH.runs=data.runs;if(data.releases)window.DASH.releases=data.releases;renderFeed();renderQueueStatus();var rt=document.querySelector('#rt tbody');if(rt){var rows=buildRecRows(data.runs);if(rows)rt.innerHTML=rows}var encBody=document.querySelector('#et tbody');if(encBody){var erows=buildEncRows(data.runs);if(erows)encBody.innerHTML=erows}if(data.stats){var st=data.stats;function setTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val}if(st.total!=null)setTxt('st-total',st.total);if(st.success!=null)setTxt('st-success',st.success);if(st.failed!=null)setTxt('st-failed',st.failed);if(st.rate!=null){var elr=document.getElementById('st-rate');if(elr)elr.innerHTML=rateZoneHtml(st.rate)}if(st.enc!=null)setTxt('st-enc',st.enc);if(st.today!=null)setTxt('st-today',st.today);if(st.streak!=null)setTxt('st-streak',st.streak);var mon=document.querySelectorAll('.monitor-value');if(mon&&mon[2])mon[2].textContent=(st.running||0)+' running';var health=document.querySelector('#sec-health .sh span');if(health&&data.generated){try{health.textContent=new Date(data.generated).toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).replace('T',' ')+' WIB'}catch(e){}}}var q=document.getElementById('q');if(q&&q.value)srch();var onFb=document.querySelector('.fb.on');if(onFb){var key=onFb.getAttribute('data-f')||'all';filt(key,onFb)}renderHero();checkHealth();applyDeepLink();updateTabTitle();updateFavicon();checkOffline();renderQChips();applyEmbedMode();applyAccent();renderColToggle();renderFlow();renderCounters();applyGlass();applyHC();applyFont();loadSnapshot();checkAchievements();renderFreqClock();renderDonutView();checkAchievements();initQuickPanel();initBatchBar();hideSkeleton();checkNewRuns(data);updateTabTitle();updateFavicon();checkSoundAlert(data);checkStreakConfetti(data);markNewFeed(data);renderQChips();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();checkAchievements();startStopwatch();ariaAnnounce('Dashboard updated');showToast('Data refreshed','refresh');checkAchievements();checkFailurePatterns();renderRunDurationPrediction()}
+
+// ═══ v8.5 features ═══
+function lastRsmHtml(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var v=runs.filter(function(r){return r.name==='rusemeva-vault'})[0];
+  var e=runs.filter(function(r){return r.name==='rusemeva-encode'})[0];
+  if(!v&&!e) return '<div class="rsm-card"><span class="rsm-ico">📭</span><span class="rsm-status">Belum ada run</span></div>';
+  function card(r,label){if(!r)return '';var id=r.orv_id||r.databaseId||'';
+    var s=displayStatusJs(r);var c=clsJs(r.conclusion);
+    return '<div class="rsm-card"><span class="rsm-ico">'+icoJs(statusKeyJs(r)==='in_progress'?'':(r.conclusion||''))+'</span>'
+      +'<div><span class="rsm-id">'+esc(id)+'</span> <span class="rsm-status">'+label+' · '+esc(s)+'</span></div>'
+      +'<a class="rsm-link" href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">GHA ↗</a></div>';}
+  return card(v,'vault')+(e?card(e,'encode'):'');
+}
+function storageStoryHtml(){
+  var st=(window.DASH||{}).stats||{};
+  var gh=st.gh_bytes!=null?Number(st.gh_bytes):0;
+  var life=st.lifetime_est_gb!=null?Number(st.lifetime_est_gb):0;
+  var ghStr=gh>=1024*1024?(gh/1024/1024).toFixed(1)+' MB':Math.max(0,gh/1024).toFixed(0)+' KB';
+  return '<b>GH:</b> '+ghStr+' (manifest .txt) · <b>Telegram:</b> ~'+life.toFixed(1)+' GB lifetime (est, video) · <b>temp:</b> 0 (dibersihkan)';
+}
+function diff24Html(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var now=Date.now();var h24=now-24*3600*1000;
+  var v24=runs.filter(function(r){return r.name==='rusemeva-vault'&&new Date(r.createdAt||0).getTime()>=h24});
+  var e24=runs.filter(function(r){return r.name==='rusemeva-encode'&&new Date(r.createdAt||0).getTime()>=h24});
+  var vf=v24.filter(function(r){return r.conclusion==='failure'}).length;
+  var es=e24.filter(function(r){return r.conclusion==='success'}).length;
+  return '<span class="diff-chip">24h vault: <b>'+v24.length+'</b></span>'
+    +'<span class="diff-chip">fail baru: <b>'+vf+'</b></span>'
+    +'<span class="diff-chip">enc selesai: <b>'+es+'</b></span>'
+    +'<span class="diff-chip">streak: <b>'+(st.streak||0)+'d</b></span>';
+}
+
+
+var lastRunId=0;
+function checkNewRuns(data){
+  if(!('Notification'in window)||Notification.permission!=='granted')return;
+  var runs=data.runs||[];
+  if(!runs.length)return;
+  var latest=runs[0];
+  var rid=latest.databaseId||0;
+  if(lastRunId===0){lastRunId=rid;return;}
+  if(rid>lastRunId){
+    var id=latest.orv_id||rid;
+    var s=displayStatusJs(latest);
+    showToast('New run started: '+id,'newrun');
+    try{new Notification('Rusemeva: '+id,{body:latest.name+' → '+s})}catch(e){}
+    lastRunId=rid;
+  }
+}
+
+
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;var b=document.getElementById('pwaInstall');if(b)b.style.display='inline-block'});
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;var b=document.getElementById('pwaInstall');if(b)b.style.display='none'})}}
+
+function openCheat(){document.getElementById('cheatOverlay').classList.add('on')}
+function closeCheat(){document.getElementById('cheatOverlay').classList.remove('on')}
+
+function shareCard(){
+  var st=(window.DASH||{}).stats||{};
+  var c=document.createElement('canvas');c.width=400;c.height=200;
+  var ctx=c.getContext('2d');
+  var bg=getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()||'#0d1117';
+  var t1=getComputedStyle(document.documentElement).getPropertyValue('--t1').trim()||'#e6edf3';
+  var t2=getComputedStyle(document.documentElement).getPropertyValue('--t2').trim()||'#7d8590';
+  var bl=getComputedStyle(document.documentElement).getPropertyValue('--bl').trim()||'#58a6ff';
+  var gn=getComputedStyle(document.documentElement).getPropertyValue('--gn').trim()||'#3fb950';
+  var or=getComputedStyle(document.documentElement).getPropertyValue('--or').trim()||'#f0883e';
+  ctx.fillStyle=bg;ctx.fillRect(0,0,400,200);
+  ctx.fillStyle=t1;ctx.font='bold 20px sans-serif';ctx.fillText('🎬 Rusemeva',20,35);
+  ctx.fillStyle=t2;ctx.font='11px sans-serif';ctx.fillText(new Date().toLocaleDateString('en-GB',{timeZone:'Asia/Jakarta',weekday:'short',day:'numeric',month:'short'}),20,52);
+  // stats
+  ctx.fillStyle=bl;ctx.font='bold 28px sans-serif';ctx.fillText(st.total||0,20,100);
+  ctx.fillStyle=t2;ctx.font='10px sans-serif';ctx.fillText('Vault total',20,115);
+  ctx.fillStyle=gn;ctx.font='bold 28px sans-serif';ctx.fillText(st.success||0,120,100);
+  ctx.fillStyle=t2;ctx.font='10px sans-serif';ctx.fillText('Success',120,115);
+  ctx.fillStyle=or;ctx.font='bold 28px sans-serif';ctx.fillText((st.rate||0)+'%',220,100);
+  ctx.fillStyle=t2;ctx.font='10px sans-serif';ctx.fillText('Rate',220,115);
+  ctx.fillStyle=bl;ctx.font='bold 28px sans-serif';ctx.fillText(st.streak||0,320,100);
+  ctx.fillStyle=t2;ctx.font='10px sans-serif';ctx.fillText('Streak (d)',320,115);
+  // footer
+  ctx.fillStyle=t2;ctx.font='9px sans-serif';ctx.fillText('daudjoss.github.io/daudjoss-vault',20,180);
+  var a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='rusemeva-stats.png';a.click();
+}
+
+// ═══ v8.7 features ═══
+
+// ═══ v8.8 features ═══
+function animateCounter(el,target,suffix){
+  if(!el)return;var start=0,duration=1500,startTime=null;
+  suffix=suffix||'';
+  function step(ts){if(!startTime)startTime=ts;var prog=Math.min((ts-startTime)/duration,1);
+    var eased=1-Math.pow(1-prog,3);
+    var val=Math.floor(eased*target);el.textContent=val+suffix;
+    if(prog<1)requestAnimationFrame(step);else el.textContent=target+suffix}
+  requestAnimationFrame(step);
+}
+function renderCounters(){
+  var st=(window.DASH||{}).stats||{};
+  var map={'st-total':st.total,'st-success':st.success,'st-failed':st.failed,'st-enc':st.enc,'st-today':st.today,'st-streak':st.streak};
+  for(var id in map){var el=document.getElementById(id);if(el&&!el.getAttribute('data-animated')){el.setAttribute('data-animated','1');var v=map[id];if(v!=null)animateCounter(el,v)}}
+  renderRateRing();
+  renderCIWeather();
+}
+// ── Progress Ring (Feature 2) ──
+function renderRateRing(){
+  var st=(window.DASH||{}).stats||{};
+  var rate=st.rate||0;
+  var c=document.getElementById('rate-ring-container');
+  if(!c)return;
+  var r=28,circumference=2*Math.PI*r;
+  var col=rate>80?'var(--gn)':(rate>60?'var(--yl)':'var(--rd)');
+  var ring='<svg width="76" height="76" style="transform:rotate(-90deg);margin:0 auto">'
+    +'<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="6"/>'
+    +'<circle id="rate-ring-fill" cx="38" cy="38" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+circumference+'" style="transition:stroke-dashoffset 1.5s ease"/>'
+    +'</svg>';
+  var label='<div style="position:relative;margin-top:-50px;text-align:center;pointer-events:none"><div style="font-size:16px;font-weight:700;color:'+col+'">'+rate+'%</div><div style="font-size:8px;color:var(--t2)">Success Rate</div></div>';
+  c.innerHTML='<div style="position:relative;width:76px;margin:0 auto">'+ring+'<div style="position:absolute;top:0;left:0;width:100%;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none"><div style="font-size:16px;font-weight:700;color:'+col+'">'+rate+'%</div><div style="font-size:8px;color:var(--t2)">Success Rate</div></div></div>';
+  var fill=document.getElementById('rate-ring-fill');
+  if(fill){
+    setTimeout(function(){
+      var offset=circumference-(rate/100)*circumference;
+      fill.setAttribute('stroke-dashoffset',offset);
+    },50);
+  }
+}
+// ── CI Health Weather (Feature 3) ──
+function renderCIWeather(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=Date.now();
+  var h24=now-24*3600*1000;
+  var h48=now-48*3600*1000;
+  var fail24=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='failure'&&new Date(r.createdAt||0).getTime()>=h24}).length;
+  var failPrev=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='failure'&&new Date(r.createdAt||0).getTime()>=h48&&new Date(r.createdAt||0).getTime()<h24}).length;
+  var icon,desc,col;
+  if(fail24===0){icon='☀️';desc='Sunny';col='var(--gn)'}
+  else if(fail24<=3){icon='☁️';desc='Cloudy';col='var(--yl)'}
+  else{icon='⛈️';desc='Stormy';col='var(--rd)'}
+  var trend;
+  if(fail24>failPrev){trend='↗️'}
+  else if(fail24<failPrev){trend='↘️'}
+  else{trend='→'}
+  var c=document.getElementById('ci-weather-box');
+  if(!c)return;
+  c.innerHTML='<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:6px">'
+    +'<span style="font-size:36px">'+icon+'</span>'
+    +'<div style="text-align:left"><div style="font-size:14px;font-weight:600;color:'+col+'">'+desc+'</div>'
+    +'<div style="font-size:11px;color:var(--t2)">'+fail24+' fail / 24h '+trend+'</div></div>'
+    +'</div>';
+}
+function renderFlow(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var vault=runs.filter(function(r){return r.name==='rusemeva-vault'})[0];
+  var enc=runs.filter(function(r){return r.name==='rusemeva-encode'})[0];
+  var vs=vault?displayStatusJs(vault):'—';var es=enc?displayStatusJs(enc):'—';
+  var vc=vault?(vault.conclusion==='success'?'var(--gn)':(vault.conclusion==='failure'?'var(--rd)':'var(--bl)')):'var(--t2)';
+  var ec=enc?(enc.conclusion==='success'?'var(--gn)':(enc.conclusion==='failure'?'var(--rd)':'var(--bl)')):'var(--t2)';
+  var html='<div class="flow-diagram">'
+    +'<div class="flow-node vault" style="border-color:'+vc+'">📹 Vault<br><b style="color:'+vc+'">'+vs+'</b></div>'
+    +'<div class="flow-arrow">→</div>'
+    +'<div class="flow-node encode" style="border-color:'+ec+'">🎞 Encode<br><b style="color:'+ec+'">'+es+'</b></div>'
+    +'<div class="flow-arrow">→</div>'
+    +'<div class="flow-node telegram">📱 Telegram<br><b style="color:var(--gn)">delivery</b></div>'
+    +'</div>';
+  var el=document.getElementById('flow-diagram');if(el)el.innerHTML=html;
+}
+function renderDependencyGraph(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=Date.now();var weekAgo=now-7*86400000;
+  var workflows=[
+    {key:'rusemeva-vault',label:'Record',icon:'������',ghName:'rusemeva-vault'},
+    {key:'rusemeva-encode',label:'Encode',icon:'������',ghName:'rusemeva-encode'},
+    {key:'Update Dashboard',label:'Deploy',icon:'������',ghName:'Update Dashboard'}
+  ];
+  workflows.forEach(function(wf){
+    var wfRuns=runs.filter(function(r){return r.name===wf.ghName});
+    wf.runs=wfRuns;
+    if(wfRuns.length){
+      wf.latest=wfRuns[0];
+      wf.hasRecent=wfRuns.some(function(r){return new Date(r.createdAt||0).getTime()>weekAgo});
+    }else{
+      wf.latest=null;wf.hasRecent=false;
+    }
+  });
+  var W=520,H=220,nw=130,nh=70,gap=60;
+  var centerY=H/2;
+  var nodes=workflows.map(function(wf,i){
+    var x=20+i*(nw+gap);var y=centerY-nh/2;
+    var statusTxt,sc;
+    if(wf.latest){
+      var sk=statusKeyJs(wf.latest);
+      if(sk==='in_progress'){statusTxt='running';sc='var(--yl)';}
+      else if(wf.latest.conclusion==='success'){statusTxt='success';sc='var(--gn)';}
+      else if(wf.latest.conclusion==='failure'){statusTxt='fail';sc='var(--rd)';}
+      else{statusTxt='none';sc='var(--t3)';}
+    }else{statusTxt='none';sc='var(--t3)';}
+    var dimmed=wf.hasRecent?'':'opacity:.4;';
+    var lastRun=wf.latest?agoJs(wf.latest.createdAt||''):'no runs';
+    return{x:x,y:y,w:nw,h:nh,wf:wf,statusTxt:statusTxt,sc:sc,dimmed:dimmed,lastRun:lastRun};
+  });
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="max-width:100%;height:auto">';
+  for(var i=0;i<nodes.length-1;i++){
+    var a=nodes[i],b=nodes[i+1];
+    var x1=a.x+a.w,y1=a.y+a.h/2,x2=b.x,y2=b.y+b.h/2;
+    svg+='<defs><marker id="arr'+i+'" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--t2)"/></marker></defs>';
+    svg+='<line x1="'+x1+'" y1="'+y1+'" x2="'+(x2-4)+'" y2="'+y2+'" stroke="var(--t2)" stroke-width="2" marker-end="url(#arr'+i+')" '+((!a.wf.hasRecent||!b.wf.hasRecent)?'opacity=.3':'')+'/>';
+  }
+  nodes.forEach(function(n){
+    svg+='<rect x="'+n.x+'" y="'+n.y+'" width="'+n.w+'" height="'+n.h+'" rx="10" fill="var(--bg2)" stroke="'+n.sc+'" stroke-width="2" style="'+n.dimmed+'"/>';
+    svg+='<text x="'+(n.x+n.w/2)+'" y="'+(n.y+18)+'" text-anchor="middle" fill="'+n.sc+'" font-size="12" font-weight="bold" style="'+n.dimmed+'">'+n.wf.icon+' '+esc(n.wf.label)+'</text>';
+    svg+='<text x="'+(n.x+n.w/2)+'" y="'+(n.y+36)+'" text-anchor="middle" fill="var(--t2)" font-size="9" style="'+n.dimmed+'">'+esc(n.wf.ghName)+'</text>';
+    svg+='<circle cx="'+(n.x+n.w/2)+'" cy="'+(n.y+48)+'" r="4" fill="'+n.sc+'"/>';
+    svg+='<text x="'+(n.x+n.w/2)+'" y="'+(n.y+62)+'" text-anchor="middle" fill="var(--t2)" font-size="8" style="'+n.dimmed+'">'+esc(n.statusTxt)+' · '+esc(n.lastRun)+'</text>';
+  });
+  svg+='</svg>';
+  var legend='<div style="display:flex;gap:12px;margin-top:8px;font-size:9px;color:var(--t2);flex-wrap:wrap">';
+  legend+='<span><span style="display:inline-block;width:8px;height:8px;background:var(--gn);border-radius:50%;margin-right:3px"></span>success</span>';
+  legend+='<span><span style="display:inline-block;width:8px;height:8px;background:var(--rd);border-radius:50%;margin-right:3px"></span>fail</span>';
+  legend+='<span><span style="display:inline-block;width:8px;height:8px;background:var(--yl);border-radius:50%;margin-right:3px"></span>running</span>';
+  legend+='<span><span style="display:inline-block;width:8px;height:8px;background:var(--t3);border-radius:50%;margin-right:3px"></span>none</span>';
+  legend+='<span style="margin-left:8px">dimmed = no runs in 7d</span>';
+  legend+='</div>';
+  return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Workflow Dependency Graph</div>'+svg+legend+'</div>';
+}
+function renderDurationBellCurve(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var vault=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='success'&&r.updatedAt&&r.createdAt});
+  if(vault.length<2)return '<div style="padding:10px;color:var(--t2)">Not enough successful vault runs for distribution analysis (need 2+).</div>';
+  var durations=vault.map(function(r){
+    var ms=new Date(r.updatedAt)-new Date(r.createdAt);
+    return ms>0?ms/60000:0;
+  }).filter(function(d){return d>0});
+  if(durations.length<2)return '<div style="padding:10px;color:var(--t2)">Not enough duration data (need 2+ runs with positive duration).</div>';
+  durations.sort(function(a,b){return a-b});
+  var n=durations.length,sum=durations.reduce(function(a,b){return a+b},0);
+  var mean=sum/n;
+  var variance=durations.reduce(function(a,b){return a+Math.pow(b-mean,2)},0)/n;
+  var sd=Math.sqrt(variance);
+  var median=durations.length%2?durations[(n-1)/2]:(durations[n/2-1]+durations[n/2])/2;
+  var p95Idx=Math.floor(n*0.95)-1;if(p95Idx<0)p95Idx=0;
+  var p95=durations[p95Idx];
+  var outliers=durations.filter(function(d){return Math.abs(d-mean)>2*sd});
+  var minD=Math.min.apply(null,durations),maxD=Math.max.apply(null,durations);
+  var padL=40,padR=20,padT=20,padB=40;
+  var W=500,H=280;
+  var cw=W-padL-padR,ch=H-padT-padB;
+  var xMin=Math.max(0,mean-4*sd),xMax=mean+4*sd;
+  if(xMax<=xMin)xMax=xMin+10;
+  var nBins=Math.min(20,Math.max(8,Math.ceil(Math.sqrt(n))));
+  var binW=(xMax-xMin)/nBins;
+  var bins=new Array(nBins).fill(0);
+  durations.forEach(function(d){
+    var idx=Math.floor((d-xMin)/binW);
+    if(idx<0)idx=0;if(idx>=nBins)idx=nBins-1;
+    bins[idx]++;
+  });
+  var maxBin=Math.max.apply(null,bins)||1;
+  function xScale(d){return padL+((d-xMin)/(xMax-xMin))*cw;}
+  function yScale(c){return padT+ch-(c/maxBin)*ch;}
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="max-width:100%;height:auto">';
+  svg+='<rect x="'+padL+'" y="'+padT+'" width="'+cw+'" height="'+ch+'" fill="var(--bg3)" opacity="0.3"/>';
+  for(var i=0;i<=4;i++){
+    var yy=padT+ch-(i/4)*ch;
+    svg+='<line x1="'+padL+'" y1="'+yy+'" x2="'+(padL+cw)+'" y2="'+yy+'" stroke="var(--brd)" stroke-width="1" opacity="0.5"/>';
+    svg+='<text x="'+(padL-4)+'" y="'+(yy+3)+'" text-anchor="end" fill="var(--t2)" font-size="8">'+Math.round((i/4)*maxBin)+'</text>';
+  }
+  var tickStep=Math.ceil((xMax-xMin)/5);
+  for(var xt=Math.ceil(xMin);xt<=xMax;xt+=tickStep){
+    svg+='<line x1="'+xScale(xt)+'" y1="'+padT+'" x2="'+xScale(xt)+'" y2="'+(padT+ch)+'" stroke="var(--brd)" stroke-width="1" opacity="0.3"/>';
+    svg+='<text x="'+xScale(xt)+'" y="'+(padT+ch+14)+'" text-anchor="middle" fill="var(--t2)" font-size="8">'+xt+'m</text>';
+  }
+  svg+='<text x="'+(padL+cw/2)+'" y="'+(H-5)+'" text-anchor="middle" fill="var(--t2)" font-size="9">Duration (minutes)</text>';
+  svg+='<text x="12" y="'+(padT+ch/2)+'" text-anchor="middle" fill="var(--t2)" font-size="9" transform="rotate(-90 12 '+(padT+ch/2)+')">Frequency</text>';
+  for(var i=0;i<nBins;i++){
+    var bx=padL+(i/nBins)*cw;
+    var bw=cw/nBins-1;
+    var bh=(bins[i]/maxBin)*ch;
+    var isOutlier=false;
+    var binCenter=xMin+(i+0.5)*binW;
+    if(Math.abs(binCenter-mean)>2*sd)isOutlier=true;
+    var bc=isOutlier?'var(--rd)':'var(--bl)';
+    svg+='<rect x="'+bx+'" y="'+(padT+ch-bh)+'" width="'+bw+'" height="'+bh+'" fill="'+bc+'" rx="2" opacity="0.7"><title>'+bins[i]+' runs around '+binCenter.toFixed(1)+'m</title></rect>';
+  }
+  var bellPts=[];
+  var bellSteps=60;
+  for(var i=0;i<=bellSteps;i++){
+    var xx=xMin+(i/bellSteps)*(xMax-xMin);
+    var yy=(1/(sd*Math.sqrt(2*Math.PI)))*Math.exp(-0.5*Math.pow((xx-mean)/sd,2));
+    var px=xScale(xx);
+    var py=padT+ch-(yy/(1/(sd*Math.sqrt(2*Math.PI))))*ch;
+    bellPts.push(px+','+py);
+  }
+  var maxFreq=1/(sd*Math.sqrt(2*Math.PI));
+  var bellPtsScaled=[];
+  for(var i=0;i<=bellSteps;i++){
+    var xx=xMin+(i/bellSteps)*(xMax-xMin);
+    var yPdf=(1/(sd*Math.sqrt(2*Math.PI)))*Math.exp(-0.5*Math.pow((xx-mean)/sd,2));
+    var scaledFreq=yPdf/maxFreq*maxBin;
+    var px=xScale(xx);
+    var py=padT+ch-(scaledFreq/maxBin)*ch;
+    bellPtsScaled.push(px+','+py);
+  }
+  svg+='<polyline points="'+bellPtsScaled.join(' ')+'" fill="none" stroke="var(--pr)" stroke-width="2" opacity="0.8"/>';
+  var meanX=xScale(mean);
+  svg+='<line x1="'+meanX+'" y1="'+padT+'" x2="'+meanX+'" y2="'+(padT+ch)+'" stroke="var(--gn)" stroke-width="2" stroke-dasharray="4,3"/>';
+  svg+='<text x="'+meanX+'" y="'+(padT-4)+'" text-anchor="middle" fill="var(--gn)" font-size="9">mean '+mean.toFixed(1)+'m</text>';
+  var lo=mean-2*sd,hi=mean+2*sd;
+  if(lo>xMin){
+    svg+='<line x1="'+xScale(lo)+'" y1="'+padT+'" x2="'+xScale(lo)+'" y2="'+(padT+ch)+'" stroke="var(--rd)" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>';
+    svg+='<text x="'+xScale(lo)+'" y="'+(padT+ch+26)+'" text-anchor="middle" fill="var(--rd)" font-size="7">-2sd</text>';
+  }
+  if(hi<xMax){
+    svg+='<line x1="'+xScale(hi)+'" y1="'+padT+'" x2="'+xScale(hi)+'" y2="'+(padT+ch)+'" stroke="var(--rd)" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>';
+    svg+='<text x="'+xScale(hi)+'" y="'+(padT+ch+26)+'" text-anchor="middle" fill="var(--rd)" font-size="7">+2sd</text>';
+  }
+  svg+='</svg>';
+  var stats='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-top:10px">';
+  stats+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--gn)">'+mean.toFixed(1)+'m</div><div class="metric-mini-lbl">Mean</div></div>';
+  stats+='<div class="metric-mini"><div class="metric-mini-val">'+median.toFixed(1)+'m</div><div class="metric-mini-lbl">Median</div></div>';
+  stats+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--or)">'+p95.toFixed(1)+'m</div><div class="metric-mini-lbl">P95</div></div>';
+  stats+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--rd)">'+outliers.length+'</div><div class="metric-mini-lbl">Outliers (&gt;2sd)</div></div>';
+  stats+='<div class="metric-mini"><div class="metric-mini-val">'+sd.toFixed(1)+'m</div><div class="metric-mini-lbl">Std Dev</div></div>';
+  stats+='<div class="metric-mini"><div class="metric-mini-val">'+n+'</div><div class="metric-mini-lbl">Samples</div></div>';
+  stats+='</div>';
+  return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Run Duration Distribution (rusemeva-vault, success only)</div>'+svg+stats+'<div style="margin-top:6px;font-size:9px;color:var(--t2)">Purple line = normal distribution fit · Red bars = outliers beyond 2 standard deviations · Duration = updatedAt - createdAt</div></div>';
+}
+
+// ═══ Storage Projection ═══
+function renderStorageProjection(){
+  var D=window.DASH||{};var st=D.stats||{};var rels=D.releases||[];
+  var ghB=st.gh_bytes!=null?Number(st.gh_bytes):0;
+  if(ghB===0&&st.total_size){ghB=Number(st.total_size)*1024*1024*1024}
+  var lifeGb=st.lifetime_est_gb!=null?Number(st.lifetime_est_gb):0;
+  var GB=1024*1024*1024;
+  var WEEK_MS=7*24*60*60*1000;
+  var now=Date.now();
+  // Filter out encode-temp and metadata-only releases
+  var mediaRels=(rels||[]).filter(function(r){
+    var tag=(r.tag||'').toLowerCase();
+    var nm=(r.name||'').toLowerCase();
+    if(tag.indexOf('encode-')>=0||nm.indexOf('encode temp')>=0)return false;
+    var sz=Number(r.size||0);
+    if(sz>0&&sz<1048576)return false;
+    return true;
+  });
+  // Growth rate: average bytes added per week from releases created in last 4 weeks
+  var fourWeeksAgo=now-4*WEEK_MS;
+  var recentReleases=mediaRels.filter(function(r){
+    var ct=new Date(r.created||0).getTime();
+    return ct>=fourWeeksAgo&&ct<=now;
+  });
+  var totalRecentBytes=recentReleases.reduce(function(a,r){return a+Number(r.size||0)},0);
+  var growthRatePerWeek=recentReleases.length>0?totalRecentBytes/4:0;
+  // Build weekly cumulative growth over last 8 weeks
+  var weeklyData=[];
+  for(var w=7;w>=0;w--){
+    var weekStart=now-(w+1)*WEEK_MS;
+    var weekEnd=now-w*WEEK_MS;
+    var weekBytes=mediaRels.filter(function(r){
+      var ct=new Date(r.created||0).getTime();
+      return ct>=weekStart&&ct<weekEnd;
+    }).reduce(function(a,r){return a+Number(r.size||0)},0);
+    weeklyData.push({label:'W-'+w,bytes:weekBytes,cumulative:0});
+  }
+  // Cumulative: start from total GH bytes and subtract backwards
+  var cumulative=ghB;
+  for(var i=weeklyData.length-1;i>=0;i--){
+    cumulative-=weeklyData[i].bytes;
+  }
+  for(var i=0;i<weeklyData.length;i++){
+    cumulative+=weeklyData[i].bytes;
+    weeklyData[i].cumulative=cumulative;
+  }
+  // Projection: when will 1GB be reached
+  var remainingBytes=GB-ghB;
+  var weeksTo1GB=0;
+  var projectionText='';
+  if(ghB>=GB){
+    projectionText='1GB limit already reached or exceeded';
+  }else if(growthRatePerWeek>0){
+    weeksTo1GB=Math.ceil(remainingBytes/growthRatePerWeek);
+    if(weeksTo1GB<=0)weeksTo1GB=1;
+    projectionText='At current rate, 1GB will be reached in ~'+weeksTo1GB+' weeks';
+  }else{
+    projectionText='No growth detected in last 4 weeks - storage is stable';
+  }
+  // Recommendation
+  var growthMB=growthRatePerWeek/(1024*1024);
+  var recommendation='';
+  var recColor='var(--gn)';
+  var recIcon='✅';
+  if(growthRatePerWeek>50*1024*1024){
+    recommendation='High growth rate - consider cleanup ('+growthMB.toFixed(1)+' MB/week)';
+    recColor='var(--rd)';
+    recIcon='⚠️';
+  }else if(growthRatePerWeek>0){
+    recommendation='Growth rate is moderate ('+growthMB.toFixed(1)+' MB/week)';
+    recColor='var(--yl)';
+    recIcon='ℹ️';
+  }else{
+    recommendation='No recent storage growth - all clear';
+    recColor='var(--gn)';
+    recIcon='✅';
+  }
+  // Sparkline SVG for weekly cumulative growth
+  var sparkW=280,sparkH=60,padL=30,padR=10,padT=10,padB=20;
+  var cw=sparkW-padL-padR,ch=sparkH-padT-padB;
+  var cumVals=weeklyData.map(function(d){return d.cumulative});
+  var minCum=Math.min.apply(null,cumVals.concat([0]));
+  var maxCum=Math.max.apply(null,cumVals.concat([GB]));
+  var rangeCum=maxCum-minCum||1;
+  var xStep=cw/(weeklyData.length-1||1);
+  var sparkPts=[];
+  weeklyData.forEach(function(d,i){
+    var px=padL+i*xStep;
+    var py=padT+ch-((d.cumulative-minCum)/rangeCum)*ch;
+    sparkPts.push(px.toFixed(1)+','+py.toFixed(1));
+  });
+  var linePath='M '+sparkPts.join(' L ');
+  var areaPath=linePath+' L '+(padL+(weeklyData.length-1)*xStep).toFixed(1)+' '+(padT+ch)+' L '+padL+' '+(padT+ch)+' Z';
+  var yMid=padT+ch-((GB-minCum)/rangeCum)*ch;
+  var sparkSvg='<svg width="'+sparkW+'" height="'+sparkH+'" style="margin:8px auto">';
+  sparkSvg+='<defs><linearGradient id="spGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--bl)" stop-opacity="0.3"/><stop offset="100%" stop-color="var(--bl)" stop-opacity="0"/></linearGradient></defs>';
+  sparkSvg+='<path d="'+areaPath+'" fill="url(#spGrad)"/>';
+  sparkSvg+='<polyline points="'+sparkPts.join(' ')+'" fill="none" stroke="var(--bl)" stroke-width="2"/>';
+  // 1GB limit line
+  if(yMid>=padT&&yMid<=padT+ch){
+    sparkSvg+='<line x1="'+padL+'" y1="'+yMid.toFixed(1)+'" x2="'+(padL+cw)+'" y2="'+yMid.toFixed(1)+'" stroke="var(--rd)" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>';
+    sparkSvg+='<text x="'+(padL+cw-2)+'" y="'+(yMid-2).toFixed(1)+'" text-anchor="end" fill="var(--rd)" font-size="7">1GB</text>';
+  }
+  // Dots
+  weeklyData.forEach(function(d,i){
+    var px=padL+i*xStep;
+    var py=padT+ch-((d.cumulative-minCum)/rangeCum)*ch;
+    sparkSvg+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="2.5" fill="var(--bl)"/>';
+  });
+  // X labels (first and last only)
+  sparkSvg+='<text x="'+padL+'" y="'+(sparkH-4)+'" text-anchor="middle" fill="var(--t2)" font-size="7">8wk ago</text>';
+  sparkSvg+='<text x="'+(padL+cw)+'" y="'+(sparkH-4)+'" text-anchor="end" fill="var(--t2)" font-size="7">now</text>';
+  sparkSvg+='</svg>';
+  // Stats grid
+  var pctUsed=ghB>0?(ghB/GB*100):0;
+  var stats='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin:8px 0">';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--bl);font-size:16px">'+fmtBytes(ghB)+'</div><div class="metric-mini-lbl">Current Usage</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--or);font-size:16px">'+(growthMB.toFixed(1))+' MB</div><div class="metric-mini-lbl">Growth / Week</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--pr);font-size:16px">'+pctUsed.toFixed(1)+'%</div><div class="metric-mini-lbl">of 1GB Limit</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:'+(weeksTo1GB>0&&weeksTo1GB<=8?'var(--rd)':weeksTo1GB>0?'var(--yl)':'var(--gn)')+';font-size:16px">'+(weeksTo1GB>0?'~'+weeksTo1GB+'w':'—')+'</div><div class="metric-mini-lbl">To 1GB</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--gn);font-size:16px">'+recentReleases.length+'</div><div class="metric-mini-lbl">Releases (4wk)</div></div>';
+  stats+='<div class="metric-mini" style="padding:6px"><div class="metric-mini-val" style="color:var(--t2);font-size:16px">'+(lifeGb>0?lifeGb.toFixed(1)+' GB':'—')+'</div><div class="metric-mini-lbl">Lifetime Est</div></div>';
+  stats+='</div>';
+  // Progress bar
+  var bar='<div style="background:var(--bg3);border-radius:4px;height:14px;overflow:hidden;margin:6px 0;border:1px solid var(--brd)"><div style="height:100%;width:'+Math.min(pctUsed,100).toFixed(1)+'%;background:linear-gradient(90deg,var(--bl),var(--rd));border-radius:3px;transition:width .3s"></div></div>';
+  // Build full card
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:4px">GitHub Release Storage Projection</div>';
+  html+='<div style="font-size:10px;color:var(--t2);margin-bottom:8px">GitHub free tier: 1GB for release assets (not Git LFS)</div>';
+  html+=stats;
+  html+=bar;
+  html+='<div style="font-size:11px;font-weight:600;margin:10px 0 4px">Cumulative Growth (last 8 weeks)</div>';
+  html+=sparkSvg;
+  html+='<div style="background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:8px;margin:10px 0;font-size:11px"><b>Projection:</b> '+esc(projectionText)+'</div>';
+  html+='<div style="background:rgba(0,0,0,.2);border:1px solid '+recColor+';border-radius:8px;padding:8px;margin:6px 0;font-size:11px;display:flex;align-items:center;gap:6px"><span style="font-size:14px">'+recIcon+'</span><span style="color:'+recColor+'">'+esc(recommendation)+'</span></div>';
+  html+='<div style="font-size:9px;color:var(--t2);margin-top:6px">Growth rate = total bytes added in last 4 weeks / 4. Lifetime estimate is total recorded volume (video on Telegram, not GH). Releases under 1MB (metadata) and encode-temp excluded.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ Failure Rate Heatmap by Hour (7x24 grid) ═══
+function renderFailureHeatmap(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var grid={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var day=d.getDay();var hour=d.getHours();
+    var key=day+'_'+hour;
+    if(!grid[key])grid[key]={total:0,fail:0};
+    grid[key].total++;
+    if(r.conclusion==='failure')grid[key].fail++;
+  });
+  var dayShort=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function cellCol(d){
+    if(!d||d.total===0)return 'var(--bg3)';
+    var rate=d.fail/d.total;
+    if(rate===0)return 'var(--gn)';
+    if(rate<=0.30)return 'var(--yl)';
+    if(rate<=0.60)return 'var(--or)';
+    return 'var(--rd)';
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Failure Rate Heatmap (Day × Hour)</div>';
+  html+='<div style="overflow-x:auto">';
+  html+='<div style="display:grid;grid-template-columns:28px repeat(24,1fr);gap:1px;min-width:520px">';
+  html+='<div></div>';
+  for(var h=0;h<24;h++){
+    html+='<div style="text-align:center;font-size:7px;color:var(--t2);padding:2px 0">'+('0'+h).slice(-2)+'</div>';
+  }
+  for(var day=0;day<7;day++){
+    html+='<div style="font-size:8px;color:var(--t2);display:flex;align-items:center;justify-content:center">'+dayShort[day]+'</div>';
+    for(var hour=0;hour<24;hour++){
+      var key=day+'_'+hour;
+      var d=grid[key];
+      var col=cellCol(d);
+      var tip='';
+      if(d){
+        var pct=Math.round(d.fail/d.total*100);
+        tip=dayShort[day]+' '+('0'+hour).slice(-2)+':00 — '+d.total+' runs, '+d.fail+' fail ('+pct+'%)';
+      }else{
+        tip=dayShort[day]+' '+('0'+hour).slice(-2)+':00 — no runs';
+      }
+      html+='<div style="background:'+col+';height:16px;border-radius:2px;cursor:default" title="'+tip+'"></div>';
+    }
+  }
+  html+='</div>';
+  html+='</div>';
+  html+='<div style="display:flex;gap:10px;margin-top:8px;font-size:9px;color:var(--t2);flex-wrap:wrap;align-items:center">';
+  html+='<span>Legend:</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--gn);border-radius:2px"></span>0% fail</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--yl);border-radius:2px"></span>1-30%</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--or);border-radius:2px"></span>31-60%</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--rd);border-radius:2px"></span>61-100%</span>';
+  html+='<span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;background:var(--bg3);border-radius:2px"></span>no runs</span>';
+  html+='</div>';
+  html+='<div style="margin-top:6px;font-size:9px;color:var(--t3)">Hover any cell for details. Based on '+(runs.length)+' runs in current data.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ Workflow Frequency Chart (last 14 days, top 5 workflows, inline SVG) ═══
+function renderWorkflowFrequency(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=new Date();
+  var days=[];var dayKeys=[];
+  for(var i=13;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    days.push(d);
+    dayKeys.push(key);
+  }
+  var byWf={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    if(dayKeys.indexOf(key)<0)return;
+    var nm=r.name||'unknown';
+    if(!byWf[nm])byWf[nm]={total:0,byDay:{}};
+    byWf[nm].total++;
+    byWf[nm].byDay[key]=(byWf[nm].byDay[key]||0)+1;
+  });
+  var sortedWf=Object.keys(byWf).sort(function(a,b){return byWf[b].total-byWf[a].total});
+  var top5=sortedWf.slice(0,5);
+  if(top5.length===0){
+    return '<div style="padding:10px;color:var(--t2)">No workflow runs in the last 14 days.</div>';
+  }
+  var colors=['var(--bl)','var(--gn)','var(--or)','var(--pr)','var(--pn)'];
+  var padL=30,padR=10,padT=20,padB=30;
+  var W=540,H=280;
+  var cw=W-padL-padR,ch=H-padT-padB;
+  var nDays=dayKeys.length;
+  var groupW=cw/nDays;
+  var barW=Math.max(2,groupW/top5.length-1);
+  var maxVal=1;
+  top5.forEach(function(wf){
+    dayKeys.forEach(function(dk){
+      var v=byWf[wf].byDay[dk]||0;
+      if(v>maxVal)maxVal=v;
+    });
+  });
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="max-width:100%;height:auto">';
+  svg+='<rect x="'+padL+'" y="'+padT+'" width="'+cw+'" height="'+ch+'" fill="var(--bg3)" opacity="0.3"/>';
+  for(var i=0;i<=4;i++){
+    var yy=padT+ch-(i/4)*ch;
+    svg+='<line x1="'+padL+'" y1="'+yy+'" x2="'+(padL+cw)+'" y2="'+yy+'" stroke="var(--brd)" stroke-width="1" opacity="0.5"/>';
+    svg+='<text x="'+(padL-4)+'" y="'+(yy+3)+'" text-anchor="end" fill="var(--t2)" font-size="8">'+Math.round((i/4)*maxVal)+'</text>';
+  }
+  for(var di=0;di<nDays;di++){
+    var dx=padL+di*groupW;
+    var label=dayKeys[di].slice(5);
+    if(di%2===0){
+      svg+='<text x="'+(dx+groupW/2)+'" y="'+(padT+ch+14)+'" text-anchor="middle" fill="var(--t2)" font-size="7">'+label+'</text>';
+    }
+    for(var wi=0;wi<top5.length;wi++){
+      var wf=top5[wi];
+      var v=byWf[wf].byDay[dayKeys[di]]||0;
+      if(v===0)continue;
+      var bh=(v/maxVal)*ch;
+      var bx=dx+wi*(barW+1);
+      var by=padT+ch-bh;
+      svg+='<rect x="'+bx+'" y="'+by+'" width="'+barW+'" height="'+bh+'" fill="'+colors[wi]+'" rx="1" opacity="0.85"><title>'+esc(wf)+': '+v+' runs on '+dayKeys[di]+'</title></rect>';
+    }
+  }
+  svg+='<text x="'+(padL+cw/2)+'" y="'+(H-5)+'" text-anchor="middle" fill="var(--t2)" font-size="9">Date (last 14 days)</text>';
+  svg+='<text x="12" y="'+(padT+ch/2)+'" text-anchor="middle" fill="var(--t2)" font-size="9" transform="rotate(-90 12 '+(padT+ch/2)+')">Runs</text>';
+  svg+='</svg>';
+  var legend='<div style="display:flex;gap:12px;margin-top:8px;font-size:9px;color:var(--t2);flex-wrap:wrap">';
+  top5.forEach(function(wf,i){
+    legend+='<span><span style="display:inline-block;width:8px;height:8px;background:'+colors[i]+';border-radius:50%;margin-right:3px"></span>'+esc(wf)+' ('+byWf[wf].total+')</span>';
+  });
+  legend+='</div>';
+  var stats='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-top:10px">';
+  top5.forEach(function(wf,i){
+    stats+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+colors[i]+'">'+byWf[wf].total+'</div><div class="metric-mini-lbl">'+esc(wf.length>18?wf.slice(0,16)+'..':wf)+'</div></div>';
+  });
+  stats+='</div>';
+  return '<div style="padding:10px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">Workflow Frequency (Last 14 Days — Top 5)</div>'+svg+legend+stats+'<div style="margin-top:6px;font-size:9px;color:var(--t2)">Each day has grouped bars per workflow. Hover bars for details.</div></div>';
+}
+function renderRings(){
+  var D=window.DASH||{};var st=D.stats||{};var daily=D.daily||D.stats&&D.stats.daily||{};
+  var today=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+  var todayCount=daily[today]||0;var weekCount=0;var monthCount=0;
+  var now=new Date();
+  for(var i=0;i<7;i++){var d=new Date(now.getTime()-i*86400000);var key=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});weekCount+=(daily[key]||0)}
+  for(var i=0;i<30;i++){var d=new Date(now.getTime()-i*86400000);var key=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});monthCount+=(daily[key]||0)}
+  var dTarget=st.best||3;var wTarget=(st.best||3)*7;var mTarget=(st.best||3)*30;
+  function ringPct(val,target){return Math.min(val/(target||1),1)}
+  var r1=20,r2=28,r3=36;var c1=2*Math.PI*r1,c2=2*Math.PI*r2,c3=2*Math.PI*r3;
+  var svg='<div class="activity-rings"><svg width="80" height="80">'
+    +'<circle class="ring-bg" cx="40" cy="40" r="'+r1+'"/><circle class="ring-fg" cx="40" cy="40" r="'+r1+'" stroke="var(--rd)" stroke-dasharray="'+c1+'" stroke-dashoffset="'+(c1-ringPct(todayCount,dTarget)*c1)+'"/>'
+    +'<circle class="ring-bg" cx="40" cy="40" r="'+r2+'"/><circle class="ring-fg" cx="40" cy="40" r="'+r2+'" stroke="var(--or)" stroke-dasharray="'+c2+'" stroke-dashoffset="'+(c2-ringPct(weekCount,wTarget)*c2)+'"/>'
+    +'<circle class="ring-bg" cx="40" cy="40" r="'+r3+'"/><circle class="ring-fg" cx="40" cy="40" r="'+r3+'" stroke="var(--bl)" stroke-dasharray="'+c3+'" stroke-dashoffset="'+(c3-ringPct(monthCount,mTarget)*c3)+'"/>'
+    +'</svg></div>';
+  var el=document.getElementById('hero-rings');
+  if(el)el.innerHTML=svg+'<div style="font-size:9px;color:var(--t2);text-align:center;margin-top:2px">D:'+todayCount+'/'+dTarget+' W:'+weekCount+' M:'+monthCount+'</div>';
+}
+function renderGantt(){
+  var D=window.DASH||{};var runs=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'}).slice(0,20);
+  if(!runs.length)return '<div style="color:var(--t2);font-size:11px">No runs</div>';
+  var now=Date.now();var earliest=now;var latest=now;
+  runs.forEach(function(r){var c=new Date(r.createdAt||0).getTime();if(c<earliest)earliest=c;var u=new Date(r.updatedAt||r.createdAt||0).getTime();if(u>latest)latest=u});
+  var span=Math.max(latest-earliest,3600000);
+  var html='<div class="gantt-wrap">';
+  runs.forEach(function(r){
+    var start=new Date(r.createdAt||0).getTime();var end=new Date(r.updatedAt||r.createdAt||0).getTime();
+    if(end<=start)end=start+300000;
+    var leftPct=((start-earliest)/span)*100;var widthPct=Math.max(((end-start)/span)*100,1);
+    var col=r.conclusion==='success'?'var(--gn)':(r.conclusion==='failure'?'var(--rd)':(r.name==='rusemeva-encode'?'var(--or)':'var(--bl)'));
+    var label=(r.orv_id||r.databaseId||'').toString().slice(0,12);
+    html+='<div class="gantt-row"><div class="gantt-label">'+esc(label)+'</div><div class="gantt-bar-wrap"><div class="gantt-bar" style="left:'+leftPct+'%;width:'+widthPct+'%;background:'+col+'" title="'+esc(r.name||'')+' '+esc(displayStatusJs(r))+'"></div></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+function showFailReplay(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'}).slice(0,5);
+  if(!fails.length)return '<div style="color:var(--t2);font-size:11px">No recent fails 🎉</div>';
+  return fails.map(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    return '<div class="fail-replay-item"><div style="display:flex;justify-content:space-between"><b style="color:var(--rd)">❌ '+esc(id)+'</b><span style="font-size:10px;color:var(--t2)">'+agoJs(r.createdAt||'')+'</span></div><div style="font-size:10px;color:var(--t2);margin-top:4px">'+esc(r.name||'')+'</div><div style="margin-top:4px"><a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank" style="font-size:10px">View log ↗</a></div></div>';
+  }).join('');
+}
+function saveRunNote(rid){
+  var note=prompt('Note for '+rid+':');if(!note)return;
+  var notes=JSON.parse(localStorage.getItem('dash_runnotes')||'{}');
+  notes[rid]=note;localStorage.setItem('dash_runnotes',JSON.stringify(notes));
+  showToast('Note saved for '+rid);
+}
+function getRunNote(rid){
+  var notes=JSON.parse(localStorage.getItem('dash_runnotes')||'{}');
+  return notes[rid]||'';
+}
+function generateReport(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=D.runs||[];
+  var today=new Date().toLocaleDateString('en-GB',{weekday:'long',timeZone:'Asia/Jakarta'});
+  var encOk=st.enc_ok||0;var rate=st.rate||0;
+  var txt='📊 Rusemeva Weekly Report\n';
+  txt+='Tanggal: '+new Date().toLocaleDateString('en-GB',{timeZone:'Asia/Jakarta'})+'\n\n';
+  txt+='Vault: '+st.total+' runs ('+st.success+' OK, '+st.failed+' fail)\n';
+  txt+='Rate: '+rate+'%\n';
+  txt+='Encode: '+encOk+' OK\n';
+  txt+='Streak: '+(st.streak||0)+' hari\n';
+  txt+='Today: '+(st.today||0)+' runs ('+today+')\n\n';
+  var fails=runs.filter(function(r){return r.conclusion==='failure'}).slice(0,3);
+  if(fails.length){txt+='Last fails:\n';fails.forEach(function(r){txt+='• '+(r.orv_id||r.databaseId)+' — '+agoJs(r.createdAt||'')+'\n'})}
+  txt+='\nDashboard: daudjoss.github.io/daudjoss-vault/';
+  return txt;
+}
+function getAlertThreshold(){
+  return parseInt(localStorage.getItem('dash_threshold')||'2',10);
+}
+function checkThresholdAlert(){
+  var D=window.DASH||{};var st=D.stats||{};
+  var fails=st.failed||0;var threshold=getAlertThreshold();
+  var el=document.getElementById('hero-alert');if(!el)return;
+  if(fails>=threshold){el.innerHTML='<div class="alert-chip">⚠️ '+fails+' fail ≥ threshold '+threshold+'</div>'}
+  else{el.innerHTML=''}
+}
+function applyEmbedMode(){
+  var p=new URLSearchParams(location.search);
+  if(p.get('embed')==='1'){
+    var hides=['.bnav','.tools-panel','.sec-feed','.sec-health','#sec-flow','','.hero-actions','#qchips','.fb-row'];
+    hides.forEach(function(s){var els=document.querySelectorAll(s);els.forEach(function(e){e.classList.add('embed-hide')})});
+    document.body.classList.add('embed-mode');
+  }
+}
+var ACCENTS={'blue':'#58a6ff','green':'#3fb950','purple':'#bc8cff','orange':'#f0883e'};
+function applyAccent(){
+  var c=localStorage.getItem('dash_accent')||'blue';var col=ACCENTS[c]||ACCENTS.blue;
+  document.documentElement.style.setProperty('--bl',col);
+}
+function setAccent(c){
+  localStorage.setItem('dash_accent',c);applyAccent();
+  document.querySelectorAll('.accent-swatch').forEach(function(s){s.classList.toggle('sel',s.getAttribute('data-accent')===c)});
+}
+function renderColToggle(){
+  var cols=[['icon','✅'],['id','ID'],['time','Time'],['status','Status'],['link','↗']];
+  var html=cols.map(function(c){
+    var hidden=localStorage.getItem('dash_col_'+c[0])==='1';
+    return '<span class="col-tog-btn'+(hidden?'':' on')+'" onclick="toggleCol(\'+c[0]+\')">'+c[1]+'</span>';
+  }).join('');
+  var el=document.getElementById('colToggle');if(el)el.innerHTML=html;
+  applyColVisibility();
+}
+function toggleCol(key){
+  var hidden=localStorage.getItem('dash_col_'+key)==='1';
+  localStorage.setItem('dash_col_'+key,hidden?'0':'1');
+  renderColToggle();
+}
+function applyColVisibility(){
+  var cols=['icon','id','time','status','link'];
+  cols.forEach(function(c){
+    var hidden=localStorage.getItem('dash_col_'+c)==='1';
+    var idx={'icon':0,'id':1,'time':2,'status':3,'link':4}[c];
+    document.querySelectorAll('#rt tr').forEach(function(tr){
+      var tds=tr.querySelectorAll('td,th');if(tds[idx])tds[idx].style.display=hidden?'none':'';
+    });
+  });
+}
+var kbNavIdx=-1;
+function kbNav(dir){
+  var rows=document.querySelectorAll('#rt tbody tr');
+  if(!rows.length)return;
+  if(kbNavIdx>=0&&rows[kbNavIdx])rows[kbNavIdx].classList.remove('kb-nav-hl');
+  kbNavIdx+=dir;
+  if(kbNavIdx<0)kbNavIdx=0;if(kbNavIdx>=rows.length)kbNavIdx=rows.length-1;
+  rows[kbNavIdx].classList.add('kb-nav-hl');
+  rows[kbNavIdx].scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function kbNavOpen(){
+  var rows=document.querySelectorAll('#rt tbody tr');
+  if(kbNavIdx>=0&&rows[kbNavIdx]){
+    var link=rows[kbNavIdx].querySelector('a');
+    if(link)link.click();
+  }
+}
+function genCurl(method,url){
+  if(method==='GET')return 'curl '+url;
+  return 'curl -X '+method+' '+url;
+}
+function copyCurl(url){
+  navigator.clipboard.writeText('curl '+url).then(function(){showToast('cURL copied!')}).catch(function(){})
+}
+
+
+
+
+
+// ═══ Flaky Run Detector ═══
+function renderFlakyDetector(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var bySha={};
+  runs.forEach(function(r){
+    var sha=r.headSha||'';
+    if(!sha)return;
+    if(!bySha[sha])bySha[sha]={runs:[],name:r.name||'',conclusions:{}};
+    bySha[sha].runs.push(r);
+    var c=r.conclusion||'unknown';
+    bySha[sha].conclusions[c]=(bySha[sha].conclusions[c]||0)+1;
+  });
+  var flaky=[];var stable=[];
+  Object.keys(bySha).forEach(function(sha){
+    var d=bySha[sha];
+    if(d.runs.length<2)return;
+    var keys=Object.keys(d.conclusions);
+    if(keys.length>1){
+      flaky.push({sha:sha,name:d.name,conclusions:d.conclusions,total:d.runs.length,runs:d.runs});
+    }else{
+      stable.push({sha:sha,name:d.name,conclusion:keys[0],total:d.runs.length});
+    }
+  });
+  flaky.sort(function(a,b){return b.total-a.total});
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(flaky.length>0?'warn':'ok')+'">'+flaky.length+'</div><div class="metric-mini-lbl">Flaky SHAs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val ok">'+stable.length+'</div><div class="metric-mini-lbl">Stable SHAs</div></div>';
+  html+='</div>';
+  if(flaky.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No flaky runs detected! ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Same SHA with different conclusions:</div>';
+    flaky.forEach(function(f){
+      var shaShort=f.sha.substring(0,7);
+      var conclParts=Object.keys(f.conclusions).map(function(c){
+        var col=c==='success'?'var(--gn)':c==='failure'?'var(--rd)':'var(--yl)';
+        return '<span style="color:'+col+'">'+c+':'+f.conclusions[c]+'</span>';
+      });
+      html+='<div class="flaky-row"><span class="flaky-sha">'+shaShort+'</span><span class="flaky-wf">'+f.name+'</span><span class="flaky-badge flaky">FLAKY</span><span>'+f.total+'</span></div>';
+      html+='<div style="font-size:8px;color:var(--t3);padding:0 0 4px 64px">'+conclParts.join(' · ')+'</div>';
+    });
+    var flakyByDay={};
+    flaky.forEach(function(f){f.runs.forEach(function(r){if(!r.createdAt)return;var d=new Date(r.createdAt);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);flakyByDay[key]=(flakyByDay[key]||0)+1})});
+    var now=new Date();var flakyVals=[];for(var i=13;i>=0;i--){var d=new Date(now.getTime()-i*86400000);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);flakyVals.push(flakyByDay[key]||0)}
+    if(flakyVals.some(function(v){return v>0}))html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Flaky Count Trend (14d)</div>'+svgSpark(flakyVals,260,40,'var(--rd)')+'</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ Workflow Network Graph ═══
+function renderNetworkGraph(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var edges={};
+  runs.forEach(function(r){
+    var ev=r.event||'unknown';
+    var wf=r.name||'unknown';
+    var key=ev+'→'+wf;
+    if(!edges[key])edges[key]={count:0,success:0,fail:0};
+    edges[key].count++;
+    if(r.conclusion==='success')edges[key].success++;
+    if(r.conclusion==='failure')edges[key].fail++;
+  });
+  var triggers={};
+  var targets={};
+  Object.keys(edges).forEach(function(key){
+    var parts=key.split('→');
+    var trig=parts[0];var tgt=parts[1];
+    if(!triggers[trig])triggers[trig]=0;
+    triggers[trig]++;
+    if(!targets[tgt])targets[tgt]=0;
+    targets[tgt]++;
+  });
+  var icons={'push':'📤','schedule':'⏰','workflow_dispatch':'👤','workflow_run':'🔄','repository_dispatch':'📡','pull_request':'🔀','release':'🏷','unknown':'❓'};
+  var html='<div class="net-graph">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Trigger → Workflow</div>';
+  var sortedEdges=Object.keys(edges).sort(function(a,b){return edges[b].count-edges[a].count});
+  sortedEdges.forEach(function(key){
+    var e=edges[key];
+    var parts=key.split('→');
+    var trig=parts[0];var tgt=parts[1];
+    var pct=e.count?Math.round(e.success/e.count*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="net-edge">';
+    html+='<span class="net-node trigger">'+(icons[trig]||'❓')+' '+trig+'</span>';
+    html+='<span class="net-arrow">→</span>';
+    html+='<span class="net-node target">'+tgt+'</span>';
+    html+='<span style="font-size:9px;color:'+col+';margin-left:8px">'+e.count+' runs · '+pct+'% ok</span>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══ Run Velocity ═══
+function renderRunVelocity(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withDur=runs.filter(function(r){return r.updatedAt&&r.createdAt}).sort(function(a,b){return new Date(a.createdAt)-new Date(b.createdAt)});
+  if(!withDur.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  var durations=withDur.map(function(r){return Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000)});
+  var window3=3;var window5=5;
+  var avg3=[];var avg5=[];
+  for(var i=0;i<durations.length;i++){
+    var s3=durations.slice(Math.max(0,i-window3+1),i+1);
+    avg3.push(Math.round(s3.reduce(function(a,b){return a+b},0)/s3.length));
+    var s5=durations.slice(Math.max(0,i-window5+1),i+1);
+    avg5.push(Math.round(s5.reduce(function(a,b){return a+b},0)/s5.length));
+  }
+  var recent3=Math.round(avg3.slice(-3).reduce(function(a,b){return a+b},0)/Math.min(3,avg3.length));
+  var recent5=Math.round(avg5.slice(-5).reduce(function(a,b){return a+b},0)/Math.min(5,avg5.length));
+  var overall=Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length);
+  var trend=recent3>overall*1.15?'📈 Slowing':recent3<overall*0.85?'📉 Speeding':'➡ Stable';
+  var trendCol=recent3>overall*1.15?'var(--rd)':recent3<overall*0.85?'var(--gn)':'var(--bl)';
+  var html='<div class="velocity-chart">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+overall+'m</div><div class="metric-mini-lbl">Overall Avg</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+recent3+'m</div><div class="metric-mini-lbl">Recent 3 MA</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+recent5+'m</div><div class="metric-mini-lbl">Recent 5 MA</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+trendCol+'">'+trend+'</div><div class="metric-mini-lbl">Trend</div></div>';
+  html+='</div>';
+  var maxV=Math.max.apply(null,durations)||1;
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Duration bars + 3-run moving average:</div>';
+  html+='<div style="height:50px;margin:8px 0;overflow:hidden">';
+  durations.slice(-20).forEach(function(d,i){
+    var h=Math.max(2,d/maxV*46);
+    var ma=avg3[avg3.length-20+i]||0;
+    var maH=Math.max(2,ma/maxV*46);
+    html+='<div class="velocity-bar" style="height:'+h+'px;background:'+(d>overall*1.5?'var(--rd)':'var(--bl)')+'" title="'+d+'m"></div>';
+    html+='<div class="velocity-bar" style="height:'+maH+'px;background:var(--or);opacity:.6" title="MA:'+ma+'m"></div>';
+  });
+  html+='</div><div style="font-size:8px;color:var(--t2)">🔵 actual · 🟠 3-run MA · last 20 runs</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">MA Trend</div>'+svgSpark(avg3.slice(-20),260,40,'var(--or)')+'</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ Quiet Periods ═══
+function renderQuietPeriods(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  if(sorted.length<2)return'<div style="padding:10px;color:var(--t2)">Need at least 2 runs</div>';
+  var gaps=[];
+  for(var i=1;i<sorted.length;i++){
+    var t1=new Date(sorted[i-1].createdAt||0).getTime();
+    var t2=new Date(sorted[i].createdAt||0).getTime();
+    var gapMin=Math.round((t2-t1)/60000);
+    if(gapMin>0){
+      gaps.push({
+        gap:gapMin,
+        before:sorted[i-1],
+        after:sorted[i],
+        gapHours:Math.round(gapMin/60*10)/10,
+        gapDays:Math.round(gapMin/1440*10)/10
+      });
+    }
+  }
+  gaps.sort(function(a,b){return b.gap-a.gap});
+  var avgGap=gaps.length?Math.round(gaps.reduce(function(a,g){return a+g.gap},0)/gaps.length):0;
+  var maxGap=gaps.length?gaps[0]:null;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val warn">'+(maxGap?maxGap.gapHours+'h':'—')+'</div><div class="metric-mini-lbl">Longest Gap</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+(avgGap<60?avgGap+'m':Math.round(avgGap/60*10)/10+'h')+'</div><div class="metric-mini-lbl">Avg Gap</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+gaps.filter(function(g){return g.gap>360}).length+'</div><div class="metric-mini-lbl">Gaps >6h</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Top 10 quiet periods (potential maintenance windows):</div>';
+  gaps.slice(0,10).forEach(function(g,idx){
+    var beforeTime=g.before.createdAt?new Date(g.before.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    var afterTime=g.after.createdAt?new Date(g.after.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    var label=g.gap>=1440?g.gapDays+'d':g.gap>=60?g.gapHours+'h':g.gap+'m';
+    html+='<div class="quiet-row"><span><span class="quiet-gap">'+label+'</span> <span class="quiet-time">('+beforeTime+' → '+afterTime+')</span></span><span class="quiet-time">'+(g.before.name||'').substring(0,12)+'</span><span class="quiet-time">'+(g.after.name||'').substring(0,12)+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+
+// ═══ Release Tracker ═══
+function renderReleaseTracker(){
+  var D=window.DASH||{};var rels=D.releases||[];
+  if(!rels.length)return'<div style="padding:10px;color:var(--t2)">No releases found</div>';
+  var sorted=rels.slice().sort(function(a,b){return new Date(b.created||0)-new Date(a.created||0)});
+  var sizes=rels.map(function(r){return r.size||0});
+  var totalSize=sizes.reduce(function(a,b){return a+b},0);
+  var avgSize=rels.length?Math.round(totalSize/rels.length):0;
+  var maxSize=Math.max.apply(null,sizes);
+  var minSize=Math.min.apply(null,sizes.filter(function(s){return s>0}))||0;
+  // Time span
+  var times=rels.map(function(r){return new Date(r.created||0).getTime()}).filter(function(t){return t>0});
+  var spanDays=times.length?Math.round((Math.max.apply(null,times)-Math.min.apply(null,times))/86400000):0;
+  var html='<div class="release-timeline">';
+  html+='<div class="release-stats">';
+  html+='<div class="release-stat"><div class="release-stat-val">'+rels.length+'</div><div class="release-stat-lbl">Total Releases</div></div>';
+  html+='<div class="release-stat"><div class="release-stat-val">'+fmtBytes(totalSize)+'</div><div class="release-stat-lbl">Total Size</div></div>';
+  html+='<div class="release-stat"><div class="release-stat-val">'+fmtBytes(avgSize)+'</div><div class="release-stat-lbl">Avg Size</div></div>';
+  html+='<div class="release-stat"><div class="release-stat-val">'+fmtBytes(maxSize)+'</div><div class="release-stat-lbl">Largest</div></div>';
+  html+='<div class="release-stat"><div class="release-stat-val">'+fmtBytes(minSize)+'</div><div class="release-stat-lbl">Smallest</div></div>';
+  html+='<div class="release-stat"><div class="release-stat-val">'+spanDays+'d</div><div class="release-stat-lbl">Time Span</div></div>';
+  html+='</div>';
+  // Size distribution bar chart
+  var maxBar=Math.max(maxSize,1);
+  html+='<div style="font-size:11px;font-weight:700;margin:8px 0 4px">Size Distribution</div>';
+  sorted.slice(0,15).forEach(function(r,i){
+    var sz=r.size||0;
+    var pct=Math.round(sz/maxBar*100);
+    var time=r.created?new Date(r.created).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    html+='<div class="release-row"><div><div class="release-tag">'+(r.tag||'')+'</div><div class="release-size-bar" style="width:'+pct+'%;background:'+(sz>100000?'var(--rd)':sz>10000?'var(--yl)':'var(--bl)')+'"></div></div><div class="release-size">'+fmtBytes(sz)+'</div><div class="release-time">'+time+'</div></div>';
+  });
+  if(rels.length>15)html+='<div style="font-size:8px;color:var(--t3);padding:4px">+'+(rels.length-15)+' more...</div>';
+  html+='</div>';
+  return html;
+}
+function fmtBytes(b){
+  if(!b||b<1)return '0 B';
+  if(b<1024)return b+' B';
+  if(b<1048576)return (b/1024).toFixed(1)+' KB';
+  return (b/1048576).toFixed(1)+' MB';
+}
+
+// ═══ DORA Scorecard ═══
+function renderDoraScorecard(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  // 1. Deploy Frequency
+  var success=runs.filter(function(r){return r.conclusion==='success'});
+  var days={};
+  success.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    days[key]=(days[key]||0)+1;
+  });
+  var dayCount=Math.max(1,Object.keys(days).length);
+  var depPerDay=success.length/dayCount;
+  var dfGrade=depPerDay>=1?'elite':depPerDay>=0.1?'high':depPerDay>=0.01?'medium':'low';
+  var dfVal=depPerDay>=1?depPerDay.toFixed(1)+'/day':depPerDay>=0.1?depPerDay.toFixed(1)+'/day':'<1/day';
+  // 2. MTTR
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var recoveries=[];
+  for(var i=0;i<fails.length;i++){
+    var failTime=new Date(fails[i].createdAt||0).getTime();
+    for(var j=0;j<runs.length;j++){
+      if(runs[j].conclusion==='success'){
+        var succTime=new Date(runs[j].createdAt||0).getTime();
+        if(succTime>failTime){recoveries.push(Math.round((succTime-failTime)/60000));break}
+      }
+    }
+  }
+  var mttr=recoveries.length?Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length):0;
+  var mttrGrade=mttr===0?'elite':mttr<60?'elite':mttr<180?'high':mttr<720?'medium':'low';
+  // 3. Change Failure Rate
+  var total=st.total||runs.length||1;
+  var failed=st.failed||0;
+  var cfr=Math.round(failed/total*100);
+  var cfrGrade=cfr<15?'elite':cfr<30?'high':cfr<50?'medium':'low';
+  // 4. Lead Time
+  var durations=runs.map(function(r){return r.updatedAt&&r.createdAt?Math.round((r.updatedAt-r.createdAt)/60000):0}).filter(function(d){return d>0});
+  var avgLT=durations.length?Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length):0;
+  var ltGrade=avgLT<60?'elite':avgLT<240?'high':avgLT<720?'medium':'low';
+  // Overall grade
+  var grades={'elite':4,'high':3,'medium':2,'low':1};
+  var overall=Math.round((grades[dfGrade]+grades[mttrGrade]+grades[cfrGrade]+grades[ltGrade])/4);
+  var overallGrade=overall>=4?'elite':overall>=3?'high':overall>=2?'medium':'low';
+  var gradeLabels={'elite':'ELITE','high':'HIGH','medium':'MEDIUM','low':'LOW'};
+  var gradeColors={'elite':'var(--gn)','high':'var(--bl)','medium':'var(--yl)','low':'var(--rd)'};
+  var html='<div class="dora-scorecard">';
+  html+='<div class="dora-grade '+overallGrade+'">';
+  html+='<div class="dora-grade-label" style="color:'+gradeColors[overallGrade]+'">'+gradeLabels[overallGrade]+'</div>';
+  html+='<div class="dora-grade-sub">DORA Maturity Level</div>';
+  html+='</div>';
+  html+='<div class="dora-4grid">';
+  // Deploy Frequency
+  html+='<div class="dora-metric"><div class="dora-metric-name">🚀 Deploy Freq</div><div class="dora-metric-val" style="color:'+gradeColors[dfGrade]+'">'+dfVal+'</div><div class="dora-metric-bench">Elite: ≥1/day</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.min(100,depPerDay*50)+'%;background:'+gradeColors[dfGrade]+'"></div></div></div>';
+  // MTTR
+  html+='<div class="dora-metric"><div class="dora-metric-name">🔧 MTTR</div><div class="dora-metric-val" style="color:'+gradeColors[mttrGrade]+'">'+(mttr||0)+'m</div><div class="dora-metric-bench">Elite: <1h</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.max(5,100-mttr/7.2)+'%;background:'+gradeColors[mttrGrade]+'"></div></div></div>';
+  // CFR
+  html+='<div class="dora-metric"><div class="dora-metric-name">📉 Change Fail</div><div class="dora-metric-val" style="color:'+gradeColors[cfrGrade]+'">'+cfr+'%</div><div class="dora-metric-bench">Elite: <15%</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.max(5,100-cfr*2)+'%;background:'+gradeColors[cfrGrade]+'"></div></div></div>';
+  // Lead Time
+  html+='<div class="dora-metric"><div class="dora-metric-name">⏱️ Lead Time</div><div class="dora-metric-val" style="color:'+gradeColors[ltGrade]+'">'+avgLT+'m</div><div class="dora-metric-bench">Elite: <1h</div><div class="dora-metric-bar"><div class="dora-metric-bar-fg" style="width:'+Math.max(5,100-avgLT/7.2)+'%;background:'+gradeColors[ltGrade]+'"></div></div></div>';
+  html+='</div>';
+  html+='<div class="dora-summary">Based on <b>'+total+'</b> runs · <b>'+success.length+'</b> successful deploys · <b>'+failed+'</b> failures<br>DORA benchmarks: Elite = 1+/day, <1h MTTR, <15% CFR, <1h Lead Time</div>';
+  html+='</div>';
+  return html;
+}
+
+
+// ═══ v10.1 Enriched Data Features ═══
+function renderTriggerAnalysis(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var triggers={};
+  runs.forEach(function(r){
+    var ev=r.event||'unknown';
+    if(!triggers[ev])triggers[ev]={total:0,success:0,fail:0};
+    triggers[ev].total++;
+    if(r.conclusion==='success')triggers[ev].success++;
+    if(r.conclusion==='failure')triggers[ev].fail++;
+  });
+  var icons={'push':'📤','schedule':'⏰','workflow_dispatch':'👤','pull_request':'🔀','release':'🏷️','repository_dispatch':'📡','unknown':'❓'};
+  var html='<div style="padding:10px">';
+  html+='<div class="trigger-grid">';
+  var sorted=Object.keys(triggers).sort(function(a,b){return triggers[b].total-triggers[a].total});
+  sorted.forEach(function(ev){
+    var d=triggers[ev];
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="trigger-card"><div class="trigger-icon">'+(icons[ev]||'❓')+'</div><div class="trigger-name">'+ev+'</div><div class="trigger-count" style="color:'+col+'">'+d.total+'</div><div style="font-size:8px;color:var(--t2)">'+pct+'% ok</div></div>';
+  });
+  html+='</div>';
+  var total=runs.length||1;
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Distribution:</div>';
+  sorted.forEach(function(ev){
+    var d=triggers[ev];
+    var pct=Math.round(d.total/total*100);
+    html+='<div style="margin:4px 0"><div style="font-size:10px;display:flex;justify-content:space-between"><span>'+(icons[ev]||'')+' '+ev+'</span><span>'+d.total+' ('+pct+'%)</span></div><div class="trigger-bar" style="width:'+pct+'%"></div></div>';
+  });
+  var triggerCounts=sorted.map(function(ev){return triggers[ev].total});
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Trigger Counts</div>';
+  html+=svgBars(triggerCounts,260,50,function(v,i){var pct=triggers[sorted[i]].total?Math.round(triggers[sorted[i]].success/triggers[sorted[i]].total*100):0;return pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)'});
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderRunNumberTracker(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withNum=runs.filter(function(r){return r.runNumber}).sort(function(a,b){return (b.runNumber||0)-(a.runNumber||0)});
+  if(!withNum.length)return'<div style="padding:10px;color:var(--t2)">No run numbers available</div>';
+  var nums=withNum.map(function(r){return r.runNumber});
+  var max=Math.max.apply(null,nums);
+  var min=Math.min.apply(null,nums);
+  var expected=max-min+1;
+  var gaps=expected-nums.length;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+max+'</div><div class="metric-mini-lbl">Latest Run #</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+min+'</div><div class="metric-mini-lbl">Oldest Run #</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(gaps>0?'warn':'ok')+'">'+gaps+'</div><div class="metric-mini-lbl">Missing Runs</div></div>';
+  html+='</div>';
+  if(gaps>0){
+    var numSet={};
+    nums.forEach(function(n){numSet[n]=true});
+    var missing=[];
+    for(var i=min;i<=max;i++){if(!numSet[i])missing.push(i)}
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--rd)">⚠️ '+missing.length+' run number(s) missing (deleted or expired):</div>';
+    html+='<div style="max-height:120px;overflow:auto;margin-top:4px">';
+    missing.slice(0,20).forEach(function(n){
+      html+='<div class="runnum-row"><span class="runnum-gap">#'+n+'</span><span style="color:var(--t2)">missing</span><span>—</span></div>';
+    });
+    if(missing.length>20)html+='<div style="font-size:9px;color:var(--t2);padding:4px">+'+(missing.length-20)+' more...</div>';
+    html+='</div>';
+  }else{
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No gaps! All '+nums.length+' runs present ✅</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function renderCommitMessages(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withTitle=runs.filter(function(r){return r.displayTitle}).slice(0,30);
+  if(!withTitle.length)return'<div style="padding:10px;color:var(--t2)">No commit messages available</div>';
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📋 Commit Messages → Run Results</div>';
+  withTitle.forEach(function(r){
+    var sha=(r.headSha||'').substring(0,7);
+    var col=r.conclusion==='success'?'var(--gn)':'var(--rd)';
+    var time=r.createdAt?new Date(r.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+    html+='<div class="commit-msg"><span class="commit-msg-sha">'+sha+'</span> <span style="color:'+col+'">'+(r.conclusion==='success'?'✅':'❌')+'</span> '+esc(r.displayTitle||'')+'<br><span style="color:var(--t3);font-size:8px">'+time+' WIB · #'+(r.runNumber||'')+' · '+(r.headBranch||'')+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderEventTimeline(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  if(!runs.length)return'<div style="padding:10px;color:var(--t2)">No runs</div>';
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📅 Event Timeline (chronological)</div>';
+  var byEvent={};
+  sorted.forEach(function(r){
+    var ev=r.event||'unknown';
+    if(!byEvent[ev])byEvent[ev]=[];
+    byEvent[ev].push(r);
+  });
+  Object.keys(byEvent).forEach(function(ev){
+    var items=byEvent[ev];
+    var success=items.filter(function(r){return r.conclusion==='success'}).length;
+    var pct=items.length?Math.round(success/items.length*100):0;
+    html+='<div style="margin:8px 0;padding:8px;border:1px solid var(--brd);border-radius:8px">';
+    html+='<div style="font-size:11px;font-weight:700;margin-bottom:4px">'+ev+' <span style="color:var(--t2)">('+items.length+' runs, '+pct+'% success)</span></div>';
+    items.slice(-5).reverse().forEach(function(r){
+      var time=r.createdAt?new Date(r.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}):'';
+      var col=r.conclusion==='success'?'var(--gn)':'var(--rd)';
+      html+='<div style="font-size:9px;padding:2px 0;color:var(--t2)"><span style="color:'+col+'">'+(r.conclusion==='success'?'✅':'❌')+'</span> '+time+' · #'+(r.runNumber||'')+' · '+(r.displayTitle||r.name||'').substring(0,30)+'</div>';
+    });
+    if(items.length>5)html+='<div style="font-size:8px;color:var(--t3);padding:2px">+'+(items.length-5)+' more...</div>';
+    html+='</div>';
+  });
+  var dayCounts={};
+  sorted.forEach(function(r){if(!r.createdAt)return;var d=new Date(r.createdAt);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);dayCounts[key]=(dayCounts[key]||0)+1});
+  var now=new Date();var evVals=[];for(var i=13;i>=0;i--){var d=new Date(now.getTime()-i*86400000);var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);evVals.push(dayCounts[key]||0)}
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Events per Day (14d)</div>'+svgBars(evVals,260,50,function(v,i){return v===0?'var(--bg3)':'var(--bl)'})+'</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderRunNumberGap(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withNum=runs.filter(function(r){return r.runNumber}).sort(function(a,b){return (a.runNumber||0)-(b.runNumber||0)});
+  if(withNum.length<2)return'<div style="padding:10px;color:var(--t2)">Need at least 2 runs with run numbers</div>';
+  var gaps=[];
+  for(var i=1;i<withNum.length;i++){
+    var prev=withNum[i-1].runNumber;
+    var curr=withNum[i].runNumber;
+    if(curr-prev>1){
+      gaps.push({from:prev+1,to:curr-1,count:curr-prev-1});
+    }
+  }
+  var totalMissing=gaps.reduce(function(a,g){return a+g.count},0);
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+gaps.length+'</div><div class="metric-mini-lbl">Gap Periods</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(totalMissing>0?'warn':'ok')+'">'+totalMissing+'</div><div class="metric-mini-lbl">Total Missing</div></div>';
+  html+='</div>';
+  if(gaps.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No gaps! Consecutive run numbers ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Gap details:</div>';
+    gaps.forEach(function(g){
+      html+='<div style="margin:4px 0;padding:6px;border:1px solid var(--brd);border-radius:6px;font-size:10px"><span style="color:var(--rd)">⚠️ #'+g.from;
+      if(g.count>1)html+=' → #'+g.to;
+      html+='</span> <span style="color:var(--t2)">'+g.count+' run(s) missing</span></div>';
+    });
+  }
+  html+='</div>';
+  return html;
+}
+
+
+// ═══ v10.0 CI/CD Metrics ═══
+
+
+
+// ═══ 1. Failure Prediction ═══
+function renderFailurePrediction(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var total=runs.length||1;
+  var baseRate=fails.length/total;
+  var byHour={};var byDay={};
+  fails.forEach(function(r){
+    var d=new Date(r.createdAt||0);
+    var h=d.getHours();
+    byHour[h]=(byHour[h]||0)+1;
+    var day=d.getDay();
+    byDay[day]=(byDay[day]||0)+1;
+  });
+  var maxHour=Object.keys(byHour).sort(function(a,b){return byHour[b]-byHour[a]})[0]||12;
+  var maxDay=Object.keys(byDay).sort(function(a,b){return byDay[b]-byDay[a]})[0]||1;
+  var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var hourRate=byHour[maxHour]?Math.round(byHour[maxHour]/(runs.filter(function(r){return new Date(r.createdAt||0).getHours()==maxHour}).length||1)*100):0;
+  var prediction=Math.min(95,Math.round(baseRate*100*0.5+hourRate*0.3+10));
+  if(fails.length===0)prediction=0;
+  var col=prediction>=50?'var(--rd)':prediction>=25?'var(--yl)':'var(--gn)';
+  var r=30,c=2*Math.PI*r,offset=c-(prediction/100*c);
+  var html='<div class="fpred-box">';
+  html+='<div class="fpred-ring"><div style="position:relative;display:inline-block;width:70px;height:70px"><svg width="70" height="70" style="transform:rotate(-90deg)"><circle cx="35" cy="35" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="5"/><circle cx="35" cy="35" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="5" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round"/></svg><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:700;color:'+col+'">'+prediction+'%</div></div></div>';
+  html+='<div style="text-align:center;font-size:9px;color:var(--t2)">Predicted failure risk for next run</div>';
+  html+='<div class="fpred-row"><span>Highest risk hour</span><span style="color:'+col+'">'+maxHour+':00</span></div>';
+  html+='<div class="fpred-row"><span>Highest risk day</span><span style="color:'+col+'">'+dayNames[maxDay]+'</span></div>';
+  html+='<div class="fpred-row"><span>Overall fail rate</span><span>'+Math.round(baseRate*100)+'%</span></div>';
+  html+='<div class="fpred-row"><span>Recent trend (last 10)</span><span>'+Math.round(fails.slice(0,10).length/Math.min(10,runs.length)*100)+'%</span></div>';
+  if(prediction>=50)html+='<div style="margin-top:8px;padding:6px;background:rgba(248,81,73,.1);border-radius:6px;font-size:10px;color:var(--rd)"><b>⚠️ High risk:</b> Next run at '+maxHour+':00 on '+dayNames[maxDay]+' has '+prediction+'% chance of failure</div>';
+  else if(prediction>0)html+='<div style="margin-top:8px;padding:6px;background:rgba(63,185,80,.1);border-radius:6px;font-size:10px;color:var(--gn)">✅ Low risk — pipeline is stable</div>';
+  else html+='<div style="margin-top:8px;text-align:center;color:var(--gn);padding:6px">No failures detected — pipeline is perfect! ✨</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 2. SLA Breach Tracker ═══
+function renderSLABreach(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var name=r.name||'unknown';
+    if(!r.updatedAt||!r.createdAt)return;
+    var dur=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);
+    if(dur<=0)return;
+    if(!byWf[name])byWf[name]={durations:[]};
+    byWf[name].durations.push(dur);
+  });
+  var html='<div style="padding:10px">';
+  var allBreaches=[];
+  Object.keys(byWf).forEach(function(wf){
+    var d=byWf[wf];
+    var avg=Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length);
+    var sla=Math.round(avg*1.5);
+    runs.forEach(function(r){
+      if(r.name!==wf||!r.updatedAt||!r.createdAt)return;
+      var dur=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);
+      if(dur>sla){
+        allBreaches.push({wf:wf,dur:dur,sla:sla,over:Math.round((dur-sla)/sla*100),id:r.databaseId||'',orv:r.orv_id||''});
+      }
+    });
+  });
+  allBreaches.sort(function(a,b){return b.over-a.over});
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val sla-breach">'+allBreaches.length+'</div><div class="metric-mini-lbl">SLA Breaches</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val sla-ok">'+(runs.length-allBreaches.length)+'</div><div class="metric-mini-lbl">Within SLA</div></div>';
+  html+='</div>';
+  if(allBreaches.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">All runs within SLA! ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">SLA = avg duration × 1.5. Breaches (sorted by severity):</div>';
+    allBreaches.slice(0,15).forEach(function(b){
+      html+='<div class="sla-row"><span class="wfd-name">'+b.wf+'</span><span style="color:var(--t3)">'+b.sla+'m</span><span class="sla-breach">'+b.dur+'m</span><span style="color:var(--rd)">+'+b.over+'%</span></div>';
+    });
+    var breachByWf={};
+    allBreaches.forEach(function(b){breachByWf[b.wf]=(breachByWf[b.wf]||0)+1});
+    var breachKeys=Object.keys(breachByWf).sort(function(a,b){return breachByWf[b]-breachByWf[a]}).slice(0,10);
+    if(breachKeys.length){
+      var breachVals=breachKeys.map(function(k){return breachByWf[k]});
+      html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Breaches per Workflow</div>';
+      html+=svgBars(breachVals,260,50,function(v,i){return v>=3?'var(--rd)':v>=2?'var(--yl)':'var(--or)'});
+      html+='</div>';
+    }
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ 3. Cancel Rate Analysis ═══
+function renderCancelRate(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var cancelled=runs.filter(function(r){return r.conclusion==='cancelled'});
+  var cancelledByWf={};
+  cancelled.forEach(function(r){var n=r.name||'';cancelledByWf[n]=(cancelledByWf[n]||0)+1});
+  var total=runs.length||1;
+  var rate=Math.round(cancelled.length/total*100);
+  var col=rate<10?'var(--gn)':rate<25?'var(--yl)':'var(--rd)';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+rate+'%</div><div class="metric-mini-lbl">Cancel Rate</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+cancelled.length+'</div><div class="metric-mini-lbl">Cancelled</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+total+'</div><div class="metric-mini-lbl">Total Runs</div></div>';
+  html+='</div>';
+  if(cancelled.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No cancelled runs! ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Cancelled by workflow:</div>';
+    Object.keys(cancelledByWf).sort(function(a,b){return cancelledByWf[b]-cancelledByWf[a]}).forEach(function(wf){
+      html+='<div class="cancel-row"><span class="wfd-name">'+wf+'</span><span style="color:var(--t3)">'+cancelledByWf[wf]+'</span><span style="color:var(--yl)">'+Math.round(cancelledByWf[wf]/cancelled.length*100)+'%</span><span style="color:var(--rd)">'+Math.round(cancelledByWf[wf]/total*100)+'%</span></div>';
+    });
+    html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Cancelled runs waste Actions minutes without producing output.</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ 4. Run Streak Analysis ═══
+function renderStreakAnalysis(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var maxWin=0,maxLoss=0,curWin=0,curLoss=0,curStreakType='none',curStreak=0;
+  for(var i=0;i<sorted.length;i++){
+    if(sorted[i].conclusion==='success'){curWin++;if(curLoss>maxLoss)maxLoss=curLoss;curLoss=0}
+    else if(sorted[i].conclusion==='failure'){curLoss++;if(curWin>maxWin)maxWin=curWin;curWin=0}
+  }
+  if(curWin>maxWin)maxWin=curWin;
+  if(curLoss>maxLoss)maxLoss=curLoss;
+  var last=sorted[sorted.length-1];
+  var currentStreak=last?(last.conclusion==='success'?curWin:(last.conclusion==='failure'?curLoss:0)):0;
+  var isWin=last?last.conclusion==='success':false;
+  var html='<div style="padding:10px">';
+  html+='<div class="streak-big"><div class="streak-num" style="color:'+(isWin?'var(--gn)':'var(--rd)')+'">'+currentStreak+'</div><div class="streak-label">Current '+(isWin?'Win':'Loss')+' Streak</div></div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--gn)">'+maxWin+'</div><div class="metric-mini-lbl">Longest Win Streak</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--rd)">'+maxLoss+'</div><div class="metric-mini-lbl">Longest Loss Streak</div></div>';
+  html+='</div>';
+  var svg='<svg width="280" height="40" viewBox="0 0 280 40">';
+  var barW=280/Math.max(sorted.length,1);
+  sorted.forEach(function(r,i){
+    var h=6;var col='var(--bg3)';
+    if(r.conclusion==='success'){col='var(--gn)';h=12}
+    else if(r.conclusion==='failure'){col='var(--rd)';h=12}
+    svg+='<rect x="'+(i*barW)+'" y="'+(40-h)+'" width="'+Math.max(barW-1,1)+'" height="'+h+'" fill="'+col+'" rx="1"/>';
+  });
+  svg+='</svg>';
+  html+='<div style="margin-top:8px">'+svg+'</div>';
+  html+='<div style="font-size:8px;color:var(--t2);text-align:center;margin-top:2px">Green = success streak, Red = failure streak</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 5. Workflow Reliability ═══
+function renderWorkflowReliability(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var n=r.name||'unknown';
+    if(!byWf[n])byWf[n]={total:0,success:0,fail:0,cancel:0,durations:[]};
+    byWf[n].total++;
+    if(r.conclusion==='success')byWf[n].success++;
+    if(r.conclusion==='failure')byWf[n].fail++;
+    if(r.conclusion==='cancelled')byWf[n].cancel++;
+    if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)byWf[n].durations.push(d)}
+  });
+  var sorted=Object.keys(byWf).sort(function(a,b){return byWf[b].total-byWf[a].total});
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Per-Workflow Composite Reliability</div>';
+  sorted.forEach(function(wf){
+    var d=byWf[wf];
+    var sr=Math.round(d.success/d.total*100);
+    var avgDur=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length):0;
+    var variance=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+Math.abs(b-avgDur)},0)/d.durations.length):0;
+    var consistency=variance<avgDur*0.3?100:variance<avgDur*0.5?75:variance<avgDur*0.8?50:25;
+    var cancelRate=d.total?Math.round(d.cancel/d.total*100):0;
+    var reliability=Math.round(sr*0.5+consistency*0.3+(100-cancelRate)*0.2);
+    var col=reliability>=80?'var(--gn)':reliability>=60?'var(--yl)':reliability>=40?'var(--or)':'var(--rd)';
+    html+='<div class="reliab-row"><span class="wfd-name">'+wf+'</span><span style="color:'+col+';font-weight:700">'+reliability+'</span><span style="color:var(--t3)">SR:'+sr+'%</span></div>';
+    html+='<div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:'+reliability+'%;background:'+col+';border-radius:2px"></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══ Leaderboard ═══
+var LB_SORT={col:'reliability',dir:-1};
+var LB_DATA=null;
+function renderLeaderboard(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var n=r.name||'unknown';
+    if(!byWf[n])byWf[n]={name:n,total:0,success:0,fail:0,cancel:0,durations:[]};
+    byWf[n].total++;
+    if(r.conclusion==='success')byWf[n].success++;
+    if(r.conclusion==='failure')byWf[n].fail++;
+    if(r.conclusion==='cancelled')byWf[n].cancel++;
+    if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)byWf[n].durations.push(d)}
+  });
+  var rows=Object.keys(byWf).map(function(n){
+    var d=byWf[n];
+    var sr=d.total?Math.round(d.success/d.total*100):0;
+    var avgDur=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length):0;
+    var variance=d.durations.length?Math.round(d.durations.reduce(function(a,b){return a+Math.abs(b-avgDur)},0)/d.durations.length):0;
+    var consistency=variance<avgDur*0.3?100:variance<avgDur*0.5?75:variance<avgDur*0.8?50:25;
+    var cancelRate=d.total?Math.round(d.cancel/d.total*100):0;
+    var reliability=Math.round(sr*0.5+consistency*0.3+(100-cancelRate)*0.2);
+    return{name:n,total:d.total,success:d.success,fail:d.fail,cancel:d.cancel,sr:sr,avgDur:avgDur,reliability:reliability,cancelRate:cancelRate};
+  });
+  LB_DATA=rows;
+  return renderLeaderboardTable(rows);
+}
+function renderLeaderboardTable(rows){
+  var sorted=rows.slice().sort(function(a,b){
+    var col=LB_SORT.col;
+    var va=a[col],vb=b[col];
+    if(typeof va==='string')return va.localeCompare(vb)*LB_SORT.dir;
+    return (va-vb)*LB_SORT.dir;
+  });
+  var top=sorted.slice(0,10);
+  var badges=['🥇','🥈','🥉'];
+  function th(col,label){
+    var arrow=LB_SORT.col===col?(LB_SORT.dir<0?' ↓':' ↑'):'';
+    return '<th class="lb-th" data-lbcol="'+col+'" onclick="lbSort(this.getAttribute("data-lbcol"))">'+label+'<span style="font-size:8px;color:var(--t2)">'+arrow+'</span></th>';
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">🏆 Workflow Leaderboard — Top 10 by '+LB_SORT.col.replace(/\w/g,function(c){return c.toUpperCase()})+'</div>';
+  html+='<table class="lb-table" style="width:100%;border-collapse:collapse;font-size:11px">';
+  html+='<thead><tr style="border-bottom:2px solid var(--brd)">';
+  html+='<th class="lb-th" style="width:30px">#</th>';
+  html+=th('name','Workflow');
+  html+=th('sr','Success %');
+  html+=th('avgDur','Avg Duration');
+  html+=th('total','Total Runs');
+  html+=th('reliability','Reliability');
+  html+='</tr></thead><tbody>';
+  if(!top.length){
+    html+='<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:16px">No workflow data available</td></tr>';
+  }
+  top.forEach(function(r,i){
+    var badge=badges[i]||(i+1);
+    var srCol=r.sr>=80?'var(--gn)':r.sr>=60?'var(--yl)':r.sr>=40?'var(--or)':'var(--rd)';
+    var relCol=r.reliability>=80?'var(--gn)':r.reliability>=60?'var(--yl)':r.reliability>=40?'var(--or)':'var(--rd)';
+    html+='<tr style="border-bottom:1px solid var(--brd)" >';
+    html+='<td style="text-align:center;font-size:14px">'+badge+'</td>';
+    html+='<td style="padding:6px 4px"><code>'+esc(r.name)+'</code></td>';
+    html+='<td style="text-align:center;color:'+srCol+';font-weight:700">'+r.sr+'%</td>';
+    html+='<td style="text-align:center">'+(r.avgDur?r.avgDur+'m':'—')+'</td>';
+    html+='<td style="text-align:center">'+r.total+'</td>';
+    html+='<td style="text-align:center;color:'+relCol+';font-weight:700">'+r.reliability+'</td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Click column headers to sort · Reliability = SR(50%) + Consistency(30%) + (100-CancelRate)(20%) · Top 10 shown</div>';
+  html+='</div>';
+  return html;
+}
+function lbSort(col){
+  if(LB_SORT.col===col){LB_SORT.dir*=-1}else{LB_SORT.col=col;LB_SORT.dir=-1}
+  if(LB_DATA){var mb=document.getElementById('mb');if(mb)mb.innerHTML=renderLeaderboardTable(LB_DATA)}
+}
+
+// ═══ Export Report (PDF) ═══
+function renderExportReport(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=(D.runs||[]).slice(0,20);
+  var gen=D.generated||'—';
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📄 Printable Report</div>';
+  html+='<div style="font-size:11px;color:var(--t2);margin-bottom:10px">Generates a clean print-formatted report. Use your browser Save as PDF option in the print dialog.</div>';
+  html+='<button class="btn" style="margin-bottom:10px" onclick="doPrintReport()">🖨 Print / Save PDF</button>';
+  html+='<div id="reportPreview" class="report-preview" style="background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;line-height:1.6;max-height:400px;overflow:auto">';
+  html+='<h2 style="margin:0 0 4px;font-size:16px">Rusemeva Vault Dashboard Report</h2>';
+  html+='<div style="color:var(--t2);font-size:10px;margin-bottom:8px">Generated: '+esc(gen)+' WIB</div>';
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:10px">';
+  html+='<tr><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Total Runs</td><td style="padding:3px 8px;border:1px solid var(--brd)">'+(st.total||0)+'</td>';
+  html+='<td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Success</td><td style="padding:3px 8px;border:1px solid var(--brd);color:var(--gn)">'+(st.success||0)+'</td></tr>';
+  html+='<tr><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Failed</td><td style="padding:3px 8px;border:1px solid var(--brd);color:var(--rd)">'+(st.failed||0)+'</td>';
+  html+='<td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Success Rate</td><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:700">'+(st.rate||0)+'%</td></tr>';
+  html+='<tr><td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Today</td><td style="padding:3px 8px;border:1px solid var(--brd)">'+(st.today||0)+'</td>';
+  html+='<td style="padding:3px 8px;border:1px solid var(--brd);font-weight:600">Streak</td><td style="padding:3px 8px;border:1px solid var(--brd)">'+(st.streak||0)+'d (best '+(st.best||0)+')</td></tr>';
+  html+='</table>';
+  html+='<h3 style="font-size:12px;margin:8px 0 4px">Recent Runs</h3>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:10px">';
+  html+='<thead><tr><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">ID</th><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">Workflow</th><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">Status</th><th style="padding:4px 6px;border:1px solid var(--brd);text-align:left">Created</th></tr></thead><tbody>';
+  runs.forEach(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var s=r.conclusion||r.status||'';
+    var sCol=s==='success'?'var(--gn)':s==='failure'?'var(--rd)':'var(--t2)';
+    html+='<tr><td style="padding:3px 6px;border:1px solid var(--brd)"><code>'+esc(String(id))+'</code></td>';
+    html+='<td style="padding:3px 6px;border:1px solid var(--brd)">'+esc(r.name||'')+'</td>';
+    html+='<td style="padding:3px 6px;border:1px solid var(--brd);color:'+sCol+'">'+esc(s)+'</td>';
+    html+='<td style="padding:3px 6px;border:1px solid var(--brd)">'+esc(r.createdAt||'')+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  var ins=(D.insights||D.stats&&D.stats.insights||[]).slice(0,5);
+  if(ins.length){
+    html+='<h3 style="font-size:12px;margin:8px 0 4px">Insights</h3><ul style="margin:0;padding-left:16px;font-size:10px">';
+    ins.forEach(function(i){html+='<li style="margin-bottom:3px">'+esc(i)+'</li>'});
+    html+='</ul>';
+  }
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+function doPrintReport(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=(D.runs||[]).slice(0,20);
+  var gen=D.generated||'—';
+  var ins=(D.insights||D.stats&&D.stats.insights||[]).slice(0,5);
+  var reportEl=document.createElement('div');
+  reportEl.id='printReport';
+  reportEl.style.position='fixed';
+  reportEl.style.left='-9999px';
+  reportEl.style.top='0';
+  reportEl.style.width='800px';
+  reportEl.style.background='#fff';
+  reportEl.style.color='#000';
+  reportEl.style.padding='20px';
+  reportEl.style.fontFamily='Arial,sans-serif';
+  reportEl.style.fontSize='12px';
+  var html='<h1 style="font-size:20px;margin:0 0 4px">Rusemeva Vault Dashboard Report</h1>';
+  html+='<div style="color:#666;font-size:10px;margin-bottom:12px">Generated: '+esc(gen)+' WIB</div>';
+  html+='<h2 style="font-size:14px;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Key Statistics</h2>';
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:12px"><tbody>';
+  html+='<tr><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Total Runs</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.total||0)+'</td>';
+  html+='<td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Success</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.success||0)+'</td></tr>';
+  html+='<tr><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Failed</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.failed||0)+'</td>';
+  html+='<td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Success Rate</td><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">'+(st.rate||0)+'%</td></tr>';
+  html+='<tr><td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Today</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.today||0)+'</td>';
+  html+='<td style="padding:4px 10px;border:1px solid #ccc;font-weight:bold">Streak</td><td style="padding:4px 10px;border:1px solid #ccc">'+(st.streak||0)+'d (best '+(st.best||0)+')</td></tr>';
+  html+='</tbody></table>';
+  html+='<h2 style="font-size:14px;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Recent Runs</h2>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:12px"><thead><tr>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">ID</th>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">Workflow</th>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">Status</th>';
+  html+='<th style="padding:4px 8px;border:1px solid #ccc;text-align:left;background:#f5f5f5">Created</th>';
+  html+='</tr></thead><tbody>';
+  runs.forEach(function(r){
+    var id=r.orv_id||r.databaseId||'';
+    var s=r.conclusion||r.status||'';
+    html+='<tr><td style="padding:3px 8px;border:1px solid #ccc">'+esc(String(id))+'</td>';
+    html+='<td style="padding:3px 8px;border:1px solid #ccc">'+esc(r.name||'')+'</td>';
+    html+='<td style="padding:3px 8px;border:1px solid #ccc">'+esc(s)+'</td>';
+    html+='<td style="padding:3px 8px;border:1px solid #ccc">'+esc(r.createdAt||'')+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  if(ins.length){
+    html+='<h2 style="font-size:14px;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Insights</h2>';
+    html+='<ul style="margin:0;padding-left:18px;font-size:11px">';
+    ins.forEach(function(i){html+='<li style="margin-bottom:4px">'+esc(i)+'</li>'});
+    html+='</ul>';
+  }
+  html+='<div style="margin-top:20px;font-size:9px;color:#999;border-top:1px solid #ccc;padding-top:8px">Rusemeva Dashboard · daudjoss/daudjoss-vault · GitHub Actions + Cloudflare Worker</div>';
+  reportEl.innerHTML=html;
+  document.body.appendChild(reportEl);
+  var prev=document.body.style.visibility;
+  document.querySelectorAll('body > *:not(#printReport)').forEach(function(el){el.style.visibility='hidden'});
+  window.print();
+  setTimeout(function(){
+    document.querySelectorAll('body > *:not(#printReport)').forEach(function(el){el.style.visibility=''});
+    if(reportEl.parentNode)reportEl.parentNode.removeChild(reportEl);
+  },500);
+}
+
+// ═══ 6. Peak Load Detector ═══
+function renderPeakLoad(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var maxConcurrent=0,maxTime='';
+  var current=[];
+  for(var i=0;i<sorted.length;i++){
+    var start=new Date(sorted[i].createdAt||0).getTime();
+    var end=new Date(sorted[i].updatedAt||sorted[i].createdAt||0).getTime();
+    current=current.filter(function(r){return r.end>start});
+    current.push({start:start,end:end,run:sorted[i]});
+    if(current.length>maxConcurrent){maxConcurrent=current.length;maxTime=sorted[i].createdAt||''}
+  }
+  var byHour={};
+  sorted.forEach(function(r){
+    var h=new Date(r.createdAt||0).getHours();
+    byHour[h]=(byHour[h]||0)+1;
+  });
+  var peakHour=Object.keys(byHour).sort(function(a,b){return byHour[b]-byHour[a]})[0]||0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val sla-breach">'+maxConcurrent+'</div><div class="metric-mini-lbl">Peak Concurrent</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+byHour[peakHour]+'</div><div class="metric-mini-lbl">Peak Hour Volume</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+peakHour+':00</div><div class="metric-mini-lbl">Busiest Hour</div></div>';
+  html+='</div>';
+  if(maxTime){
+    html+='<div style="margin-top:8px;padding:6px;background:rgba(248,81,73,.08);border-radius:6px;font-size:10px"><b>Peak:</b> '+maxConcurrent+' concurrent runs at '+new Date(maxTime).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'})+' WIB</div>';
+  }
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Hourly load distribution:</div>';
+  var maxH=byHour[peakHour]||1;
+  var vals=[];var cols=[];
+  for(var h=0;h<24;h++){vals.push(byHour[h]||0);cols.push((byHour[h]||0)>=maxH*0.8?'var(--rd)':(byHour[h]||0)>=maxH*0.5?'var(--yl)':'var(--bl)')}
+  html+=svgBars(vals,280,50,cols);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>';
+  if(maxConcurrent>=5)html+='<div style="margin-top:8px;font-size:10px;color:var(--rd)"><b>⚠️ High load:</b> '+maxConcurrent+' concurrent runs may slow down CI</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 7. Failure Clusters ═══
+function renderFailureClusters(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'}).sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var clusters=[];
+  var currentCluster=[];
+  for(var i=0;i<fails.length;i++){
+    if(currentCluster.length===0){currentCluster.push(fails[i])}
+    else{
+      var prevTime=new Date(currentCluster[currentCluster.length-1].createdAt||0).getTime();
+      var currTime=new Date(fails[i].createdAt||0).getTime();
+      if(currTime-prevTime<3600000){currentCluster.push(fails[i])}
+      else{if(currentCluster.length>=2)clusters.push(currentCluster);currentCluster=[fails[i]]}
+    }
+  }
+  if(currentCluster.length>=2)clusters.push(currentCluster);
+  clusters.sort(function(a,b){return b.length-a.length});
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(clusters.length>0?'warn':'ok')+'">'+clusters.length+'</div><div class="metric-mini-lbl">Failure Waves</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+fails.length+'</div><div class="metric-mini-lbl">Total Fails</div></div>';
+  html+='</div>';
+  if(clusters.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No failure clusters detected ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Failure waves (≥2 fails within 1h):</div>';
+    clusters.slice(0,10).forEach(function(c,i){
+      var first=c[0];var last=c[c.length-1];
+      var span=Math.round((new Date(last.createdAt||0)-new Date(first.createdAt||0))/60000);
+      html+='<div class="cluster-box '+(c.length>=3?'cluster-fail':'')+'">';
+      html+='<div style="font-size:10px;font-weight:700;color:var(--rd)"><2728> Wave #'+(i+1)+': '+c.length+' fails in '+span+'m</div>';
+      var t=new Date(first.createdAt||0).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+      html+='<div style="font-size:9px;color:var(--t3)">Started: '+t+' WIB</div>';
+      html+='</div>';
+    });
+  }
+  html+='</div>';
+  return html;
+}
+
+// ═══ 8. Run Waste Analyzer ═══
+function renderWasteAnalyzer(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var wasted=runs.filter(function(r){return r.conclusion==='failure'||r.conclusion==='cancelled'});
+  var totalWasteMin=0;var byType={failure:0,cancelled:0};
+  wasted.forEach(function(r){
+    if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0){totalWasteMin+=d;byType[r.conclusion]=(byType[r.conclusion]||0)+d}}
+  });
+  var totalRunsMin=0;
+  runs.forEach(function(r){if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)totalRunsMin+=d}});
+  var wastePct=totalRunsMin?Math.round(totalWasteMin/totalRunsMin*100):0;
+  var col=wastePct<15?'var(--gn)':wastePct<30?'var(--yl)':'var(--rd)';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+totalWasteMin+'m</div><div class="metric-mini-lbl">Wasted Minutes</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+wasted.length+'</div><div class="metric-mini-lbl">Wasted Runs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+wastePct+'%</div><div class="metric-mini-lbl">Waste Ratio</div></div>';
+  html+='</div>';
+  var byWf={};
+  wasted.forEach(function(r){var n=r.name||'';if(!byWf[n])byWf[n]={count:0,mins:0};byWf[n].count++;if(r.updatedAt&&r.createdAt){var d=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);if(d>0)byWf[n].mins+=d}});
+  if(Object.keys(byWf).length>0){
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Waste by workflow:</div>';
+    Object.keys(byWf).sort(function(a,b){return byWf[b].mins-byWf[a].mins}).forEach(function(wf){
+      var d=byWf[wf];
+      html+='<div class="waste-row"><span class="wfd-name">'+wf+'</span><span style="color:var(--rd)">'+d.mins+'m</span><span style="color:var(--t3)">'+d.count+'x</span></div>';
+    });
+  }
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Waste = failed + cancelled runs. These consume Actions minutes without producing output.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 9. Performance Percentile ═══
+function renderPercentile(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var durations=runs.filter(function(r){return r.updatedAt&&r.createdAt}).map(function(r){return Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000)}).filter(function(d){return d>0}).sort(function(a,b){return a-b});
+  if(!durations.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  function pct(p){var idx=Math.floor(durations.length*p/100);return durations[Math.min(idx,durations.length-1)]}
+  var p50=pct(50),p90=pct(90),p99=pct(99);
+  var latest=runs[0];
+  var latestDur=latest&&latest.updatedAt&&latest.createdAt?Math.round((new Date(latest.updatedAt)-new Date(latest.createdAt))/60000):0;
+  var rank=0;
+  for(var i=0;i<durations.length;i++){if(latestDur>=durations[i])rank++}
+  var rankPct=Math.round(rank/durations.length*100);
+  var col=rankPct>=90?'var(--rd)':rankPct>=50?'var(--yl)':'var(--gn)';
+  var html='<div style="padding:10px">';
+  html+='<div style="text-align:center;margin:8px"><div style="font-size:28px;font-weight:700;color:'+col+'">'+rankPct+'%</div><div style="font-size:9px;color:var(--t2)">Latest run is slower than '+rankPct+'% of all runs</div></div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val wfd-fast">'+p50+'m</div><div class="metric-mini-lbl">P50 (median)</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--yl)">'+p90+'m</div><div class="metric-mini-lbl">P90</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val wfd-slow">'+p99+'m</div><div class="metric-mini-lbl">P99</div></div>';
+  html+='</div>';
+  var maxV=durations[durations.length-1]||1;
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Duration Distribution (P50→P99):</div>';
+  var vals=[p50,p90,p99,latestDur];
+  var cols=['var(--gn)','var(--yl)','var(--rd)',col];
+  html+=svgBars(vals,280,40,cols);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>P50</span><span>P90</span><span>P99</span><span>Latest</span></div></div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 10. Workflow Lifecycle ═══
+function renderLifecycle(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var n=r.name||'unknown';
+    if(!byWf[n])byWf[n]={first:null,last:null,count:0,active:false};
+    var t=new Date(r.createdAt||0).getTime();
+    if(byWf[n].first===null||t<byWf[n].first)byWf[n].first=t;
+    if(byWf[n].last===null||t>byWf[n].last)byWf[n].last=t;
+    byWf[n].count++;
+  });
+  var now=Date.now();
+  Object.keys(byWf).forEach(function(wf){
+    var d=byWf[wf];
+    d.activeDays=Math.round((now-(d.last||0))/86400000);
+    d.lifespan=Math.round(((d.last||0)-(d.first||0))/86400000);
+    d.active=d.activeDays<7;
+    d.dormant=d.activeDays>=30;
+  });
+  var sorted=Object.keys(byWf).sort(function(a,b){return byWf[b].count-byWf[a].count});
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Workflow Lifecycle</div>';
+  sorted.forEach(function(wf){
+    var d=byWf[wf];
+    var status=d.active?'<span style="color:var(--gn)">Active</span>':d.dormant?'<span style="color:var(--rd)">Dormant</span>':'<span style="color:var(--yl)">Idle</span>';
+    html+='<div class="lifecycle-row"><span class="wfd-name">'+wf+'</span><span>'+d.count+'x</span><span style="font-size:9px">'+d.lifespan+'d span</span></div>';
+    var age=d.activeDays;
+    var ageStr=age===0?'today':age+'d ago';
+    html+='<div style="font-size:9px;color:var(--t3);margin-bottom:6px">Last: '+ageStr+' | '+status+'</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// ═══ 11. Run Density Map ═══
+function renderDensityMap(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byHourDay={};
+  runs.forEach(function(r){
+    var d=new Date(r.createdAt||0);
+    var day=d.getDay();var hour=d.getHours();
+    var key=day+'_'+hour;
+    byHourDay[key]=(byHourDay[key]||0)+1;
+  });
+  var max=1;
+  Object.keys(byHourDay).forEach(function(k){if(byHourDay[k]>max)max=byHourDay[k]});
+  var dayNames=['S','M','T','W','T','F','S'];
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Run Density (Day × Hour)</div>';
+  for(var day=0;day<7;day++){
+    html+='<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><span style="font-size:8px;color:var(--t2);width:10px">'+dayNames[day]+'</span>';
+    for(var hour=0;hour<24;hour++){
+      var key=day+'_'+hour;
+      var count=byHourDay[key]||0;
+      var intensity=count/max;
+      var col=count===0?'var(--bg3)':intensity>0.7?'rgba(63,185,80,.9)':intensity>0.4?'rgba(63,185,80,.5)':'rgba(63,185,80,.2)';
+      html+='<div class="density-cell" style="background:'+col+'" title="'+dayNames[day]+' '+hour+':00 — '+count+' runs"></div>';
+    }
+    html+='</div>';
+  }
+  html+='<div style="display:flex;justify-content:space-between;font-size:7px;color:var(--t2);margin-top:2px;padding-left:14px"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>';
+  html+='<div style="font-size:8px;color:var(--t3);margin-top:4px;text-align:center">Darker = more runs. Identifies when CI is most active.</div>';
+  html+='</div>';
+  return html;
+}
+
+// ═══ 12. Duplicate Run Detector ═══
+function renderDuplicateDetector(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var sorted=runs.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var dups=[];
+  for(var i=1;i<sorted.length;i++){
+    var prev=sorted[i-1];var curr=sorted[i];
+    if(prev.name===curr.name&&(prev.headBranch||'')===(curr.headBranch||'')){
+      var gap=new Date(curr.createdAt||0).getTime()-new Date(prev.createdAt||0).getTime();
+      if(gap>0&&gap<300000){
+        dups.push({name:curr.name,branch:curr.headBranch||'',gap:Math.round(gap/1000),prevId:prev.databaseId,currId:curr.databaseId,prevOrv:prev.orv_id||'',currOrv:curr.orv_id||''});
+      }
+    }
+  }
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(dups.length>0?'warn':'ok')+'">'+dups.length+'</div><div class="metric-mini-lbl">Duplicate Runs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+(runs.length-dups.length)+'</div><div class="metric-mini-lbl">Unique Runs</div></div>';
+  html+='</div>';
+  if(dups.length===0){
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No duplicate runs detected ✅</div>';
+  }else{
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Same workflow+branch within 5 min:</div>';
+    dups.slice(0,15).forEach(function(d){
+      html+='<div class="dup-row"><span class="wfd-name">'+d.name+'</span><span style="color:var(--yl)">'+d.gap+'s</span><span style="color:var(--t3)">'+(d.prevOrv||d.prevId)+'</span></div>';
+    });
+    html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Duplicates may indicate accidental re-triggers or webhook issues.</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+
+// ═══ CI/CD Health Score (composite 0-100) ═══
+function renderHealthScore(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  // 1. Success rate (0-30 pts)
+  var total=st.total||runs.length||1;
+  var success=st.success||0;
+  var sr=Math.round(success/total*100);
+  var srPts=Math.min(30,Math.round(sr/100*30));
+  // 2. MTTR (0-20 pts)
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var recoveries=[];
+  for(var i=0;i<fails.length;i++){
+    var ft=new Date(fails[i].createdAt||0).getTime();
+    for(var j=0;j<runs.length;j++){
+      if(runs[j].conclusion==='success'){var st2=new Date(runs[j].createdAt||0).getTime();if(st2>ft){recoveries.push(Math.round((st2-ft)/60000));break}}
+    }
+  }
+  var mttr=recoveries.length?Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length):0;
+  var mttrPts=mttr===0?20:mttr<30?18:mttr<60?14:mttr<180?10:mttr<720?5:0;
+  // 3. Frequency (0-15 pts)
+  var days={};
+  runs.forEach(function(r){if(r.createdAt){var d=new Date(r.createdAt);var k=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);days[k]=(days[k]||0)+1}});
+  var dc=Math.max(1,Object.keys(days).length);
+  var freq=runs.length/dc;
+  var freqPts=freq>=2?15:freq>=1?12:freq>=0.5?8:freq>=0.1?4:0;
+  // 4. Velocity/Stability (0-15 pts) — low variance = stable
+  var durations=runs.map(function(r){return r.updatedAt&&r.createdAt?Math.round((r.updatedAt-r.createdAt)/60000):0}).filter(function(d){return d>0});
+  var avgDur=durations.length?Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length):0;
+  var variance=durations.length?Math.round(durations.reduce(function(a,b){return a+Math.abs(b-avgDur)},0)/durations.length):0;
+  var velPts=variance<avgDur*0.2?15:variance<avgDur*0.4?10:variance<avgDur*0.6?6:3;
+  // 5. Flakiness (0-10 pts) — same SHA different conclusions = flaky
+  var bySha={};
+  runs.forEach(function(r){var sha=r.headSha||'';if(!sha)return;if(!bySha[sha])bySha[sha]={c:{}};var c=r.conclusion||'?';bySha[sha].c[c]=(bySha[sha].c[c]||0)+1});
+  var flakyCount=0;
+  Object.keys(bySha).forEach(function(sha){var keys=Object.keys(bySha[sha].c);if(keys.length>1)flakyCount++});
+  var flakyPts=flakyCount===0?10:flakyCount<3?7:flakyCount<10?3:0;
+  // Total
+  var score=srPts+mttrPts+freqPts+velPts+flakyPts;
+  var grade=score>=85?'A':score>=70?'B':score>=50?'C':score>=30?'D':'F';
+  var col=score>=85?'var(--gn)':score>=70?'var(--bl)':score>=50?'var(--yl)':score>=30?'var(--or)':'var(--rd)';
+  // SVG ring gauge
+  var r=40,c=2*Math.PI*r,offset=c-(score/100*c);
+  var html='<div class="health-score-wrap">';
+  html+='<div class="health-score-ring"><svg width="100" height="100" style="transform:rotate(-90deg)"><circle cx="50" cy="50" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="6"/><circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="6" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round" style="transition:stroke-dashoffset .5s ease"/></svg><div class="health-score-num" style="color:'+col+'">'+score+'</div></div>';
+  html+='<div class="health-score-grade" style="color:'+col+'">Grade '+grade+'</div>';
+  html+='<div style="font-size:9px;color:var(--t2)">Composite CI/CD Health (0-100)</div>';
+  html+='<div class="health-score-factors">';
+  html+='<div class="health-score-factor"><span>Success Rate</span><span>'+srPts+'/30</span><span style="color:'+(srPts>=24?'var(--gn)':srPts>=15?'var(--yl)':'var(--rd)')+'">'+sr+'%</span></div>';
+  html+='<div class="health-score-factor"><span>MTTR</span><span>'+mttrPts+'/20</span><span style="color:'+(mttrPts>=14?'var(--gn)':mttrPts>=7?'var(--yl)':'var(--rd)')+'">'+(mttr||0)+'m</span></div>';
+  html+='<div class="health-score-factor"><span>Frequency</span><span>'+freqPts+'/15</span><span style="color:'+(freqPts>=12?'var(--gn)':freqPts>=6?'var(--yl)':'var(--rd)')+'">'+freq.toFixed(1)+'/d</span></div>';
+  html+='<div class="health-score-factor"><span>Stability</span><span>'+velPts+'/15</span><span style="color:'+(velPts>=12?'var(--gn)':velPts>=6?'var(--yl)':'var(--rd)')+'">'+(variance<avgDur*0.2?'Stable':variance<avgDur*0.4?'OK':'Variable')+'</span></div>';
+  html+='<div class="health-score-factor"><span>Flakiness</span><span>'+flakyPts+'/10</span><span style="color:'+(flakyPts>=10?'var(--gn)':flakyPts>=5?'var(--yl)':'var(--rd)')+'">'+flakyCount+' flaky</span></div>';
+  html+='</div></div>';
+  return html;
+}
+
+// ═══ Week-over-Week Delta ═══
+function renderWoWDelta(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var now=Date.now();
+  var week1=runs.filter(function(r){var t=new Date(r.createdAt||0).getTime();return t>now-7*86400000&&t<=now});
+  var week2=runs.filter(function(r){var t=new Date(r.createdAt||0).getTime();return t>now-14*86400000&&t<=now-7*86400000});
+  var w1Success=week1.filter(function(r){return r.conclusion==='success'}).length;
+  var w2Success=week2.filter(function(r){return r.conclusion==='success'}).length;
+  var w1Fail=week1.filter(function(r){return r.conclusion==='failure'}).length;
+  var w2Fail=week2.filter(function(r){return r.conclusion==='failure'}).length;
+  var w1Rate=week1.length?Math.round(w1Success/week1.length*100):0;
+  var w2Rate=week2.length?Math.round(w2Success/week2.length*100):0;
+  var w1Dur=week1.length?Math.round(week1.filter(function(r){return r.updatedAt&&r.createdAt}).map(function(r){return Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000)}).reduce(function(a,b){return a+b},0)/Math.max(week1.length,1)):0;
+  var w2Dur=week2.length?Math.round(week2.filter(function(r){return r.updatedAt&&r.createdAt}).map(function(r){return Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000)}).reduce(function(a,b){return a+b},0)/Math.max(week2.length,1)):0;
+  function deltaLabel(curr,prev,invert){
+    if(prev===0&&curr===0)return['—','flat'];
+    if(prev===0)return['NEW','up'];
+    var pct=Math.round((curr-prev)/prev*100);
+    if(invert){pct=-pct}
+    var cls=pct>0?'up':pct<0?'down':'flat';
+    var arrow=pct>0?'▲':pct<0?'▼':'—';
+    return[arrow+' '+Math.abs(pct)+'%',cls];
+  }
+  var dr=deltaLabel(w1Rate,w2Rate);
+  var dc=deltaLabel(week1.length,week2.length);
+  var dd=deltaLabel(w1Dur,w2Dur,true); // invert: lower is better
+  var df=deltaLabel(w1Fail,w2Fail,true);
+  var html='<div class="wow-grid">';
+  html+='<div class="wow-card"><div class="wow-label">Total Runs</div><div class="wow-val">'+week1.length+'</div><div class="wow-delta '+dc[1]+'">'+dc[0]+'</div><div class="wow-detail">vs '+week2.length+' last week</div></div>';
+  html+='<div class="wow-card"><div class="wow-label">Success Rate</div><div class="wow-val" style="color:'+(w1Rate>=80?'var(--gn)':w1Rate>=50?'var(--yl)':'var(--rd)')+'">'+w1Rate+'%</div><div class="wow-delta '+dr[1]+'">'+dr[0]+'</div><div class="wow-detail">vs '+w2Rate+'% last week</div></div>';
+  html+='<div class="wow-card"><div class="wow-label">Avg Duration</div><div class="wow-val">'+w1Dur+'m</div><div class="wow-delta '+dd[1]+'">'+dd[0]+'</div><div class="wow-detail">vs '+w2Dur+'m last week</div></div>';
+  html+='<div class="wow-card"><div class="wow-label">Failures</div><div class="wow-val" style="color:'+(w1Fail===0?'var(--gn)':w1Fail<3?'var(--yl)':'var(--rd)')+'">'+w1Fail+'</div><div class="wow-delta '+df[1]+'">'+df[0]+'</div><div class="wow-detail">vs '+w2Fail+' last week</div></div>';
+  html+='</div>';
+  var wowVals=[week1.length,week2.length,w1Success,w2Success,w1Fail,w2Fail];
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Week-over-Week Comparison</div>';
+  html+=svgBars(wowVals,260,50,['var(--bl)','var(--bg3)','var(--gn)','var(--bg3)','var(--rd)','var(--bg3)']);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>W1 Runs</span><span>W2 Runs</span><span>W1 ✓</span><span>W2 ✓</span><span>W1 ✗</span><span>W2 ✗</span></div></div>';
+  return html;
+}
+
+// ═══ Workflow Duration Breakdown ═══
+function renderWFDuration(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byWf={};
+  runs.forEach(function(r){
+    var name=r.name||'unknown';
+    if(!r.updatedAt||!r.createdAt)return;
+    var dur=Math.round((new Date(r.updatedAt)-new Date(r.createdAt))/60000);
+    if(dur<=0)return;
+    if(!byWf[name])byWf[name]={durations:[],success:0,fail:0};
+    byWf[name].durations.push(dur);
+    if(r.conclusion==='success')byWf[name].success++;
+    if(r.conclusion==='failure')byWf[name].fail++;
+  });
+  var sorted=Object.keys(byWf).sort(function(a,b){
+    var avgA=Math.round(byWf[a].durations.reduce(function(x,y){return x+y},0)/byWf[a].durations.length);
+    var avgB=Math.round(byWf[b].durations.reduce(function(x,y){return x+y},0)/byWf[b].durations.length);
+    return avgB-avgA;
+  });
+  if(!sorted.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  var html='<div style="padding:10px">';
+  // Stats
+  var allDurs=[];
+  sorted.forEach(function(w){allDurs=allDurs.concat(byWf[w].durations)});
+  var overallAvg=Math.round(allDurs.reduce(function(a,b){return a+b},0)/allDurs.length);
+  var max=0,min=Infinity;
+  sorted.forEach(function(w){
+    var avg=Math.round(byWf[w].durations.reduce(function(a,b){return a+b},0)/byWf[w].durations.length);
+    if(avg>max)max=avg;
+    if(avg<min)min=avg;
+  });
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+overallAvg+'m</div><div class="metric-mini-lbl">Overall Avg</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val wfd-slow">'+max+'m</div><div class="metric-mini-lbl">Slowest</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val wfd-fast">'+min+'m</div><div class="metric-mini-lbl">Fastest</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Per workflow (sorted by avg duration):</div>';
+  sorted.forEach(function(w){
+    var d=byWf[w];
+    var avg=Math.round(d.durations.reduce(function(a,b){return a+b},0)/d.durations.length);
+    var dMax=Math.max.apply(null,d.durations);
+    var dMin=Math.min.apply(null,d.durations);
+    var pct=Math.round(avg/max*100);
+    var col=avg>overallAvg*1.5?'var(--rd)':avg<overallAvg*0.5?'var(--gn)':'var(--bl)';
+    html+='<div style="margin:6px 0">';
+    html+='<div class="wfd-row"><span class="wfd-name">'+w+'</span><span class="wfd-dur" style="color:'+col+'">'+avg+'m</span><span style="font-size:9px;color:var(--t3)">'+d.durations.length+'x</span><span style="font-size:9px;color:var(--t3)">['+dMin+'-'+dMax+'m]</span></div>';
+    html+='<div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:3px"></div></div>';
+    html+='<div style="margin-top:2px">'+svgSpark(d.durations.slice(-12),120,24,col)+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+
+// ═══ UPGRADED v10.2 — SVG charts + interactivity ═══
+
+// Helper: SVG mini sparkline
+function svgSpark(vals,w,h,col){
+  if(!vals||!vals.length)return'';
+  var max=Math.max.apply(null,vals)||1,min=Math.min.apply(null,vals);
+  var range=max-min||1;
+  var step=w/Math.max(vals.length-1,1);
+  var pts=vals.map(function(v,i){return(i*step)+','+(h-((v-min)/range*h))}).join(' ');
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+(col||'var(--bl)')+'" stroke-width="1.5" stroke-linejoin="round"/><circle cx="'+((vals.length-1)*step)+'" cy="'+(h-((vals[vals.length-1]-min)/range*h))+'" r="2" fill="'+(col||'var(--bl)')+'"/></svg>';
+}
+
+// Helper: SVG donut gauge
+function svgGauge(pct,r,col,label){
+  var c=2*Math.PI*r;
+  var offset=c-(pct/100*c);
+  return '<div style="display:inline-block;position:relative;width:'+((r+8)*2)+'px;height:'+((r+8)*2)+'px"><svg width="'+((r+8)*2)+'" height="'+((r+8)*2)+'" style="transform:rotate(-90deg)"><circle cx="'+(r+8)+'" cy="'+(r+8)+'" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="6"/><circle cx="'+(r+8)+'" cy="'+(r+8)+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="6" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round" style="transition:stroke-dashoffset .5s ease"/></svg><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:16px;font-weight:700">'+pct+'%</div><div style="font-size:8px;color:var(--t2)">'+label+'</div></div></div>';
+}
+
+// Helper: SVG bar chart
+function svgBars(vals,w,h,cols){
+  if(!vals||!vals.length)return'';
+  var max=Math.max.apply(null,vals)||1;
+  var bw=w/vals.length;
+  var bars=vals.map(function(v,i){
+    var bh=Math.max(2,(v/max)*(h-4));
+    var col=cols?(typeof cols==='function'?cols(v,i):cols[i]||'var(--bl)'):'var(--bl)';
+    return '<rect x="'+(i*bw+1)+'" y="'+(h-bh)+'" width="'+(bw-2)+'" height="'+bh+'" fill="'+col+'" rx="2"><title>'+(v)+'</title></rect>';
+  }).join('');
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+bars+'</svg>';
+}
+
+// UPGRADE: Deploy Frequency — add SVG sparkline + trend
+function renderDeployFrequency(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var success=runs.filter(function(r){return r.conclusion==='success'});
+  var days={};
+  success.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    days[key]=(days[key]||0)+1;
+  });
+  var dayCount=Math.max(1,Object.keys(days).length);
+  var freq=(success.length/dayCount).toFixed(1);
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  var col=freq>=1?'var(--gn)':freq>=0.5?'var(--yl)':'var(--rd)';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+freq+'</div><div class="metric-mini-lbl">Deploys/Day</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+success.length+'</div><div class="metric-mini-lbl">Total Deploys</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+dayCount+'</div><div class="metric-mini-lbl">Active Days</div></div>';
+  html+='</div>';
+  // 14-day sparkline
+  var now=new Date();
+  var vals14=[];
+  for(var i=13;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    vals14.push(days[key]||0);
+  }
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">14-Day Trend</div>'+svgSpark(vals14,260,40,col)+'</div>';
+  // 7-day bar chart
+  var weekData=[];
+  for(var i=6;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    weekData.push(days[key]||0);
+  }
+  var dayNames=['S','M','T','W','T','F','S'];
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">7-Day Bars</div>';
+  html+=svgBars(weekData,260,50,function(v,i){return v===0?'var(--bg3)':'var(--bl)'});
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px">';
+  for(var i=6;i>=0;i--){var d=new Date(now.getTime()-i*86400000);html+='<span>'+dayNames[d.getDay()]+'</span>'}
+  html+='</div></div>';
+  html+='</div>';
+  return html;
+}
+
+// UPGRADE: MTTR — add SVG sparkline + recovery gauge
+function renderMTTR(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var recoveries=[];
+  for(var i=0;i<fails.length;i++){
+    var failTime=new Date(fails[i].createdAt||0).getTime();
+    for(var j=0;j<runs.length;j++){
+      if(runs[j].conclusion==='success'){
+        var succTime=new Date(runs[j].createdAt||0).getTime();
+        if(succTime>failTime){recoveries.push(Math.round((succTime-failTime)/60000));break}
+      }
+    }
+  }
+  var avgMTTR=recoveries.length?Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length):0;
+  var maxMTTR=recoveries.length?Math.max.apply(null,recoveries):0;
+  var html='<div style="padding:10px">';
+  var score=Math.max(0,100-avgMTTR);
+  var col=avgMTTR<30?'var(--gn)':avgMTTR<60?'var(--yl)':'var(--rd)';
+  html+='<div style="text-align:center;margin-bottom:8px">'+svgGauge(score,30,col,'Recovery')+'</div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+avgMTTR+'m</div><div class="metric-mini-lbl">Avg MTTR</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+maxMTTR+'m</div><div class="metric-mini-lbl">Max MTTR</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+recoveries.length+'</div><div class="metric-mini-lbl">Recoveries</div></div>';
+  html+='</div>';
+  if(recoveries.length>0){
+    html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Recovery Trend</div>'+svgSpark(recoveries.slice(0,15).reverse(),260,40,'var(--or)')+'</div>';
+    html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Recent recoveries:</div>';
+    recoveries.slice(0,5).forEach(function(r,i){
+      html+='<div class="retry-row"><span>Recovery #'+(i+1)+'</span><span style="color:'+(r<30?'var(--gn)':r<60?'var(--yl)':'var(--rd)')+'">'+r+' min</span></div>';
+    });
+  }else{
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No failures detected! ✨</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+// UPGRADE: Success by Hour — SVG bar chart with color gradient
+function renderSuccessByHour(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byHour={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var h=new Date(r.createdAt).getHours();
+    if(!byHour[h])byHour[h]={total:0,success:0};
+    byHour[h].total++;
+    if(r.conclusion==='success')byHour[h].success++;
+  });
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Success Rate by Hour (WIB)</div>';
+  var vals=[];var cols=[];
+  for(var h=0;h<24;h++){
+    var d=byHour[h]||{total:0,success:0};
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    vals.push(d.total);
+    cols.push(pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)');
+  }
+  html+=svgBars(vals,280,60,cols);
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span></div>';
+  // Detail table
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Peak hours:</div>';
+  var peakHours=Object.keys(byHour).sort(function(a,b){return byHour[b].total-byHour[a].total}).slice(0,5);
+  peakHours.forEach(function(h){
+    var d=byHour[h];
+    var pct=Math.round(d.success/d.total*100);
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="retry-row"><span>'+h+':00 WIB</span><span style="color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// UPGRADE: Branch Health — SVG progress bars
+function renderBranchHealth(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var branches={};
+  runs.forEach(function(r){
+    var b=r.headBranch||'master';
+    if(!branches[b])branches[b]={total:0,success:0,fail:0};
+    branches[b].total++;
+    if(r.conclusion==='success')branches[b].success++;
+    if(r.conclusion==='failure')branches[b].fail++;
+  });
+  var html='<div style="padding:10px">';
+  var sorted=Object.keys(branches).sort(function(a,b){return branches[b].total-branches[a].total});
+  sorted.forEach(function(b){
+    var d=branches[b];
+    var pct=Math.round(d.success/d.total*100);
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div style="margin:8px 0">';
+    html+='<div style="font-size:11px;display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-weight:600">'+b+'</span><span style="color:'+col+'">'+pct+'%</span></div>';
+    html+='<div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;position:relative">';
+    html+='<div style="height:100%;width:'+pct+'%;background:'+col+';border-radius:5px;transition:width .5s"></div>';
+    html+='</div>';
+    html+='<div style="font-size:9px;color:var(--t2);margin-top:2px">'+d.success+' ✓ / '+d.fail+' ✗ / '+d.total+' total</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+// UPGRADE: DORA Scorecard — SVG gauges for each metric
+
+
+
+
+function renderCFR(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var total=st.total||runs.length||1;
+  var failed=st.failed||0;
+  var cfr=Math.round(failed/total*100);
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  var col=cfr<10?'var(--gn)':cfr<25?'var(--yl)':'var(--rd)';
+  html+='<div style="text-align:center;margin:8px">'+svgGauge(100-cfr,30,col,'Success')+'</div>';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+cfr+'%</div><div class="metric-mini-lbl">Change Fail Rate</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+failed+'</div><div class="metric-mini-lbl">Failed Runs</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+total+'</div><div class="metric-mini-lbl">Total Runs</div></div>';
+  html+='</div>';
+  var weeks={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var week=Math.floor(d.getDate()/7);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-W'+week;
+    if(!weeks[key])weeks[key]={total:0,fail:0};
+    weeks[key].total++;
+    if(r.conclusion==='failure')weeks[key].fail++;
+  });
+  var wKeys=Object.keys(weeks).slice(-4);
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Weekly failure rate:</div>';
+  wKeys.forEach(function(k){
+    var w=weeks[k];
+    var pct=w.total?Math.round(w.fail/w.total*100):0;
+    html+='<div style="margin:4px 0"><div style="font-size:10px;display:flex;justify-content:space-between"><span>'+k+'</span><span style="color:'+(pct<25?'var(--gn)':'var(--rd)')+'">'+pct+'% ('+w.fail+'/'+w.total+')</span></div><div style="height:6px;background:var(--bg3);border-radius:3px;margin-top:2px"><div style="height:100%;width:'+pct+'%;background:'+(pct<25?'var(--gn)':'var(--rd)')+';border-radius:3px"></div></div></div>';
+  });
+  html+='<div style="text-align:center;margin-top:8px">'+svgGauge(cfr,30,(cfr<10?'var(--gn)':cfr<25?'var(--yl)':'var(--rd)'),'CFR')+'</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderLeadTime(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var durations=runs.map(function(r){return r.updatedAt&&r.createdAt?Math.round((r.updatedAt-r.createdAt)/60000):0}).filter(function(d){return d>0});
+  var avg=durations.length?Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length):0;
+  var min=durations.length?Math.min.apply(null,durations):0;
+  var max=durations.length?Math.max.apply(null,durations):0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(avg<10?'ok':avg<30?'warn':'bad')+'">'+avg+'m</div><div class="metric-mini-lbl">Avg Lead Time</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+min+'m</div><div class="metric-mini-lbl">Fastest</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+max+'m</div><div class="metric-mini-lbl">Slowest</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Lead Time Trend</div>'+svgSpark(durations,260,40,'var(--bl)')+'</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderFailurePattern(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  var byHour={};
+  var byDay={};
+  fails.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var h=d.getHours();
+    byHour[h]=(byHour[h]||0)+1;
+    var day=d.getDay();
+    byDay[day]=(byDay[day]||0)+1;
+  });
+  var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">By Day of Week</div>';
+  html+='<div class="pattern-grid">';
+  for(var i=0;i<7;i++){
+    var count=byDay[i]||0;
+    var cls=count===0?'empty':count>=3?'fail':'s'+Math.min(4,count);
+    html+='<div class="pattern-cell '+cls+'">'+dayNames[i][0]+'</div>';
+  }
+  html+='</div><div class="pattern-label">'+dayNames.join(' ')+'</div>';
+  html+='<div style="font-size:12px;font-weight:700;margin:12px 0 8px">By Hour (WIB)</div>';
+  var maxH=Math.max.apply(null,Object.values(byHour).concat([1]));
+  html+='<div class="hour-bar">';
+  for(var h=0;h<24;h++){
+    var count=byHour[h]||0;
+    var height=Math.max(2,count/maxH*56);
+    html+='<div class="hour-col fail" style="height:'+height+'px" title="'+h+':00 - '+count+' fails"></div>';
+  }
+  html+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>00:00</span><span>12:00</span><span>23:00</span></div>';
+  html+='</div>';
+  return html;
+}
+
+function renderDurationTrend(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withDur=runs.filter(function(r){return r.updatedAt&&r.createdAt}).slice(0,30).reverse();
+  if(!withDur.length)return'<div style="padding:10px;color:var(--t2)">No duration data</div>';
+  var durations=withDur.map(function(r){return Math.round((r.updatedAt-r.createdAt)/60000)});
+  var maxD=Math.max.apply(null,durations)||1;
+  var avg=Math.round(durations.reduce(function(a,b){return a+b},0)/durations.length);
+  var recent=durations.slice(-5);
+  var recentAvg=Math.round(recent.reduce(function(a,b){return a+b},0)/recent.length);
+  var trend=recentAvg>avg*1.2?'up':recentAvg<avg*0.8?'down':'';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+avg+'m</div><div class="metric-mini-lbl">Avg Duration</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(!trend?'ok':'')+'">'+recentAvg+'m</div><div class="metric-mini-lbl">Recent Avg</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(trend==='up'?'bad':'ok')+'">'+(trend==='up'?'📈':trend==='down'?'📉':'➡')+'</div><div class="metric-mini-lbl">Trend</div></div>';
+  html+='</div>';
+  html+='<div class="duration-trend">';
+  durations.forEach(function(d,i){
+    var h=Math.max(2,d/maxD*40);
+    html+='<div style="display:inline-block;width:6px;height:'+h+'px;background:'+(d>avg*1.5?'var(--rd)':'var(--bl)')+';margin-right:1px;border-radius:2px 2px 0 0" title="Run '+(i+1)+': '+d+'m"></div>';
+  });
+  html+='</div><div style="font-size:8px;color:var(--t2)">Last '+durations.length+' runs (oldest → newest)</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Duration Trend</div>'+svgSpark(durations,260,40,'var(--bl)')+'</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Recent 10 Durations</div>'+svgBars(durations.slice(-10),260,50,function(v,i){return v>avg*1.5?'var(--rd)':'var(--bl)'})+'</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderSuccessByDay(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byDay={};
+  runs.forEach(function(r){
+    if(!r.createdAt)return;
+    var d=new Date(r.createdAt);
+    var day=d.getDay();
+    if(!byDay[day])byDay[day]={total:0,success:0};
+    byDay[day].total++;
+    if(r.conclusion==='success')byDay[day].success++;
+  });
+  var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Success Rate by Day of Week</div>';
+  for(var i=0;i<7;i++){
+    var d=byDay[i]||{total:0,success:0};
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div style="display:flex;align-items:center;gap:8px;margin:4px 0">';
+    html+='<span style="width:30px;font-size:10px;color:var(--t2)">'+dayNames[i]+'</span>';
+    html+='<div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+col+';transition:width .5s"></div></div>';
+    html+='<span style="width:50px;font-size:10px;text-align:right;color:'+col+'">'+pct+'% ('+d.success+'/'+d.total+')</span>';
+    html+='</div>';
+  }
+  var dayPcts=[];
+  for(var i=0;i<7;i++){var dd=byDay[i]||{total:0,success:0};dayPcts.push(dd.total?Math.round(dd.success/dd.total*100):0)}
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Success Rate Bars</div>';
+  html+=svgBars(dayPcts,260,50,function(v,i){return v>=80?'var(--gn)':v>=50?'var(--yl)':'var(--rd)'});
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div></div>';
+  html+='</div>';
+  return html;
+}
+
+
+
+function renderActionsMinutes(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var totalMinutes=0;
+  runs.forEach(function(r){
+    if(r.updatedAt&&r.createdAt)totalMinutes+=Math.round((r.updatedAt-r.createdAt)/60000);
+  });
+  var freeTier=2000;
+  var used=Math.min(totalMinutes,freeTier);
+  var pct=Math.round(used/freeTier*100);
+  var remaining=freeTier-used;
+  var col=pct<60?'var(--gn)':pct<85?'var(--yl)':'var(--rd)';
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:'+col+'">'+totalMinutes+'</div><div class="metric-mini-lbl">Minutes Used</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val ok">'+remaining+'</div><div class="metric-mini-lbl">Remaining</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+pct+'%</div><div class="metric-mini-lbl">Used</div></div>';
+  html+='</div>';
+  html+='<div style="margin-top:8px"><div style="font-size:10px;color:var(--t2);margin-bottom:4px">Free Tier: 2000 min/month</div>';
+  html+='<div style="height:12px;background:var(--bg3);border-radius:6px;overflow:hidden"><div class="minutes-bar '+(pct>=85?'bad':pct>=60?'warn':'')+'" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
+  html+='<div style="font-size:9px;color:var(--t3);margin-top:4px">Estimate based on '+runs.length+' runs (actual billing may differ)</div>';
+  html+='</div>';
+  return html;
+}
+
+function renderWorkflowComparison(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var workflows={};
+  runs.forEach(function(r){
+    var w=r.name||'unknown';
+    if(!workflows[w])workflows[w]={total:0,success:0,fail:0};
+    workflows[w].total++;
+    if(r.conclusion==='success')workflows[w].success++;
+    if(r.conclusion==='failure')workflows[w].fail++;
+  });
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:10px;color:var(--t2);border-bottom:1px solid var(--brd);padding-bottom:4px;margin-bottom:4px;display:grid;grid-template-columns:1fr 40px 40px"><span>Workflow</span><span>Total</span><span>Rate</span></div>';
+  var sorted=Object.keys(workflows).sort(function(a,b){return workflows[b].total-workflows[a].total});
+  sorted.forEach(function(w){
+    var d=workflows[w];
+    var pct=d.total?Math.round(d.success/d.total*100):0;
+    var col=pct>=80?'var(--gn)':pct>=50?'var(--yl)':'var(--rd)';
+    html+='<div class="workflow-row"><span>'+w.substring(0,25)+'</span><span>'+d.total+'</span><span style="color:'+col+'">'+pct+'%</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderConcurrency(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var slots={};
+  runs.forEach(function(r){
+    if(!r.createdAt||!r.updatedAt)return;
+    var s=new Date(r.createdAt).getTime();
+    var e=new Date(r.updatedAt).getTime();
+    if(!s||!e)return;
+    var key=Math.floor(s/60000);
+    if(!slots[key])slots[key]={count:0,runs:[]};
+    slots[key].count++;
+    slots[key].runs.push(r);
+  });
+  var maxConc=0;
+  Object.values(slots).forEach(function(s){if(s.count>maxConc)maxConc=s.count});
+  var currentRunning=runs.filter(function(r){return r.status==='in_progress'||r.conclusion===null}).length;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val" style="color:var(--bl)">'+currentRunning+'</div><div class="metric-mini-lbl">Running Now</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val warn">'+maxConc+'</div><div class="metric-mini-lbl">Peak Concurrent</div></div>';
+  html+='</div>';
+  var sortedSlots=Object.keys(slots).sort(function(a,b){return slots[b].count-slots[a].count}).slice(0,10);
+  html+='<div style="margin-top:8px;font-size:11px;color:var(--t2)">Top 10 concurrency moments:</div>';
+  sortedSlots.forEach(function(k){
+    var s=slots[k];
+    var d=new Date(parseInt(k)*60000);
+    var time=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+    html+='<div class="concurrency-bar" style="width:100%">'+time+' — '+s.count+' parallel</div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderCommitImpact(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var withSha=runs.filter(function(r){return r.headSha}).slice(0,20);
+  if(!withSha.length){
+    // Use databaseId as proxy
+    withSha=runs.slice(0,20);
+  }
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:10px;color:var(--t2);border-bottom:1px solid var(--brd);padding-bottom:4px;margin-bottom:4px;display:grid;grid-template-columns:60px 1fr 40px"><span>SHA</span><span>Workflow</span><span>Result</span></div>';
+  withSha.forEach(function(r){
+    var sha=(r.headSha||'').substring(0,7)||(r.databaseId||'').toString().substring(0,7);
+    var col=r.conclusion==='success'?'var(--gn)':'var(--rd)';
+    html+='<div class="commit-row"><span class="commit-sha">'+sha+'</span><span style="color:var(--t2)">'+(r.name||'').substring(0,20)+'</span><span class="commit-result" style="color:'+col+'">'+(r.conclusion==='success'?'✅':'❌')+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderDeployTimeline(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var deploys=runs.filter(function(r){return r.conclusion==='success'}).slice(0,30).reverse();
+  if(!deploys.length)return'<div style="padding:10px;color:var(--t2)">No deploys</div>';
+  var firstTime=new Date(deploys[0].createdAt||0).getTime();
+  var lastTime=new Date(deploys[deploys.length-1].createdAt||0).getTime();
+  var span=Math.max(1,lastTime-firstTime);
+  var html='<div style="padding:10px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">Deploy Timeline ('+deploys.length+' deploys)</div>';
+  html+='<div class="timeline-track">';
+  deploys.forEach(function(r){
+    var t=new Date(r.createdAt||0).getTime();
+    var pct=((t-firstTime)/span*100).toFixed(1);
+    html+='<div class="timeline-dot ok" style="left:'+pct+'%" title="'+(r.orv_id||'')+' — '+new Date(t).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'Asia/Jakarta'})+'"></div>';
+  });
+  html+='</div>';
+  var fD=new Date(firstTime).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  var lD=new Date(lastTime).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  html+='<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2)"><span>'+fD+'</span><span>'+lD+'</span></div>';
+  html+='</div>';
+  return html;
+}
+
+function renderRetryTracker(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var retried=[];
+  for(var i=0;i<runs.length-1;i++){
+    if(runs[i].conclusion==='failure'){
+      var next=runs[i+1];
+      if(next&&next.name===runs[i].name){
+        var isRetry=true;
+        var t1=new Date(runs[i].createdAt||0).getTime();
+        var t2=new Date(next.createdAt||0).getTime();
+        if(t2-t1<3600000)retried.push({fail:runs[i],retry:next,success:next.conclusion==='success'});
+      }
+    }
+  }
+  var successRate=retried.length?Math.round(retried.filter(function(r){return r.success}).length/retried.length*100):0;
+  var html='<div style="padding:10px">';
+  html+='<div class="metric-grid">';
+  html+='<div class="metric-mini"><div class="metric-mini-val">'+retried.length+'</div><div class="metric-mini-lbl">Retries</div></div>';
+  html+='<div class="metric-mini"><div class="metric-mini-val '+(successRate>=50?'ok':'warn')+'">'+successRate+'%</div><div class="metric-mini-lbl">Retry Success</div></div>';
+  html+='</div>';
+  if(retried.length>0){
+    retried.slice(0,10).forEach(function(r,i){
+      html+='<div class="retry-row"><span>'+(r.fail.orv_id||r.fail.databaseId||'')+'</span><span style="color:'+(r.success?'var(--gn)':'var(--rd)')+'">'+(r.success?'✅ Recovered':'❌ Still failing')+'</span></div>';
+    });
+  }else{
+    html+='<div style="text-align:center;color:var(--gn);padding:10px">No retries needed! 🎉</div>';
+  }
+  var retryTrend=retried.slice(-15).map(function(r,i){return i+1});
+  html+='<div style="margin-top:8px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">Retry Count Trend</div>'+svgSpark(retryTrend,260,40,'var(--or)')+'</div>';
+  html+='</div>';
+  return html;
+}
+
+
+// ═══ v9.2 features ═══
+
+var _achvList=[
+  {id:'first_run',icon:'🎯',name:'First Success',desc:'Complete 1 successful run',check:function(s){return s.success>=1},max:1},
+  {id:'ten_runs',icon:'🔟',name:'10 Runs',desc:'Complete 10 runs',check:function(s){return s.total>=10},max:10},
+  {id:'fifty_runs',icon:'5️⃣0️⃣',name:'50 Runs',desc:'Complete 50 runs',check:function(s){return s.total>=50},max:50},
+  {id:'hundred_runs',icon:'🏆',name:'100 Runs',desc:'Complete 100 runs',check:function(s){return s.total>=100},max:100},
+  {id:'thousand_runs',icon:'📈',name:'1000 Runs',desc:'Complete 1000 runs',check:function(s){return s.total>=1000},max:1000},
+  {id:'streak3',icon:'🔥',name:'3-Day Streak',desc:'3 day streak',check:function(s){return s.streak>=3},max:3},
+  {id:'streak7',icon:'📅',name:'7-Day Streak',desc:'7 day streak',check:function(s){return s.streak>=7},max:7},
+  {id:'streak50',icon:'🔥',name:'50 Day Streak',desc:'50 day streak',check:function(s){return s.streak>=50},max:50},
+  {id:'rate80',icon:'📊',name:'80% Rate',desc:'80%+ success rate',check:function(s){return s.rate>=80},max:80},
+  {id:'rate90',icon:'🏆',name:'90% Rate',desc:'90%+ success rate',check:function(s){return s.rate>=90},max:90},
+  {id:'speed_demon',icon:'⚡',name:'Speed Demon',desc:'Avg run duration <5min',check:function(s){return (s.avg_duration||0)>0&&(s.avg_duration||0)<300},max:300},
+  {id:'perfect_week',icon:'💯',name:'100% Week',desc:'100% success rate with 5+ runs',check:function(s){return s.rate>=100&&s.total>=5},max:100},
+  {id:'nofails',icon:'🛡️',name:'No Fails',desc:'0 failed runs',check:function(s){return s.failed===0&&s.total>=5},max:1}
+];
+var _achvUnlocked=JSON.parse(localStorage.getItem('dash_achv')||'{}');
+function renderAchievements(){
+  var st=(window.DASH||{}).stats||{};
+  var html='<div class="achv-wrap"><div class="achv-grid">';
+  var unlockedCount=0;
+  _achvList.forEach(function(a){
+    var unlocked=_achvUnlocked[a.id]||a.check(st);
+    if(unlocked&&!_achvUnlocked[a.id])_achvUnlocked[a.id]=true;
+    if(unlocked)unlockedCount++;
+    var cls=unlocked?'unlocked':'locked';
+    var progress='';
+    if(!unlocked){
+      var prog=0;
+      if(a.id==='ten_runs')prog=Math.min(st.total,10);
+      else if(a.id==='fifty_runs')prog=Math.min(st.total,50);
+      else if(a.id==='hundred_runs')prog=Math.min(st.total,100);
+      else if(a.id==='thousand_runs')prog=Math.min(st.total,1000);
+      else if(a.id==='streak3')prog=Math.min(st.streak,3);
+      else if(a.id==='streak7')prog=Math.min(st.streak,7);
+      else if(a.id==='streak50')prog=Math.min(st.streak,50);
+      else if(a.id==='rate80')prog=Math.min(st.rate,80);
+      else if(a.id==='rate90')prog=Math.min(st.rate,90);
+      else if(a.id==='speed_demon'){var ad=st.avg_duration||0;if(ad>0)prog=Math.round(300-ad)}
+      else if(a.id==='perfect_week')prog=Math.min(st.rate,100);
+      if(prog>0)progress='<div class="achv-progress">'+prog+'/'+a.max+'</div>';
+    }
+    html+='<div class="achv-badge '+cls+'"><div class="achv-icon">'+a.icon+'</div><div class="achv-name">'+a.name+'</div><div class="achv-desc">'+a.desc+'</div>'+progress+'</div>';
+  });
+  html+='</div><div style="text-align:center;margin-top:8px;font-size:11px;color:var(--t2)">Unlocked: '+unlockedCount+'/'+_achvList.length+'</div></div>';
+  localStorage.setItem('dash_achv',JSON.stringify(_achvUnlocked));
+  return html;
+}
+function checkAchievements(){
+  var st=(window.DASH||{}).stats||{};
+  _achvList.forEach(function(a){
+    if(!_achvUnlocked[a.id]&&a.check(st)){_achvUnlocked[a.id]=true;showToast('🏆 Achievement: '+a.name+'!','complete')}
+  });
+  localStorage.setItem('dash_achv',JSON.stringify(_achvUnlocked));
+}
+
+function renderAnalytics(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var html='<div class="chart-wrap">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:8px">📊 Success Rate Trend (Last 14 days)</div>';
+  html+='<canvas class="chart-canvas" id="chartTrend"></canvas>';
+  html+='<div style="font-size:12px;font-weight:700;margin:12px 0 8px">📈 Runs Per Day (Last 14 days)</div>';
+  html+='<canvas class="chart-canvas" id="chartRuns"></canvas>';
+  html+='<div style="font-size:12px;font-weight:700;margin:12px 0 8px">⏱️ Duration Distribution</div>';
+  html+='<canvas class="chart-canvas" id="chartDuration"></canvas>';
+  html+='</div>';
+  setTimeout(function(){
+    var now=new Date();
+    var labels=[],successData=[],totalData=[];
+    for(var i=13;i>=0;i--){
+      var d=new Date(now.getTime()-i*86400000);
+      var key=d.getDate()+'/'+(d.getMonth()+1);
+      labels.push(key);
+      var dKey=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+      var dayRuns=runs.filter(function(r){if(!r.createdAt)return false;var rd=new Date(r.createdAt);return rd.getFullYear()===d.getFullYear()&&rd.getMonth()===d.getMonth()&&rd.getDate()===d.getDate()});
+      totalData.push(dayRuns.length);
+      successData.push(dayRuns.filter(function(r){return r.conclusion==='success'}).length);
+    }
+    if(typeof Chart==='undefined')return;
+    var ctx1=document.getElementById('chartTrend');
+    if(ctx1)new Chart(ctx1.getContext('2d'),{type:'line',data:{labels:labels,datasets:[{label:'Success',data:successData,borderColor:'#3fb950',backgroundColor:'rgba(63,185,80,.1)',fill:true}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+    var ctx2=document.getElementById('chartRuns');
+    if(ctx2)new Chart(ctx2.getContext('2d'),{type:'bar',data:{labels:labels,datasets:[{label:'Total',data:totalData,backgroundColor:'#58a6ff'},{label:'Success',data:successData,backgroundColor:'#3fb950'}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+    var durations=runs.map(function(r){return r.updatedAt&&r.createdAt?Math.round((r.updatedAt-r.createdAt)/60000):0}).filter(function(d){return d>0&&d<120});
+    var buckets=[0,0,0,0,0,0];
+    durations.forEach(function(d){if(d<5)buckets[0]++;else if(d<10)buckets[1]++;else if(d<20)buckets[2]++;else if(d<30)buckets[3]++;else if(d<60)buckets[4]++;else buckets[5]++});
+    var ctx3=document.getElementById('chartDuration');
+    if(ctx3)new Chart(ctx3.getContext('2d'),{type:'bar',data:{labels:['<5m','5-10m','10-20m','20-30m','30-60m','60m+'],datasets:[{label:'Runs',data:buckets,backgroundColor:'#d29922'}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  },50);
+  return html;
+}
+
+
+function renderCompare(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var opts=runs.slice(0,50).map(function(r){return'<option value="'+(r.databaseId||'')+'">'+(r.orv_id||r.databaseId||'')+' — '+(r.name||'').substring(0,20)+'</option>'}).join('');
+  var html='<div class="compare-wrap">';
+  html+='<div class="compare-select"><div><select class="inp" id="cmpA" ><option value="">Select Run A</option>'+opts+'</select></div><div><select class="inp" id="cmpB" ><option value="">Select Run B</option>'+opts+'</select></div></div>';
+  html+='<div id="cmpDetail" style="font-size:10px;color:var(--t2);text-align:center">Select two runs to compare</div>';
+  html+='</div>';
+  return html;
+}
+function renderCompareDetail(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var aId=document.getElementById('cmpA')&&document.getElementById('cmpA').value;
+  var bId=document.getElementById('cmpB')&&document.getElementById('cmpB').value;
+  var el=document.getElementById('cmpDetail');
+  if(!el)return;
+  if(!aId||!bId){el.innerHTML='Select two runs to compare';return}
+  var rA=runs.find(function(r){return String(r.databaseId)===String(aId)});
+  var rB=runs.find(function(r){return String(r.databaseId)===String(bId)});
+  if(!rA||!rB){el.innerHTML='Run not found';return}
+  function fmtDate(ts){return ts?new Date(ts).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'-'}
+  function dur(r){return(r.updatedAt&&r.createdAt)?Math.round((r.updatedAt-r.createdAt)/60000)+'m':'-'}
+  function cmp(vA,vB){if(vA===vB)return'<span style="color:var(--gn)">=</span>';return'<span style="color:var(--rd)">≠</span>'}
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  html+='<div class="compare-col"><h4>Run A</h4>';
+  html+='<div class="compare-row"><span>RSM</span><span>'+(rA.orv_id||'-')+'</span></div>';
+  html+='<div class="compare-row"><span>Name</span><span>'+(rA.name||'-').substring(0,15)+'</span></div>';
+  html+='<div class="compare-row"><span>Status</span><span style="color:'+(rA.conclusion==='success'?'var(--gn)':'var(--rd)')+'">'+(rA.conclusion||'-')+'</span></div>';
+  html+='<div class="compare-row"><span>Created</span><span>'+fmtDate(rA.createdAt)+'</span></div>';
+  html+='<div class="compare-row"><span>Duration</span><span>'+dur(rA)+'</span></div>';
+  html+='</div>';
+  html+='<div class="compare-col"><h4>Run B</h4>';
+  html+='<div class="compare-row"><span>RSM</span><span>'+(rB.orv_id||'-')+'</span></div>';
+  html+='<div class="compare-row"><span>Name</span><span>'+(rB.name||'-').substring(0,15)+'</span></div>';
+  html+='<div class="compare-row"><span>Status</span><span style="color:'+(rB.conclusion==='success'?'var(--gn)':'var(--rd)')+'">'+(rB.conclusion||'-')+'</span></div>';
+  html+='<div class="compare-row"><span>Created</span><span>'+fmtDate(rB.createdAt)+'</span></div>';
+  html+='<div class="compare-row"><span>Duration</span><span>'+dur(rB)+'</span></div>';
+  html+='</div></div>';
+  html+='<div style="text-align:center;margin-top:8px">RSM '+cmp(rA.orv_id,rB.orv_id)+' | Status '+cmp(rA.conclusion,rB.conclusion)+' | Duration '+cmp(dur(rA),dur(rB))+'</div>';
+  el.innerHTML=html;
+}
+
+function exportMarkdown(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var nl=String.fromCharCode(10);var md='# Rusemeva Dashboard Report'+nl;
+  md+='> Generated: '+new Date().toLocaleString('en-GB')+nl+nl;
+  md+='## 📊 Summary'+nl+nl;
+  md+='| Metric | Value |'+nl+'|---|---|'+nl;
+  md+='| Total Runs | '+st.total+' |'+nl;
+  md+='| Success | '+st.success+' |'+nl;
+  md+='| Failed | '+st.failed+' |'+nl;
+  md+='| Success Rate | '+st.rate+'% |'+nl;
+  md+='| Current Streak | '+st.streak+' days |'+nl+nl;
+  md+='## 📋 Recent Runs (Last 20)'+nl+nl;
+  md+='| # | RSM | Name | Status | Created | Duration |'+nl;
+  md+='|---|---|---|---|---|---|'+nl;
+  runs.slice(0,20).forEach(function(r,i){
+    var d=r.createdAt?new Date(r.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'-';
+    var dur=(r.updatedAt&&r.createdAt)?Math.round((r.updatedAt-r.createdAt)/60000)+'m':'-';
+    md+='| '+(i+1)+' | '+(r.orv_id||'-')+' | '+(r.name||'-')+' | '+(r.conclusion||'-')+' | '+d+' | '+dur+' |'+nl;
+  });
+  md+=nl+'---'+nl+'*Auto-generated by Rusemeva Dashboard v9.2*'+nl;
+  downloadBlob(md,'rusemeva-report.md','text/markdown');
+  showToast('Markdown exported!');
+}
+
+var _clockTimer=null;
+function renderClock(){
+  var html='<div style="padding:12px">';
+  html+='<div class="dash-clock" id="dashClock">--:--:--</div>';
+  html+='<div class="dash-clock-date" id="dashClockDate">-</div>';
+  html+='<div class="dash-clock-tz" id="dashClockTz">GMT+7</div>';
+  html+='</div>';
+  if(_clockTimer)clearInterval(_clockTimer);
+  _clockTimer=setInterval(function(){
+    var el=document.getElementById('dashClock');
+    if(!el)return;
+    var now=new Date();
+    var h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+    el.textContent=('0'+h).slice(-2)+':'+('0'+m).slice(-2)+':'+('0'+s).slice(-2);
+    var el2=document.getElementById('dashClockDate');
+    if(el2)el2.textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    var el3=document.getElementById('dashClockTz');
+    if(el3)el3.textContent='GMT+7 (Jakarta)';
+  },1000);
+  return html;
+}
+
+
+// ═══ v9.0 features ═══
+function calcInsights(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var byDay={};var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  runs.forEach(function(r){
+    var d=new Date(r.createdAt||0).getDay();
+    if(!byDay[d])byDay[d]={ok:0,total:0};
+    byDay[d].total++;if(r.conclusion==='success')byDay[d].ok++;
+  });
+  var best={day:'',rate:0};var worst={day:'',rate:100};
+  Object.keys(byDay).forEach(function(d){
+    var r=Math.round(byDay[d].ok/byDay[d].total*100);
+    if(r>best.rate)best={day:days[d],rate:r};
+    if(r<worst.rate)worst={day:days[d],rate:r};
+  });
+  return {best:best,worst:worst};
+}
+function renderInsights(){
+  var ins=calcInsights();var st=(window.DASH||{}).stats||{};
+  var html='<div class="insight-box">';
+  if(ins.best.day)html+='<b>Best day: '+esc(ins.best.day)+' ('+ins.best.rate+'%)</b><br>';
+  if(ins.worst.day)html+='<span class="bad">Worst day: '+esc(ins.worst.day)+' ('+ins.worst.rate+'%)</span><br>';
+  html+='Streak: '+(st.streak||0)+' hari · Rate: '+(st.rate||0)+'%';
+  html+='</div>';
+  return html;
+}
+function calcRecovery(){
+  var D=window.DASH||{};var runs=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'}).sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var recoveries=[];var lastFail=null;
+  runs.forEach(function(r){
+    if(r.conclusion==='failure'){lastFail=new Date(r.createdAt||0)}
+    else if(r.conclusion==='success'&&lastFail){recoveries.push(new Date(r.createdAt||0)-lastFail);lastFail=null}
+  });
+  if(!recoveries.length)return null;
+  var avg=Math.round(recoveries.reduce(function(a,b){return a+b},0)/recoveries.length/60000);
+  return {avg:avg,count:recoveries.length};
+}
+function renderRecovery(){
+  var rc=calcRecovery();
+  if(!rc)return '<div class="insight-box">No recovery data yet</div>';
+  return '<div class="insight-box">Recovery time: <b>'+rc.avg+'m</b> avg ('+rc.count+' recoveries)</div>';
+}
+function calcProductivity(){
+  var st=(window.DASH||{}).stats||{};
+  var rateScore=Math.min((st.rate||0),100);
+  var streakScore=Math.min((st.streak||0)*5,50);
+  var freqScore=Math.min((st.total||0)*2,30);
+  var total=rateScore+streakScore+freqScore;
+  return {total:Math.min(total,100),rate:rateScore,streak:streakScore,freq:freqScore};
+}
+function renderProductivity(){
+  var p=calcProductivity();
+  var col=p.total>=80?'var(--gn)':(p.total>=50?'var(--or)':'var(--rd)');
+  var r=26,c=2*Math.PI*r,off=c-(p.total/100*c);
+  return '<div class="prod-score"><div class="prod-ring"><svg width="60" height="60" style="transform:rotate(-90deg)"><circle cx="30" cy="30" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="4"/><circle cx="30" cy="30" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="4" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" stroke-linecap="round"/><text x="30" y="30" text-anchor="middle" dy=".3em" font-size="14" font-weight="bold" fill="'+col+'" style="transform:rotate(90deg);transform-origin:30px 30px">'+p.total+'</text></svg></div><div class="prod-bar-wrap"><div style="font-size:11px;font-weight:600">Productivity Score</div><div style="font-size:9px;color:var(--t2)">Rate: '+p.rate+' · Streak: '+p.streak+' · Freq: '+p.freq+'</div></div></div>';
+}
+var _stopwatchTimer=null;
+function startStopwatch(){
+  if(_stopwatchTimer)clearInterval(_stopwatchTimer);
+  _stopwatchTimer=setInterval(function(){
+    var D=window.DASH||{};var runs=D.runs||[];
+    var running=runs.filter(function(r){return statusKeyJs(r)==='in_progress'});
+    running.forEach(function(r){
+      var el=document.getElementById('sw-'+(r.databaseId||''));
+      if(el){var ms=Date.now()-new Date(r.createdAt||0).getTime();var m=Math.floor(ms/60000);var s=Math.floor((ms%60000)/1000);el.textContent=m+'m '+s+'s'}
+    });
+    if(!running.length&&_stopwatchTimer){clearInterval(_stopwatchTimer);_stopwatchTimer=null}
+  },1000);
+}
+function toggleQuickPanel(){
+  var el=document.getElementById('quickPanel');if(el)el.classList.toggle('on');
+}
+function initQuickPanel(){
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.quick-btn');if(!btn)return;
+    var act=btn.getAttribute('data-action');
+    if(act==='copyRSM'){var D=window.DASH||{};var r=(D.runs||[])[0];if(r)copyRSM(r.orv_id||r.databaseId||'')}
+    else if(act==='export')expCSV();
+    
+    else if(act==='terminal')toggleTerminal();
+    else if(act==='snapshot')saveSnapshot();
+    else if(act==='glass')toggleGlass();
+    else if(act==='close')toggleQuickPanel();
+  });
+}
+var _batchSel={};
+function toggleBatchSel(rid){
+  _batchSel[rid]=!_batchSel[rid];
+  var el=document.querySelector('[data-rid="'+rid+'"]');if(el)el.classList.toggle('batch-sel',_batchSel[rid]);
+  updateBatchBar();
+}
+function updateBatchBar(){
+  var count=Object.keys(_batchSel).filter(function(k){return _batchSel[k]}).length;
+  var bar=document.getElementById('batchBar');if(!bar)return;
+  bar.classList.toggle('on',count>0);
+  var cnt=document.getElementById('batchCount');if(cnt)cnt.textContent=count;
+}
+function initBatchBar(){
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('[data-batch]');if(!btn)return;
+    var act=btn.getAttribute('data-batch');
+    if(act==='clear'){_batchSel={};document.querySelectorAll('.batch-sel').forEach(function(el){el.classList.remove('batch-sel')});updateBatchBar();return}
+    var selected=Object.keys(_batchSel).filter(function(k){return _batchSel[k]});
+    if(!selected.length)return;
+    if(act==='tag'){var tag=prompt('Tag for '+selected.length+' runs:');if(!tag)return;var tags=JSON.parse(localStorage.getItem('dash_tags')||'{}');selected.forEach(function(rid){tags[rid]=tags[rid]||[];tags[rid].push(tag)});localStorage.setItem('dash_tags',JSON.stringify(tags));showToast('Tagged '+selected.length+' runs')}
+    else if(act==='note'){var note=prompt('Note for '+selected.length+' runs:');if(!note)return;var notes=JSON.parse(localStorage.getItem('dash_runnotes')||'{}');selected.forEach(function(rid){notes[rid]=note});localStorage.setItem('dash_runnotes',JSON.stringify(notes));showToast('Noted '+selected.length+' runs')}
+  });
+}
+function renderQR(){
+  var url='https://daudjoss.github.io/daudjoss-vault/';
+  var size=120;var c=document.createElement('canvas');c.width=size;c.height=size;c.className='qr-canvas';
+  var ctx=c.getContext('2d');
+  // Simple QR placeholder — draw URL as barcode-like pattern
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
+  ctx.fillStyle='#000';
+  // Draw finder patterns (corners)
+  function finder(x,y){ctx.fillRect(x,y,21,21);ctx.fillStyle='#fff';ctx.fillRect(x+4,y+4,13,13);ctx.fillStyle='#000';ctx.fillRect(x+7,y+7,7,7)}
+  finder(4,4);finder(size-25,4);finder(4,size-25);
+  // Draw data modules from URL hash
+  var data=url;var px=30;var py=30;
+  for(var i=0;i<data.length&&py<size-25;i++){
+    var code=data.charCodeAt(i);
+    for(var bit=0;bit<8&&px<size-25;bit++){
+      if(code&(1<<bit))ctx.fillRect(px,py,3,3);
+      px+=4;
+    }
+    if(px>=size-25){px=30;py+=4}
+  }
+  // Timing pattern
+  ctx.fillStyle='#000';
+  for(var i=28;i<size-25;i+=4){ctx.fillRect(i,28,2,2);ctx.fillRect(28,i,2,2)}
+  return '<div class="qr-wrap">'+c.outerHTML+'<div style="font-size:9px;color:var(--t2);margin-top:4px">Scan to open dashboard</div></div>';
+}
+function genOGImage(){
+  var st=(window.DASH||{}).stats||{};
+  var c=document.createElement('canvas');c.width=1200;c.height=630;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,1200,630);
+  ctx.fillStyle='#58a6ff';ctx.fillRect(0,0,1200,8);
+  ctx.fillStyle='#fff';ctx.font='bold 48px sans-serif';ctx.fillText('Rusemeva Dashboard',60,100);
+  ctx.font='20px sans-serif';ctx.fillStyle='#8b949e';ctx.fillText('github.com/daudjoss/daudjoss-vault',60,140);
+  ctx.font='bold 72px sans-serif';ctx.fillStyle='#3fb950';ctx.fillText(st.total+' Runs',60,280);
+  ctx.fillStyle='#58a6ff';ctx.fillText(st.rate+'% Rate',60,380);
+  ctx.fillStyle='#f0883e';ctx.fillText((st.streak||0)+'d Streak',60,480);
+  ctx.font='16px sans-serif';ctx.fillStyle='#8b949e';ctx.fillText(new Date().toLocaleDateString('en-GB',{timeZone:'Asia/Jakarta'}),60,560);
+  var a=document.createElement('a');a.href=c.toDataURL();a.download='og-image.png';a.click();
+  showToast('OG image downloaded!');
+}
+function renderEmbedSnippet(){
+  var url='https://daudjoss.github.io/daudjoss-vault/?embed=1';
+  var code='<iframe src="'+url+'" width="100%" height="400" frameborder="0" style="border-radius:12px"></iframe>';
+  return '<div class="embed-snippet" id="embedSnippet">'+esc(code)+'<span class="curl-copy" style="position:absolute;top:4px;right:4px;font-size:9px;cursor:pointer;padding:2px 6px;border-radius:4px;background:var(--bg2);border:1px solid var(--brd)" onclick="copyEmbed()">📋</span></div>';
+}
+function copyEmbed(){
+  var el=document.getElementById('embedSnippet');if(!el)return;
+  var txt=el.textContent.replace('📋','').trim();
+  navigator.clipboard.writeText(txt).then(function(){showToast('Embed code copied!')}).catch(function(){})
+}
+function toggleHC(){
+  document.body.classList.toggle('hc-mode');
+  var on=document.body.classList.contains('hc-mode');
+  localStorage.setItem('dash_hc',on?'1':'0');
+}
+function applyHC(){
+  if(localStorage.getItem('dash_hc')==='1')document.body.classList.add('hc-mode');
+}
+function adjustFont(dir){
+  var cur=parseInt(localStorage.getItem('dash_fontsize')||'14',10);
+  cur=Math.max(10,Math.min(22,cur+dir));
+  localStorage.setItem('dash_fontsize',String(cur));
+  document.documentElement.style.fontSize=cur+'px';
+}
+function applyFont(){
+  var cur=parseInt(localStorage.getItem('dash_fontsize')||'14',10);
+  document.documentElement.style.fontSize=cur+'px';
+}
+function ariaAnnounce(msg){
+  var el=document.getElementById('ariaLive');if(el)el.textContent=msg;
+}
+function hideSkeleton(){
+  var el=document.getElementById('skeletonWrap');if(el)el.style.display='none';
+}
+
+
+// ═══ v8.9 features ═══
+var ACHIEVEMENTS=[
+  {id:'run100',icon:'💯',name:'100 Runs',desc:'100 total vault runs',check:function(st){return (st.total||0)>=100}},
+  {id:'streak10',icon:'🔥',name:'10-Day Streak',desc:'10 hari streak berturut',check:function(st){return (st.streak||0)>=10}},
+  {id:'rate95',icon:'🎯',name:'95% Week',desc:'95% success rate',check:function(st){return (st.rate||0)>=95}},
+  {id:'firstfail',icon:'⚡',name:'Recovery',desc:'First fail → recovery',check:function(st){return (st.failed||0)>0&&(st.rate||0)>50}},
+  {id:'enc50',icon:'🎞',name:'50 Encodes',desc:'50 encode jobs OK',check:function(st){return (st.enc_ok||0)>=50}},
+  {id:'today5',icon:'📅',name:'5 Today',desc:'5 runs hari ini',check:function(st){return (st.today||0)>=5}},
+  {id:'streak5',icon:'🌱',name:'5-Day Streak',desc:'5 hari streak',check:function(st){return (st.streak||0)>=5}},
+  {id:'rate80',icon:'📈',name:'80% Club',desc:'80%+ success rate',check:function(st){return (st.rate||0)>=80}}
+];
+function showBadge(a){
+  var el=document.getElementById('badgeToast');if(!el)return;
+  document.getElementById('badgeIcon').textContent=a.icon;
+  document.getElementById('badgeName').textContent=a.name;
+  document.getElementById('badgeDesc').textContent=a.desc;
+  el.classList.add('on');
+  setTimeout(function(){el.classList.remove('on')},3500);
+}
+function renderBadges(){
+  var st=(window.DASH||{}).stats||{};var unlocked=JSON.parse(localStorage.getItem('dash_badges')||'[]');
+  return '<div class="badge-grid">'+ACHIEVEMENTS.map(function(a){
+    var on=unlocked.indexOf(a.id)>=0||a.check(st);
+    return '<div class="badge-item'+(on?'':' locked')+'"><div class="bi">'+a.icon+'</div><div class="bl">'+esc(a.name)+'</div></div>';
+  }).join('')+'</div><div style="font-size:10px;color:var(--t2)">'+unlocked.length+'/'+ACHIEVEMENTS.length+' unlocked</div>';
+}
+
+function renderFreqClock(){
+  var D=window.DASH||{};var runs=D.runs||[];var hours={};
+  runs.forEach(function(r){var h=new Date(r.createdAt||0).getHours();hours[h]=(hours[h]||0)+1});
+  var max=Math.max.apply(null,Object.values(hours).concat([1]));var cx=100,cy=100,r=80;
+  var html='<svg class="freq-clock" width="200" height="200" viewBox="0 0 200 200">';
+  for(var h=0;h<24;h++){
+    var count=hours[h]||0;var len=(count/max)*60;var angle=(h/24)*2*Math.PI-Math.PI/2;
+    var x2=cx+Math.cos(angle)*(r+len);var y2=cy+Math.sin(angle)*(r+len);
+    var x1=cx+Math.cos(angle)*r;var y1=cy+Math.sin(angle)*r;
+    var col=count>0?'var(--bl)':'var(--bg3)';
+    html+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="3" stroke-linecap="round" title="'+h+':00 → '+count+' runs"/>';
+  }
+  html+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--brd)" stroke-width="1"/>';
+  html+='<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dy=".3em" font-size="10" fill="var(--t2)">24h</text></svg>';
+  var el=document.getElementById('freqClockWrap');if(el)el.innerHTML=html+'<div style="font-size:9px;color:var(--t2);text-align:center">Intensitas runs per jam</div>';
+}
+function detectFailPatterns(){
+  var D=window.DASH||{};var runs=D.runs||[];var fails=runs.filter(function(r){return r.conclusion==='failure'});
+  if(fails.length<2)return '';
+  var byHour={};var byDay={};var byName={};
+  fails.forEach(function(r){var d=new Date(r.createdAt||0);var h=d.getHours();var dw=d.getDay();var nm=r.name||'';
+    byHour[h]=(byHour[h]||0)+1;byDay[dw]=(byDay[dw]||0)+1;byName[nm]=(byName[nm]||0)+1});
+  var patterns=[];
+  Object.keys(byHour).forEach(function(h){if(byHour[h]>=2)patterns.push('Jam '+h+':00 — '+byHour[h]+' fail')});
+  Object.keys(byDay).forEach(function(d){var days=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];if(byDay[d]>=2)patterns.push(days[d]+' — '+byDay[d]+' fail')});
+  Object.keys(byName).forEach(function(n){if(byName[n]>=2)patterns.push(n+' — '+byName[n]+' fail')});
+  if(!patterns.length)return '';
+  return '<div class="fail-pattern">⚠️ <b>Pattern detected:</b><br>'+patterns.map(function(p){return '• '+p}).join('<br>')+'</div>';
+}
+function predictDuration(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var done=runs.filter(function(r){return r.conclusion==='success'&&r.name==='rusemeva-vault'&&r.createdAt&&r.updatedAt});
+  if(done.length<3)return null;
+  var durs=done.map(function(r){return new Date(r.updatedAt)-new Date(r.createdAt)}).sort(function(a,b){return a-b});
+  var avg=durs.reduce(function(a,b){return a+b},0)/durs.length;
+  var median=durs[Math.floor(durs.length/2)];
+  return {avg:Math.round(avg/60000),median:Math.round(median/60000),samples:durs.length};
+}
+function renderClusters(){
+  var D=window.DASH||{};var runs=(D.runs||[]).slice().sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)});
+  var sessions=[];var current=null;
+  runs.forEach(function(r){
+    var t=new Date(r.createdAt||0).getTime();if(!t)return;
+    if(current&&Math.abs(t-current.start)<3600000){current.runs.push(r);current.end=t}
+    else{current={start:t,end:t,runs:[r]};sessions.push(current)}
+  });
+  return sessions.slice(0,10).map(function(s){
+    var vault=s.runs.filter(function(r){return r.name==='rusemeva-vault'}).length;
+    var enc=s.runs.filter(function(r){return r.name==='rusemeva-encode'}).length;
+    var time=new Date(s.start).toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit'});
+    return '<div class="session-group"><div class="session-header">🕐 '+time+' WIB — '+s.runs.length+' runs ('+vault+' vault, '+enc+' enc)</div>'+s.runs.slice(0,5).map(rowRun).join('')+'</div>';
+  }).join('');
+}
+function toggleTerminal(){
+  var el=document.getElementById('terminalBox');if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+  if(el.style.display!=='none'){var inp=document.getElementById('terminalInput');if(inp)inp.focus()}
+}
+function execTerminal(cmd){
+  var out=document.getElementById('terminalOut');if(!out)return;
+  var c=cmd.trim().toLowerCase();var parts=c.split(/\s+/);var D=window.DASH||{};var st=D.stats||{};
+  var nl=String.fromCharCode(10);
+  var html='<span class="terminal-prompt">rusemeva@dash:~$</span> '+esc(cmd)+nl;
+  if(c==='help'){html+='Commands: stats, search <query>, export csv, export md, theme, clear, fails, badges, report, about'}
+  else if(c==='stats'){html+='Total: '+st.total+' | OK: '+st.success+' | Fail: '+st.failed+' | Rate: '+st.rate+'% | Streak: '+st.streak+'d'}
+  else if(parts[0]==='search'&&parts[1]){var q=document.getElementById('q');if(q){q.value=parts.slice(1).join(' ');srch()}html+='Searching: '+esc(parts.slice(1).join(' '))}
+  else if(c==='export csv'){html+='Exporting CSV...';expCSV()}
+  else if(c==='export md'){html+='Exporting MD...';expMD()}
+  
+  else if(c==='clear'){html=''}
+  else if(c==='fails'){html+=showFailReplay()}
+  else if(c==='badges'){html+=renderBadges()}
+  else if(c==='report'){html+=generateReport()}
+  else if(c==='about'){html+='Rusemeva Dashboard v8.9 — github.com/daudjoss/daudjoss-vault'}
+  else if(c===''){html+=''}
+  else{html+='Unknown command: '+esc(cmd)+'. Type help.'}
+  out.innerHTML=html+(c==='clear'?'':out.innerHTML);
+}
+function saveSnapshot(){
+  var state={q:(document.getElementById('q')||{}).value||'',theme:document.documentElement.getAttribute('data-t')||'dark',
+    accent:localStorage.getItem('dash_accent')||'blue',compact:document.body.classList.contains('compact')?'1':'0'};
+  var fb=document.querySelector('.fb.on');state.filter=fb?fb.getAttribute('data-f'):'all';
+  var hash=btoa(JSON.stringify(state));location.hash=hash;
+  showToast('Snapshot URL copied! Share the link.');
+}
+function loadSnapshot(){
+  if(!location.hash)return;try{var state=JSON.parse(atob(location.hash.slice(1)));
+    var q=document.getElementById('q');if(q&&state.q){q.value=state.q;srch()}
+    if(state.theme){document.documentElement.setAttribute('data-t',state.theme);localStorage.setItem('th',state.theme)}
+    if(state.accent){localStorage.setItem('dash_accent',state.accent);applyAccent()}
+    if(state.compact==='1'&&!document.body.classList.contains('compact'))toggleCompact();
+    if(state.filter){var fb=document.querySelector('.fb[data-f="'+state.filter+'"]');if(fb)fb.click()}
+  }catch(e){}
+}
+function renderStatSparkline(values,color){
+  var max=Math.max.apply(null,values.concat([1]));var w=40,h=14,step=w/(values.length-1);
+  var pts=values.map(function(v,i){return (i*step)+','+(h-(v/max*h))}).join(' ');
+  return '<svg class="stat-spark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1"/></svg>';
+}
+function renderDonut(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var ok=runs.filter(function(r){return r.conclusion==='success'}).length;
+  var fl=runs.filter(function(r){return r.conclusion==='failure'}).length;
+  var cn=runs.filter(function(r){return r.conclusion==='cancelled'}).length;
+  var rn=runs.filter(function(r){return statusKeyJs(r)==='in_progress'}).length;
+  var total=ok+fl+cn+rn;if(!total)return '';
+  var r=50,cx=60,cy=60,circ=2*Math.PI*r;var offset=0;
+  var slices=[{val:ok,col:'var(--gn)',label:'OK'},{val:fl,col:'var(--rd)',label:'Fail'},{val:cn,col:'var(--t2)',label:'Cancel'},{val:rn,col:'var(--bl)',label:'Running'}];
+  var html='<svg width="120" height="120" viewBox="0 0 120 120">';
+  slices.forEach(function(s){
+    var pct=s.val/total;var dash=pct*circ;
+    html+='<circle class="donut-slice" cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+s.col+'" stroke-width="12" stroke-dasharray="'+dash+' '+(circ-dash)+'" stroke-dashoffset="'+(-offset)+'" transform="rotate(-90 '+cx+' '+cy+')" data-label="'+s.label+'" />';
+    offset+=dash;
+  });
+  html+='<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dy=".3em" font-size="14" font-weight="bold" fill="var(--t1)">'+total+'</text></svg>';
+  html+='<div class="donut-legend">'+slices.map(function(s){return '<span style="color:'+s.col+';font-size:10px;cursor:pointer" >'+s.label+': '+s.val+'</span>'}).join(' · ')+'</div>';
+  return html;
+}
+function donutFilter(label){
+  var fb=document.querySelectorAll('.fb');
+  if(label==='Fail'){fb.forEach(function(b){if(b.getAttribute('data-f')==='fail')b.click()})}
+  else if(label==='Running'){fb.forEach(function(b){if(b.getAttribute('data-f')==='running')b.click()})}
+  else if(label==='OK'){fb.forEach(function(b){if(b.getAttribute('data-f')==='ok')b.click()})}
+  else{fb.forEach(function(b){if(b.getAttribute('data-f')==='all')b.click()})}
+}
+function renderFlowParticles(){
+  var flow=document.getElementById('flow-diagram');if(!flow)return;
+  var arrows=flow.querySelectorAll('.flow-arrow');
+  arrows.forEach(function(a){
+    for(var i=0;i<3;i++){
+      var p=document.createElement('div');p.className='flow-particle';p.style.animationDelay=(i*0.7)+'s';
+      a.style.position='relative';a.appendChild(p);
+    }
+  });
+}
+function toggleGlass(){
+  document.body.classList.toggle('glass-mode');
+  var on=document.body.classList.contains('glass-mode');
+  localStorage.setItem('dash_glass',on?'1':'0');
+}
+function applyGlass(){
+  if(localStorage.getItem('dash_glass')==='1')document.body.classList.add('glass-mode');
+}
+
+
+function renderDonutView(){var el=document.getElementById('donutWrap');if(el)el.innerHTML=renderDonut()}
+function renderGauge(){
+  var st=(window.DASH||{}).stats||{};var rate=st.rate||0;
+  var r=28,c=2*Math.PI*r,off=c-(rate/100*c);
+  var col=rate>=80?'var(--gn)':(rate>=60?'var(--or)':'var(--rd)');
+  var svg='<div class="gauge"><svg width="64" height="64"><circle class="gauge-bg" cx="32" cy="32" r="'+r+'"/><circle class="gauge-fg" cx="32" cy="32" r="'+r+'" stroke="'+col+'" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'"/></svg><div class="gauge-txt" style="color:'+col+'">'+rate+'%</div></div>';
+  var el=document.getElementById('hero-gauge');if(el)el.innerHTML=svg;
+}
+function renderFreshness(){
+  var D=window.DASH||{};var gen=D.generated;var cls='ok',txt='Live';
+  if(gen){var min=(Date.now()-new Date(gen).getTime())/60000;
+    cls=min<5?'ok':(min<30?'warn':'stale');
+    txt=min<5?'Live ('+Math.round(min)+'m)':(min<30?'Stale ('+Math.round(min)+'m)':'Stale ('+Math.round(min)+'m)');
+  }
+  var el=document.getElementById('hero-fresh');
+  if(el)el.innerHTML='<span class="fresh-dot '+cls+'"></span><span style="font-size:10px;color:var(--t2)">'+txt+'</span>';
+}
+function rateZoneHtml(rate){
+  var cls=rate>=80?'good':(rate>=60?'mid':'bad');
+  return '<span class="rate-zone '+cls+'">'+rate+'%</span>';
+}
+function updateTabTitle(){
+  var D=window.DASH||{};var st=D.stats||{};var runs=D.runs||[];
+  var rn=st.running||0;
+  if(rn>0){document.title='🔄 '+rn+' Running | Rusemeva';return}
+  var vaultRuns=(runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});
+  var sorted=vaultRuns.slice().sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)});
+  var last=sorted[0];
+  if(!last){document.title='Rusemeva';return}
+  var sk=statusKeyJs(last);
+  if(sk==='failure'){var failCount=vaultRuns.filter(function(r){return statusKeyJs(r)==='failure'}).length;document.title='❌ '+failCount+' Failed | Rusemeva'}
+  else{document.title='✅ All Clear | Rusemeva'}
+}
+function updateFavicon(){
+  var D=window.DASH||{};var st=D.stats||{};var fl=st.failed||0;
+  if(fl===0){var link=document.querySelector("link[rel='icon']");if(link)link.href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>';return}
+  var c=document.createElement('canvas');c.width=32;c.height=32;var ctx=c.getContext('2d');
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,32,32);
+  ctx.font='20px sans-serif';ctx.fillText('🎬',2,24);
+  ctx.fillStyle='#f85149';ctx.beginPath();ctx.arc(26,6,7,0,2*Math.PI);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText(String(fl),26,9);
+  var link=document.querySelector("link[rel='icon']");if(!link){link=document.createElement('link');link.rel='icon';document.head.appendChild(link)}
+  link.href=c.toDataURL();
+}
+var lastFailCount=0;
+function checkSoundAlert(data){
+  if(localStorage.getItem('soundAlert')!=='1')return;
+  var st=data.stats||{};var fl=st.failed||0;
+  if(lastFailCount===0){lastFailCount=fl;return}
+  if(fl>lastFailCount){
+    try{var ctx=new (window.AudioContext||window.webkitAudioContext)();var osc=ctx.createOscillator();var gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=800;osc.type='sine';
+      gain.gain.setValueAtTime(0,ctx.currentTime);gain.gain.linearRampToValueAtTime(0.3,ctx.currentTime+0.05);
+      gain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.2);osc.start();osc.stop(ctx.currentTime+0.2)}catch(e){}
+  }
+  lastFailCount=fl;
+}
+function getNotifPrefs(){var d={runComplete:true,failDetected:true,dataRefreshed:true,newRunStarted:true};try{var s=JSON.parse(localStorage.getItem('notifPrefs')||'{}');if(s&&typeof s==='object'){d.runComplete=s.runComplete!==false;d.failDetected=s.failDetected!==false;d.dataRefreshed=s.dataRefreshed!==false;d.newRunStarted=s.newRunStarted!==false}}catch(e){}return d}
+function saveNotifPref(key,val){var p=getNotifPrefs();p[key]=val;localStorage.setItem('notifPrefs',JSON.stringify(p))}
+function resetNotifPrefs(){localStorage.setItem('notifPrefs',JSON.stringify({runComplete:true,failDetected:true,dataRefreshed:true,newRunStarted:true}));showM('notifprefs')}
+function shouldShowNotif(key){var p=getNotifPrefs();return p[key]!==false}
+function showToast(msg,type){showToastTyped(msg,type||'info')}
+function showToastTyped(msg,type){var p=getNotifPrefs();if(type==='fail'&&!p.failDetected)return;if(type==='complete'&&!p.runComplete)return;if(type==='refresh'&&!p.dataRefreshed)return;if(type==='newrun'&&!p.newRunStarted)return;var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('on');clearTimeout(window._toastTimer);window._toastTimer=setTimeout(function(){t.classList.remove('on')},1500)}
+function copyRSM(id){
+  if(!id)return;
+  navigator.clipboard.writeText(id).then(function(){showToast('Copied: '+id)}).catch(function(){})
+}
+function renderSHist(){var hist=JSON.parse(localStorage.getItem('dash_shist')||'[]');var el=document.getElementById('qchips');if(!el)return;var html='<div style="margin-top:2px">';if(hist.length){html+='<span style="font-size:9px;color:var(--t2)">Recent:</span> ';hist.forEach(function(h,i){html+='<span class="shist-item" onclick="reuseSearch('+i+')">'+esc(h)+'</span>'})}html+='</div>';el.insertAdjacentHTML('beforeend',html)}
+function reuseSearch(i){var hist=JSON.parse(localStorage.getItem('dash_shist')||'[]');var q=document.getElementById('q');if(q&&hist[i]){q.value=hist[i];srch()}}
+function renderQChips(){
+  var chips=[['today','Today'],['fail','Failed'],['running','Running'],['rsm','RSM'],['enc','Encode']];
+  var html=chips.map(function(c){
+    var on=document.body.getAttribute('data-qchip-'+c[0])==='1';
+    return '<span class="qchip'+(on?' on':'')+'" onclick="toggleQChip(this)" data-key="'+c[0]+'">'+c[1]+'</span>';
+  }).join('');
+  var el=document.getElementById('qchips');if(el)el.innerHTML=html;
+}
+function toggleQChip(el){
+  var key=el.getAttribute('data-key');
+  var on=document.body.getAttribute('data-qchip-'+key)==='1';
+  document.body.setAttribute('data-qchip-'+key,on?'0':'1');
+  renderQChips();srch();
+}
+function applyQChips(rows){
+  var today=document.body.getAttribute('data-qchip-today')==='1';
+  var fail=document.body.getAttribute('data-qchip-fail')==='1';
+  var running=document.body.getAttribute('data-qchip-running')==='1';
+  var rsm=document.body.getAttribute('data-qchip-rsm')==='1';
+  var enc=document.body.getAttribute('data-qchip-enc')==='1';
+  if(!today&&!fail&&!running&&!rsm&&!enc)return rows;
+  return rows.filter(function(r){
+    if(rsm&&String(r.orv_id||'').indexOf('RSM')<0)return false;
+    if(enc&&r.name!=='rusemeva-encode')return false;
+    if(fail&&r.conclusion!=='failure')return false;
+    if(running&&statusKeyJs(r)!=='in_progress')return false;
+    if(today){var d=new Date(r.createdAt||0).toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});var now=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});if(d!==now)return false}
+    return true;
+  });
+}
+function checkOffline(){
+  var el=document.getElementById('offlineBanner');
+  if(!el)return;
+  function update(){el.classList.toggle('on',!navigator.onLine)}
+  update();
+  window.addEventListener('online',update);
+  window.addEventListener('offline',update);
+}
+function fireConfetti(){
+  var c=document.createElement('canvas');c.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+  c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+  var ctx=c.getContext('2d');var parts=[];var colors=['#58a6ff','#3fb950','#f0883e','#bc8cff','#f778ba'];
+  for(var i=0;i<80;i++){parts.push({x:c.width/2,y:c.height/3,vx:(Math.random()-0.5)*8,vy:Math.random()*-8+2,color:colors[i%5],size:Math.random()*4+2,life:1})}
+  var start=Date.now();
+  function frame(){
+    ctx.clearRect(0,0,c.width,c.height);
+    parts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life-=0.012;
+      ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,p.size,p.size)});
+    if(Date.now()-start<2500)requestAnimationFrame(frame);else c.remove();
+  }
+  frame();
+}
+function checkStreakConfetti(data){
+  var st=data.stats||{};var streak=st.streak||0;
+  var key='confetti_streak_'+streak;
+  if((streak===5||streak===10||streak===15||streak===20)&&!localStorage.getItem(key)){
+    fireConfetti();localStorage.setItem(key,'1');
+  }
+}
+function expMD(){
+  var rows=filteredRows();if(!rows.length)return;
+  var nl=String.fromCharCode(10);var md='| ID | Name | Status | Created | RSM-ID |'+nl+'|---|---|---|---|---|'+nl;
+  md+=rows.map(function(r){
+    var id=r.databaseId||'';var orv=r.orv_id||'';
+    return '| '+id+' | '+esc(r.name||'')+' | '+esc(displayStatusJs(r))+' | '+agoJs(r.createdAt||'')+' | '+orv+' |';
+  }).join(nl);
+  downloadBlob(new Blob([md],{type:'text/markdown'}),'rusemeva-runs.md');
+}
+function renderRateHistory(){
+  var D=window.DASH||{};var daily=D.daily||D.stats&&D.stats.daily||{};
+  var days=30;var today=new Date();var vals=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    var key=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+    vals.push({key:key,count:daily[key]||0});
+  }
+  var max=Math.max.apply(null,vals.map(function(v){return v.count}))||1;
+  var w=280,h=40,step=w/(vals.length-1);
+  var pts=vals.map(function(v,i){return (i*step)+','+(h-(v.count/max*h))}).join(' ');
+  var svg='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="var(--bl)" stroke-width="1.5"/></svg>';
+  return '<div style="margin-top:8px"><div style="font-size:11px;font-weight:600;margin-bottom:4px">Rate history 30 hari</div>'+svg+'<div style="font-size:9px;color:var(--t2);margin-top:2px">Max: '+max+' runs/day</div></div>';
+}
+var _lastFeedIds={};
+function markNewFeed(data){
+  var runs=data.runs||[];
+  runs.forEach(function(r){
+    var rid=String(r.databaseId||'');
+    if(rid&&!_lastFeedIds[rid]){
+      if(Object.keys(_lastFeedIds).length>0)r._isNew=true;
+      _lastFeedIds[rid]=1;
+    }
+  });
+  setTimeout(function(){runs.forEach(function(r){r._isNew=false})},500);
+}
+
+
+function renderSparkline(){
+  var D=window.DASH||{};var daily=D.daily||D.stats&&D.stats.daily||{};
+  var days=7;var today=new Date();var vals=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    var key=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+    vals.push(daily[key]||0);
+  }
+  var max=Math.max.apply(null,vals)||1;
+  var w=80,h=20,step=w/(vals.length-1);
+  var pts=vals.map(function(v,i){return (i*step)+','+(h-(v/max*h))}).join(' ');
+  var svg='<svg class="spark" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'
+    +'<polyline points="'+pts+'" fill="none" stroke="var(--bl)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'<circle cx="'+((vals.length-1)*step)+'" cy="'+(h-(vals[vals.length-1]/max*h))+'" r="2" fill="var(--bl)"/>'
+    +'</svg>';
+  var el=document.getElementById('hero-spark');
+  if(el)el.innerHTML='<span class="rate-ring">📈 7d '+svg+' <b style="color:var(--bl)">'+vals[vals.length-1]+'</b> today</span>';
+}
+
+
+function renderETA(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var running=runs.filter(function(r){return statusKeyJs(r)==='in_progress'&&r.name==='rusemeva-vault'});
+  var done=runs.filter(function(r){return r.conclusion==='success'&&r.name==='rusemeva-vault'&&r.createdAt&&r.updatedAt});
+  var avgMs=0;
+  if(done.length){var total=0;done.forEach(function(r){total+=new Date(r.updatedAt)-new Date(r.createdAt)});avgMs=total/done.length}
+  running.forEach(function(r){
+    if(!avgMs)return;
+    var elapsed=Date.now()-new Date(r.createdAt).getTime();
+    var remain=Math.max(0,Math.round((avgMs-elapsed)/60000));
+    var id=r.orv_id||r.databaseId;
+    var badge=document.querySelector('[data-rid="'+r.databaseId+'"] .fi-status');
+    if(badge&&!badge.getAttribute('data-eta')){
+      badge.setAttribute('data-eta','1');
+      badge.innerHTML+=' <span class="eta-badge">ETA ~'+remain+'m</span>';
+    }
+  });
+}
+
+function renderAlert(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var h24=Date.now()-24*3600*1000;
+  var fails=runs.filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='failure'&&new Date(r.createdAt||0).getTime()>=h24});
+  var el=document.getElementById('hero-alert');
+  if(!el)return;
+  if(fails.length>=2){
+    var hours={};fails.forEach(function(r){var h=new Date(r.createdAt).getHours();hours[h]=(hours[h]||0)+1});
+    var pattern=Object.keys(hours).filter(function(h){return hours[h]>=2});
+    var msg=pattern.length?'⚠️ Pattern: '+fails.length+' fail jam '+pattern.join(',')+'': '⚠️ '+fails.length+' vault fail dalam 24h';
+    el.innerHTML='<div class="alert-chip">'+msg+'</div>';
+  }else{el.innerHTML=''}
+}
+
+function renderHeatmap(){
+  var D=window.DASH||{};var runs=D.runs||[];var daily=D.daily||D.stats&&D.stats.daily||{};
+  var dayMap={};
+  runs.forEach(function(r){
+    var rd=new Date(r.createdAt||0);
+    var key=rd.getFullYear()+'-'+('0'+(rd.getMonth()+1)).slice(-2)+'-'+('0'+rd.getDate()).slice(-2);
+    if(!dayMap[key])dayMap[key]={s:0,f:0,n:0};
+    if(r.conclusion==='success')dayMap[key].s++;
+    else if(r.conclusion==='failure')dayMap[key].f++;
+    else dayMap[key].n++;
+  });
+  var days=365;var today=new Date();
+  var start=new Date(today.getTime()-(days-1)*86400000);
+  var startDow=start.getDay();
+  var html='<div class="heatmap-wrap"><div class="heatmap-grid">';
+  for(var i=0;i<startDow;i++)html+='<div class="heatmap-cell empty"></div>';
+  var monthLabels='';var lastMonth=-1;var colCount=0;var monthCols=[];
+  for(var i=0;i<days;i++){
+    var d=new Date(start.getTime()+i*86400000);
+    var key=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    var dm=dayMap[key];var total=dm?(dm.s+dm.f+dm.n):0;
+    var cls='';
+    if(total===0)cls='';
+    else if(dm.f>0&&dm.s===0)cls='lf';
+    else if(dm.f>0)cls='lmix';
+    else if(total<=1)cls='l1';
+    else if(total<=2)cls='l2';
+    else if(total<=4)cls='l3';
+    else cls='l4';
+    var title=key+': '+total+' run'+(total!==1?'s':'')+(dm?(' ('+dm.s+'ok/'+dm.f+'fail)'):'');
+    html+='<div class="heatmap-cell '+cls+'" title="'+title+'"></div>';
+    if(d.getMonth()!==lastMonth){monthCols.push({col:colCount,label:d.toLocaleString('en',{month:'short'})});lastMonth=d.getMonth()}
+    colCount++;
+  }
+  html+='</div>';
+  var lblHtml='<div class="heatmap-months">';
+  monthCols.forEach(function(m){lblHtml+='<span style="position:absolute;left:'+(m.col*16)+'px">'+m.label+'</span>'});
+  lblHtml+='</div>';
+  html=lblHtml+html;
+  html+='<div class="heatmap-legend"><span>Less</span><div class="heatmap-cell"></div><div class="heatmap-cell l1"></div><div class="heatmap-cell l2"></div><div class="heatmap-cell l3"></div><div class="heatmap-cell l4"></div><div class="heatmap-cell lmix"></div><div class="heatmap-cell lf"></div><span>More</span></div>';
+  html+='<div style="text-align:center;margin-top:6px;font-size:10px;color:var(--t2)">Green=success · Red=fail · Gray=no runs · 365 days</div></div>';
+  return html;
+}
+
+function renderPredictiveInsights(){
+  var D=window.DASH||{};var runs=D.runs||[];var st=D.stats||{};
+  var vaultRuns=runs.filter(function(r){return r.name==='rusemeva-vault'});
+  if(vaultRuns.length<3){var el=document.getElementById('hero-predins');if(el)el.innerHTML='';return}
+  var insights=[];
+  var days=7;var today=new Date();
+  var dailyTotals=[],dailyFails=[],dailySuccess=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    var k=d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+    var dr=vaultRuns.filter(function(r){try{return new Date(r.createdAt).toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'})===k}catch(e){return false}});
+    dailyTotals.push(dr.length);
+    dailyFails.push(dr.filter(function(r){return r.conclusion==='failure'}).length);
+    dailySuccess.push(dr.filter(function(r){return r.conclusion==='success'}).length);
+  }
+  var weekTotal=dailyTotals.reduce(function(a,b){return a+b},0);
+  var weekFails=dailyFails.reduce(function(a,b){return a+b},0);
+  if(weekTotal>0){
+    var failRate=weekFails/weekTotal*100;
+    var recentFailRate=dailyFails.slice(-3).reduce(function(a,b){return a+b},0)/Math.max(dailyTotals.slice(-3).reduce(function(a,b){return a+b},0),1)*100;
+    var trendDir=recentFailRate>failRate+5?'up':recentFailRate<failRate-5?'down':'stable';
+    var prob=Math.round(Math.max(failRate,recentFailRate));
+    var sev=prob>=20?'danger':prob>=10?'warn':'good';
+    var msg='Failure probability tomorrow: ~'+prob+'% based on weekly trend';
+    if(trendDir==='up')msg+=' (trending up)';
+    else if(trendDir==='down')msg+=' (improving)';
+    insights.push({text:msg,sev:sev});
+  }
+  var hourCounts={};
+  var hourDur={};
+  vaultRuns.forEach(function(r){
+    if(r.createdAt&&r.updatedAt&&r.conclusion==='success'){
+      try{
+        var ct=new Date(r.createdAt);var ut=new Date(r.updatedAt);var dur=(ut-ct)/1000;
+        if(dur>0&&dur<7200){
+          var h=parseInt(ct.toLocaleString('en-GB',{hour:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).split(':')[0]);
+          hourCounts[h]=(hourCounts[h]||0)+1;hourDur[h]=(hourDur[h]||0)+dur;
+        }
+      }catch(e){}
+    }
+  });
+  var fastestHour=-1,fastestAvg=99999;
+  for(var h in hourDur){
+    var avg=hourDur[h]/hourCounts[h];
+    if(hourCounts[h]>=2&&avg<fastestAvg){fastestAvg=avg;fastestHour=parseInt(h)}
+  }
+  if(fastestHour>=0){
+    var mins=Math.floor(fastestAvg/60);var secs=Math.round(fastestAvg%60);
+    insights.push({text:'Fastest runs tend to occur at '+fastestHour+':00 (avg '+mins+'m'+secs+'s)',sev:'good'});
+  }
+  var wfCounts={};
+  vaultRuns.forEach(function(r){var nm=r.name||'unknown';if(!wfCounts[nm])wfCounts[nm]={total:0,fails:0};wfCounts[nm].total++;if(r.conclusion==='failure')wfCounts[nm].fails++});
+  var totalRuns=vaultRuns.length;var avgFailRate=totalRuns>0?vaultRuns.filter(function(r){return r.conclusion==='failure'}).length/totalRuns*100:0;
+  for(var nm in wfCounts){
+    var w=wfCounts[nm];if(w.total<5)continue;
+    var wfr=w.fails/w.total*100;
+    if(wfr>avgFailRate*2&&w.fails>=2){
+      var mult=Math.round(wfr/Math.max(avgFailRate,1)*10)/10;
+      insights.push({text:'Workflow "'+nm+'" has '+mult+'x more failures than average ('+Math.round(wfr)+'% vs '+Math.round(avgFailRate)+'%)',sev:'danger'});
+    }
+  }
+  var recentTotals=dailyTotals.slice(-3).reduce(function(a,b){return a+b},0);
+  var prevTotals=dailyTotals.slice(0,3).reduce(function(a,b){return a+b},0);
+  if(prevTotals>0&&recentTotals>0){
+    var change=Math.round((recentTotals-prevTotals)/prevTotals*100);
+    if(Math.abs(change)>=20){
+      insights.push({text:'Activity '+(change>0?'up':'down')+' '+Math.abs(change)+'% in last 3 days vs prior 3 days',sev:change>0?'good':'warn'});
+    }
+  }
+  var cancelCount=vaultRuns.filter(function(r){return r.conclusion==='cancelled'}).length;
+  if(cancelCount>=3&&totalRuns>0){
+    var cancelRate=Math.round(cancelCount/totalRuns*100);
+    if(cancelRate>=10)insights.push({text:'High cancellation rate: '+cancelRate+'% ('+cancelCount+' runs) — possible manual aborts',sev:'warn'});
+  }
+  if(insights.length===0){
+    insights.push({text:'All systems nominal — no anomalies detected in recent patterns',sev:'good'});
+  }
+  insights=insights.slice(0,5);
+  var html='<div class="predins-card"><div class="predins-title">💡 Predictive Insights AI</div><div class="predins-list">';
+  insights.forEach(function(ins){
+    html+='<div class="predins-item '+(ins.sev||'')+'"><span class="predins-bullet">◆</span><span class="predins-text">'+esc(ins.text)+'</span></div>';
+  });
+  html+='</div></div>';
+  var el=document.getElementById('hero-predins');if(el)el.innerHTML=html;
+}
+
+function renderStatSparklines(){
+  var D=window.DASH||{};var runs=D.runs||[];var daily=D.daily||D.stats&&D.stats.daily||{};
+  var days=7;var today=new Date();var keys=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date(today.getTime()-i*86400000);
+    keys.push(d.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'}));
+  }
+  var vaultRuns=runs.filter(function(r){return r.name==='rusemeva-vault'});
+  var totals=[],successes=[],failures=[];
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];var dayRuns=vaultRuns.filter(function(r){
+      try{var dt=new Date(r.createdAt);var rk=dt.toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});return rk===k}catch(e){return false}
+    });
+    totals.push(dayRuns.length);
+    successes.push(dayRuns.filter(function(r){return r.conclusion==='success'}).length);
+    failures.push(dayRuns.filter(function(r){return r.conclusion==='failure'}).length);
+  }
+  function miniSpark(vals,col){
+    if(!vals||!vals.length)return '';
+    var w=40,h=16;var max=Math.max.apply(null,vals);var min=Math.min.apply(null,vals);
+    var range=(max-min)||1;var step=w/Math.max(vals.length-1,1);
+    var pts=vals.map(function(v,i){return (i*step)+','+(h-((v-min)/range*(h-2))-1)}).join(' ');
+    var lastX=(vals.length-1)*step;
+    var lastY=h-((vals[vals.length-1]-min)/range*(h-2))-1;
+    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="'+lastX+'" cy="'+lastY+'" r="1.5" fill="'+col+'"/></svg>';
+  }
+  var el;
+  el=document.getElementById('spark-total');if(el)el.innerHTML=miniSpark(totals,'var(--bl)');
+  el=document.getElementById('spark-success');if(el)el.innerHTML=miniSpark(successes,'var(--gn)');
+  el=document.getElementById('spark-failed');if(el)el.innerHTML=miniSpark(failures,'var(--rd)');
+}
+
+// ── Feature: Actions Minutes Tracker ──
+function calcGhaMinutesThisMonth(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=new Date();var ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  var totalSec=0;
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i];if(!r.createdAt||!r.updatedAt)continue;
+    try{var ct=new Date(r.createdAt);if(isNaN(ct))continue;
+      var rym=ct.getFullYear()+'-'+String(ct.getMonth()+1).padStart(2,'0');
+      if(rym!==ym)continue;
+      var ut=new Date(r.updatedAt);if(isNaN(ut))continue;
+      var dur=(ut-ct)/1000;if(dur>0)totalSec+=dur;
+    }catch(e){}
+  }
+  return Math.round(totalSec/60);
+}
+function renderGhaMinutes(){
+  var el=document.getElementById('ghaMinutes');if(!el)return;
+  var mins=calcGhaMinutesThisMonth();var cap=2000;
+  var pct=Math.min(Math.round(mins/cap*100),100);
+  var col=pct<50?'var(--gn)':pct<80?'var(--yl)':'var(--rd)';
+  el.innerHTML='Actions: <b style="color:'+col+'">'+mins+'m</b> / '+cap+'m ('+pct+'%)<div class="gha-min-bar"><div class="gha-min-fill" style="width:'+pct+'%;background:'+col+'"></div></div>';
+}
+
+// ── Feature: Data Freshness Banner ──
+var freshBannerDismissed=false;
+function renderFreshnessBanner(){
+  var banner=document.getElementById('freshBanner');if(!banner)return;
+  var D=window.DASH||{};var gen=D.generated;if(!gen)return;
+  var min=(Date.now()-new Date(gen).getTime())/60000;
+  var txtEl=document.getElementById('freshBannerText');
+  if(min<5){
+    banner.classList.remove('show','warn','stale');
+    banner.classList.add('fresh');
+    freshBannerDismissed=false;
+    if(txtEl)txtEl.textContent='Data fresh — last update '+Math.round(min)+'m ago';
+    if(min<1&&txtEl)txtEl.textContent='Data fresh — updated just now';
+    return;
+  }
+  if(freshBannerDismissed)return;
+  var cls=min>10?'stale':'warn';
+  var mins=Math.round(min);
+  if(txtEl)txtEl.textContent='Data stale — last update '+mins+'m ago';
+  banner.classList.remove('fresh');
+  banner.classList.add('show',cls);
+}
+function initFreshnessBannerDismiss(){
+  var x=document.getElementById('freshBannerX');
+  if(x)x.addEventListener('click',function(){freshBannerDismissed=true;var b=document.getElementById('freshBanner');if(b)b.classList.remove('show')});
+}
+
+// ── Feature: Quick Stats One-liner ──
+function renderQuickStats(){
+  var el=document.getElementById('quickStats');if(!el)return;
+  var D=window.DASH||{};var st=D.stats||{};var runs=D.runs||[];
+  var today=st.today||0;var todayOk=st.today_ok||0;
+  var avgDur=st.avg_duration||0;var avgMin=avgDur>0?Math.round(avgDur/60):0;
+  var streak=st.streak||0;
+  var vaultRuns=runs.filter(function(r){return r.name==='rusemeva-vault'});
+  var todayRuns=vaultRuns.filter(function(r){
+    try{return new Date(r.createdAt).toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'})===new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'})}catch(e){return false}
+  });
+  var tCount=todayRuns.length;
+  var tOk=todayRuns.filter(function(r){return r.conclusion==='success'}).length;
+  var parts=[];
+  parts.push('Today: '+tCount+' runs, '+tOk+' OK');
+  if(avgMin>0)parts.push('avg '+avgMin+'m');
+  if(streak>0)parts.push('streak '+streak+'d');
+  el.textContent=parts.join(', ');
+}
+
+function renderHero(){var r=document.getElementById('hero-rsm');if(r)r.innerHTML=lastRsmHtml();
+  var s=document.getElementById('hero-storage');if(s)s.innerHTML=storageStoryHtml();
+  var d=document.getElementById('hero-diff');if(d)d.innerHTML=diff24Html();renderSparkline();renderAlert();renderETA();renderGauge();renderFreshness();renderRings();renderFlow();renderCounters();checkThresholdAlert();renderFreqClock();renderDonutView();renderFlowParticles();checkAchievements();hideSkeleton();startStopwatch();renderStatSparklines();renderPredictiveInsights();checkFailurePatterns();renderRunDurationPrediction();renderGhaMinutes();renderQuickStats();renderFreshnessBanner();renderQueueStatus();}
+
+// ── FEATURE 1: Run Duration Prediction ──
+function calcAvgDurationByWorkflow(wfName){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var done=runs.filter(function(r){return r.conclusion&&(r.conclusion==='success'||r.conclusion==='failure')&&r.name===wfName&&r.createdAt&&r.updatedAt});
+  if(!done.length)return 0;
+  var total=0;done.forEach(function(r){total+=new Date(r.updatedAt)-new Date(r.createdAt)});
+  return total/done.length;
+}
+function formatRemaining(ms){
+  if(ms<=0)return '~0m left';
+  var mins=Math.floor(ms/60000);var secs=Math.floor((ms%60000)/1000);
+  if(mins<=0)return '~'+secs+'s left';
+  return '~'+mins+'m left';
+}
+function renderRunDurationPrediction(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var running=runs.filter(function(r){return statusKeyJs(r)==='in_progress'});
+  running.forEach(function(r){
+    var wfName=r.name||'';
+    var avgMs=calcAvgDurationByWorkflow(wfName);
+    if(!avgMs)return;
+    var elapsed=Date.now()-new Date(r.createdAt).getTime();
+    var remain=Math.max(0,avgMs-elapsed);
+    var badgeText=formatRemaining(remain);
+    var fi=document.querySelector('[data-rid="'+(r.databaseId||'')+'"]');
+    if(fi){
+      var existing=fi.querySelector('.dur-pred-badge');
+      if(existing){existing.textContent=badgeText}
+      else{var statusEl=fi.querySelector('.fi-status');if(statusEl){var badge=document.createElement('span');badge.className='dur-pred-badge';badge.textContent=badgeText;statusEl.appendChild(badge)}}
+    }
+    var swEl=document.getElementById('sw-'+(r.databaseId||''));
+    if(swEl){
+      var existingSw=swEl.parentNode.querySelector('.dur-pred-badge');
+      if(existingSw){existingSw.textContent=badgeText}
+      else{var badge2=document.createElement('span');badge2.className='dur-pred-badge';badge2.textContent=badgeText;swEl.parentNode.insertBefore(badge2,swEl.nextSibling)}
+    }
+  });
+}
+if(!window._durPredTimer){window._durPredTimer=setInterval(function(){renderRunDurationPrediction()},10000)}
+
+// ── FEATURE 2: Failure Pattern Detection ──
+function checkFailurePatterns(){
+  var D=window.DASH||{};var runs=(D.runs||[]).slice();
+  var byWf={};
+  runs.forEach(function(r){var nm=r.name||'';if(!nm)return;if(!byWf[nm])byWf[nm]=[];byWf[nm].push(r)});
+  var streaks=[];
+  Object.keys(byWf).forEach(function(nm){
+    var wfRuns=byWf[nm].slice().sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)});
+    var streak=0;
+    for(var i=0;i<wfRuns.length;i++){
+      var sk=statusKeyJs(wfRuns[i]);
+      if(sk==='failure'){streak++}
+      else if(sk==='in_progress'){continue}
+      else{break}
+    }
+    if(streak>=2){streaks.push({name:nm,streak:streak,latestRun:wfRuns[0]})}
+  });
+  var heroEl=document.getElementById('hero-fstreak');
+  if(heroEl){
+    if(streaks.length){
+      var html='<div class="fail-streak-card"><div class="fs-title">⚠️ Consecutive Failure Streaks</div>';
+      streaks.forEach(function(s){html+='<div class="fs-item">• '+esc(s.name)+' — '+s.streak+' fails in a row</div>'});
+      html+='</div>';heroEl.innerHTML=html;
+    }else{heroEl.innerHTML=''}
+  }
+  streaks.forEach(function(s){
+    var feedItems=document.querySelectorAll('#sec-feed .fi');
+    var latestFi=null;
+    feedItems.forEach(function(fi){
+      var nameEl=fi.querySelector('.fi-name');
+      if(nameEl&&nameEl.textContent===s.name){if(!latestFi)latestFi=fi}
+    });
+    if(latestFi&&!latestFi.querySelector('.fail-streak-badge')){
+      var statusEl=latestFi.querySelector('.fi-status');
+      if(statusEl){var badge=document.createElement('span');badge.className='fail-streak-badge';badge.textContent='⚠️ '+s.streak+' fails in a row';statusEl.appendChild(badge)}
+    }
+  });
+}
+
+// ── FEATURE 3: Timeline View ──
+function renderTimelineView(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var now=new Date();
+  var todayRuns=runs.filter(function(r){if(!r.createdAt)return false;try{var d=new Date(r.createdAt);return d.toDateString()===now.toDateString()}catch(e){return false}});
+  todayRuns=todayRuns.slice().sort(function(a,b){return new Date(a.createdAt||0)-new Date(b.createdAt||0)});
+  var html='<div class="tl-wrap">';
+  html+='<div style="font-size:13px;font-weight:700;margin-bottom:8px">������ Timeline — '+now.toLocaleDateString('en-GB',{weekday:'long',month:'short',day:'numeric'})+'</div>';
+  html+='<div class="tl-track" id="tlTrack">';
+  for(var h=0;h<24;h+=3){var pct=(h/24)*100;html+='<div class="tl-grid-line" style="left:'+pct+'%"></div>'}
+  var nowPct=(now.getHours()+now.getMinutes()/60)/24*100;
+  html+='<div class="tl-now-line" style="left:'+nowPct+'%"></div>';
+  html+='<div class="tl-now-label" style="left:'+nowPct+'%">NOW</div>';
+  todayRuns.forEach(function(r){
+    var d=new Date(r.createdAt);
+    var dotPct=(d.getHours()+d.getMinutes()/60)/24*100;
+    var sk=statusKeyJs(r);
+    var cls=sk==='success'?'success':sk==='failure'?'failure':sk==='in_progress'?'running':'cancelled';
+    var id=r.orv_id||r.databaseId||'';
+    var timeStr=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    var tooltip=esc(id+' · '+r.name+' · '+sk+' · '+timeStr);
+    html+='<div class="tl-dot '+cls+'" style="left:'+dotPct+'%" data-tl="'+tooltip+'" data-rid="'+esc(r.databaseId||'')+'"></div>';
+  });
+  html+='</div>';
+  html+='<div class="tl-hours">';
+  for(var h2=0;h2<24;h2++){html+='<div class="tl-hour-label">'+h2+'</div>'}
+  html+='</div>';
+  html+='<div class="tl-legend"><span><span class="lg-dot success"></span>Success</span><span><span class="lg-dot failure"></span>Fail</span><span><span class="lg-dot running"></span>Running</span><span><span class="lg-dot cancelled"></span>Cancelled</span></div>';
+  var byStatus={success:0,failure:0,in_progress:0,cancelled:0};
+  todayRuns.forEach(function(r){var sk=statusKeyJs(r);byStatus[sk]=(byStatus[sk]||0)+1});
+  html+='<div style="margin-top:8px;font-size:10px;color:var(--t2)">Total today: '+todayRuns.length+' · Success: '+byStatus.success+' · Fail: '+byStatus.failure+' · Running: '+(byStatus.in_progress||0)+' · Cancelled: '+(byStatus.cancelled||0)+'</div>';
+  if(!todayRuns.length){html+='<div style="text-align:center;padding:20px;font-size:11px;color:var(--t2)">No runs today yet.</div>'}
+  html+='</div>';
+  setTimeout(function(){
+    var track=document.getElementById('tlTrack');if(!track)return;
+    track.querySelectorAll('.tl-dot').forEach(function(dot){
+      dot.onmouseenter=function(e){var tip=document.createElement('div');tip.className='tl-tooltip';tip.innerHTML=dot.getAttribute('data-tl');document.body.appendChild(tip);tip.style.left=(e.clientX+10)+'px';tip.style.top=(e.clientY+10)+'px';window._tlTip=tip};
+      dot.onmouseleave=function(){if(window._tlTip){window._tlTip.remove();window._tlTip=null}};
+      dot.onmousemove=function(e){if(window._tlTip){window._tlTip.style.left=(e.clientX+10)+'px';window._tlTip.style.top=(e.clientY+10)+'px'}};
+      dot.onclick=function(){var rid=dot.getAttribute('data-rid');if(rid)location.href='?run='+rid};
+    });
+  },50);
+  return html;
+}
+
+// ── honest client health ──
+function checkHealth(){
+  var rows=[];var D=window.DASH||{};var st=D.stats||{};
+  // data.json age
+  var gen=D.generated;var ageMin=0;
+  if(gen){ageMin=(Date.now()-new Date(gen).getTime())/60000;}
+  rows.push({label:'data.json age',val:ageMin<120?Math.round(ageMin)+'m':'stale',ok:ageMin<120});
+  // worker orv-map
+  rows.push({label:'Worker orv-map',val:((D.runs||[]).filter(function(r){return r.orv_id}).length)+' linked',ok:true});
+  // vault fail 24h
+  var h24=Date.now()-24*3600*1000;
+  var vf=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'&&r.conclusion==='failure'&&new Date(r.createdAt||0).getTime()>=h24}).length;
+  rows.push({label:'vault fail 24h',val:vf+' run(s)',ok:vf===0,warn:vf>0&&vf<3});
+  // running
+  var rn=st.running||0;
+  rows.push({label:'running',val:rn+' job(s)',ok:rn<=5,warn:rn>5});
+  var html=rows.map(function(r){
+    var cls=r.ok?'ok':(r.warn?'warn':'err');
+    return '<div class="health-row"><span class="health-dot '+cls+'"></span><span>'+esc(r.label)+'</span><span style="margin-left:auto;color:var(--t2)">'+esc(r.val)+'</span></div>';
+  }).join('');
+  var box=document.getElementById('health-rows');if(box)box.innerHTML=html;
+  var ts=document.getElementById('health-ts');if(ts)ts.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour12:false})+' WIB';
+}
+
+// ── deep link ?rsm= / ?run= ──
+function applyDeepLink(){
+  var p=new URLSearchParams(location.search);
+  var rsm=p.get('rsm');var run=p.get('run');
+  if(!rsm&&!run)return;
+  var q=document.getElementById('q');
+  if(q){q.value=rsm||run||'';srch();}
+  // highlight in table
+  setTimeout(function(){
+    var sel=rsm?'[data-orv="'+rsm+'"]':(run?'[data-rid="'+run+'"]':'');
+    var el=document.querySelector(sel);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('hl-row');
+      if(el.tagName==='TR'){}else{var p2=el.closest('tr')||el;p2.classList.add('hl-row');}
+    }
+  },300);
+}
+
+// ── saved views ──
+function applyView(btn,key){
+  document.querySelectorAll('.view-btn').forEach(function(b){b.classList.remove('act')});
+  if(btn)btn.classList.add('act');
+  if(!key)return;
+  var fb=document.querySelectorAll('.fb');var onFb=null;
+  fb.forEach(function(b){if(b.classList.contains('on'))onFb=b;});
+  if(key==='all'){if(onFb)filt(onFb.getAttribute('data-f')||'all',onFb);var q=document.getElementById('q');if(q)q.value='';srch();return;}
+  if(key==='fail'){fb.forEach(function(b){if(b.getAttribute('data-f')==='fail')b.click();});return;}
+  if(key==='running'){fb.forEach(function(b){if(b.getAttribute('data-f')==='running')b.click();});return;}
+  if(key==='today'){var q=document.getElementById('q');if(q){var today=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});q.value=today;srch();}return;}
+  if(key==='rsm'){var q=document.getElementById('q');if(q){q.value='RSM';srch();}return;}
+}
+function saveCurrentView(){
+  var q=document.getElementById('q');var qq=q?q.value:'';
+  var fb=document.querySelector('.fb.on');var f=fb?fb.getAttribute('data-f'):'all';
+  var name=prompt('Nama view:');if(!name)return;
+  var views=JSON.parse(localStorage.getItem('dash_views')||'[]');
+  views.push({name:name,q:qq,filt:f});
+  localStorage.setItem('dash_views',JSON.stringify(views));
+  renderSavedViews();renderHero();checkHealth();applyDeepLink();if(DATA)checkNewRuns(DATA);
+}
+function renderSavedViews(){
+  var views=JSON.parse(localStorage.getItem('dash_views')||'[]');
+  var box=document.getElementById('saved-views');if(!box)return;
+  box.innerHTML=views.map(function(v,i){
+    return '<button class="view-btn" onclick="loadView('+i+')">'+esc(v.name)+'</button> '
+      +'<button class="view-btn" style="padding:1px 4px" onclick="delView('+i+')">×</button>';
+  }).join('');
+}
+function loadView(i){
+  var views=JSON.parse(localStorage.getItem('dash_views')||'[]');var v=views[i];if(!v)return;
+  var q=document.getElementById('q');if(q&&v.q)q.value=v.q;srch();
+  var fb=document.querySelector('.fb[data-f="'+v.filt+'"]');if(fb)fb.click();
+}
+function delView(i){
+  var views=JSON.parse(localStorage.getItem('dash_views')||'[]');views.splice(i,1);
+  localStorage.setItem('dash_views',JSON.stringify(views));renderSavedViews();
+}
+
+// ── compact mode ──
+function setThreshold(v){v=parseInt(v||'2',10);if(v<1)v=1;if(v>20)v=20;localStorage.setItem('dash_threshold',String(v));checkThresholdAlert()}
+function toggleSound(){var on=localStorage.getItem('soundAlert')==='1';localStorage.setItem('soundAlert',on?'0':'1');var btn=document.querySelector('[onclick*=toggleSound]');if(btn)btn.textContent=on?'OFF':'ON'}
+function toggleSoundBtn(btn){var on=localStorage.getItem('soundAlert')==='1';localStorage.setItem('soundAlert',on?'0':'1');updateSoundToggleIcon()}
+function updateSoundToggleIcon(){var btn=document.getElementById('soundTog');if(!btn)return;var on=localStorage.getItem('soundAlert')==='1';btn.textContent=on?'🔊':'🔇';btn.classList.toggle('off',!on)}
+function toggleCompact(){
+  document.body.classList.toggle('compact');
+  var on=document.body.classList.contains('compact');
+  localStorage.setItem('dash_compact',on?'1':'0');
+  var b=document.getElementById('compactBtn');if(b)b.textContent=on?'📐 Normal':'📐 Compact';
+}
+
+// ── compare 2 runs ──
+var cmpPick=[];
+function toggleCmpPick(rid){
+  var i=cmpPick.indexOf(rid);
+  if(i>=0){cmpPick.splice(i,1);}else{if(cmpPick.length>=2)cmpPick.shift();cmpPick.push(rid);}
+  document.querySelectorAll('.fi').forEach(function(el){
+    var r=el.getAttribute('data-rid');
+    if(cmpPick.indexOf(r)>=0)el.style.outline='2px solid var(--or)';else el.style.outline='';
+  });
+  if(cmpPick.length===2)showCmpModal();
+}
+function showCmpModal(){
+  var D=window.DASH||{};var runs=D.runs||[];
+  var r1=runs.filter(function(r){return String(r.databaseId)===cmpPick[0]})[0];
+  var r2=runs.filter(function(r){return String(r.databaseId)===cmpPick[1]})[0];
+  if(!r1||!r2)return;
+  document.getElementById('mo').classList.add('on');
+  document.getElementById('mt').textContent='🔄 Compare 2 runs';
+  function fmt(r){if(!r)return '—';
+    return '<div style="font-size:11px;line-height:1.6">'
+      +'<b>ID:</b> '+(r.orv_id||r.databaseId)+'<br>'
+      +'<b>Name:</b> '+esc(r.name||'')+'<br>'
+      +'<b>Status:</b> '+esc(displayStatusJs(r))+'<br>'
+      +'<b>Created:</b> '+agoJs(r.createdAt||'')+'<br>'
+      +'<a href="https://github.com/daudjoss/daudjoss-vault/actions/runs/'+r.databaseId+'" target="_blank">GHA ↗</a></div>';}
+  document.getElementById('mb').innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+    +'<div>'+fmt(r1)+'</div><div>'+fmt(r2)+'</div></div>'
+    +'<div style="margin-top:8px"><button class="btn" id="cmpClearBtn">Clear</button></div>';var cb=document.getElementById('cmpClearBtn');if(cb)cb.onclick=function(){cmpPick=[];clM();document.querySelectorAll('.fi').forEach(function(e){e.style.outline=''})}
+}
+var CMD_ITEMS=[
+  {cat:'Navigate',label:'Home',act:"document.querySelector('.hero').scrollIntoView({behavior:'smooth'})"},
+  {cat:'Navigate',label:'Feed',act:"document.getElementById('sec-feed').scrollIntoView({behavior:'smooth'})"},
+  {cat:'Navigate',label:'Recordings',act:"document.getElementById('sec-rec').scrollIntoView({behavior:'smooth'})"},
+  {cat:'Navigate',label:'Tools',act:"document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})"},
+  {cat:'Tools',label:'Stats',act:"showM('stats')"},
+  {cat:'Tools',label:'Search',act:"showM('search')"},
+  {cat:'Tools',label:'Export',act:"showM('export')"},
+  {cat:'Tools',label:'Customize',act:"showM('customize')"},
+  {cat:'Tools',label:'Player',act:"showM('player')"},
+  {cat:'Tools',label:'Notes',act:"showM('notes')"},
+  {cat:'Tools',label:'Tags',act:"showM('tags')"},
+  {cat:'Tools',label:'Bookmarks',act:"showM('bookmarks')"},
+  {cat:'Tools',label:'History',act:"showM('history')"},
+  {cat:'Tools',label:'Share',act:"showM('share')"},
+  {cat:'Tools',label:'Comments',act:"showM('comments')"},
+  {cat:'View',label:'Compact toggle',act:"toggleCompact()"},
+  {cat:'View',label:'Save view',act:"saveCurrentView()"},
+  {cat:'View',label:'Refresh',act:"softRefresh().then(function(ok){if(!ok)location.reload()})"},
+  {cat:'Help',label:'Help',act:"showM('help')"},
+  {cat:'CI/CD',label:'Failure Prediction',act:"showM('fpred')"},
+  {cat:'CI/CD',label:'Cancel Rate Analysis',act:"showM('cancel')"},
+  {cat:'CI/CD',label:'Run Streak Analysis',act:"showM('streaka')"},
+  {cat:'CI/CD',label:'Failure Clusters',act:"showM('cluster')"},
+  {cat:'CI/CD',label:'Performance Percentile',act:"showM('pctile')"},
+  {cat:'CI/CD',label:'Workflow Lifecycle',act:"showM('lifecycle')"},
+  {cat:'CI/CD',label:'Run Density Map',act:"showM('density')"},
+  {cat:'CI/CD',label:'Week-over-Week Delta',act:"showM('wow')"},
+  {cat:'CI/CD',label:'Workflow Duration',act:"showM('wfduration')"},
+  {cat:'CI/CD',label:'Workflow Network Graph',act:"showM('netgraph')"},
+  {cat:'CI/CD',label:'Release Tracker',act:"showM('releases')"},
+  {cat:'CI/CD',label:'DORA Scorecard',act:"showM('dora')"},
+  {cat:'CI/CD',label:'Trigger Analysis',act:"showM('trigger')"},
+  {cat:'CI/CD',label:'Run Number Tracker',act:"showM('runnum')"},
+  {cat:'CI/CD',label:'Commit Messages',act:"showM('commitmsg')"},
+  {cat:'CI/CD',label:'MTTR',act:"showM('mttr')"},
+  {cat:'CI/CD',label:'Change Failure Rate',act:"showM('cfr')"},
+  {cat:'CI/CD',label:'Lead Time',act:"showM('leadtime')"},
+  {cat:'CI/CD',label:'Failure Patterns',act:"showM('failpattern')"},
+  {cat:'CI/CD',label:'Duration Trends',act:"showM('durtrend')"},
+  {cat:'CI/CD',label:'Success by Day',act:"showM('successday')"},
+  {cat:'CI/CD',label:'Success by Hour',act:"showM('successhour')"},
+  {cat:'CI/CD',label:'Branch Health',act:"showM('branchhealth')"},
+  {cat:'CI/CD',label:'Workflow Comparison',act:"showM('workflowcomp')"},
+  {cat:'CI/CD',label:'Concurrency',act:"showM('concurrency')"},
+  {cat:'CI/CD',label:'Commit Impact',act:"showM('commitimpact')"},
+  {cat:'Data',label:'Activity Heatmap',act:"showM('heatmap')"},
+  {cat:'Data',label:'Achievements',act:"showM('achievements')"},
+  {cat:'Data',label:'Analytics Charts',act:"showM('analytics')"},
+  {cat:'Data',label:'Compare',act:"showM('compare')"},
+  {cat:'Data',label:'Timeline',act:"showM('timeline')"},
+  {cat:'Tools',label:'Dashboard Clock',act:"showM('clock')"},
+  {cat:'Tools',label:'Leaderboard',act:"showM('leaderboard')"},
+  {cat:'Tools',label:'24h Timeline',act:"showM('timeline24')"},
+  {cat:'Tools',label:'Dependencies',act:"showM('depgraph')"},
+  {cat:'Tools',label:'Duration Distribution',act:"showM('durbell')"},
+  {cat:'Tools',label:'💾 Storage Projection',act:"showM('storageproj')"},
+  {cat:'Tools',label:'Failure Heatmap',act:"showM('failheat')"},
+  {cat:'Tools',label:'Workflow Frequency',act:"showM('workflowfreq')"},
+  {cat:'Tools',label:'Notification Settings',act:"showM('notifprefs')"}
+];
+var cmdSel=0;
+function openCmd(){document.getElementById('cmdOverlay').classList.add('on');var i=document.getElementById('cmdInput');i.value='';i.focus();cmdSel=0;filterCmd()}
+function closeCmd(){document.getElementById('cmdOverlay').classList.remove('on')}
+function filterCmd(){
+  var q=(document.getElementById('cmdInput').value||'').toLowerCase();
+  var items=CMD_ITEMS.filter(function(c){return c.label.toLowerCase().indexOf(q)>=0||c.cat.toLowerCase().indexOf(q)>=0});
+  // also search runs
+  var D=window.DASH||{};var runs=(D.runs||[]).filter(function(r){
+    var blob=((r.orv_id||'')+' '+(r.databaseId||'')+' '+(r.name||'')).toLowerCase();
+    return q&&blob.indexOf(q)>=0;}).slice(0,5);
+  var html=items.map(function(c,i){
+    return '<div class="cmd-item'+(i===cmdSel?' sel':'')+'" data-act="'+esc(c.act)+'"><span>'+esc(c.label)+'</span><span class="cmd-cat">'+esc(c.cat)+'</span></div>';
+  }).join('');
+  html+=runs.map(function(r){
+    var id=r.orv_id||r.databaseId;
+    return '<div class="cmd-item" data-run="'+r.databaseId+'"><span>🔎 '+esc(id)+'</span><span class="cmd-cat">'+esc(r.name||'')+'</span></div>';
+  }).join('');
+  var box=document.getElementById('cmdList');box.innerHTML=html;box.querySelectorAll('.cmd-item').forEach(function(el){el.onclick=function(){if(el.getAttribute('data-run')){location.href='?run='+el.getAttribute('data-run')}else{closeCmd();try{eval(el.getAttribute('data-act'))}catch(e){console.warn(e)}}}})||'<div class="cmd-item" style="color:var(--t2)">Tidak ada</div>';
+}
+function cmdKey(e){
+  if(e.key==='Escape'){closeCmd();return;}
+      if(e.key==='Enter'){var items=document.querySelectorAll('.cmd-item');if(items[cmdSel])items[cmdSel].click();}
+}
+
+// ── export filtered (override dashRows to respect current filter) ──
+function filteredRows(){
+  var D=window.DASH||{};var rows=(D.runs||[]).filter(function(r){return r.name==='rusemeva-vault'||r.name==='rusemeva-encode'});
+  var q=document.getElementById('q');var qq=q?q.value.toLowerCase().trim():'';
+  if(qq){rows=rows.filter(function(r){var blob=((r.orv_id||'')+' '+(r.databaseId||'')+' '+(r.name||'')+' '+(r.conclusion||'')).toLowerCase();return blob.indexOf(qq)>=0;});}
+  return rows;
+}
+
+// ── keyboard shortcut: P for palette ──
+
+async function softRefresh(){var sp=document.getElementById('dashSpinner');if(sp)sp.classList.add('on');try{var r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('data.json '+r.status);var data=await r.json();try{var m=await fetch('https://rusemeva.rusemeva-vault.workers.dev/api/orv-map',{cache:'no-store'});if(m.ok){var mj=await m.json();if(mj&&mj.map)data.orv_map=mj.map}}catch(e){}updateLiveUI(data);return true}catch(e){console.warn('softRefresh failed',e);return false}finally{if(sp)sp.classList.remove('on')}}
+var cd=30;setInterval(async function(){cd--;var t=document.getElementById('tmr');if(t)t.textContent=cd+'s';if(cd<=0){var mo=document.getElementById('mo');if(!mo.classList.contains('on')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){var ok=await softRefresh();if(!ok)location.reload();cd=30}else{cd=30}}},1000);
+// initial soft patch shortly after load (pick up fresher data.json / orv-map)
+applyCustomize();if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var b=document.getElementById('compactBtn');if(b)b.textContent='📐 Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();initFreshnessBannerDismiss();document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='p'||e.key==='P'){e.preventDefault();openCmd()}});if(localStorage.getItem('dash_compact')==='1'){document.body.classList.add('compact');var cb=document.getElementById('compactBtn');if(cb)cb.textContent='Normal'}renderSavedViews();renderHero();checkHealth();applyDeepLink();setTimeout(function(){softRefresh()},2500);
+renderPresets();updateSavePresetBtn();applyGroupingState();initGroupHeaderClicks();initPresetClicks();restoreDateFilter();
+if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
+// ── auto-refresh timer ("Updated Xs ago") + freshness banner ──
+setInterval(function(){var D=window.DASH||{};var gen=D.generated;if(!gen)return;var el=document.getElementById('refreshTimer');if(!el)return;var sec=Math.round((Date.now()-new Date(gen).getTime())/1000);if(sec<1){el.textContent='Updated just now';el.className='';return}el.textContent='Updated '+sec+'s ago';el.className=sec>120?'stale':(sec>60?'warn':'');renderFreshnessBanner()},1000);
+// ── init sound toggle icon ──
+updateSoundToggleIcon();
+// ── mobile swipe navigation (left/right to switch menu items) ──
+var swipeMenuItems=['sec-home','sec-feed','sec-rec','sec-tools','sec-act'];
+var swipeStartX=0,swipeStartY=0;
+document.addEventListener('touchstart',function(e){if(e.touches.length===1){swipeStartX=e.touches[0].clientX;swipeStartY=e.touches[0].clientY}}, {passive:true});
+document.addEventListener('touchend',function(e){if(e.changedTouches.length!==1)return;var dx=e.changedTouches[0].clientX-swipeStartX;var dy=e.changedTouches[0].clientY-swipeStartY;if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;var cur=-1;for(var i=0;i<swipeMenuItems.length;i++){var el=document.getElementById(swipeMenuItems[i]);if(el){var r=el.getBoundingClientRect();if(r.top<=120&&r.bottom>120){cur=i;break}}}if(cur<0)cur=0;if(dx<0){var ni=Math.min(cur+1,swipeMenuItems.length-1)}else{var ni=Math.max(cur-1,0)}var target=document.getElementById(swipeMenuItems[ni]);if(target)target.scrollIntoView({behavior:'smooth'})},{passive:true});
