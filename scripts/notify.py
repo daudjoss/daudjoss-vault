@@ -245,8 +245,16 @@ def send_video(video_path, thumb_path, caption):
                 f"{api_url}/sendVideo",
                 data=body,
                 headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
-            urllib.request.urlopen(req, timeout=600)
-            return True
+            resp = urllib.request.urlopen(req, timeout=600)
+            result = json.loads(resp.read())
+            if result.get("ok"):
+                video_sent = result.get("result", {}).get("video", {})
+                if video_sent:
+                    file_id = video_sent.get("file_id", "")
+                    if file_id:
+                        return file_id
+                    return True
+                return True
         except Exception as e:
             print(f"⚠️ sendVideo gagal ({api_url[:30]}): {e}")
     return False
