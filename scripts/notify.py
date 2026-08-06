@@ -316,7 +316,10 @@ def send_photo_fallback(photo_path, caption):
                 f"{FALLBACK_API}/sendPhoto",
                 data=body,
                 headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
-            urllib.request.urlopen(req2, timeout=600)
+            resp = urllib.request.urlopen(req2, timeout=600)
+            js = json.loads(resp.read().decode())
+            if js.get("ok") and js.get("result", {}).get("photo", [{}])[0].get("file_id"):
+                return js["result"]["photo"][0]["file_id"]
             return True
         except Exception as e2:
             print(f"⚠️ sendPhoto fallback juga gagal: {e2}")
