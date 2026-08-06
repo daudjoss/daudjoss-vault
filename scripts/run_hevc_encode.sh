@@ -605,8 +605,10 @@ RENORM_EOF
         if [ -s "$RENORM_FILE" ]; then
           mv -f "$RENORM_FILE" "$HEVC_FILE"
           echo "✅ Re-normalized to -16 LUFS"
-          # Update loudness report with verified value (only first occurrence)
+          # Update loudness report with verified value
+          LOUDNESS_TEXT="${LOUDNESS_TEXT:-}"
           LOUDNESS_TEXT=$(echo "$LOUDNESS_TEXT" | sed "1s/-[0-9.]* LUFS/${VERIFY_LUFS} LUFS (verified)/")
+          [ -z "$LOUDNESS_TEXT" ] && LOUDNESS_TEXT="✅ ${VERIFY_LUFS} LUFS (verified, target -16)"
           RENORM_DONE=1
         else
           echo "⚠️ Re-normalization failed, keeping original"
@@ -670,6 +672,7 @@ PYEOF
   echo "$ANOMALY_TEXT" >> $GITHUB_ENV
   echo "RUSEMEVA_EOF" >> $GITHUB_ENV
   # === LOUDNESS REPORT (LUFS, 2-min sample dari tengah video) ===
+  LOUDNESS_TEXT=""  # Ensure initialized even if probe skipped
   # If post-encode verification already re-normalized, skip probe — already verified
   if [ "${RENORM_DONE:-0}" != "1" ]; then
   LOUDNESS_LOG="/tmp/rusemeva_loudness.log"
@@ -712,10 +715,11 @@ except:
 PYEOF
     )
   fi
+  fi  # RENORM_DONE guard
+  # Always write LOUDNESS_TEXT (may be set by verification re-normalize)
   echo "LOUDNESS_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
   echo "$LOUDNESS_TEXT" >> $GITHUB_ENV
   echo "RUSEMEVA_EOF" >> $GITHUB_ENV
-  fi  # RENORM_DONE guard
   # === ENCODE EFFICIENCY SCORE ===
   EFFICIENCY_TEXT=""
   HEVC_BYTES_F=$(stat -c%s "$HEVC_FILE" 2>/dev/null || wc -c < "$HEVC_FILE")
