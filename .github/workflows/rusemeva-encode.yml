@@ -214,6 +214,9 @@ jobs:
           docker rm -f tg-bot-api >/dev/null 2>&1 || true
           rm -rf /tmp/tg-bot-api && mkdir -p /tmp/tg-bot-api
           docker run -d --name tg-bot-api --entrypoint /usr/local/bin/telegram-bot-api -p 8081:8081 \
+            -e TELEGRAM_API_ID="$TELEGRAM_API_ID" \
+            -e TELEGRAM_API_HASH="$TELEGRAM_API_HASH" \
+            -e TELEGRAM_LOCAL=1 \
             -v /tmp/tg-bot-api:/var/lib/telegram-bot-api \
             aiogram/telegram-bot-api:latest \
             --local --api-id "$TELEGRAM_API_ID" --api-hash "$TELEGRAM_API_HASH" --dir /var/lib/telegram-bot-api --temp-dir /tmp/telegram-bot-api --http-port 8081 --verbosity=2
@@ -511,7 +514,7 @@ jobs:
         run: |
           if [ -n "${HEVC_FILE:-}" ] && [ -s "$HEVC_FILE" ]; then
             SIZE=$(stat -c%s "$HEVC_FILE" 2>/dev/null || echo 0)
-            MAX=$((2*1024*1024*1024))
+            MAX=$((1900*1024*1024))
             if [ "$SIZE" -gt "$MAX" ]; then
               echo "📦 HEVC $((SIZE/1024/1024/1024)) GB > 2GB -> split -b 1990M"
               # Format part-000 (sama kayak record.yml yg terbukti jalan)
