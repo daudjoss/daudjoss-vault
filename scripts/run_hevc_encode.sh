@@ -99,6 +99,17 @@ PYEOF
     echo "⚠️ Turbo normalize gagal — pakai original apa adanya"
     HEVC_FILE="$FILE"
   fi
+  # Guard: hasil HEVC_SKIP terlalu kecil vs original -> kemungkinan corruption/bug
+  HEVC_BYTES_NOW=$(stat -c%s "$HEVC_FILE" 2>/dev/null || wc -c < "$HEVC_FILE")
+  ORIG_BYTES_NOW=$(stat -c%s "$FILE" 2>/dev/null || wc -c < "$FILE")
+  if [ "$HEVC_BYTES_NOW" -gt 0 ] && [ "$ORIG_BYTES_NOW" -gt 0 ]; then
+    RATIO_PCT=$(( HEVC_BYTES_NOW * 100 / ORIG_BYTES_NOW ))
+    if [ "$RATIO_PCT" -lt 50 ]; then
+      echo "⚠️ Hasil HEVC_SKIP cuma ${RATIO_PCT}% dari original — terlalu kecil, pakai original apa adanya"
+      HEVC_FILE="$FILE"
+      HEVC_SIZE=$(ls -lh "$HEVC_FILE" | awk '{print $5}')
+    fi
+  fi
 fi
 echo "HEVC_SKIP=$HEVC_SKIP" >> $GITHUB_ENV
 # Set defaults untuk HEVC_SKIP path (supaya post-encode block tidak crash)
@@ -724,7 +735,24 @@ PYEOF
   EFFICIENCY_TEXT=""
   HEVC_BYTES_F=$(stat -c%s "$HEVC_FILE" 2>/dev/null || wc -c < "$HEVC_FILE")
   if [ "${ORIG_BYTES:-0}" -gt 0 ] && [ "${HEVC_BYTES_F:-0}" -gt 0 ]; then
-    EFFICIENCY_TEXT=$(python3 - "$ORIG_BYTES" "$HEVC_BYTES_F" "$HDUR_INT" "$HBR" <<'PYEOF'
+    # Jika HEVC_SKIP, utamakan info "no re-encode" agar tidak menyesatkan.
+if [ "${HEVC_SKIP:-0}" = "1" ]; then
+  EFFICIENCY_TEXT=$(python3 - "$ORIG_BYTES" "$HEVC_BYTES_F" <<'PYEOF'
+import sys
+orig = int(sys.argv[1])
+hevc = int(sys.argv[2])
+ratio = (1 - hevc / orig) * 100 if orig > 0 else 0
+out = []
+out.append(f"⏭️ No re-encode — original already efficient")
+if abs(ratio) > 5:
+    out.append(f"📏 Audio normalize changed size by {ratio:+.0f}% ({orig/1048576:.0f}MB → {hevc/1048576:.0f}MB)")
+else:
+    out.append(f"📏 Size preserved: {hevc/1048576:.0f}MB")
+print("\n".join(out))
+PYEOF
+    )
+else
+  EFFICIENCY_TEXT=$(python3 - "$ORIG_BYTES" "$HEVC_BYTES_F" "$HDUR_INT" "$HBR" <<'PYEOF'
 import sys
 orig = int(sys.argv[1])
 hevc = int(sys.argv[2])
@@ -752,6 +780,7 @@ if dur > 0 and br > 0:
 print("\n".join(out))
 PYEOF
     )
+fi
   fi
   echo "EFFICIENCY_TEXT<<RUSEMEVA_EOF" >> $GITHUB_ENV
   echo "$EFFICIENCY_TEXT" >> $GITHUB_ENV

@@ -354,15 +354,72 @@ def send_photo_fallback(photo_path, caption):
             return False
 
 
-def send_video_with_fallback(video_path, caption, thumb_path):
-    """Kirim video (max 2GB) via local Bot API Server; fallback foto+link lalu teks.
-    Return file_id (str) kalau sukses lewat sendVideo, True kalau sukses fallback, False kalau gagal."""
+def send_document(doc_path, caption):
+    """Kirim file asli (tanpa kompresi Telegram) via sendDocument."""
+    if not doc_path or not os.path.isfile(doc_path) or os.path.getsize(doc_path) == 0:
+        print("⚠️ File dokumen tidak valid, lewati sendDocument.")
+        return False
+    size = os.path.getsize(doc_path)
+    MAX_BYTES = 2 * 1024 * 1024 * 1024
+    if size > MAX_BYTES:
+        print(f"⚠️ Dokumen {size/1024/1024/1024:.2f} GB > 2 GB limit.")
+        return False
+
+    boundary = f"----rusemeva{uuid.uuid4().hex}"
+    with open(doc_path, "rb") as f:
+        dbytes = f.read()
+    dname = os.path.basename(doc_path)
+    dctype = mimetypes.guess_type(dname)[0] or "video/mp4"
+
+    parts = []
+    parts.append((f"--{boundary}" + CRLF).encode())
+    parts.append(b'Content-Disposition: form-data; name="chat_id"' + CRLF.encode() + CRLF.encode())
+    parts.append(f"{chat_id}".encode() + CRLF.encode())
+    parts.append((f"--{boundary}" + CRLF).encode())
+    parts.append(b'Content-Disposition: form-data; name="caption"' + CRLF.encode() + CRLF.encode())
+    parts.append(f"{caption}".encode() + CRLF.encode())
+    parts.append((f"--{boundary}" + CRLF).encode())
+    parts.append(b'Content-Disposition: form-data; name="parse_mode"' + CRLF.encode() + CRLF.encode())
+    parts.append(b"HTML" + CRLF.encode())
+    parts.append((f"--{boundary}" + CRLF).encode())
+    parts.append(f'Content-Disposition: form-data; name="document"; filename="{dname}"'.encode() + CRLF.encode())
+    parts.append(f"Content-Type: {dctype}".encode() + CRLF.encode() + CRLF.encode())
+    parts.append(dbytes)
+    parts.append(CRLF.encode())
+    parts.append((f"--{boundary}--" + CRLF).encode())
+    body = b"".join(parts)
+
+    for api_url in [API, FALLBACK_API]:
+        try:
+            req = urllib.request.Request(
+                f"{api_url}/sendDocument",
+                data=body,
+                headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
+            resp = urllib.request.urlopen(req, timeout=600)
+            result = json.loads(resp.read())
+            if result.get("ok"):
+                return True
+        except Exception as e:
+            print(f"⚠️ sendDocument gagal ({api_url[:30]}): {e}")
+    return False
+
+
+def send_video_with_fallback(video_path, caption, thumb_path, prefer_doc=True):
+    """Kirim file via sendDocument (utuh, tidak dikompres Telegram) jika prefer_doc=True,
+    dengan fallback sendVideo (playable) + foto+link+teks."""
+    if prefer_doc:
+        if send_document(video_path, caption):
+            print("✅ File terkirim via sendDocument (ukuran asli).", flush=True)
+            return True
     fid = send_video(video_path, thumb_path, caption)
     if isinstance(fid, str):
         return fid
     if fid is True:
         return True
-    fallback_caption = caption + (f"\n\n📂 Release: {release_url}\n🔗 Run: {run_url}" if release_url else "")
+    if release_url:
+        fallback_caption = caption + "\n\n📂 Release: " + release_url + "\n🔗 Run: " + run_url
+    else:
+        fallback_caption = caption
     if thumb_path and os.path.isfile(thumb_path) and os.path.getsize(thumb_path) > 0:
         if send_photo_fallback(thumb_path, fallback_caption):
             return True
