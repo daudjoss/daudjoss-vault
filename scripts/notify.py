@@ -277,6 +277,7 @@ def send_video(video_path, thumb_path, caption):
             result = json.loads(resp.read())
             if result.get("ok"):
                 video_sent = result.get("result", {}).get("video", {})
+                print(f"✅ sendVideo ok | file_id={video_sent.get('file_id','')[:20]}... | sent_size={video_sent.get('file_size',0)} bytes", flush=True)
                 if video_sent:
                     file_id = video_sent.get("file_id", "")
                     if file_id:
@@ -399,6 +400,9 @@ def send_document(doc_path, caption):
             resp = urllib.request.urlopen(req, timeout=600)
             result = json.loads(resp.read())
             if result.get("ok"):
+                doc_info = result.get("result", {}).get("document", {})
+                sent_size = doc_info.get("file_size", 0)
+                print(f"✅ sendDocument ok | file_id={doc_info.get('file_id','')[:20]}... | sent_size={sent_size} bytes", flush=True)
                 return True
         except Exception as e:
             print(f"⚠️ sendDocument gagal ({api_url[:30]}): {e}")
