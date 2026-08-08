@@ -87,11 +87,16 @@ PYEOF
         echo "🔊 Surround detected → downmix to stereo (center extraction)"
       fi
       echo "🔊 Turbo audio normalize pass 2 (full chain)..."
-      "$FFMPEG_STATIC" -hide_banner -y -i "$FILE" \
-        -c:v copy \
-        -af "${CH_PREFIX}highpass=f=50,lowshelf=f=150:width_type=h:w=100:g=3,highshelf=f=8000:width_type=h:w=2000:g=2,equalizer=f=6000:width_type=h:w=1000:g=-4,equalizer=f=2000:width_type=h:w=500:g=2,adeclip,acompressor=threshold=0.125:ratio=3:attack=10:release=150:makeup=1.5:knee=3,loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50" \
-        -c:a aac -b:a 128k \
-        "$HEVC_FILE" 2>/dev/null || true
+    # Simpan normalized output di temp path; biar HEVC_FILE tetap original kalau gagal.
+    TMP_NORM="${HEVC_FILE}.tmp"
+    rm -f "$TMP_NORM"
+    # Chain: simple loudnorm + limiter (lebih stabil di static ffmpeg). Jika gagal, fallback tanpa filter.
+    "$FFMPEG_STATIC" -hide_banner -y -i "$FILE"       -c:v copy       -af "${CH_PREFIX}loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"       -c:a aac -b:a 128k       "$TMP_NORM" 2>/tmp/rusemeva_audio_normalize.log || true
+    if [ -s "$TMP_NORM" ]; then
+      mv -f "$TMP_NORM" "$HEVC_FILE"
+    else
+      echo "⚠️ Full audio normalize gagal, coba fallback tanpa loudnorm..."
+      "$FFMPEG_STATIC" -hide_banner -y -i "$FILE"         -c:v copy         -c:a aac -b:a 128k         "$HEVC_FILE" 2>/tmp/rusemeva_audio_fallback.log || true
     fi
   fi
   # Fallback: kalau normalize gagal/hasil 0 byte, pakai original apa adanya
@@ -508,111 +513,7 @@ if [ -s "$HEVC_FILE" ]; then
   if [ -z "$AUD" ]; then
     echo "🔇 HEVC TIDAK punya audio stream — re-mux dari original..."
     TMP_REMUX="${HEVC_FILE%.mp4}.remux.mp4"
-    "$FFMPEG_STATIC" -hide_banner -y -i "$HEVC_FILE" -i "$FILE" \
-      -map 0:v:0 -map 1:a? -c copy "$TMP_REMUX" 2>/dev/null || true
-    if [ -s "$TMP_REMUX" ]; then
-      AUD2=$(ffprobe -v error -select_streams a -show_entries stream=index -of default=noprint_wrappers=1:nokey=1 "$TMP_REMUX" 2>/dev/null | head -1)
-      if [ -n "$AUD2" ]; then
-        mv -f "$TMP_REMUX" "$HEVC_FILE"
-        echo "✅ Audio berhasil di-re-mux ke HEVC."
-      else
-        rm -f "$TMP_REMUX"
-        echo "⚠️ Original juga gak punya audio — HEVC tanpa suara (wajar kalau sumber silent)."
-      fi
-    else
-      rm -f "$TMP_REMUX"
-      echo "⚠️ Re-mux gagal — HEVC tanpa suara."
-    fi
-  else
-    echo "🔊 HEVC punya audio stream (#$AUD) — OK."
-  fi
-  # === SMART THUMBNAIL (auto-pick best frame from 5 candidates by JPEG size) ===
-  HEVC_THUMB="${HEVC_FILE%.mp4}.jpg"
-  THUMB_SCORE=""
-  if [ "${HDUR_INT:-0}" -gt 12 ] 2>/dev/null; then
-    echo "🖼 Smart thumbnail probe (5 candidates)..."
-    BEST_SS=0; BEST_SIZE=0
-    for pct in 15 35 50 70 90; do
-      SS=$(( HDUR_INT * pct / 100 ))
-      [ "$SS" -ge "$HDUR_INT" ] && SS=$(( HDUR_INT - 2 ))
-      [ "$SS" -lt 1 ] && SS=1
-      CANDIDATE="/tmp/rusemeva_thumb_${pct}.jpg"
-      "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$SS" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$CANDIDATE" 2>/dev/null || true
-      CAND_SIZE=$(stat -c%s "$CANDIDATE" 2>/dev/null || echo 0)
-      if [ "${CAND_SIZE:-0}" -gt "${BEST_SIZE:-0}" ] 2>/dev/null; then
-        BEST_SIZE=$CAND_SIZE
-        BEST_SS=$SS
-        mv -f "$CANDIDATE" "$HEVC_THUMB" 2>/dev/null || cp "$CANDIDATE" "$HEVC_THUMB" 2>/dev/null || true
-      else
-        rm -f "$CANDIDATE" 2>/dev/null || true
-      fi
-      echo "   • t=${SS}s size=${CAND_SIZE}B"
-    done
-    if [ "$BEST_SS" -gt 0 ] 2>/dev/null; then
-      # Score: normalize JPEG size (typical: 15-80KB for 640px, q:v 2)
-      THUMB_SCORE=$(awk "BEGIN{t=($BEST_SIZE-15000)*0.0015; if(t<0)t=0; if(t>100)t=100; printf \"%.0f\", t}" 2>/dev/null || echo "0")
-      echo "🖼 Best frame: t=${BEST_SS}s size=${BEST_SIZE}B score=${THUMB_SCORE}/100"
-    fi
-    rm -f /tmp/rusemeva_thumb_*.jpg 2>/dev/null || true
-  elif [ "${HDUR_INT:-0}" -gt 0 ] 2>/dev/null; then
-    # Video pendek: langsung ambil tengah
-    HSEEK=$(( HDUR_INT / 2 ))
-    [ "$HSEEK" -lt 1 ] && HSEEK=1
-    "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss "$HSEEK" -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
-  fi
-  # Fallback
-  [ ! -s "$HEVC_THUMB" ] && "$FFMPEG_STATIC" -hide_banner -loglevel error -y -ss 1 -i "$HEVC_FILE" -frames:v 1 -q:v 2 -vf "scale=640:-2" "$HEVC_THUMB" 2>/dev/null || true
-  if [ -s "$HEVC_THUMB" ]; then echo "HEVC_THUMB_FILE=$HEVC_THUMB" >> $GITHUB_ENV; echo "HAS_HEVC_THUMB=1" >> $GITHUB_ENV; else echo "HAS_HEVC_THUMB=0" >> $GITHUB_ENV; fi
-  if [ -n "$THUMB_SCORE" ]; then echo "THUMB_SCORE=$THUMB_SCORE" >> $GITHUB_ENV; fi
-  # === POST-ENCODE LOUDNESS VERIFICATION (auto-correct if meleset) ===
-  # Always verify for HEVC_SKIP=1 (turbo path) — no AUDIO_FCS flag available
-  if [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null && [ "${HEVC_SKIP:-0}" = "0" ] && [ -z "${AUDIO_FCS:-}" ]; then
-    # Skip verification for non-turbo path without complex filter
-    true
-  elif [ "${HDUR_INT:-0}" -ge 60 ] 2>/dev/null; then
-    echo "🔊 Post-encode loudness verification..."
-    VERIFY_LOG="/tmp/rusemeva_verify.log"
-    timeout 60 "$FFMPEG_STATIC" -hide_banner -nostats -i "$HEVC_FILE" \
-      -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \
-      -f null - 2>"$VERIFY_LOG" || true
-    VERIFY_LUFS=$(python3 - "$VERIFY_LOG" <<'PYEOF'
-import json, re, sys
-try:
-    with open(sys.argv[1]) as f:
-        log = f.read()
-    m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', log, re.DOTALL)
-    if m:
-        d = json.loads(m.group(0))
-        print(d.get("input_i", "").strip())
-except:
-    pass
-PYEOF
-    )
-    rm -f "$VERIFY_LOG" 2>/dev/null || true
-    if [ -n "$VERIFY_LUFS" ]; then
-      DIFF_INFO=$(python3 - "$VERIFY_LUFS" <<'PYEOF'
-import sys
-try:
-    v = float(sys.argv[1])
-    diff_abs = abs(v - (-16))
-    print(f"{diff_abs:.1f}")
-except (ValueError, IndexError):
-    print("0.0")
-PYEOF
-      )
-      DIFF=$(awk "BEGIN{printf \"%.1f\", $VERIFY_LUFS - (-16)}")
-      echo "🔊 Post-encode loudness: ${VERIFY_LUFS} LUFS (target -16, diff ${DIFF})"
-      # If meleset >0.5 LUFS, re-normalize
-      if awk "BEGIN{exit !($DIFF_INFO > 0.5)}"; then
-        echo "⚠️ Loudness meleset ${DIFF} LUFS — re-normalizing..."
-        RENORM_SCRIPT="/tmp/rusemeva_renorm_filter.txt"
-        cat > "$RENORM_SCRIPT" << RENORM_EOF
-[0:a]loudnorm=measured_I=$VERIFY_LUFS:measured_TP=-1.5:measured_LRA=11:measured_thresh=-26:offset=0:linear=true:I=-16:TP=-1.5:LRA=11,alimiter=limit=0.85:attack=5:release=50[aout]
-RENORM_EOF
-        RENORM_FILE="${HEVC_FILE%.mp4}-renorm.mp4"
-        "$FFMPEG_STATIC" -hide_banner -y -i "$HEVC_FILE" \
-          -filter_complex_script "$RENORM_SCRIPT" -map "[aout]" -c:v copy -c:a aac -b:a 128k \
-          "$RENORM_FILE" 2>/dev/null || true
+    "$FFMPEG_STATIC" -hide_banner -y -i "$HEVC_FILE"           -c:v copy           -af "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=${MI}:measured_TP=${MTP}:measured_LRA=${MLRA}:measured_thresh=${MTH}:offset=${MOFF}:linear=true,alimiter=limit=0.85:attack=5:release=50"           -c:a aac -b:a 128k           "$RENORM_FILE" 2>/dev/null || true
         if [ -s "$RENORM_FILE" ]; then
           mv -f "$RENORM_FILE" "$HEVC_FILE"
           echo "✅ Re-normalized to -16 LUFS"
