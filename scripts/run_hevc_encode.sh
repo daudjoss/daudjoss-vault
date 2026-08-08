@@ -328,7 +328,7 @@ PYEOF
       echo "🔊 Surround detected → downmix to stereo (center extraction)"
     fi
     # Simple audio chain: loudnorm + limiter (stabil di static ffmpeg, no crossover/amerge)
-    AUDIO_AF="${CH_PREFIX}loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
+    AUDIO_AF="-af ${CH_PREFIX}loudnorm=$LOUDNORM_MEASURED,alimiter=limit=0.85:attack=5:release=50"
     AUDIO_FCS=""
     AUDIO_ENC="-c:a aac -b:a 128k"
     echo "🔊 Audio chain: loudnorm(-16 LUFS) → limiter(0.85) → verify+correct"
