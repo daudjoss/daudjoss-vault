@@ -458,7 +458,7 @@ if job_status == "success":
             )
         elif os.path.isfile(filename) and os.path.getsize(filename) > 0:
             print("📤 Mengirim video ORIGINAL...", flush=True)
-            res = send_video_with_fallback(filename, caption_orig, thumb_path)
+            res = send_video_with_fallback(filename, caption_orig, thumb_path, prefer_doc=False)
             # Capture file_id (kalau sukses lewat sendVideo) untuk trigger encode terpisah
             if isinstance(res, str):
                 with open("/tmp/rusemeva_orig_file_id.txt", "w") as f:
