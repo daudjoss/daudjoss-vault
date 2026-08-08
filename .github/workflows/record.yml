@@ -693,7 +693,7 @@ jobs:
           docker run -d --name tg-bot-api --entrypoint /usr/local/bin/telegram-bot-api -p 8081:8081 \
             -v /tmp/tg-bot-api:/var/lib/telegram-bot-api \
             aiogram/telegram-bot-api:latest \
-            --local --api-id "$TELEGRAM_API_ID" --api-hash "$TELEGRAM_API_HASH" --dir /var/lib/telegram-bot-api --temp-dir /tmp/telegram-bot-api --http-port 8081 --verbosity=2 --upload-max-size 2097152000
+            --local --api-id "$TELEGRAM_API_ID" --api-hash "$TELEGRAM_API_HASH" --dir /var/lib/telegram-bot-api --temp-dir /tmp/telegram-bot-api --http-port 8081 --verbosity=2
           echo "⏳ Menunggu Bot API Server siap (hingga 90s)..."
           for i in $(seq 1 45); do
             CODE=$(curl -s -o /tmp/getme.json -w "%{http_code}" "http://localhost:8081/bot${{ secrets.BOT_TOKEN }}/getMe" 2>/dev/null)
