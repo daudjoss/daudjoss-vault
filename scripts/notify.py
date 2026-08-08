@@ -356,6 +356,7 @@ def send_photo_fallback(photo_path, caption):
 
 def send_document(doc_path, caption):
     """Kirim file asli (tanpa kompresi Telegram) via sendDocument."""
+    CRLF = "\r\n"
     if not doc_path or not os.path.isfile(doc_path) or os.path.getsize(doc_path) == 0:
         print("⚠️ File dokumen tidak valid, lewati sendDocument.")
         return False
